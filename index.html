@@ -16,7 +16,6 @@
             --border-color: rgba(255, 255, 255, 0.12);
             --success-color: #10b981;
             --gold-color: #f59e0b;
-            --purple-color: #a855f7;
         }
 
         * { margin:0; padding:0; box-sizing:border-box; font-family:-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; -webkit-tap-highlight-color: transparent; }
@@ -51,7 +50,7 @@
         @keyframes pulseGlow { 0% { transform: scale(0.85); opacity: 0.5; } 100% { transform: scale(1.2); opacity: 0.95; } }
         @keyframes loadProgress { 0% { width: 0%; } 100% { width: 100%; } }
 
-        /* AUTH CARD */
+        /* AUTH CARD WITH NAME & DOB FIELDS */
         .auth-container { display:flex; flex-direction:column; align-items:center; justify-content:center; flex:1; padding:20px; width:100%; }
         .auth-card {
             background: var(--card-bg); border: 1px solid var(--border-color);
@@ -75,6 +74,8 @@
         .input-group input { width:100%; background:#020617; border:1px solid var(--border-color); color:#fff; padding:12px 40px; border-radius:12px; font-size:14px; outline:none; transition:0.3s; }
         .input-group input:focus { border-color:var(--accent-color); box-shadow: 0 0 12px var(--accent-glow); }
         .pwd-toggle { position:absolute; right:14px; top:50%; transform:translateY(-50%); color:var(--text-muted); cursor:pointer; font-size:14px; }
+
+        .signup-extra-fields { display:none; flex-direction:column; gap:0px; }
 
         .btn-primary {
             width:100%; background: linear-gradient(135deg, #2563eb, #1d4ed8); color:#fff;
@@ -112,7 +113,6 @@
         .msg-image { max-width:100%; border-radius:12px; margin-top:8px; border:1px solid var(--border-color); }
         .msg-video { width:100%; border-radius:12px; margin-top:8px; background:#000; }
 
-        /* MINDMAP & NOTES BOX */
         .mindmap-box { background:#030712; border:1px dashed var(--accent-color); border-radius:12px; padding:12px; margin-top:8px; font-size:12.5px; line-height:1.6; }
         .notes-card { background:rgba(16, 185, 129, 0.08); border:1px solid rgba(16, 185, 129, 0.3); border-radius:12px; padding:12px; margin-top:8px; }
 
@@ -176,7 +176,7 @@
         <div class="splash-logo-container">
             <div class="splash-logo-glow"></div>
             <div class="splash-logo">
-                <img src="./file_000000051ac82068c717a63b34c9d7b.png" alt="TicBull Logo">
+                <img src="./logo.png" alt="TicBull Logo" onerror="this.src='https://raw.githubusercontent.com/yuviyadav16/ticbull-academy/main/logo.png'">
             </div>
         </div>
         <div class="splash-title">TicBull Academy</div>
@@ -187,12 +187,12 @@
         </div>
     </div>
 
-    <!-- AUTH SCREEN -->
+    <!-- AUTH SCREEN (WITH NAME, DOB, EMAIL & SHOW/HIDE PASSWORD) -->
     <div class="auth-container" id="auth-screen">
         <div class="auth-card">
             <div class="brand-header">
                 <div class="brand-icon-box">
-                    <img src="./file_000000051ac82068c717a63b34c9d7b.png" alt="Logo">
+                    <img src="./logo.png" alt="Logo" onerror="this.src='https://raw.githubusercontent.com/yuviyadav16/ticbull-academy/main/logo.png'">
                 </div>
                 <h2 style="font-size:20px; font-weight:800;">TicBull Academy</h2>
                 <p style="font-size:12px; color:var(--text-muted); margin-top:3px;">AI Student Portal & Exam Engine</p>
@@ -201,6 +201,18 @@
             <div class="auth-tabs">
                 <div class="auth-tab active" id="tab-login" onclick="switchAuth('login')">Sign In</div>
                 <div class="auth-tab" id="tab-signup" onclick="switchAuth('signup')">Sign Up</div>
+            </div>
+
+            <!-- EXTRA FIELDS FOR SIGN UP (NAME & DOB) -->
+            <div class="signup-extra-fields" id="signupFields">
+                <div class="input-group">
+                    <i class="fa-regular fa-user left-icon"></i>
+                    <input type="text" id="studentName" placeholder="Full Student Name">
+                </div>
+                <div class="input-group">
+                    <i class="fa-regular fa-calendar left-icon"></i>
+                    <input type="date" id="studentDob" placeholder="Date of Birth">
+                </div>
             </div>
 
             <div class="input-group">
@@ -214,7 +226,7 @@
                 <i class="fa-solid fa-eye pwd-toggle" id="pwdToggle" onclick="togglePassword()"></i>
             </div>
 
-            <button class="btn-primary" onclick="handleAuth()">OPEN LEARNING PORTAL</button>
+            <button class="btn-primary" id="authSubmitBtn" onclick="handleAuth()">OPEN LEARNING PORTAL</button>
         </div>
     </div>
 
@@ -224,10 +236,10 @@
             <div class="header-brand">
                 <button class="menu-btn" onclick="toggleDrawer()"><i class="fa-solid fa-bars"></i></button>
                 <div class="header-logo">
-                    <img src="./file_000000051ac82068c717a63b34c9d7b.png" alt="Logo">
+                    <img src="./logo.png" alt="Logo" onerror="this.src='https://raw.githubusercontent.com/yuviyadav16/ticbull-academy/main/logo.png'">
                 </div>
                 <div>
-                    <strong style="color:#fff; font-size:13.5px;">TicBull Academy</strong>
+                    <strong style="color:#fff; font-size:13.5px;" id="portalHeaderName">TicBull Academy</strong>
                     <p style="font-size:9.5px; color:var(--text-muted);">AI Tutor Engine v6.0</p>
                 </div>
             </div>
@@ -274,7 +286,7 @@
         </div>
 
         <div class="chat-container" id="chatBox">
-            <div class="msg ai">
+            <div class="msg ai" id="welcomeAiMessage">
                 <b>Welcome to TicBull Academy! 🚀</b><br>
                 Aapka **Class 12 Science** Pass active hai. Below `+` icon click karke Notes, MindMap, MCQs, AI Diagram Image ya AI Video Explanation generate karo!
             </div>
@@ -399,6 +411,7 @@
     </footer>
 
     <script>
+        let currentAuthMode = 'login';
         let purchasedPlanName = 'Class 12 Science';
         let isProUser = false;
         let selectedPlanName = 'Class 12 Science';
@@ -420,13 +433,23 @@
         }
 
         function switchAuth(mode) {
+            currentAuthMode = mode;
             document.getElementById('tab-login').classList.toggle('active', mode === 'login');
             document.getElementById('tab-signup').classList.toggle('active', mode === 'signup');
+            document.getElementById('signupFields').style.display = mode === 'signup' ? 'flex' : 'none';
+            document.getElementById('authSubmitBtn').innerText = mode === 'login' ? 'OPEN LEARNING PORTAL' : 'CREATE STUDENT ACCOUNT';
         }
 
         function handleAuth() {
             const email = document.getElementById('email').value;
+            const name = document.getElementById('studentName').value;
             if(!email) { alert("Please enter Email ID!"); return; }
+
+            if(name) {
+                document.getElementById('portalHeaderName').innerText = `Welcome, ${name.split(' ')[0]}`;
+                document.getElementById('welcomeAiMessage').innerHTML = `<b>Welcome ${name}! 🚀</b><br>Aapka **Class 12 Science** Pass active hai. Below \`+\` icon click karke Notes, MindMap, MCQs, AI Diagram Image ya AI Video Explanation generate karo!`;
+            }
+
             document.getElementById('auth-screen').style.display = 'none';
             document.getElementById('main-dashboard').style.display = 'flex';
         }
@@ -533,7 +556,6 @@
                             <span style="text-decoration:underline; cursor:pointer;" onclick="openSubscriptionModal()">👉 Click here to Upgrade to TicBull Pro Pass (₹2,999)</span>
                         </div>`;
                 } else {
-                    // RICH AI OUTPUT GENERATION (NOTES, MINDMAP, IMAGE DIAGRAM, VIDEO)
                     let aiResponseHTML = `<b>[${board} | ${cls} | ${stream} AI Engine]:</b><br>`;
                     
                     if(questionText.includes('MindMap') || questionText.includes('Flowchart')) {
@@ -553,7 +575,7 @@
                     } else if(questionText.includes('Video')) {
                         aiResponseHTML += `
                             <b>🎥 AI Visual Video Explanation:</b><br>
-                            <video class="msg-video" controls poster="./file_000000051ac82068c717a63b34c9d7b.png">
+                            <video class="msg-video" controls poster="./logo.png">
                                 <source src="https://www.w3schools.com/html/mov_bbb.mp4" type="video/mp4">
                                 Your browser does not support the video tag.
                             </video>`;
