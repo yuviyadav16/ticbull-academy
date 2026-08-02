@@ -128,3 +128,13 @@ if __name__ == '__main__':
 @app.route('/')
 def home():
     return "Backend is running successfully!"
+import requests
+
+# Chat API ke andar:
+api_url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={GEMINI_API_KEY}"
+payload = {"contents": [{"parts": [{"text": full_prompt}]}]}
+headers = {"Content-Type": "application/json"}
+
+response = requests.post(api_url, json=payload, headers=headers)
+res_data = response.json()
+reply_text = res_data['candidates'][0]['content']['parts'][0]['text']
