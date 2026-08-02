@@ -1,3 +1,26 @@
+    try:
+        print("GEMINI_API_KEY is present:", bool(GEMINI_API_KEY)) # Ye Render ke logs me print karega
+        
+        if GEMINI_API_KEY:
+            api_url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={GEMINI_API_KEY}"
+            payload = {"contents": [{"parts": [{"text": full_prompt}]}]}
+            headers = {"Content-Type": "application/json"}
+            
+            response = requests.post(api_url, json=payload, headers=headers)
+            print("Gemini API Status Code:", response.status_code) # Status code check karne ke liye
+            
+            res_data = response.json()
+            print("Gemini API Response:", res_data) # Response check karne ke liye
+            
+            reply_text = res_data['candidates'][0]['content']['parts'][0]['text']
+        else:
+            reply_text = f"<b>{board} | {cls} AI Engine:</b><br><br>API Key missing!"
+            
+        return jsonify({"success": True, "reply": reply_text})
+    except Exception as e:
+        print("AI Engine Error Details:", str(e))
+        return jsonify({"success": False, "message": f"AI Engine Error: {str(e)}"}), 500
+        
 import os
 import random
 import smtplib
