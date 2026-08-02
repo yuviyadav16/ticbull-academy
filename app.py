@@ -1,27 +1,4 @@
-    try:
-        print("GEMINI_API_KEY is present:", bool(GEMINI_API_KEY)) # Ye Render ke logs me print karega
-        
-        if GEMINI_API_KEY:
-            api_url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={GEMINI_API_KEY}"
-            payload = {"contents": [{"parts": [{"text": full_prompt}]}]}
-            headers = {"Content-Type": "application/json"}
-            
-            response = requests.post(api_url, json=payload, headers=headers)
-            print("Gemini API Status Code:", response.status_code) # Status code check karne ke liye
-            
-            res_data = response.json()
-            print("Gemini API Response:", res_data) # Response check karne ke liye
-            
-            reply_text = res_data['candidates'][0]['content']['parts'][0]['text']
-        else:
-            reply_text = f"<b>{board} | {cls} AI Engine:</b><br><br>API Key missing!"
-            
-        return jsonify({"success": True, "reply": reply_text})
-    except Exception as e:
-        print("AI Engine Error Details:", str(e))
-        return jsonify({"success": False, "message": f"AI Engine Error: {str(e)}"}), 500
-        
-import os
+    import os
 import random
 import smtplib
 from email.mime.text import MIMEText
@@ -35,7 +12,7 @@ CORS(app)
 # Environment Variables
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "")
 SMTP_EMAIL = os.getenv("SMTP_EMAIL", "ticbull.support@gmail.com")
-SMTP_PASSWORD = os.getenv("SMTP_PASSWORD", "")  # Gmail App Password
+SMTP_PASSWORD = os.getenv("SMTP_PASSWORD", "")
 
 # Temporary OTP Storage
 otp_store = {}
@@ -61,7 +38,6 @@ def send_otp_email(to_email, otp):
         print("SMTP Email Error:", e)
         return False
 
-# 1. SEND OTP API
 @app.route('/api/send-otp', methods=['POST'])
 def send_otp():
     data = request.get_json() or {}
@@ -78,11 +54,10 @@ def send_otp():
     else:
         return jsonify({
             "success": True,
-            "message": f"Testing Mode: OTP is {otp} (Add Gmail App Password in Render for Real Emails)",
+            "message": f"Testing Mode: OTP is {otp}",
             "test_otp": otp
         })
 
-# 2. VERIFY OTP API
 @app.route('/api/verify-otp', methods=['POST'])
 def verify_otp():
     data = request.get_json() or {}
@@ -95,7 +70,6 @@ def verify_otp():
     else:
         return jsonify({"success": False, "message": "Galat OTP! Sahi 6-digit OTP daalein."}), 400
 
-# 3. SUPER INTELLIGENT AI CHAT ENGINE
 @app.route('/api/chat', methods=['POST'])
 def chat():
     data = request.get_json() or {}
@@ -137,7 +111,7 @@ Your Behavior Rules:
             res_data = response.json()
             reply_text = res_data['candidates'][0]['content']['parts'][0]['text']
         else:
-            reply_text = f"<b>{board} | {cls} AI Engine:</b><br><br>Aapke question <b>'{prompt}'</b> ke liye API Key configured nahi hai."
+            reply_text = f"<b>{board} | {cls} AI Engine:</b><br><br>API Key missing!"
             
         return jsonify({"success": True, "reply": reply_text})
     except Exception as e:
