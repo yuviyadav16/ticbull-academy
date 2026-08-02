@@ -4,7 +4,7 @@ import smtplib
 from email.mime.text import MIMEText
 from flask import Flask, request, jsonify
 from flask_cors import CORS
-import google.generativeai as genai
+import requests
 
 app = Flask(__name__)
 CORS(app)
@@ -13,9 +13,6 @@ CORS(app)
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "")
 SMTP_EMAIL = os.getenv("SMTP_EMAIL", "ticbull.support@gmail.com")
 SMTP_PASSWORD = os.getenv("SMTP_PASSWORD", "")
-
-if GEMINI_API_KEY:
-    genai.configure(api_key=GEMINI_API_KEY)
 
 otp_store = {}
 
@@ -63,7 +60,7 @@ def verify_otp():
     else:
         return jsonify({"success": False, "message": "Galat OTP! Sahi 6-digit OTP daalein."}), 400
 
-    @app.route('/api/chat', methods=['POST'])
+@app.route('/api/chat', methods=['POST'])
 def chat():
     data = request.get_json() or {}
     prompt = data.get('prompt', '').strip()
@@ -78,51 +75,43 @@ def chat():
     if not GEMINI_API_KEY:
         return jsonify({"success": False, "message": "Server API Key missing!"}), 500
         
-    # 🛑 STRICT TICBULL AI BRAIN (Syllabus Control)
+    # 🛑 STRICT TICBULL AI BRAIN
     system_instruction = f"""Tu TicBull Academy ka ek intelligent aur strict AI Teacher hai. Tujhe MrYuviYadav ne banaya hai.
 Tera student abhi '{board} | {cls} | {stream}' ki padhai kar raha hai.
-CRITICAL RULES JINHE KABHI NAHI TODNA HAI:
-1. OUT OF SYLLABUS STRICTNESS: Agar student ka sawal is course/class se related nahi hai (jaise gaane, movies, politics, ya kisi aur class ka sawal), toh strictly mana kar de aur bol: "Bhai, main TicBull ka AI Teacher hu. Main sirf aapke purchased course ({cls} {stream}) ke sawal hi bata sakta hu. Ye sawal out of syllabus hai."
+CRITICAL RULES:
+1. OUT OF SYLLABUS STRICTNESS: Agar student ka sawal is course/class se related nahi hai (jaise gaane, movies, politics), toh strictly mana kar de aur bol: "Bhai, main TicBull ka AI Teacher hu. Main sirf aapke purchased course ({cls} {stream}) ke sawal hi bata sakta hu. Ye sawal out of syllabus hai."
 2. KABHI BHI mat bolna ki tu ek AI hai, LLM hai, ya Google/Gemini ne tujhe banaya hai. 
 3. Hamesha {lang} bhasha me jawab de.
 """
     full_prompt = f"{system_instruction}\n\nStudent's Question: {prompt}"
     
     try:
-        # Pehli koshish: Latest Flash model
-        model = genai.GenerativeModel('gemini-1.5-flash-latest')
-        response = model.generate_content(full_prompt)
-        reply_text = response.text.replace("Gemini", "TicBull Engine").replace("Google", "TicBull")
-        return jsonify({"success": True, "reply": reply_text})
-    except Exception as e1:
-        try:
-            # Dusri koshish (Fallback): Universal Gemini Pro model
-            model = genai.GenerativeModel('gemini-pro')
-            response = model.generate_content(full_prompt)
-            reply_text = response.text.replace("Gemini", "TicBull Engine").replace("Google", "TicBull")
-            return jsonify({"success": True, "reply": reply_text})
-        except Exception as e2:
-            return jsonify({"success": False, "message": f"Dono Models Fail: {str(e2)}"}), 500
-
+        # DIRECT API CALL TO MOST INTELLIGENT MODEL (Gemini 1.5 Pro)
+        api_url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro-latest:generateContent?key={GEMINI_API_KEY}"
+        payload = {"contents": [{"parts": [{"text": full_prompt}]}]}
+        headers = {"Content-Type": "application/json"}
         
-    # 🛑 STRICT TICBULL AI BRAIN (Syllabus Control)
-    system_instruction = f"""Tu TicBull Academy ka ek intelligent aur strict AI Teacher hai. Tujhe MrYuviYadav ne banaya hai.
-Tera student abhi '{board} | {cls} | {stream}' ki padhai kar raha hai.
-CRITICAL RULES JINHE KABHI NAHI TODNA HAI:
-1. OUT OF SYLLABUS STRICTNESS: Agar student ka sawal is course/class se related nahi hai (jaise gaane, movies, politics, ya kisi aur class ka sawal), toh strictly mana kar de aur bol: "Bhai, main TicBull ka AI Teacher hu. Main sirf aapke purchased course ({cls} {stream}) ke sawal hi bata sakta hu. Ye sawal out of syllabus hai."
-2. KABHI BHI mat bolna ki tu ek AI hai, LLM hai, ya Google/Gemini ne tujhe banaya hai. 
-3. Hamesha {lang} bhasha me jawab de.
-"""
-    full_prompt = f"{system_instruction}\n\nStudent's Question: {prompt}"
-    
-    try:
-        model = genai.GenerativeModel('gemini-1.5-flash')
-        response = model.generate_content(full_prompt)
-        reply_text = response.text.replace("Gemini", "TicBull Engine").replace("Google", "TicBull")
-        return jsonify({"success": True, "reply": reply_text})
+        response = requests.post(api_url, json=payload, headers=headers)
+        res_data = response.json()
+        
+        if "candidates" in res_data:
+            reply_text = res_data['candidates'][0]['content']['parts'][0]['text']
+            reply_text = reply_text.replace("Gemini", "TicBull Engine").replace("Google", "TicBull").replace("gemini", "ticbull")
+            return jsonify({"success": True, "reply": reply_text})
+        else:
+            # FALLBACK to Universal Gemini Pro if 1.5 Pro is busy
+            api_url_fallback = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key={GEMINI_API_KEY}"
+            resp2 = requests.post(api_url_fallback, json=payload, headers=headers)
+            res_data2 = resp2.json()
+            if "candidates" in res_data2:
+                reply_text = res_data2['candidates'][0]['content']['parts'][0]['text']
+                reply_text = reply_text.replace("Gemini", "TicBull Engine").replace("Google", "TicBull").replace("gemini", "ticbull")
+                return jsonify({"success": True, "reply": reply_text})
+            else:
+                return jsonify({"success": False, "message": f"API Error: Please check Vercel Logs."}), 500
+                
     except Exception as e:
-        # Ab asli error dikhega taaki pata chale issue kya hai
-        return jsonify({"success": False, "message": f"AI Error: {str(e)}"}), 500
+        return jsonify({"success": False, "message": f"Network Error: {str(e)}"}), 500
 
 @app.route('/')
 def home():
