@@ -14,7 +14,7 @@ SMTP_EMAIL = os.getenv("SMTP_EMAIL", "ticbull.support@gmail.com")
 SMTP_PASSWORD = os.getenv("SMTP_PASSWORD", "")
 
 otp_store = {}
-active_sessions = {}  # Single device session tracker
+active_sessions = {}
 
 def send_otp_email(to_email, otp):
     if not SMTP_PASSWORD or not SMTP_EMAIL:
@@ -57,7 +57,6 @@ def verify_otp():
     
     if email in otp_store and otp_store[email] == user_otp:
         del otp_store[email]
-        # Single Device Token Generate
         token = str(random.randint(10000000, 99999999))
         active_sessions[email] = {"device": device_id, "token": token}
         return jsonify({"success": True, "message": "Verified!", "token": token})
@@ -73,7 +72,7 @@ def check_session():
     if email in active_sessions and active_sessions[email]["token"] == token:
         return jsonify({"success": True, "active": True})
     else:
-        return jsonify({"success": True, "active": False, "message": "Another device logged in!"})
+        return jsonify({"success": True, "active": False})
 
 @app.route('/api/chat', methods=['POST'])
 def chat():
@@ -97,7 +96,8 @@ Rules: Out of syllabus sawal mana kar dena. Kabhie mat kehna ki tu AI ya Gemini 
     full_prompt = f"{system_instruction}\n\nStudent Question: {prompt}"
     
     try:
-        url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key={GEMINI_API_KEY}"
+        # Standard stable endpoint using gemini-pro
+        url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key={GEMINI_API_KEY}"
         payload = {"contents": [{"parts": [{"text": full_prompt}]}]}
         headers = {"Content-Type": "application/json"}
         
@@ -123,4 +123,3 @@ def home():
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)
-
