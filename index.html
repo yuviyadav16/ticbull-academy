@@ -3,98 +3,186 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>TicBull Academy - AI Exam Tutor</title>
+    <title>TicBull Academy - AI Smart Exam Engine</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
-        * { margin:0; padding:0; box-sizing:border-box; font-family:'Segoe UI', Roboto, sans-serif; }
-        body { background:#050505; color:#fff; display:flex; flex-direction:column; min-height:100vh; overflow-x:hidden; }
+        :root {
+            --bg-color: #08090a;
+            --card-bg: rgba(18, 20, 24, 0.85);
+            --accent-color: #3b82f6;
+            --accent-glow: rgba(59, 130, 246, 0.25);
+            --text-main: #f3f4f6;
+            --text-muted: #9ca3af;
+            --border-color: rgba(255, 255, 255, 0.08);
+            --success-color: #10b981;
+        }
 
-        /* ANIMATED SPLASH SCREEN */
+        * { margin:0; padding:0; box-sizing:border-box; font-family:-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; -webkit-tap-highlight-color: transparent; }
+        body { background: var(--bg-color); color: var(--text-main); display:flex; flex-direction:column; min-height:100vh; overflow-x:hidden; }
+
+        /* SPLASH SCREEN */
         #splash-screen {
             position: fixed; top:0; left:0; width:100%; height:100%;
-            background: #000000; display:flex; flex-direction:column;
+            background: #000; display:flex; flex-direction:column;
             justify-content:center; align-items:center; z-index:9999;
-            animation: fadeOut 0.8s ease 3s forwards;
+            transition: opacity 0.6s ease, visibility 0.6s ease;
+        }
+        .splash-logo-container { position: relative; width: 100px; height: 100px; display:flex; justify-content:center; align-items:center; }
+        .splash-logo-glow {
+            position: absolute; width: 100%; height: 100%; border-radius: 24px;
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            filter: blur(20px); opacity: 0.6; animation: pulseGlow 2s infinite alternate;
         }
         .splash-logo {
-            width: 110px; height: 110px; border-radius: 20px;
-            background: #000; border:2px solid #ffffff;
-            display:flex; justify-content:center; align-items:center;
-            box-shadow: 0 0 35px rgba(255, 255, 255, 0.2);
-            animation: pulse 1.5s infinite alternate;
-            overflow: hidden;
+            position: relative; width: 90px; height: 90px; border-radius: 22px;
+            background: #111; border: 1px solid rgba(255,255,255,0.2);
+            display:flex; justify-content:center; align-items:center; overflow:hidden;
         }
         .splash-logo img { width:100%; height:100%; object-fit:cover; }
-        .splash-title { margin-top:20px; font-size:24px; font-weight:900; letter-spacing:2px; color:#fff; text-transform:uppercase; }
-        .developer-tag { margin-top:8px; font-size:12px; color:#a0a0a0; letter-spacing:1px; font-weight:600; }
+        .splash-title { margin-top:24px; font-size:22px; font-weight:800; letter-spacing:1px; background: linear-gradient(180deg, #fff, #aaa); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .developer-tag { margin-top:6px; font-size:12px; color: var(--accent-color); font-weight:600; letter-spacing:0.5px; }
 
-        @keyframes pulse { 0% { transform: scale(0.95); } 100% { transform: scale(1.05); } }
-        @keyframes fadeOut { 100% { opacity:0; visibility:hidden; } }
+        @keyframes pulseGlow { 0% { transform: scale(0.9); opacity: 0.4; } 100% { transform: scale(1.1); opacity: 0.8; } }
 
-        /* AUTH CONTAINER */
-        .auth-container { display:flex; flex-direction:column; align-items:center; justify-content:center; flex:1; padding:20px; margin-bottom:80px; }
-        .auth-card { background:#0e0e0e; border:1px solid #222; border-radius:18px; padding:28px; width:100%; max-width:400px; box-shadow:0 10px 40px rgba(0,0,0,0.8); text-align:center; }
-        .brand-header { display:flex; flex-direction:column; align-items:center; margin-bottom:20px; }
-        .brand-header img { width:60px; height:60px; border-radius:12px; margin-bottom:10px; border:1px solid #fff; }
-        .brand-header h2 { font-size:22px; font-weight:800; letter-spacing:1px; }
+        /* AUTH / SUBSCRIPTION MODAL */
+        .auth-container { display:flex; flex-direction:column; align-items:center; justify-content:center; flex:1; padding:20px; width:100%; }
+        .auth-card {
+            background: var(--card-bg); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--border-color); border-radius:24px; padding:28px 22px;
+            width:100%; max-width:420px; box-shadow:0 20px 50px rgba(0,0,0,0.6); text-align:center;
+        }
+        .brand-header { display:flex; flex-direction:column; align-items:center; margin-bottom:18px; }
+        .brand-icon-box {
+            width:64px; height:64px; border-radius:18px; background:#181a20; border:1px solid rgba(255,255,255,0.1);
+            display:flex; justify-content:center; align-items:center; margin-bottom:10px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.4); overflow:hidden;
+        }
+        .brand-icon-box img { width:100%; height:100%; object-fit:cover; }
+
+        .auth-tabs { display:flex; background:#121418; padding:4px; border-radius:12px; border:1px solid var(--border-color); margin-bottom:16px; }
+        .auth-tab { flex:1; padding:10px; font-size:13px; font-weight:600; color:var(--text-muted); border-radius:8px; cursor:pointer; transition:0.3s; }
+        .auth-tab.active { background:var(--accent-color); color:#fff; }
+
+        .input-group { position:relative; margin-bottom:12px; text-align:left; }
+        .input-group i { position:absolute; left:14px; top:50%; transform:translateY(-50%); color:var(--text-muted); font-size:14px; }
+        .input-group input { width:100%; background:#121418; border:1px solid var(--border-color); color:#fff; padding:12px 14px 12px 40px; border-radius:12px; font-size:14px; outline:none; transition:0.3s; }
+        .input-group input:focus { border-color:var(--accent-color); box-shadow: 0 0 12px var(--accent-glow); }
+
+        /* PLAN SELECTION CARDS */
+        .plan-title { font-size:12px; font-weight:700; color:var(--text-muted); text-align:left; margin:14px 0 8px 2px; text-transform:uppercase; letter-spacing:0.5px; }
+        .plan-options { display:flex; gap:10px; margin-bottom:18px; }
+        .plan-box {
+            flex:1; background:#121418; border:1px solid var(--border-color); border-radius:14px; padding:12px 10px;
+            cursor:pointer; transition:0.3s; position:relative; text-align:center;
+        }
+        .plan-box.active { border-color:var(--accent-color); background:rgba(59, 130, 246, 0.08); box-shadow: 0 0 15px var(--accent-glow); }
+        .plan-box .price { font-size:16px; font-weight:800; color:#fff; margin-top:2px; }
+        .plan-box .sub { font-size:11px; color:var(--text-muted); }
+        .save-badge { position:absolute; top:-9px; right:8px; background:var(--success-color); color:#000; font-size:9px; font-weight:800; padding:2px 6px; border-radius:10px; text-transform:uppercase; }
+
+        .btn-primary {
+            width:100%; background: linear-gradient(135deg, #3b82f6, #2563eb); color:#fff;
+            font-weight:700; padding:13px; border:none; border-radius:12px; cursor:pointer; font-size:14px;
+            letter-spacing:0.5px; box-shadow:0 8px 20px var(--accent-glow); transition:0.2s;
+        }
+        .btn-primary:active { transform:scale(0.98); }
+
+        /* DASHBOARD */
+        #main-dashboard { display:none; flex-direction:column; flex:1; padding:14px; max-width:800px; margin:0 auto; width:100%; }
         
-        input, select { width:100%; background:#141414; border:1px solid #2a2a2a; color:#fff; padding:14px; border-radius:12px; margin-bottom:14px; font-size:14px; outline:none; transition:0.3s; }
-        input:focus, select:focus { border-color:#fff; }
-        
-        .btn-primary { width:100%; background:#ffffff; color:#000; font-weight:800; padding:14px; border:none; border-radius:12px; cursor:pointer; font-size:15px; letter-spacing:0.5px; transition:0.3s; }
-        .btn-primary:active { transform:scale(0.98); opacity:0.9; }
+        .header { display:flex; justify-content:space-between; align-items:center; padding:12px 16px; background:var(--card-bg); border-radius:18px; border:1px solid var(--border-color); margin-bottom:12px; }
+        .header-brand { display:flex; align-items:center; gap:12px; }
+        .header-logo { width:38px; height:38px; border-radius:10px; background:#181a20; border:1px solid rgba(255,255,255,0.1); display:flex; justify-content:center; align-items:center; overflow:hidden; }
+        .header-logo img { width:100%; height:100%; object-fit:cover; }
+        .user-badge { background:rgba(16, 185, 129, 0.15); border:1px solid rgba(16, 185, 129, 0.3); color:#10b981; padding:6px 10px; border-radius:20px; font-size:11px; font-weight:700; }
 
-        /* DASHBOARD (Hidden Initially) */
-        #main-dashboard { display:none; flex-direction:column; flex:1; padding:16px; padding-bottom:160px; }
-        .header { display:flex; justify-content:space-between; align-items:center; padding:14px 18px; background:#0e0e0e; border-radius:14px; border:1px solid #222; margin-bottom:16px; }
-        .header-brand { display:flex; align-items:center; gap:10px; }
-        .header-brand img { width:32px; height:32px; border-radius:6px; border:1px solid #fff; }
-        .user-badge { background:#1a1a1a; border:1px solid #333; color:#fff; padding:6px 12px; border-radius:20px; font-size:11px; font-weight:600; }
+        .select-row { display:flex; gap:10px; margin-bottom:12px; }
+        select { flex:1; background:#121418; border:1px solid var(--border-color); color:#fff; padding:10px 12px; border-radius:12px; font-size:13px; outline:none; }
 
-        /* AI CHAT INTERFACE */
-        .chat-box { background:#090909; border-radius:14px; padding:16px; flex:1; min-height:300px; max-height:420px; overflow-y:auto; margin-bottom:14px; border:1px solid #1f1f1f; display:flex; flex-direction:column; gap:12px; }
-        .msg { padding:12px 16px; border-radius:12px; font-size:14px; line-height:1.6; max-width:85%; }
-        .msg.user { background:#ffffff; color:#000; font-weight:600; align-self:flex-end; border-bottom-right-radius:2px; }
-        .msg.ai { background:#141414; color:#fff; border:1px solid #282828; align-self:flex-start; border-bottom-left-radius:2px; }
+        .chat-container {
+            background:#0d0e12; border:1px solid var(--border-color); border-radius:20px;
+            padding:16px; flex:1; min-height:360px; max-height:500px; overflow-y:auto;
+            display:flex; flex-direction:column; gap:12px; margin-bottom:12px;
+        }
+        .msg { padding:12px 16px; border-radius:16px; font-size:14px; line-height:1.5; max-width:85%; word-wrap:break-word; }
+        .msg.user { background:var(--accent-color); color:#fff; align-self:flex-end; border-bottom-right-radius:4px; }
+        .msg.ai { background:#181a20; color:var(--text-main); border:1px solid var(--border-color); align-self:flex-start; border-bottom-left-radius:4px; }
+        .msg-image { max-width:100%; border-radius:10px; margin-bottom:8px; }
 
-        /* FOOTER & SOCIALS SECTION */
-        footer { background:#000000; border-top:1px solid #1a1a1a; padding:16px 12px; text-align:center; font-size:11px; color:#888; width:100%; }
-        footer b { color:#fff; }
+        .chat-input-bar { display:flex; align-items:center; background:#121418; border:1px solid var(--border-color); border-radius:16px; padding:6px 8px 6px 12px; gap:8px; }
+        .chat-input-bar input[type="text"] { flex:1; background:transparent; border:none; color:#fff; outline:none; font-size:14px; }
         
-        .footer-section { margin-bottom:12px; }
-        .footer-title { font-size:10px; text-transform:uppercase; letter-spacing:1px; color:#666; margin-bottom:6px; font-weight:700; }
-        
-        .socials { display:flex; justify-content:center; gap:16px; font-size:16px; }
-        .socials a { color:#a0a0a0; text-decoration:none; transition:0.3s; display:inline-flex; align-items:center; gap:4px; font-size:13px; }
+        .upload-btn { background:rgba(255,255,255,0.05); color:var(--text-muted); border:1px solid var(--border-color); width:38px; height:38px; border-radius:10px; display:flex; justify-content:center; align-items:center; cursor:pointer; transition:0.2s; }
+        .upload-btn:hover { color:#fff; background:rgba(255,255,255,0.1); }
+        .send-btn { background:var(--accent-color); color:#fff; border:none; width:38px; height:38px; border-radius:10px; display:flex; justify-content:center; align-items:center; cursor:pointer; }
+
+        #imagePreview { display:none; padding:8px 12px; background:#181a20; border-radius:10px; font-size:12px; color:var(--accent-color); margin-bottom:8px; align-items:center; justify-content:space-between; }
+
+        /* FOOTER */
+        footer { background:#000; border-top:1px solid var(--border-color); padding:16px; text-align:center; font-size:11px; color:var(--text-muted); margin-top:auto; width:100%; }
+        .socials { display:flex; justify-content:center; gap:16px; margin:8px 0; }
+        .socials a { color:var(--text-muted); font-size:16px; transition:0.3s; }
         .socials a:hover { color:#fff; }
-
-        .support-box { background:#0a0a0a; border:1px solid #1f1f1f; border-radius:10px; padding:10px; margin-top:10px; display:inline-block; width:100%; max-width:400px; }
-        .support-box a { color:#fff; text-decoration:none; font-weight:600; }
     </style>
 </head>
 <body>
 
     <!-- ANIMATED SPLASH SCREEN -->
     <div id="splash-screen">
-        <div class="splash-logo">
-            <img src="./file_0000000051ac82068c717a68e826b86e" alt="TicBull Logo" onerror="this.src='./9830.png'">
+        <div class="splash-logo-container">
+            <div class="splash-logo-glow"></div>
+            <div class="splash-logo">
+                <img src="./file_0000000051ac82068c717a68e826b86e" alt="Logo" onerror="this.style.display='none'; document.getElementById('splash-fallback').style.display='block';">
+                <i class="fa-solid fa-graduation-cap splash-logo-icon" id="splash-fallback" style="display:none; font-size:38px; color:#fff;"></i>
+            </div>
         </div>
         <div class="splash-title">TicBull Academy</div>
-        <div class="developer-tag">Developed by MrYuviYadav</div>
+        <div class="developer-tag"><i class="fa-solid fa-code"></i> Developed by MrYuviYadav</div>
     </div>
 
-    <!-- LOGIN / AUTH SCREEN -->
+    <!-- AUTH & SUBSCRIPTION SELECTION SCREEN -->
     <div class="auth-container" id="auth-screen">
         <div class="auth-card">
             <div class="brand-header">
-                <img src="./file_0000000051ac82068c717a68e826b86e" alt="TicBull Logo" onerror="this.src='./9830.png'">
-                <h2>TicBull Academy</h2>
-                <p style="font-size:12px; color:#888; margin-top:4px;">AI Student Portal & Exam Engine</p>
+                <div class="brand-icon-box">
+                    <img src="./file_0000000051ac82068c717a68e826b86e" alt="Logo" onerror="this.style.display='none'; document.getElementById('auth-fallback').style.display='block';">
+                    <i class="fa-solid fa-brain" id="auth-fallback" style="display:none; font-size:28px; color:var(--accent-color);"></i>
+                </div>
+                <h2 style="font-size:20px; font-weight:800;">TicBull Academy</h2>
+                <p style="font-size:12px; color:var(--text-muted); margin-top:4px;">AI Student Portal & Exam Engine</p>
             </div>
-            <input type="email" id="email" placeholder="Enter Student Email...">
-            <input type="password" id="password" placeholder="Enter Secure Password...">
-            <button class="btn-primary" onclick="handleLogin()">LOGIN TO LEARNING PORTAL</button>
-            <p style="font-size:11px; margin-top:16px; color:#777;">1-Year Premium Pass: <b>₹500 / Year</b></p>
+
+            <div class="auth-tabs">
+                <div class="auth-tab active" id="tab-login" onclick="switchAuth('login')">Sign In</div>
+                <div class="auth-tab" id="tab-signup" onclick="switchAuth('signup')">Sign Up</div>
+            </div>
+
+            <div class="input-group">
+                <i class="fa-regular fa-envelope"></i>
+                <input type="email" id="email" placeholder="Student Email ID">
+            </div>
+            <div class="input-group">
+                <i class="fa-solid fa-lock"></i>
+                <input type="password" id="password" placeholder="Password">
+            </div>
+
+            <!-- PRICING PLAN SELECTOR -->
+            <div class="plan-title">Select Student Pass Plan:</div>
+            <div class="plan-options">
+                <div class="plan-box" id="plan-monthly" onclick="selectPlan('monthly')">
+                    <div class="sub">Monthly Pass</div>
+                    <div class="price">₹99</div>
+                    <div class="sub">/ Month</div>
+                </div>
+                <div class="plan-box active" id="plan-yearly" onclick="selectPlan('yearly')">
+                    <span class="save-badge">Save ₹289</span>
+                    <div class="sub">1-Year Pass</div>
+                    <div class="price">₹899</div>
+                    <div class="sub">/ Year</div>
+                </div>
+            </div>
+
+            <button class="btn-primary" id="auth-btn" onclick="handleAuth()">PROCEED TO LEARNING PORTAL</button>
         </div>
     </div>
 
@@ -102,76 +190,122 @@
     <div id="main-dashboard">
         <div class="header">
             <div class="header-brand">
-                <img src="./file_0000000051ac82068c717a68e826b86e" alt="TicBull Logo" onerror="this.src='./9830.png'">
+                <div class="header-logo">
+                    <img src="./file_0000000051ac82068c717a68e826b86e" alt="Logo" onerror="this.style.display='none'; document.getElementById('hdr-fallback').style.display='block';">
+                    <i class="fa-solid fa-bolt" id="hdr-fallback" style="display:none; color:var(--accent-color);"></i>
+                </div>
                 <div>
-                    <strong style="color:#fff; font-size:15px; letter-spacing:0.5px;">TicBull Academy</strong>
-                    <p style="font-size:10px; color:#888;">AI Smart Exam Tutor Engine</p>
+                    <strong style="color:#fff; font-size:14px;">TicBull Academy</strong>
+                    <p style="font-size:10px; color:var(--text-muted);">AI Tutor Engine v2.0</p>
                 </div>
             </div>
-            <span class="user-badge"><i class="fa-solid fa-shield-halved" style="color:#00ff88; margin-right:4px;"></i> Pass: ₹500/Yr</span>
+            <span class="user-badge" id="activePlanBadge"><i class="fa-solid fa-shield-check"></i> ₹899/Yr Pass Active</span>
         </div>
 
-        <!-- EXAM FILTER -->
-        <div style="display:flex; gap:8px; margin-bottom:12px;">
+        <div class="select-row">
             <select id="boardSelect">
+                <option value="NEET Exam">NEET Medical</option>
                 <option value="Bihar Board">Bihar Board (BSEB)</option>
                 <option value="UP Board">UP Board</option>
                 <option value="CBSE Board">CBSE Board</option>
-                <option value="NEET Exam">NEET Medical</option>
                 <option value="UPSC Exam">UPSC Civil Services</option>
             </select>
             <select id="classSelect">
+                <option value="Class 11th/12th">Class 11th / 12th</option>
                 <option value="Class 10th">Class 10th</option>
-                <option value="Class 12th">Class 12th</option>
                 <option value="Competitive">Competitive Exam</option>
             </select>
         </div>
 
-        <!-- AI TUTOR CONSOLE -->
-        <div class="chat-box" id="chatBox">
+        <div class="chat-container" id="chatBox">
             <div class="msg ai">
-                <b>Welcome to TicBull Academy!</b><br>
-                Main aapka AI Personal Tutor hoon. Apne Board aur Class select karo aur koi bhi chapter ya question pucho. Super simple language me samjhaunga! 🚀
+                <b>Welcome to TicBull Academy! 🚀</b><br>
+                Main aapka AI Personal Tutor hoon. Board/Exam select karein, question likhein ya photo upload karke pucho!
             </div>
         </div>
 
-        <!-- INPUT BOX -->
-        <div style="display:flex; gap:8px;">
-            <input type="text" id="userInput" placeholder="Ask any chapter / question..." style="margin:0;">
-            <button class="btn-primary" style="width:70px; padding:0;" onclick="askAI()"><i class="fa-solid fa-paper-plane"></i></button>
+        <div id="imagePreview">
+            <span><i class="fa-regular fa-image"></i> Photo Selected</span>
+            <i class="fa-solid fa-xmark" style="cursor:pointer;" onclick="removeImage()"></i>
+        </div>
+
+        <div class="chat-input-bar">
+            <label class="upload-btn" for="photoInput" title="Upload Question Image">
+                <i class="fa-solid fa-camera"></i>
+            </label>
+            <input type="file" id="photoInput" accept="image/*" style="display:none;" onchange="handleImageSelect(event)">
+            
+            <input type="text" id="userInput" placeholder="Ask question or upload photo topic...">
+            
+            <button class="send-btn" onclick="askAI()"><i class="fa-solid fa-paper-plane"></i></button>
         </div>
     </div>
 
-    <!-- FOOTER WITH OWNER & OFFICIAL SUPPORT LINKS -->
+    <!-- FOOTER -->
     <footer>
-        <div class="footer-section">
-            <div class="footer-title">Developer & Founder</div>
-            <p style="margin-bottom:6px;"><b>MrYuviYadav</b></p>
-            <div class="socials">
-                <a href="https://youtube.com/@mryuviyadav" target="_blank"><i class="fa-brands fa-youtube"></i></a>
-                <a href="https://www.instagram.com/mryuvi_yadav" target="_blank"><i class="fa-brands fa-instagram"></i></a>
-                <a href="https://x.com/mryuviyadav" target="_blank"><i class="fa-brands fa-x-twitter"></i></a>
-                <a href="https://t.me/mryuviyadav" target="_blank"><i class="fa-brands fa-telegram"></i></a>
-                <a href="https://facebook.com/mryuviyadav" target="_blank"><i class="fa-brands fa-facebook"></i></a>
-            </div>
+        <div style="margin-bottom:6px; font-weight:600; color:#fff;">Developer & Founder: MrYuviYadav</div>
+        <div class="socials">
+            <a href="https://youtube.com/@mryuviyadav" target="_blank"><i class="fa-brands fa-youtube"></i></a>
+            <a href="https://www.instagram.com/mryuvi_yadav" target="_blank"><i class="fa-brands fa-instagram"></i></a>
+            <a href="https://x.com/mryuviyadav" target="_blank"><i class="fa-brands fa-x-twitter"></i></a>
+            <a href="https://t.me/mryuviyadav" target="_blank"><i class="fa-brands fa-telegram"></i></a>
         </div>
-
-        <div class="support-box">
-            <div class="footer-title" style="color:#a0a0a0;">TicBull Official Support</div>
-            <div class="socials" style="margin-top:4px;">
-                <a href="mailto:ticbull.support@gmail.com"><i class="fa-solid fa-envelope"></i> Email Us</a> |
-                <a href="https://t.me/ticbullteam" target="_blank"><i class="fa-brands fa-telegram"></i> Telegram</a> |
-                <a href="https://www.instagram.com/ticbull" target="_blank"><i class="fa-brands fa-instagram"></i> Instagram</a>
-            </div>
-        </div>
+        <p style="margin-top:8px;">TicBull Support: <a href="mailto:ticbull.support@gmail.com" style="color:var(--accent-color); text-decoration:none;">ticbull.support@gmail.com</a></p>
     </footer>
 
     <script>
-        function handleLogin() {
+        let currentMode = 'login';
+        let selectedPlan = 'yearly';
+        let selectedImageBase64 = null;
+
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                const splash = document.getElementById('splash-screen');
+                splash.style.opacity = '0';
+                setTimeout(() => splash.style.visibility = 'hidden', 600);
+            }, 2000);
+        });
+
+        function switchAuth(mode) {
+            currentMode = mode;
+            document.getElementById('tab-login').classList.toggle('active', mode === 'login');
+            document.getElementById('tab-signup').classList.toggle('active', mode === 'signup');
+            document.getElementById('auth-btn').innerText = mode === 'login' ? 'PROCEED TO LEARNING PORTAL' : 'CREATE FREE ACCOUNT';
+        }
+
+        function selectPlan(plan) {
+            selectedPlan = plan;
+            document.getElementById('plan-monthly').classList.toggle('active', plan === 'monthly');
+            document.getElementById('plan-yearly').classList.toggle('active', plan === 'yearly');
+        }
+
+        function handleAuth() {
             const email = document.getElementById('email').value;
-            if(!email) { alert("Please enter email!"); return; }
+            if(!email) { alert("Please enter email address!"); return; }
+            
+            const planText = selectedPlan === 'monthly' ? '₹99/Mo Pass Active' : '₹899/Yr Pass Active';
+            document.getElementById('activePlanBadge').innerHTML = `<i class="fa-solid fa-shield-check"></i> ${planText}`;
+            
             document.getElementById('auth-screen').style.display = 'none';
             document.getElementById('main-dashboard').style.display = 'flex';
+        }
+
+        function handleImageSelect(event) {
+            const file = event.target.files[0];
+            if(file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    selectedImageBase64 = e.target.result;
+                    document.getElementById('imagePreview').style.display = 'flex';
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function removeImage() {
+            selectedImageBase64 = null;
+            document.getElementById('photoInput').value = '';
+            document.getElementById('imagePreview').style.display = 'none';
         }
 
         function askAI() {
@@ -180,19 +314,34 @@
             const board = document.getElementById('boardSelect').value;
             const cls = document.getElementById('classSelect').value;
 
-            if(!input.value.trim()) return;
+            if(!input.value.trim() && !selectedImageBase64) return;
 
-            const userText = input.value;
-            chatBox.innerHTML += `<div class="msg user">${userText}</div>`;
+            let userMsgContent = '';
+            if(selectedImageBase64) {
+                userMsgContent += `<img src="${selectedImageBase64}" class="msg-image"><br>`;
+            }
+            if(input.value.trim()) {
+                userMsgContent += input.value.trim();
+            }
+
+            chatBox.innerHTML += `<div class="msg user">${userMsgContent}</div>`;
+            
             input.value = '';
+            removeImage();
             chatBox.scrollTop = chatBox.scrollHeight;
 
             setTimeout(() => {
-                chatBox.innerHTML += `<div class="msg ai"><b>[${board} - ${cls} Answer]:</b><br>Aapke question "<b>${userText}</b>" ka simple explanation:<br><br>1. <b>Main Point:</b> Is concept ka basics bohot easy hai.<br>2. <b>Exam Tip:</b> Is topic se 3-5 marks ke questions aate hain.<br>3. <b>Summary:</b> Isko easily yaad rakhne ke liye bullet points follow karo.</div>`;
+                chatBox.innerHTML += `
+                    <div class="msg ai">
+                        <b>[${board} - ${cls} Tutor Response]:</b><br>
+                        Aapke question ka simplified solution:<br><br>
+                        1. <b>Key Concept:</b> Basic principles and definitions explained clearly.<br>
+                        2. <b>Exam Strategy:</b> High-yield scoring tips for ${board}.<br>
+                        3. <b>Summary:</b> Core points to retain for exams.
+                    </div>`;
                 chatBox.scrollTop = chatBox.scrollHeight;
             }, 800);
         }
     </script>
 </body>
 </html>
-
