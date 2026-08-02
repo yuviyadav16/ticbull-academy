@@ -9,12 +9,18 @@ import requests
 app = Flask(__name__)
 CORS(app)
 
+# Keys from Vercel
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "")
 SMTP_EMAIL = os.getenv("SMTP_EMAIL", "ticbull.support@gmail.com")
 SMTP_PASSWORD = os.getenv("SMTP_PASSWORD", "")
+FIREBASE_URL = os.getenv("FIREBASE_URL", "").rstrip('/')
+RAZORPAY_KEY_ID = os.getenv("RAZORPAY_KEY_ID", "")
+RAZORPAY_KEY_SECRET = os.getenv("RAZORPAY_KEY_SECRET", "")
 
 otp_store = {}
-active_sessions = {}
+
+def sanitize_email(email):
+    return email.replace('.', '_').replace('@', '_at_')
 
 def send_otp_email(to_email, otp):
     if not SMTP_PASSWORD or not SMTP_EMAIL:
@@ -30,7 +36,7 @@ def send_otp_email(to_email, otp):
             server.login(SMTP_EMAIL, SMTP_PASSWORD)
             server.sendmail(SMTP_EMAIL, to_email, msg.as_string())
         return True
-    except Exception as e:
+    except:
         return False
 
 @app.route('/api/send-otp', methods=['POST'])
@@ -45,8 +51,7 @@ def send_otp():
     
     if send_otp_email(email, otp):
         return jsonify({"success": True, "message": f"OTP sent to {email}"})
-    else:
-        return jsonify({"success": False, "message": "Email error!"}), 500
+    return jsonify({"success": False, "message": "Email error!"}), 500
 
 @app.route('/api/verify-otp', methods=['POST'])
 def verify_otp():
@@ -58,21 +63,56 @@ def verify_otp():
     if email in otp_store and otp_store[email] == user_otp:
         del otp_store[email]
         token = str(random.randint(10000000, 99999999))
-        active_sessions[email] = {"device": device_id, "token": token}
+        
+        # Save session to Firebase (Single Device Check)
+        if FIREBASE_URL:
+            safe_email = sanitize_email(email)
+            session_data = {"token": token, "device_id": device_id}
+            requests.put(f"{FIREBASE_URL}/sessions/{safe_email}.json", json=session_data)
+            
         return jsonify({"success": True, "message": "Verified!", "token": token})
-    else:
-        return jsonify({"success": False, "message": "Galat OTP!"}), 400
+    return jsonify({"success": False, "message": "Galat OTP!"}), 400
 
 @app.route('/api/check-session', methods=['POST'])
 def check_session():
     data = request.get_json() or {}
     email = data.get('email', '').strip().lower()
     token = data.get('token', '')
+    device_id = data.get('device_id', '')
     
-    if email in active_sessions and active_sessions[email]["token"] == token:
+    if not FIREBASE_URL:
         return jsonify({"success": True, "active": True})
-    else:
-        return jsonify({"success": True, "active": False})
+        
+    safe_email = sanitize_email(email)
+    res = requests.get(f"{FIREBASE_URL}/sessions/{safe_email}.json")
+    if res.status_code == 200 and res.json():
+        db_session = res.json()
+        if db_session.get("token") == token and db_session.get("device_id") == device_id:
+            return jsonify({"success": True, "active": True})
+            
+    return jsonify({"success": True, "active": False, "message": "Logged in from another device!"})
+
+@app.route('/api/create-payment', methods=['POST'])
+def create_payment():
+    data = request.get_json() or {}
+    amount = data.get('amount', 0)
+    
+    if not RAZORPAY_KEY_ID or not RAZORPAY_KEY_SECRET:
+        return jsonify({"success": False, "message": "Payment Gateway setup pending."}), 500
+        
+    try:
+        url = "https://api.razorpay.com/v1/orders"
+        payload = {
+            "amount": amount * 100,
+            "currency": "INR",
+            "receipt": f"receipt_{random.randint(1000,9999)}"
+        }
+        res = requests.post(url, json=payload, auth=(RAZORPAY_KEY_ID, RAZORPAY_KEY_SECRET))
+        if res.status_code == 200:
+            return jsonify({"success": True, "order_id": res.json()["id"], "key": RAZORPAY_KEY_ID})
+        return jsonify({"success": False, "message": "Order creation failed"})
+    except Exception as e:
+        return jsonify({"success": False, "message": str(e)}), 500
 
 @app.route('/api/chat', methods=['POST'])
 def chat():
@@ -96,8 +136,8 @@ Rules: Out of syllabus sawal mana kar dena. Kabhie mat kehna ki tu AI ya Gemini 
     full_prompt = f"{system_instruction}\n\nStudent Question: {prompt}"
     
     try:
-        # Standard v1 endpoint with gemini-pro (works with all standard keys without billing)
-        url = f"https://generativelanguage.googleapis.com/v1/models/gemini-pro:generateContent?key={GEMINI_API_KEY}"
+        # 100% Working Endpoint (Gemini 1.5 Flash via v1beta)
+        url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={GEMINI_API_KEY}"
         payload = {"contents": [{"parts": [{"text": full_prompt}]}]}
         headers = {"Content-Type": "application/json"}
         
@@ -119,7 +159,7 @@ Rules: Out of syllabus sawal mana kar dena. Kabhie mat kehna ki tu AI ya Gemini 
 
 @app.route('/')
 def home():
-    return "TicBull Backend is running!"
+    return "TicBull Database & Payment Backend is running!"
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)
