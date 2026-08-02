@@ -50,7 +50,7 @@
         @keyframes pulseGlow { 0% { transform: scale(0.85); opacity: 0.5; } 100% { transform: scale(1.2); opacity: 0.95; } }
         @keyframes loadProgress { 0% { width: 0%; } 100% { width: 100%; } }
 
-        /* AUTH CARD WITH NAME & DOB FIELDS */
+        /* AUTH CARD */
         .auth-container { display:flex; flex-direction:column; align-items:center; justify-content:center; flex:1; padding:20px; width:100%; }
         .auth-card {
             background: var(--card-bg); border: 1px solid var(--border-color);
@@ -109,6 +109,7 @@
         .msg { padding:12px 14px; border-radius:16px; font-size:13.5px; line-height:1.5; max-width:88%; word-wrap:break-word; }
         .msg.user { background:var(--accent-color); color:#fff; align-self:flex-end; border-bottom-right-radius:4px; }
         .msg.ai { background:#0f172a; color:var(--text-main); border:1px solid var(--border-color); align-self:flex-start; border-bottom-left-radius:4px; }
+        .msg.guide-ai { background:rgba(245, 158, 11, 0.1); border:1px solid rgba(245, 158, 11, 0.4); color:#fef08a; align-self:flex-start; }
         .msg.error { background:rgba(239, 68, 68, 0.15); border:1px solid #ef4444; color:#fca5a5; align-self:center; width:100%; text-align:center; }
         .msg-image { max-width:100%; border-radius:12px; margin-top:8px; border:1px solid var(--border-color); }
         .msg-video { width:100%; border-radius:12px; margin-top:8px; background:#000; }
@@ -151,7 +152,7 @@
         .modal-overlay { position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); z-index:2000; display:none; justify-content:center; align-items:center; padding:16px; }
         .modal-card { background:#0f172a; border:1px solid var(--border-color); border-radius:20px; padding:22px; max-width:480px; width:100%; text-align:center; position:relative; max-height:92vh; display:flex; flex-direction:column; }
         
-        .pricing-list { display:flex; flex-direction:column; gap:8px; margin:12px 0; text-align:left; overflow-y:auto; padding-right:4px; max-height:340px; }
+        .pricing-list { display:flex; flex-direction:column; gap:8px; margin:12px 0; text-align:left; overflow-y:auto; padding-right:4px; max-height:360px; }
         .price-category-label { font-size:11px; font-weight:800; color:var(--accent-color); text-transform:uppercase; letter-spacing:0.5px; margin:8px 0 4px 2px; }
         .price-item { background:#020617; border:1px solid var(--border-color); padding:10px 12px; border-radius:10px; display:flex; justify-content:space-between; align-items:center; cursor:pointer; transition:0.2s; }
         .price-item:hover, .price-item.selected { border-color:var(--accent-color); background:rgba(37, 99, 235, 0.18); }
@@ -187,7 +188,7 @@
         </div>
     </div>
 
-    <!-- AUTH SCREEN (WITH NAME, DOB, EMAIL & SHOW/HIDE PASSWORD) -->
+    <!-- AUTH SCREEN -->
     <div class="auth-container" id="auth-screen">
         <div class="auth-card">
             <div class="brand-header">
@@ -203,7 +204,6 @@
                 <div class="auth-tab" id="tab-signup" onclick="switchAuth('signup')">Sign Up</div>
             </div>
 
-            <!-- EXTRA FIELDS FOR SIGN UP (NAME & DOB) -->
             <div class="signup-extra-fields" id="signupFields">
                 <div class="input-group">
                     <i class="fa-regular fa-user left-icon"></i>
@@ -240,7 +240,7 @@
                 </div>
                 <div>
                     <strong style="color:#fff; font-size:13.5px;" id="portalHeaderName">TicBull Academy</strong>
-                    <p style="font-size:9.5px; color:var(--text-muted);">AI Tutor Engine v6.0</p>
+                    <p style="font-size:9.5px; color:var(--text-muted);">AI Tutor Engine v6.5</p>
                 </div>
             </div>
             <span class="user-badge" onclick="openSubscriptionModal()"><i class="fa-solid fa-crown"></i> <span id="badgePlanText">Class 12 Science Active</span></span>
@@ -252,10 +252,22 @@
                 <option value="Bihar Board (BSEB)">Bihar Board (BSEB)</option>
                 <option value="UP Board">UP Board</option>
                 <option value="ICSE / ISC">ICSE / ISC Board</option>
-                <option value="JEE Main Prep">JEE Main Prep</option>
-                <option value="NEET Medical Prep">NEET Medical Prep</option>
+                <option value="BPSC Exam Prep">BPSC (Bihar Public Service Commission)</option>
                 <option value="UPSC Civil Services">UPSC Civil Services</option>
+                <option value="State PSC Exams">State PSC (UPPSC, MPPSC, etc.)</option>
+                <option value="JEE Main Prep">JEE Main Prep</option>
+                <option value="JEE Advanced Prep">JEE Advanced Prep</option>
+                <option value="NEET Medical Prep">NEET Medical Prep</option>
                 <option value="CUET Exam">CUET Exam</option>
+                <option value="SSC / Banking / Railway">SSC / Banking / Railway</option>
+                <option value="NDA / Defense">NDA / Defense Exams</option>
+                <option value="CLAT Entrance">CLAT Law Entrance</option>
+                <option value="CAT Exam Prep">CAT MBA Prep</option>
+                <option value="GATE Exam Prep">GATE Engineering</option>
+                <option value="CA / CS / CMA">CA / CS / CMA Foundation</option>
+                <option value="Social Media Mastery">Social Media & YouTube Skills</option>
+                <option value="Digital Marketing">Digital Marketing & Business</option>
+                <option value="Coding & AI Skills">Coding, Python & AI Skills</option>
             </select>
 
             <select id="classSelect">
@@ -264,13 +276,14 @@
                 <option value="Class 10">Class 10th</option>
                 <option value="Class 9">Class 9th</option>
                 <option value="Competitive Aspirant">Competitive Aspirant</option>
+                <option value="Skill & Business Learner">Skill & Business Aspirant</option>
             </select>
 
             <select id="streamSelect">
                 <option value="Science (PCM/PCB)">Science (PCM/PCB)</option>
                 <option value="Commerce">Commerce</option>
                 <option value="Arts / Humanities">Arts / Humanities</option>
-                <option value="General Studies">General / Competitive</option>
+                <option value="Creator & Skill">Creator / Social Media / Business</option>
             </select>
 
             <select id="langSelect">
@@ -288,7 +301,7 @@
         <div class="chat-container" id="chatBox">
             <div class="msg ai" id="welcomeAiMessage">
                 <b>Welcome to TicBull Academy! 🚀</b><br>
-                Aapka **Class 12 Science** Pass active hai. Below `+` icon click karke Notes, MindMap, MCQs, AI Diagram Image ya AI Video Explanation generate karo!
+                Aapka **Class 12 Science** Pass active hai. Below `+` icon click karke Notes, MindMap, MCQs, AI Diagram Image, Video ya Skills Guide generate karo!
             </div>
         </div>
 
@@ -297,13 +310,14 @@
             <i class="fa-solid fa-xmark" style="cursor:pointer;" onclick="removeImage()"></i>
         </div>
 
-        <!-- QUICK AI TOOLKIT POPUP MENU (+) INCLUDING NOTES, MINDMAP, IMAGE & VIDEO -->
+        <!-- QUICK AI TOOLKIT POPUP MENU (+) -->
         <div class="ai-tools-menu" id="aiToolsMenu">
             <button class="tool-btn" onclick="triggerTool('Generate Comprehensive Detailed Chapter Notes')"><i class="fa-solid fa-book" style="color:#10b981;"></i> Detailed Notes</button>
             <button class="tool-btn" onclick="triggerTool('Generate Quick Revision Short Notes (Bullet Pointers)')"><i class="fa-solid fa-bolt" style="color:#f59e0b;"></i> Quick Short Notes</button>
             <button class="tool-btn" onclick="triggerTool('Generate Visual Flowchart MindMap Tree')"><i class="fa-solid fa-diagram-project" style="color:#a855f7;"></i> Topic MindMap Tree</button>
             <button class="tool-btn" onclick="triggerTool('Generate Detailed Diagram Image')"><i class="fa-solid fa-image" style="color:#3b82f6;"></i> AI Diagram / Image Generator</button>
             <button class="tool-btn" onclick="triggerTool('Generate AI Video Visual Explanation')"><i class="fa-solid fa-circle-play" style="color:#ef4444;"></i> AI Video Explanation</button>
+            <button class="tool-btn" onclick="triggerTool('Generate Social Media & YouTube Growth Strategy')"><i class="fa-brands fa-youtube" style="color:#ff0000;"></i> Social Media Growth Guide</button>
             <button class="tool-btn" onclick="triggerTool('Generate 10 Objective Questions (MCQs) with Answer Key')"><i class="fa-solid fa-list-check" style="color:#06b6d4;"></i> Objective MCQs</button>
         </div>
 
@@ -330,13 +344,15 @@
             <i class="fa-solid fa-xmark" style="color:var(--text-muted); cursor:pointer;" onclick="toggleDrawer()"></i>
         </div>
         
+        <div class="drawer-item" onclick="triggerAppGuideBot()"><i class="fa-solid fa-robot" style="color:#f59e0b;"></i> 🤖 TicBull Guide Bot (App Info)</div>
         <div class="drawer-item" onclick="openSubscriptionModal()"><i class="fa-solid fa-crown" style="color:#f59e0b;"></i> Upgrade or Switch Course Pass</div>
         <div class="drawer-item" onclick="clearChat()"><i class="fa-solid fa-trash-can" style="color:#ef4444;"></i> Clear Current Chat</div>
 
         <div class="history-title"><i class="fa-solid fa-clock-rotate-left"></i> Recent Chat History:</div>
         <div class="history-list" id="historyList">
+            <div class="history-item">BPSC Bihar Special Notes</div>
             <div class="history-item">Class 12 Physics MindMap</div>
-            <div class="history-item">Organic Chemistry Notes</div>
+            <div class="history-item">Social Media Growth Hacks</div>
         </div>
         
         <div style="margin-top:auto; border-top:1px solid var(--border-color); padding-top:14px;">
@@ -346,7 +362,7 @@
         </div>
     </div>
 
-    <!-- PRICING MODAL -->
+    <!-- COMPLETE PRICING MODAL (ALL EXAMS INCLUDING BPSC & SKILLS) -->
     <div class="modal-overlay" id="subModal">
         <div class="modal-card">
             <i class="fa-solid fa-xmark" style="position:absolute; right:16px; top:16px; color:var(--text-muted); cursor:pointer;" onclick="closeSubscriptionModal()"></i>
@@ -358,11 +374,11 @@
                     <strong style="color:#f59e0b; font-size:13px;"><i class="fa-solid fa-crown"></i> TicBull Pro Pass (All-Access)</strong>
                     <span style="color:#10b981; font-weight:800; font-size:13.5px;">₹2,999/yr</span>
                 </div>
-                <p style="font-size:10px; color:#d1d5db; margin-top:4px;">Unlocked All Boards, Classes (9-12), Science/Commerce/Arts & Competitive Exams!</p>
+                <p style="font-size:10px; color:#d1d5db; margin-top:4px;">Unlocked All Boards, Classes (9-12), Science/Commerce/Arts, BPSC/UPSC & Skill Courses!</p>
             </div>
 
             <div class="pricing-list">
-                <div class="price-category-label">📖 School Boards (CBSE / Bihar / UP)</div>
+                <div class="price-category-label">📖 School Boards (CBSE / Bihar / UP / ICSE)</div>
                 <div class="price-item" onclick="selectPlan('Class 9 School Board', 499, this)"><span class="plan-name">Class 9 (All Subjects)</span><span class="plan-cost">₹499/yr</span></div>
                 <div class="price-item" onclick="selectPlan('Class 10 Board', 599, this)"><span class="plan-name">Class 10 (All Subjects)</span><span class="plan-cost">₹599/yr</span></div>
                 <div class="price-item" onclick="selectPlan('Class 11 Science', 899, this)"><span class="plan-name">Class 11 Science (PCM/PCB)</span><span class="plan-cost">₹899/yr</span></div>
@@ -372,18 +388,26 @@
                 <div class="price-item" onclick="selectPlan('Class 12 Commerce', 899, this)"><span class="plan-name">Class 12 Commerce</span><span class="plan-cost">₹899/yr</span></div>
                 <div class="price-item" onclick="selectPlan('Class 12 Arts', 799, this)"><span class="plan-name">Class 12 Arts / Humanities</span><span class="plan-cost">₹799/yr</span></div>
 
-                <div class="price-category-label">🏆 Competitive Exams</div>
+                <div class="price-category-label">🏆 Competitive Exams (All India & State)</div>
+                <div class="price-item" onclick="selectPlan('BPSC Exam Prep', 1499, this)"><span class="plan-name">BPSC (Bihar PSC Exam)</span><span class="plan-cost">₹1,499/yr</span></div>
+                <div class="price-item" onclick="selectPlan('UPSC Civil Services', 2499, this)"><span class="plan-name">UPSC Civil Services</span><span class="plan-cost">₹2,499/yr</span></div>
+                <div class="price-item" onclick="selectPlan('State PSC Prep', 1499, this)"><span class="plan-name">State PSC Exams</span><span class="plan-cost">₹1,499/yr</span></div>
                 <div class="price-item" onclick="selectPlan('JEE Main Prep', 1499, this)"><span class="plan-name">JEE Main Exam</span><span class="plan-cost">₹1,499/yr</span></div>
                 <div class="price-item" onclick="selectPlan('JEE Advanced Prep', 1799, this)"><span class="plan-name">JEE Advanced Exam</span><span class="plan-cost">₹1,799/yr</span></div>
                 <div class="price-item" onclick="selectPlan('NEET Medical Prep', 1499, this)"><span class="plan-name">NEET Medical Exam</span><span class="plan-cost">₹1,499/yr</span></div>
                 <div class="price-item" onclick="selectPlan('CUET Prep', 999, this)"><span class="plan-name">CUET Exam</span><span class="plan-cost">₹999/yr</span></div>
                 <div class="price-item" onclick="selectPlan('SSC / Banking / Railway', 999, this)"><span class="plan-name">SSC / Banking / Railway</span><span class="plan-cost">₹999/yr</span></div>
                 <div class="price-item" onclick="selectPlan('NDA Defense Prep', 999, this)"><span class="plan-name">NDA / Defense Exams</span><span class="plan-cost">₹999/yr</span></div>
-                <div class="price-item" onclick="selectPlan('UPSC Civil Services', 2499, this)"><span class="plan-name">UPSC Civil Services</span><span class="plan-cost">₹2,499/yr</span></div>
-                <div class="price-item" onclick="selectPlan('State PSC Prep', 1499, this)"><span class="plan-name">State PSC Exams</span><span class="plan-cost">₹1,499/yr</span></div>
                 <div class="price-item" onclick="selectPlan('CLAT Entrance', 1299, this)"><span class="plan-name">CLAT Entrance Exam</span><span class="plan-cost">₹1,299/yr</span></div>
+                <div class="price-item" onclick="selectPlan('CAT Exam Prep', 1799, this)"><span class="plan-name">CAT MBA Entrance</span><span class="plan-cost">₹1,799/yr</span></div>
                 <div class="price-item" onclick="selectPlan('GATE Exam Prep', 1999, this)"><span class="plan-name">GATE Exam</span><span class="plan-cost">₹1,999/yr</span></div>
                 <div class="price-item" onclick="selectPlan('CA / CS / CMA Foundation', 1499, this)"><span class="plan-name">CA / CS / CMA Foundation</span><span class="plan-cost">₹1,499/yr</span></div>
+
+                <div class="price-category-label">🚀 Skill & Business Courses</div>
+                <div class="price-item" onclick="selectPlan('Social Media Mastery', 999, this)"><span class="plan-name">Social Media & YouTube Creator</span><span class="plan-cost">₹999/yr</span></div>
+                <div class="price-item" onclick="selectPlan('Digital Marketing & Business', 999, this)"><span class="plan-name">Digital Marketing & Startup</span><span class="plan-cost">₹999/yr</span></div>
+                <div class="price-item" onclick="selectPlan('Coding & AI Skills', 999, this)"><span class="plan-name">Coding, Python & AI Mastery</span><span class="plan-cost">₹999/yr</span></div>
+                <div class="price-item" onclick="selectPlan('Finance & Stock Market', 999, this)"><span class="plan-name">Finance & Stock Market Basics</span><span class="plan-cost">₹999/yr</span></div>
             </div>
 
             <button class="btn-primary" onclick="activateSelectedPlan()">ACTIVATE / SWITCH PASS</button>
@@ -447,7 +471,7 @@
 
             if(name) {
                 document.getElementById('portalHeaderName').innerText = `Welcome, ${name.split(' ')[0]}`;
-                document.getElementById('welcomeAiMessage').innerHTML = `<b>Welcome ${name}! 🚀</b><br>Aapka **Class 12 Science** Pass active hai. Below \`+\` icon click karke Notes, MindMap, MCQs, AI Diagram Image ya AI Video Explanation generate karo!`;
+                document.getElementById('welcomeAiMessage').innerHTML = `<b>Welcome ${name}! 🚀</b><br>Aapka **Class 12 Science** Pass active hai. Below \`+\` icon click karke Notes, MindMap, MCQs, AI Diagram Image, Video ya Skills Guide generate karo!`;
             }
 
             document.getElementById('auth-screen').style.display = 'none';
@@ -479,6 +503,21 @@
             document.getElementById('aiToolsMenu').style.display = 'none';
             document.getElementById('userInput').value = promptAction;
             askAI();
+        }
+
+        function triggerAppGuideBot() {
+            if(document.getElementById('drawer').classList.contains('open')) toggleDrawer();
+            const chatBox = document.getElementById('chatBox');
+            chatBox.innerHTML += `
+                <div class="msg guide-ai">
+                    <b>🤖 TICBULL OFFICIAL GUIDE BOT:</b><br><br>
+                    • <b>App Founder & Developer:</b> Created by <b>MrYuviYadav</b>.<br>
+                    • <b>App Purpose:</b> AI Powered All-in-One Learning, Exam Engine & Creator Skills Portal.<br>
+                    • <b>Key Features:</b> Detailed Notes, MindMaps, Photo Vision Doubt Solver, MCQs, AI Diagram & Video Explanations.<br>
+                    • <b>Courses Supported:</b> CBSE, Bihar, UP Board, BPSC, NEET, JEE, UPSC, SSC, Defense, & Social Media/Business Skills.<br>
+                    • <b>How to Use:</b> Select your Board/Class/Skill from top dropdowns, ask doubts or click <b>(+)</b> for instant tools!
+                </div>`;
+            chatBox.scrollTop = chatBox.scrollHeight;
         }
 
         function selectPlan(name, price, element) {
@@ -548,7 +587,7 @@
             chatBox.scrollTop = chatBox.scrollHeight;
 
             setTimeout(() => {
-                if(!isProUser && !purchasedPlanName.includes(cls) && !purchasedPlanName.includes(board)) {
+                if(!isProUser && !purchasedPlanName.includes(cls) && !purchasedPlanName.includes(board) && !purchasedPlanName.includes(stream)) {
                     chatBox.innerHTML += `
                         <div class="msg error">
                             <b>⛔ COURSE ACCESS DENIED!</b><br>
@@ -558,10 +597,18 @@
                 } else {
                     let aiResponseHTML = `<b>[${board} | ${cls} | ${stream} AI Engine]:</b><br>`;
                     
-                    if(questionText.includes('MindMap') || questionText.includes('Flowchart')) {
+                    if(questionText.includes('Social Media') || questionText.includes('YouTube') || questionText.includes('Instagram')) {
+                        aiResponseHTML += `
+                            <div class="notes-card">
+                                🚀 <b>CREATOR & SOCIAL MEDIA GROWTH STRATEGY:</b><br><br>
+                                1. <b>Hook First 3 Secs:</b> Strong visual/verbal hook to stop scrolling.<br>
+                                2. <b>High Engagement Ratio:</b> Comments/Shares prompt in script.<br>
+                                3. <b>SEO & Metadata:</b> High volume tags, thumbnails, and viral titles.
+                            </div>`;
+                    } else if(questionText.includes('MindMap') || questionText.includes('Flowchart')) {
                         aiResponseHTML += `
                             <div class="mindmap-box">
-                                <b>🧠 VISUAL MINDMAP TREE:</b><br>
+                                🧠 <b>VISUAL MINDMAP TREE:</b><br>
                                 📍 <b>Core Topic:</b> ${questionText}<br>
                                 ├── 🔹 <b>Sub-Topic 1:</b> Key Principles & Definitions<br>
                                 ├── 🔹 <b>Sub-Topic 2:</b> Main Formulas & Reactions<br>
@@ -582,7 +629,7 @@
                     } else if(questionText.includes('Notes')) {
                         aiResponseHTML += `
                             <div class="notes-card">
-                                <b>📚 SYLLABUS DETAILED NOTES:</b><br><br>
+                                📚 <b>SYLLABUS DETAILED NOTES:</b><br><br>
                                 • <b>Definition:</b> Clear concept explanation in ${lang}.<br>
                                 • <b>Key Pointers:</b> Important terms, bullet highlights & PYQ references.<br>
                                 • <b>Summary:</b> Quick 1-minute revision summary for ${board} ${cls}.
