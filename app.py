@@ -63,7 +63,7 @@ def verify_otp():
     else:
         return jsonify({"success": False, "message": "Galat OTP! Sahi 6-digit OTP daalein."}), 400
 
-@app.route('/api/chat', methods=['POST'])
+    @app.route('/api/chat', methods=['POST'])
 def chat():
     data = request.get_json() or {}
     prompt = data.get('prompt', '').strip()
@@ -77,6 +77,33 @@ def chat():
     
     if not GEMINI_API_KEY:
         return jsonify({"success": False, "message": "Server API Key missing!"}), 500
+        
+    # 🛑 STRICT TICBULL AI BRAIN (Syllabus Control)
+    system_instruction = f"""Tu TicBull Academy ka ek intelligent aur strict AI Teacher hai. Tujhe MrYuviYadav ne banaya hai.
+Tera student abhi '{board} | {cls} | {stream}' ki padhai kar raha hai.
+CRITICAL RULES JINHE KABHI NAHI TODNA HAI:
+1. OUT OF SYLLABUS STRICTNESS: Agar student ka sawal is course/class se related nahi hai (jaise gaane, movies, politics, ya kisi aur class ka sawal), toh strictly mana kar de aur bol: "Bhai, main TicBull ka AI Teacher hu. Main sirf aapke purchased course ({cls} {stream}) ke sawal hi bata sakta hu. Ye sawal out of syllabus hai."
+2. KABHI BHI mat bolna ki tu ek AI hai, LLM hai, ya Google/Gemini ne tujhe banaya hai. 
+3. Hamesha {lang} bhasha me jawab de.
+"""
+    full_prompt = f"{system_instruction}\n\nStudent's Question: {prompt}"
+    
+    try:
+        # Pehli koshish: Latest Flash model
+        model = genai.GenerativeModel('gemini-1.5-flash-latest')
+        response = model.generate_content(full_prompt)
+        reply_text = response.text.replace("Gemini", "TicBull Engine").replace("Google", "TicBull")
+        return jsonify({"success": True, "reply": reply_text})
+    except Exception as e1:
+        try:
+            # Dusri koshish (Fallback): Universal Gemini Pro model
+            model = genai.GenerativeModel('gemini-pro')
+            response = model.generate_content(full_prompt)
+            reply_text = response.text.replace("Gemini", "TicBull Engine").replace("Google", "TicBull")
+            return jsonify({"success": True, "reply": reply_text})
+        except Exception as e2:
+            return jsonify({"success": False, "message": f"Dono Models Fail: {str(e2)}"}), 500
+
         
     # 🛑 STRICT TICBULL AI BRAIN (Syllabus Control)
     system_instruction = f"""Tu TicBull Academy ka ek intelligent aur strict AI Teacher hai. Tujhe MrYuviYadav ne banaya hai.
