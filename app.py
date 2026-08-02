@@ -87,7 +87,7 @@ def chat():
         return jsonify({"success": False, "message": "Question empty nahi ho sakta!"}), 400
     
     if not GEMINI_API_KEY:
-        return jsonify({"success": False, "message": "API Key missing in Vercel!"}), 500
+        return jsonify({"success": False, "message": "API Key missing in Vercel Environment Variables!"}), 500
         
     system_instruction = f"""Tu TicBull Academy ka intelligent teacher hai. Tujhe MrYuviYadav ne banaya hai. 
 Student {board} {cls} {stream} ka hai. 
@@ -96,8 +96,8 @@ Rules: Out of syllabus sawal mana kar dena. Kabhie mat kehna ki tu AI ya Gemini 
     full_prompt = f"{system_instruction}\n\nStudent Question: {prompt}"
     
     try:
-        # Standard stable endpoint using gemini-pro
-        url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key={GEMINI_API_KEY}"
+        # Standard v1 endpoint with gemini-pro (works with all standard keys without billing)
+        url = f"https://generativelanguage.googleapis.com/v1/models/gemini-pro:generateContent?key={GEMINI_API_KEY}"
         payload = {"contents": [{"parts": [{"text": full_prompt}]}]}
         headers = {"Content-Type": "application/json"}
         
@@ -112,10 +112,10 @@ Rules: Out of syllabus sawal mana kar dena. Kabhie mat kehna ki tu AI ya Gemini 
             err_msg = res_data["error"].get("message", "API Error")
             return jsonify({"success": False, "message": f"AI Error: {err_msg}"}), 500
         else:
-            return jsonify({"success": False, "message": "AI Server busy, try again."}), 500
+            return jsonify({"success": False, "message": f"API Response Error: {str(res_data)}"}), 500
             
     except Exception as e:
-        return jsonify({"success": False, "message": f"Error: {str(e)}"}), 500
+        return jsonify({"success": False, "message": f"Server Error: {str(e)}"}), 500
 
 @app.route('/')
 def home():
