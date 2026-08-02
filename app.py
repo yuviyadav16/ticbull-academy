@@ -9,10 +9,12 @@ import requests
 app = Flask(__name__)
 CORS(app)
 
+# Environment Variables
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "")
 SMTP_EMAIL = os.getenv("SMTP_EMAIL", "ticbull.support@gmail.com")
 SMTP_PASSWORD = os.getenv("SMTP_PASSWORD", "")
 
+# Temporary OTP Storage
 otp_store = {}
 
 def send_otp_email(to_email, otp):
@@ -36,6 +38,7 @@ def send_otp_email(to_email, otp):
         print("SMTP Email Error:", e)
         return False
 
+# 1. SEND OTP API
 @app.route('/api/send-otp', methods=['POST'])
 def send_otp():
     data = request.get_json() or {}
@@ -56,6 +59,7 @@ def send_otp():
             "test_otp": otp
         })
 
+# 2. VERIFY OTP API
 @app.route('/api/verify-otp', methods=['POST'])
 def verify_otp():
     data = request.get_json() or {}
@@ -68,6 +72,7 @@ def verify_otp():
     else:
         return jsonify({"success": False, "message": "Galat OTP! Sahi 6-digit OTP daalein."}), 400
 
+# 3. SUPER INTELLIGENT AI CHAT ENGINE (gemini-2.5-flash)
 @app.route('/api/chat', methods=['POST'])
 def chat():
     data = request.get_json() or {}
@@ -101,7 +106,7 @@ Your Behavior Rules:
     
     try:
         if GEMINI_API_KEY:
-            api_url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={GEMINI_API_KEY}"
+            api_url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key={GEMINI_API_KEY}"
             payload = {"contents": [{"parts": [{"text": full_prompt}]}]}
             headers = {"Content-Type": "application/json"}
             
