@@ -9,16 +9,14 @@ import requests
 app = Flask(__name__)
 CORS(app)
 
-# Environment Variables
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "")
 SMTP_EMAIL = os.getenv("SMTP_EMAIL", "ticbull.support@gmail.com")
 SMTP_PASSWORD = os.getenv("SMTP_PASSWORD", "")
 
-# Temporary OTP Storage
 otp_store = {}
 
 def send_otp_email(to_email, otp):
-    if not SMTP_PASSWORD:
+    if not SMTP_PASSWORD or not SMTP_EMAIL:
         return False
     
     subject = "TicBull Academy - Email Verification OTP"
@@ -35,10 +33,9 @@ def send_otp_email(to_email, otp):
             server.sendmail(SMTP_EMAIL, to_email, msg.as_string())
         return True
     except Exception as e:
-        print("SMTP Email Error:", e)
+        print("SMTP Error:", e)
         return False
 
-# 1. SEND OTP API
 @app.route('/api/send-otp', methods=['POST'])
 def send_otp():
     data = request.get_json() or {}
@@ -53,13 +50,8 @@ def send_otp():
     if send_otp_email(email, otp):
         return jsonify({"success": True, "message": f"OTP successfully sent to {email}"})
     else:
-        return jsonify({
-            "success": True,
-            "message": f"Testing Mode: OTP is {otp}",
-            "test_otp": otp
-        })
+        return jsonify({"success": False, "message": "Email bhejne me error aayi! SMTP settings check karein."}), 500
 
-# 2. VERIFY OTP API
 @app.route('/api/verify-otp', methods=['POST'])
 def verify_otp():
     data = request.get_json() or {}
@@ -72,7 +64,6 @@ def verify_otp():
     else:
         return jsonify({"success": False, "message": "Galat OTP! Sahi 6-digit OTP daalein."}), 400
 
-# 3. SUPER INTELLIGENT AI CHAT ENGINE (gemini-2.5-flash)
 @app.route('/api/chat', methods=['POST'])
 def chat():
     data = request.get_json() or {}
@@ -83,42 +74,30 @@ def chat():
     lang = data.get('lang', 'Hinglish')
     
     if not prompt:
-        return jsonify({"success": False, "message": "Doubt/Question khali nahi ho sakta!"}), 400
+        return jsonify({"success": False, "message": "Question khali nahi ho sakta!"}), 400
     
-    system_instruction = f"""
-You are 'TicBull AI Engine v8.5', a world-class expert educator, exam topper mentor, and creator consultant.
-
-Student Context:
-- Target Exam/Board: {board}
-- Class/Level: {cls}
-- Stream/Category: {stream}
-- Medium/Language: Answer strictly in {lang} with professional, encouraging tone.
-
-Your Behavior Rules:
-1. If student asks a doubt, give step-by-step, accurate, top-marks level answers.
-2. For BPSC/UPSC: Include Prelims facts + Mains Answer Writing Pointers + Bihar Special context if relevant.
-3. For Class 9-12 (PCM/PCB/Commerce): Explain core concepts, key formulas, and exam tips.
-4. For YouTube/Social Media Skills: Give practical hooks, SEO tags, algorithm tricks, and content scripts.
-5. Formatting: Use clear headings, bullet points, and bold text for readability.
-"""
-    
-    full_prompt = f"{system_instruction}\n\nUser Question: {prompt}"
+    if not GEMINI_API_KEY:
+        return jsonify({"success": False, "message": "Gemini API Key missing on server!"}), 500
+        
+    system_instruction = f"You are TicBull AI Engine. Answer the student's question accurately in {lang} for {board} {cls} {stream}."
+    full_prompt = f"{system_instruction}\n\nQuestion: {prompt}"
     
     try:
-        if GEMINI_API_KEY:
-            api_url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key={GEMINI_API_KEY}"
-            payload = {"contents": [{"parts": [{"text": full_prompt}]}]}
-            headers = {"Content-Type": "application/json"}
-            
-            response = requests.post(api_url, json=payload, headers=headers)
-            res_data = response.json()
+        api_url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key={GEMINI_API_KEY}"
+        payload = {"contents": [{"parts": [{"text": full_prompt}]}]}
+        headers = {"Content-Type": "application/json"}
+        
+        response = requests.post(api_url, json=payload, headers=headers)
+        res_data = response.json()
+        
+        if "candidates" in res_data:
             reply_text = res_data['candidates'][0]['content']['parts'][0]['text']
+            return jsonify({"success": True, "reply": reply_text})
         else:
-            reply_text = f"<b>{board} | {cls} AI Engine:</b><br><br>API Key missing!"
+            return jsonify({"success": False, "message": f"Gemini Error: {res_data}"}), 500
             
-        return jsonify({"success": True, "reply": reply_text})
     except Exception as e:
-        return jsonify({"success": False, "message": f"AI Engine Error: {str(e)}"}), 500
+        return jsonify({"success": False, "message": f"Server Error: {str(e)}"}), 500
 
 @app.route('/')
 def home():
