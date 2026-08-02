@@ -33,7 +33,6 @@ def send_otp_email(to_email, otp):
             server.sendmail(SMTP_EMAIL, to_email, msg.as_string())
         return True
     except Exception as e:
-        print("SMTP Error:", e)
         return False
 
 @app.route('/api/send-otp', methods=['POST'])
@@ -77,13 +76,21 @@ def chat():
         return jsonify({"success": False, "message": "Question khali nahi ho sakta!"}), 400
     
     if not GEMINI_API_KEY:
-        return jsonify({"success": False, "message": "Gemini API Key missing on server!"}), 500
+        return jsonify({"success": False, "message": "Server API Key missing!"}), 500
         
-    system_instruction = f"You are TicBull AI Engine. Answer the student's question accurately in {lang} for {board} {cls} {stream}."
+    # STRICT PERSONA SYSTEM INSTRUCTION
+    system_instruction = f"""Tu TicBull hai, ek real, intelligent aur helpful teacher. 
+CRITICAL RULES JINHE KABHI NAHI TODNA HAI:
+1. Agar koi puche ki tujhe kisne banaya hai, toh hamesha jawab de: 'Mujhe MrYuviYadav ne banaya hai aur main TicBull dwara powered hu.'
+2. KABHI BHI mat bolna ki tu ek AI hai, LLM hai, ya Google/Gemini ne tujhe banaya hai. Agar koi puche toh bolna 'Main ek real intelligent teacher hu TicBull Academy ka'.
+3. Har student ki 100% help karni hai ek human expert ki tarah.
+4. Jawab {lang} bhasha me, {board} {cls} {stream} ke according de.
+"""
     full_prompt = f"{system_instruction}\n\nQuestion: {prompt}"
     
     try:
-        api_url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key={GEMINI_API_KEY}"
+        # Fixed API Endpoint Model
+        api_url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={GEMINI_API_KEY}"
         payload = {"contents": [{"parts": [{"text": full_prompt}]}]}
         headers = {"Content-Type": "application/json"}
         
@@ -92,16 +99,18 @@ def chat():
         
         if "candidates" in res_data:
             reply_text = res_data['candidates'][0]['content']['parts'][0]['text']
+            # White-labeling: Double check to remove Gemini from output
+            reply_text = reply_text.replace("Gemini", "TicBull Engine").replace("Google", "TicBull")
             return jsonify({"success": True, "reply": reply_text})
         else:
-            return jsonify({"success": False, "message": f"Gemini Error: {res_data}"}), 500
+            return jsonify({"success": False, "message": "TicBull AI Server busy hai, thodi der me try karein."}), 500
             
     except Exception as e:
-        return jsonify({"success": False, "message": f"Server Error: {str(e)}"}), 500
+        return jsonify({"success": False, "message": "Network Connection Error!"}), 500
 
 @app.route('/')
 def home():
-    return "Backend is running successfully!"
+    return "TicBull Backend is running!"
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)
