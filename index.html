@@ -21,7 +21,7 @@
         * { margin:0; padding:0; box-sizing:border-box; font-family:-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; -webkit-tap-highlight-color: transparent; }
         body { background: var(--bg-color); color: var(--text-main); display:flex; flex-direction:column; min-height:100vh; overflow-x:hidden; }
 
-        /* SPLASH SCREEN */
+        /* SPLASH SCREEN WITH REAL BULL LOGO */
         #splash-screen {
             position: fixed; top:0; left:0; width:100%; height:100%;
             background: #000; display:flex; flex-direction:column;
@@ -39,7 +39,7 @@
             background: #000; border: 2px solid rgba(255,255,255,0.15);
             display:flex; justify-content:center; align-items:center; overflow:hidden;
         }
-        .splash-logo img { width:80%; height:80%; object-fit:contain; }
+        .splash-logo img { width:85%; height:85%; object-fit:contain; }
         .splash-title { margin-top:20px; font-size:24px; font-weight:800; letter-spacing:1px; color:#fff; }
         .developer-tag { margin-top:6px; font-size:12px; color: var(--accent-color); font-weight:600; }
 
@@ -54,11 +54,11 @@
         }
         .brand-header { display:flex; flex-direction:column; align-items:center; margin-bottom:18px; }
         .brand-icon-box {
-            width:70px; height:70px; border-radius:50%; background:#000; border:1px solid rgba(255,255,255,0.15);
+            width:75px; height:75px; border-radius:50%; background:#000; border:1px solid rgba(255,255,255,0.15);
             display:flex; justify-content:center; align-items:center; margin-bottom:10px;
             box-shadow: 0 8px 25px rgba(0,0,0,0.5); overflow:hidden;
         }
-        .brand-icon-box img { width:75%; height:75%; object-fit:contain; }
+        .brand-icon-box img { width:85%; height:85%; object-fit:contain; }
 
         .auth-tabs { display:flex; background:#111318; padding:4px; border-radius:12px; border:1px solid var(--border-color); margin-bottom:16px; }
         .auth-tab { flex:1; padding:10px; font-size:13px; font-weight:600; color:var(--text-muted); border-radius:8px; cursor:pointer; transition:0.3s; }
@@ -83,8 +83,8 @@
         .header { display:flex; justify-content:space-between; align-items:center; padding:10px 14px; background:var(--card-bg); border-radius:18px; border:1px solid var(--border-color); margin-bottom:10px; }
         .header-brand { display:flex; align-items:center; gap:10px; }
         .menu-btn { background:none; border:none; color:#fff; font-size:18px; cursor:pointer; padding:6px; }
-        .header-logo { width:36px; height:36px; border-radius:50%; background:#000; border:1px solid rgba(255,255,255,0.1); display:flex; justify-content:center; align-items:center; overflow:hidden; }
-        .header-logo img { width:80%; height:80%; object-fit:contain; }
+        .header-logo { width:38px; height:38px; border-radius:50%; background:#000; border:1px solid rgba(255,255,255,0.1); display:flex; justify-content:center; align-items:center; overflow:hidden; }
+        .header-logo img { width:85%; height:85%; object-fit:contain; }
         .user-badge { background:rgba(245, 158, 11, 0.15); border:1px solid rgba(245, 158, 11, 0.3); color:var(--gold-color); padding:5px 10px; border-radius:20px; font-size:11px; font-weight:700; cursor:pointer; }
 
         /* CATEGORY SELECTOR GRID */
@@ -135,17 +135,18 @@
         .support-box { background:#111318; border:1px solid var(--border-color); border-radius:12px; padding:10px; margin:8px auto; max-width:400px; display:flex; justify-content:center; gap:14px; }
         .support-box a { color:#fff; text-decoration:none; font-size:12px; font-weight:600; display:flex; align-items:center; gap:6px; }
         .dev-socials { display:flex; justify-content:center; gap:16px; margin:8px 0; }
-        .dev-socials a { color:var(--text-muted); font-size:15px; }
+        .dev-socials a { color:var(--text-muted); font-size:16px; transition:0.2s; }
+        .dev-socials a:hover { color:#fff; }
     </style>
 </head>
 <body>
 
-    <!-- ANIMATED SPLASH SCREEN -->
+    <!-- ANIMATED SPLASH SCREEN WITH LOGO -->
     <div id="splash-screen">
         <div class="splash-logo-container">
             <div class="splash-logo-glow"></div>
             <div class="splash-logo">
-                <img src="https://raw.githubusercontent.com/yuviyadav16/ticbull-academy/main/file_0000000051ac82068c717a68e826b86e" alt="TicBull Logo" onerror="this.src='https://i.ibb.co/3fdSgJk/ticbull-logo.png';">
+                <img src="./file_0000000051ac82068c717a68e826b86e" alt="TicBull Logo">
             </div>
         </div>
         <div class="splash-title">TicBull Academy</div>
@@ -157,7 +158,7 @@
         <div class="auth-card">
             <div class="brand-header">
                 <div class="brand-icon-box">
-                    <img src="https://raw.githubusercontent.com/yuviyadav16/ticbull-academy/main/file_0000000051ac82068c717a68e826b86e" alt="Logo" onerror="this.src='https://i.ibb.co/3fdSgJk/ticbull-logo.png';">
+                    <img src="./file_0000000051ac82068c717a68e826b86e" alt="Logo">
                 </div>
                 <h2 style="font-size:20px; font-weight:800;">TicBull Academy</h2>
                 <p style="font-size:12px; color:var(--text-muted); margin-top:3px;">AI Student Portal & Exam Engine</p>
@@ -189,7 +190,7 @@
             <div class="header-brand">
                 <button class="menu-btn" onclick="toggleDrawer()"><i class="fa-solid fa-bars"></i></button>
                 <div class="header-logo">
-                    <img src="https://raw.githubusercontent.com/yuviyadav16/ticbull-academy/main/file_0000000051ac82068c717a68e826b86e" alt="Logo" onerror="this.src='https://i.ibb.co/3fdSgJk/ticbull-logo.png';">
+                    <img src="./file_0000000051ac82068c717a68e826b86e" alt="Logo">
                 </div>
                 <div>
                     <strong style="color:#fff; font-size:13.5px;">TicBull Academy</strong>
@@ -216,7 +217,7 @@
                 <option value="GATE / CAT / CLAT">GATE / CAT / CLAT / CA</option>
             </select>
 
-            <select id="classSelect" onchange="updateSuggestedPlan()">
+            <select id="classSelect">
                 <option value="Class 12">Class 12th</option>
                 <option value="Class 11">Class 11th</option>
                 <option value="Class 10">Class 10th</option>
@@ -224,7 +225,7 @@
                 <option value="Competitive Exam">Competitive Aspirant</option>
             </select>
 
-            <select id="streamSelect" onchange="updateSuggestedPlan()">
+            <select id="streamSelect">
                 <option value="Science">Science (PCM/PCB)</option>
                 <option value="Commerce">Commerce</option>
                 <option value="Arts">Arts / Humanities</option>
@@ -287,7 +288,6 @@
             <h3 style="color:#fff; font-size:18px;">🎓 TicBull Academy Pass</h3>
             <p style="font-size:11.5px; color:var(--text-muted); margin-top:2px;">Select your preferred annual study plan</p>
 
-            <!-- PRO PASS FEATURE HIGHLIGHT -->
             <div class="pro-banner" onclick="selectPlan('TicBull Pro', 2999)" id="proPlanCard" style="cursor:pointer;">
                 <div style="display:flex; justify-content:space-between; align-items:center;">
                     <strong style="color:#f59e0b; font-size:13px;"><i class="fa-solid fa-crown"></i> TicBull Academy Pro Pass</strong>
@@ -299,7 +299,6 @@
             <div style="font-size:11px; font-weight:700; color:var(--text-muted); text-align:left; text-transform:uppercase;">Or Select Specific Course:</div>
             
             <div class="pricing-list" id="pricingList">
-                <!-- Dynamically populated or standard list -->
                 <div class="price-item" onclick="selectPlan('Class 9 School Board', 499)">
                     <span class="plan-name">Class 9 (CBSE / Bihar / UP)</span>
                     <span class="plan-cost">₹499/yr</span>
@@ -330,7 +329,7 @@
         </div>
     </div>
 
-    <!-- FOOTER WITH OFFICIAL SUPPORT LINKS -->
+    <!-- FOOTER WITH YOUTUBE & ALL SOCIAL LINKS -->
     <footer>
         <div style="margin-bottom:6px; font-weight:700; color:#fff;">TicBull Official Support Channels:</div>
         <div class="support-box">
@@ -341,10 +340,11 @@
 
         <div style="margin-top:12px; font-weight:600; color:var(--text-muted);">Developer & Founder: <b style="color:#fff;">MrYuviYadav</b></div>
         <div class="dev-socials">
-            <a href="https://x.com/mryuviyadav" target="_blank"><i class="fa-brands fa-x-twitter"></i></a>
-            <a href="https://www.instagram.com/mryuvi_yadav" target="_blank"><i class="fa-brands fa-instagram"></i></a>
-            <a href="https://t.me/mryuviyadav" target="_blank"><i class="fa-brands fa-telegram"></i></a>
-            <a href="https://facebook.com/mryuviyadav" target="_blank"><i class="fa-brands fa-facebook"></i></a>
+            <a href="https://youtube.com/@mryuviyadav" target="_blank" style="color:#ff0000;" title="YouTube Channel"><i class="fa-brands fa-youtube"></i></a>
+            <a href="https://www.instagram.com/mryuvi_yadav" target="_blank" style="color:#e1306c;" title="Instagram Profile"><i class="fa-brands fa-instagram"></i></a>
+            <a href="https://x.com/mryuviyadav" target="_blank" title="X / Twitter Profile"><i class="fa-brands fa-x-twitter"></i></a>
+            <a href="https://t.me/mryuviyadav" target="_blank" style="color:#0088cc;" title="Telegram Channel"><i class="fa-brands fa-telegram"></i></a>
+            <a href="https://facebook.com/mryuviyadav" target="_blank" style="color:#1877f2;" title="Facebook Page"><i class="fa-brands fa-facebook"></i></a>
         </div>
         <p style="margin-top:6px;">Official Email: <a href="mailto:ticbull.support@gmail.com" style="color:var(--accent-color); text-decoration:none;">ticbull.support@gmail.com</a></p>
     </footer>
@@ -386,7 +386,7 @@
             if(!email) { alert("Please enter Email ID!"); return; }
             document.getElementById('auth-screen').style.display = 'none';
             document.getElementById('main-dashboard').style.display = 'flex';
-            openSubscriptionModal(); // Pop up pricing modal right after login/signup!
+            openSubscriptionModal();
         }
 
         function toggleDrawer() {
@@ -409,16 +409,15 @@
             selectedPlanName = name;
             selectedPlanPrice = price;
             
-            // Highlight selected UI
             const items = document.querySelectorAll('.price-item');
             items.forEach(item => item.classList.remove('selected'));
-            event.currentTarget.classList.add('selected');
+            if(event && event.currentTarget) event.currentTarget.classList.add('selected');
         }
 
         function activateSelectedPlan() {
             document.getElementById('badgePlanText').innerText = `${selectedPlanName} Active`;
             closeSubscriptionModal();
-            alert(`Congratulations! ${selectedPlanName} (₹${selectedPlanPrice}/yr) Activated Successfully! Enjoy Unlimited AI Tutoring.`);
+            alert(`Congratulations! ${selectedPlanName} (₹${selectedPlanPrice}/yr) Activated Successfully!`);
         }
 
         function handleImageSelect(event) {
