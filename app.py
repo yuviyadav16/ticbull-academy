@@ -1,4 +1,4 @@
-    import os
+import os
 import random
 import smtplib
 from email.mime.text import MIMEText
@@ -9,12 +9,10 @@ import requests
 app = Flask(__name__)
 CORS(app)
 
-# Environment Variables
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "")
 SMTP_EMAIL = os.getenv("SMTP_EMAIL", "ticbull.support@gmail.com")
 SMTP_PASSWORD = os.getenv("SMTP_PASSWORD", "")
 
-# Temporary OTP Storage
 otp_store = {}
 
 def send_otp_email(to_email, otp):
