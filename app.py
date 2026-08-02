@@ -4,7 +4,7 @@ import smtplib
 from email.mime.text import MIMEText
 from flask import Flask, request, jsonify
 from flask_cors import CORS
-import google.generativeai as genai
+import requests
 
 app = Flask(__name__)
 CORS(app)
@@ -12,9 +12,6 @@ CORS(app)
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "")
 SMTP_EMAIL = os.getenv("SMTP_EMAIL", "ticbull.support@gmail.com")
 SMTP_PASSWORD = os.getenv("SMTP_PASSWORD", "")
-
-if GEMINI_API_KEY:
-    genai.configure(api_key=GEMINI_API_KEY)
 
 otp_store = {}
 
@@ -84,12 +81,26 @@ Rules: Out of syllabus sawal mana kar dena. Kabhie mat kehna ki tu AI ya Gemini 
     full_prompt = f"{system_instruction}\n\nStudent Question: {prompt}"
     
     try:
-        model = genai.GenerativeModel('gemini-pro')
-        response = model.generate_content(full_prompt)
-        reply_text = response.text.replace("Gemini", "TicBull Engine").replace("Google", "TicBull").replace("gemini", "ticbull")
-        return jsonify({"success": True, "reply": reply_text})
+        # Hum direct v1 endpoint aur gemini-1.5-flash use kar rahe hain jo 100% free aur fast hai
+        url = f"https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key={GEMINI_API_KEY}"
+        payload = {"contents": [{"parts": [{"text": full_prompt}]}]}
+        headers = {"Content-Type": "application/json"}
+        
+        response = requests.post(url, json=payload, headers=headers, timeout=25)
+        res_data = response.json()
+        
+        if "candidates" in res_data:
+            reply_text = res_data['candidates'][0]['content']['parts'][0]['text']
+            reply_text = reply_text.replace("Gemini", "TicBull Engine").replace("Google", "TicBull").replace("gemini", "ticbull")
+            return jsonify({"success": True, "reply": reply_text})
+        elif "error" in res_data:
+            err_msg = res_data["error"].get("message", "API Error")
+            return jsonify({"success": False, "message": f"AI Error: {err_msg}"}), 500
+        else:
+            return jsonify({"success": False, "message": "AI Server busy, try again."}), 500
+            
     except Exception as e:
-        return jsonify({"success": False, "message": f"AI Error: {str(e)}"}), 500
+        return jsonify({"success": False, "message": f"Error: {str(e)}"}), 500
 
 @app.route('/')
 def home():
