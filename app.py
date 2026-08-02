@@ -73,7 +73,7 @@ def chat():
         return jsonify({"success": False, "message": "Question khali nahi ho sakta!"}), 400
     
     if not GEMINI_API_KEY:
-        return jsonify({"success": False, "message": "Server API Key missing!"}), 500
+        return jsonify({"success": False, "message": "Error: Vercel me GEMINI_API_KEY nahi mili!"}), 500
         
     # 🛑 STRICT TICBULL AI BRAIN
     system_instruction = f"""Tu TicBull Academy ka ek intelligent aur strict AI Teacher hai. Tujhe MrYuviYadav ne banaya hai.
@@ -86,8 +86,8 @@ CRITICAL RULES:
     full_prompt = f"{system_instruction}\n\nStudent's Question: {prompt}"
     
     try:
-        # DIRECT API CALL TO MOST INTELLIGENT MODEL (Gemini 1.5 Pro)
-        api_url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro-latest:generateContent?key={GEMINI_API_KEY}"
+        # DIRECT API CALL TO MOST STABLE MODEL (Gemini 1.5 Pro)
+        api_url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro:generateContent?key={GEMINI_API_KEY}"
         payload = {"contents": [{"parts": [{"text": full_prompt}]}]}
         headers = {"Content-Type": "application/json"}
         
@@ -98,17 +98,12 @@ CRITICAL RULES:
             reply_text = res_data['candidates'][0]['content']['parts'][0]['text']
             reply_text = reply_text.replace("Gemini", "TicBull Engine").replace("Google", "TicBull").replace("gemini", "ticbull")
             return jsonify({"success": True, "reply": reply_text})
+        elif "error" in res_data:
+            # YE LINE GOOGLE KA ASLI ERROR SCREEN PAR DIKHAYEGI
+            error_msg = res_data["error"].get("message", "Unknown Google API Error")
+            return jsonify({"success": False, "message": f"Google API Issue: {error_msg}"}), 500
         else:
-            # FALLBACK to Universal Gemini Pro if 1.5 Pro is busy
-            api_url_fallback = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key={GEMINI_API_KEY}"
-            resp2 = requests.post(api_url_fallback, json=payload, headers=headers)
-            res_data2 = resp2.json()
-            if "candidates" in res_data2:
-                reply_text = res_data2['candidates'][0]['content']['parts'][0]['text']
-                reply_text = reply_text.replace("Gemini", "TicBull Engine").replace("Google", "TicBull").replace("gemini", "ticbull")
-                return jsonify({"success": True, "reply": reply_text})
-            else:
-                return jsonify({"success": False, "message": f"API Error: Please check Vercel Logs."}), 500
+            return jsonify({"success": False, "message": f"Unknown Issue: {str(res_data)}"}), 500
                 
     except Exception as e:
         return jsonify({"success": False, "message": f"Network Error: {str(e)}"}), 500
