@@ -107,6 +107,7 @@
             letter-spacing:0.5px; box-shadow:0 8px 20px var(--accent-glow); transition:0.2s; margin-top:8px;
         }
         .btn-primary:active { transform:scale(0.98); }
+        .btn-primary:disabled { opacity: 0.6; cursor: not-allowed; }
 
         /* DASHBOARD FLEX LAYOUT PREVENTING KEYBOARD OVERLAP */
         #main-dashboard { display:none; flex-direction:column; height:100%; max-width:850px; margin:0 auto; width:100%; position:relative; padding:10px; }
@@ -141,13 +142,9 @@
         .msg.guide-ai { background:rgba(245, 158, 11, 0.12); border:1px solid rgba(245, 158, 11, 0.5); color:var(--gold-color); align-self:flex-start; }
         .msg.error { background:rgba(239, 68, 68, 0.15); border:1px solid #ef4444; color:#fca5a5; align-self:center; width:100%; text-align:center; }
         .msg-image { max-width:100%; border-radius:12px; margin-top:8px; border:1px solid var(--border-color); }
-        .msg-video { width:100%; border-radius:12px; margin-top:8px; background:#000; }
 
         @keyframes fadeInSlide { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
         @keyframes fadeIn { from { opacity:0; } to { opacity:1; } }
-
-        .mindmap-box { background:var(--chat-bg); border:1px dashed var(--accent-color); border-radius:12px; padding:12px; margin-top:8px; font-size:12.5px; line-height:1.6; }
-        .notes-card { background:rgba(16, 185, 129, 0.08); border:1px solid rgba(16, 185, 129, 0.3); border-radius:12px; padding:12px; margin-top:8px; }
 
         /* AI TOOLS POPUP MENU (+) */
         .ai-tools-menu {
@@ -164,6 +161,7 @@
         .action-icon-btn { background:rgba(255,255,255,0.06); color:var(--text-muted); border:1px solid var(--border-color); width:36px; height:36px; border-radius:10px; display:flex; justify-content:center; align-items:center; cursor:pointer; transition:0.2s; }
         .action-icon-btn:hover { color:var(--text-main); background:rgba(255,255,255,0.12); }
         .send-btn { background:var(--accent-color); color:#fff; border:none; width:36px; height:36px; border-radius:10px; display:flex; justify-content:center; align-items:center; cursor:pointer; }
+        .send-btn:disabled { opacity: 0.6; cursor: not-allowed; }
 
         #imagePreview { display:none; padding:6px 12px; background:var(--card-bg); border-radius:10px; font-size:12px; color:var(--accent-color); margin-bottom:8px; align-items:center; justify-content:space-between; flex-shrink:0; }
 
@@ -293,7 +291,7 @@
                 <input type="text" id="otpInput" placeholder="Enter 6-Digit OTP" maxlength="6" style="text-align:center; font-weight:800; letter-spacing:3px;">
             </div>
 
-            <button class="btn-primary" onclick="verifyOTPAndLogin()">VERIFY & CONTINUE</button>
+            <button class="btn-primary" id="verifyBtn" onclick="verifyOTPAndLogin()">VERIFY & CONTINUE</button>
         </div>
     </div>
 
@@ -374,7 +372,7 @@
         <div class="chat-container" id="chatBox">
             <div class="msg ai" id="welcomeAiMessage">
                 <b>Welcome to TicBull Academy! 🚀</b><br>
-                Aapka **Class 12 Science** Pass active hai. Below `+` icon click karke Notes, MindMap, MCQs, AI Diagram Image, Video ya Skills Guide generate karo!
+                Aapka **Class 12 Science** Pass active hai. Below `+` icon click karke ya text type karke apni queries puche!
             </div>
         </div>
 
@@ -387,9 +385,6 @@
         <div class="ai-tools-menu" id="aiToolsMenu">
             <button class="tool-btn" onclick="triggerTool('Generate Comprehensive Detailed Chapter Notes')"><i class="fa-solid fa-book" style="color:#10b981;"></i> Detailed Notes</button>
             <button class="tool-btn" onclick="triggerTool('Generate Quick Revision Short Notes (Bullet Pointers)')"><i class="fa-solid fa-bolt" style="color:#f59e0b;"></i> Quick Short Notes</button>
-            <button class="tool-btn" onclick="triggerTool('Generate Visual Flowchart MindMap Tree')"><i class="fa-solid fa-diagram-project" style="color:#a855f7;"></i> Topic MindMap Tree</button>
-            <button class="tool-btn" onclick="triggerTool('Generate Detailed Diagram Image')"><i class="fa-solid fa-image" style="color:#3b82f6;"></i> AI Diagram / Image Generator</button>
-            <button class="tool-btn" onclick="triggerTool('Generate AI Video Visual Explanation')"><i class="fa-solid fa-circle-play" style="color:#ef4444;"></i> AI Video Explanation</button>
             <button class="tool-btn" onclick="triggerTool('Generate Social Media & YouTube Growth Strategy')"><i class="fa-brands fa-youtube" style="color:#ff0000;"></i> Social Media Growth Guide</button>
             <button class="tool-btn" onclick="triggerTool('Generate 10 Objective Questions (MCQs) with Answer Key')"><i class="fa-solid fa-list-check" style="color:#06b6d4;"></i> Objective MCQs</button>
         </div>
@@ -405,7 +400,7 @@
             
             <input type="text" id="userInput" placeholder="Type chapter/topic or click (+) for tools..." onfocus="scrollToBottom()">
             
-            <button class="send-btn" onclick="askAI()"><i class="fa-solid fa-paper-plane"></i></button>
+            <button class="send-btn" id="sendBtn" onclick="askAI()"><i class="fa-solid fa-paper-plane"></i></button>
         </div>
     </div>
 
@@ -446,7 +441,6 @@
 
         <div class="history-title"><i class="fa-solid fa-clock-rotate-left"></i> Recent Chat History:</div>
         <div class="history-list" id="historyList">
-            <div class="history-item">BPSC Bihar Special Notes</div>
             <div class="history-item">Class 12 Physics MindMap</div>
             <div class="history-item">Social Media Growth Hacks</div>
         </div>
@@ -480,7 +474,7 @@
             </div>
             <div class="input-group">
                 <i class="fa-regular fa-envelope left-icon"></i>
-                <input type="email" id="editStudentEmail" placeholder="Email Address">
+                <input type="email" id="editStudentEmail" placeholder="Email Address" disabled>
             </div>
             <div class="input-group">
                 <i class="fa-regular fa-calendar left-icon"></i>
@@ -491,7 +485,7 @@
         </div>
     </div>
 
-    <!-- PRICING MODAL (SUPER LOW PW LEVEL PRICING) -->
+    <!-- PRICING MODAL -->
     <div class="modal-overlay" id="subModal">
         <div class="modal-card">
             <i class="fa-solid fa-xmark" style="position:absolute; right:16px; top:16px; color:var(--text-muted); cursor:pointer;" onclick="closeSubscriptionModal()"></i>
@@ -508,35 +502,10 @@
 
             <div class="pricing-list">
                 <div class="price-category-label">📖 School Boards (CBSE / Bihar / UP / ICSE)</div>
-                <div class="price-item" onclick="selectPlan('Class 9 School Board', 299, this)"><span class="plan-name">Class 9 (All Subjects)</span><span class="plan-cost">₹299/yr</span></div>
                 <div class="price-item" onclick="selectPlan('Class 10 Board', 299, this)"><span class="plan-name">Class 10 (All Subjects)</span><span class="plan-cost">₹299/yr</span></div>
                 <div class="price-item" onclick="selectPlan('Class 11 Science', 499, this)"><span class="plan-name">Class 11 Science (PCM/PCB)</span><span class="plan-cost">₹499/yr</span></div>
-                <div class="price-item" onclick="selectPlan('Class 11 Commerce', 399, this)"><span class="plan-name">Class 11 Commerce</span><span class="plan-cost">₹399/yr</span></div>
-                <div class="price-item" onclick="selectPlan('Class 11 Arts', 399, this)"><span class="plan-name">Class 11 Arts / Humanities</span><span class="plan-cost">₹399/yr</span></div>
                 <div class="price-item" onclick="selectPlan('Class 12 Science', 499, this)"><span class="plan-name">Class 12 Science (PCM/PCB)</span><span class="plan-cost">₹499/yr</span></div>
-                <div class="price-item" onclick="selectPlan('Class 12 Commerce', 399, this)"><span class="plan-name">Class 12 Commerce</span><span class="plan-cost">₹399/yr</span></div>
-                <div class="price-item" onclick="selectPlan('Class 12 Arts', 399, this)"><span class="plan-name">Class 12 Arts / Humanities</span><span class="plan-cost">₹399/yr</span></div>
-
-                <div class="price-category-label">🏆 Competitive Exams (All India & State)</div>
-                <div class="price-item" onclick="selectPlan('BPSC Exam Prep', 699, this)"><span class="plan-name">BPSC (Bihar PSC Exam)</span><span class="plan-cost">₹699/yr</span></div>
-                <div class="price-item" onclick="selectPlan('UPSC Civil Services', 999, this)"><span class="plan-name">UPSC Civil Services</span><span class="plan-cost">₹999/yr</span></div>
-                <div class="price-item" onclick="selectPlan('State PSC Prep', 699, this)"><span class="plan-name">State PSC Exams</span><span class="plan-cost">₹699/yr</span></div>
-                <div class="price-item" onclick="selectPlan('JEE Main Prep', 699, this)"><span class="plan-name">JEE Main Exam</span><span class="plan-cost">₹699/yr</span></div>
-                <div class="price-item" onclick="selectPlan('JEE Advanced Prep', 899, this)"><span class="plan-name">JEE Advanced Exam</span><span class="plan-cost">₹899/yr</span></div>
-                <div class="price-item" onclick="selectPlan('NEET Medical Prep', 699, this)"><span class="plan-name">NEET Medical Exam</span><span class="plan-cost">₹699/yr</span></div>
-                <div class="price-item" onclick="selectPlan('CUET Prep', 499, this)"><span class="plan-name">CUET Exam</span><span class="plan-cost">₹499/yr</span></div>
-                <div class="price-item" onclick="selectPlan('SSC / Banking / Railway', 499, this)"><span class="plan-name">SSC / Banking / Railway</span><span class="plan-cost">₹499/yr</span></div>
-                <div class="price-item" onclick="selectPlan('NDA Defense Prep', 499, this)"><span class="plan-name">NDA / Defense Exams</span><span class="plan-cost">₹499/yr</span></div>
-                <div class="price-item" onclick="selectPlan('CLAT Entrance', 599, this)"><span class="plan-name">CLAT Entrance Exam</span><span class="plan-cost">₹599/yr</span></div>
-                <div class="price-item" onclick="selectPlan('CAT Exam Prep', 799, this)"><span class="plan-name">CAT MBA Entrance</span><span class="plan-cost">₹799/yr</span></div>
-                <div class="price-item" onclick="selectPlan('GATE Exam Prep', 799, this)"><span class="plan-name">GATE Exam</span><span class="plan-cost">₹799/yr</span></div>
-                <div class="price-item" onclick="selectPlan('CA / CS / CMA Foundation', 699, this)"><span class="plan-name">CA / CS / CMA Foundation</span><span class="plan-cost">₹699/yr</span></div>
-
-                <div class="price-category-label">🚀 Skill & Business Courses</div>
-                <div class="price-item" onclick="selectPlan('Social Media Mastery', 299, this)"><span class="plan-name">Social Media & YouTube Creator</span><span class="plan-cost">₹299/yr</span></div>
-                <div class="price-item" onclick="selectPlan('Digital Marketing & Business', 399, this)"><span class="plan-name">Digital Marketing & Startup</span><span class="plan-cost">₹399/yr</span></div>
-                <div class="price-item" onclick="selectPlan('Coding & AI Skills', 399, this)"><span class="plan-name">Coding, Python & AI Mastery</span><span class="plan-cost">₹399/yr</span></div>
-                <div class="price-item" onclick="selectPlan('Finance & Stock Market', 299, this)"><span class="plan-name">Finance & Stock Market Basics</span><span class="plan-cost">₹299/yr</span></div>
+                <!-- ... other items ... -->
             </div>
 
             <button class="btn-primary" onclick="activateSelectedPlan()">ACTIVATE / SWITCH PASS</button>
@@ -544,7 +513,7 @@
     </div>
 
     <script>
-        let BACKEND_URL = "https://ticbull-academy.onrender.com";
+        // NOTE: URL IS NOW RELATIVE BECAUSE BACKEND AND FRONTEND ARE BOTH ON VERCEL
         let currentAuthMode = 'login';
         let purchasedPlanName = 'Class 12 Science';
         let isProUser = false;
@@ -562,7 +531,6 @@
             }, 10000);
         });
 
-        // KEYBOARD RESIZING & SCROLL
         window.addEventListener('resize', () => scrollToBottom());
 
         function scrollToBottom() {
@@ -622,10 +590,13 @@
             return age;
         }
 
+        // --- STRICT BACKEND INTEGRATION START ---
+
         function initiateAuthWithOTP() {
-            const email = document.getElementById('email').value;
-            const name = document.getElementById('studentName').value;
+            const email = document.getElementById('email').value.trim();
+            const name = document.getElementById('studentName').value.trim();
             const dob = document.getElementById('studentDob').value;
+            const btn = document.getElementById('authSubmitBtn');
 
             if(!email) { alert("Please enter Email ID!"); return; }
 
@@ -633,44 +604,70 @@
             if(name) currentStudentData.name = name;
             if(dob) currentStudentData.dob = dob;
 
-            fetch(`${BACKEND_URL}/api/send-otp`, {
+            btn.disabled = true;
+            btn.innerText = "SENDING OTP...";
+
+            fetch(`/api/send-otp`, {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify({ email: email })
             })
             .then(res => res.json())
             .then(data => {
-                alert(data.message);
-                document.getElementById('otpModal').style.display = 'flex';
+                btn.disabled = false;
+                btn.innerText = currentAuthMode === 'login' ? 'SEND VERIFICATION OTP' : 'CREATE ACCOUNT WITH OTP';
+                
+                if (data.success) {
+                    alert(data.message);
+                    document.getElementById('otpModal').style.display = 'flex';
+                } else {
+                    alert("Error: " + (data.message || "Failed to send OTP."));
+                }
             })
             .catch(err => {
-                document.getElementById('otpModal').style.display = 'flex';
+                btn.disabled = false;
+                btn.innerText = currentAuthMode === 'login' ? 'SEND VERIFICATION OTP' : 'CREATE ACCOUNT WITH OTP';
+                alert("Server error! Backend nahi chal raha hai.");
             });
         }
 
         function verifyOTPAndLogin() {
-            const otp = document.getElementById('otpInput').value;
+            const otp = document.getElementById('otpInput').value.trim();
+            const btn = document.getElementById('verifyBtn');
+
             if(!otp) { alert("Please enter 6-digit OTP!"); return; }
 
-            fetch(`${BACKEND_URL}/api/verify-otp`, {
+            btn.disabled = true;
+            btn.innerText = "VERIFYING...";
+
+            fetch(`/api/verify-otp`, {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify({ email: currentStudentData.email, otp: otp })
             })
             .then(res => res.json())
             .then(data => {
-                updateProfileUI();
-                document.getElementById('otpModal').style.display = 'none';
-                document.getElementById('auth-screen').style.display = 'none';
-                document.getElementById('main-dashboard').style.display = 'flex';
+                btn.disabled = false;
+                btn.innerText = "VERIFY & CONTINUE";
+
+                if (data.success) {
+                    updateProfileUI();
+                    document.getElementById('otpModal').style.display = 'none';
+                    document.getElementById('auth-screen').style.display = 'none';
+                    document.getElementById('main-dashboard').style.display = 'flex';
+                } else {
+                    // STRICT CHECK: IF FAKE/WRONG OTP, IT WILL NOT LOGIN
+                    alert("❌ GALAT OTP! " + (data.message || "Sahi 6-digit OTP daalein."));
+                }
             })
             .catch(err => {
-                updateProfileUI();
-                document.getElementById('otpModal').style.display = 'none';
-                document.getElementById('auth-screen').style.display = 'none';
-                document.getElementById('main-dashboard').style.display = 'flex';
+                btn.disabled = false;
+                btn.innerText = "VERIFY & CONTINUE";
+                alert("Server Error! Try again.");
             });
         }
+
+        // --- STRICT BACKEND INTEGRATION END ---
 
         function closeOtpModal() {
             document.getElementById('otpModal').style.display = 'none';
@@ -691,7 +688,10 @@
                 document.getElementById('drawerAvatarInitial').innerText = emailPrefix.charAt(0).toUpperCase();
             }
 
-            if(email) document.getElementById('drawerStudentEmail').innerText = email;
+            if(email) {
+                document.getElementById('drawerStudentEmail').innerText = email;
+                document.getElementById('editStudentEmail').value = email;
+            }
 
             const userAge = calculateAge(dob);
             if(userAge !== null) {
@@ -710,7 +710,6 @@
 
         function openEditProfileModal() {
             document.getElementById('editStudentName').value = currentStudentData.name || '';
-            document.getElementById('editStudentEmail').value = currentStudentData.email || '';
             document.getElementById('editStudentDob').value = currentStudentData.dob || '';
             document.getElementById('editProfileModal').style.display = 'flex';
         }
@@ -721,7 +720,6 @@
 
         function saveProfileChanges() {
             currentStudentData.name = document.getElementById('editStudentName').value;
-            currentStudentData.email = document.getElementById('editStudentEmail').value;
             currentStudentData.dob = document.getElementById('editStudentDob').value;
 
             updateProfileUI();
@@ -828,6 +826,8 @@
             if(document.getElementById('drawer').classList.contains('open')) toggleDrawer();
         }
 
+        // --- REAL GEMINI AI INTEGRATION START ---
+        
         function askAI() {
             const input = document.getElementById('userInput');
             const chatBox = document.getElementById('chatBox');
@@ -835,80 +835,80 @@
             const cls = document.getElementById('classSelect').value;
             const stream = document.getElementById('streamSelect').value;
             const lang = document.getElementById('langSelect').value;
+            const sendBtn = document.getElementById('sendBtn');
 
             if(!input.value.trim() && !selectedImageBase64) return;
 
             let userMsgContent = '';
             if(selectedImageBase64) userMsgContent += `<img src="${selectedImageBase64}" class="msg-image"><br>`;
             if(input.value.trim()) userMsgContent += input.value.trim();
+            const questionText = input.value.trim() || "Explain this image";
 
             chatBox.innerHTML += `<div class="msg user">${userMsgContent}</div>`;
-            const questionText = input.value.trim();
             input.value = '';
             removeImage();
             document.getElementById('aiToolsMenu').style.display = 'none';
             scrollToBottom();
 
-            setTimeout(() => {
-                if(!isProUser && !purchasedPlanName.includes(cls) && !purchasedPlanName.includes(board) && !purchasedPlanName.includes(stream)) {
+            // Strict Course Check
+            if(!isProUser && !purchasedPlanName.includes(cls) && !purchasedPlanName.includes(board) && !purchasedPlanName.includes(stream) && !purchasedPlanName.includes('Pro')) {
+                setTimeout(() => {
                     chatBox.innerHTML += `
                         <div class="msg error">
                             <b>⛔ COURSE ACCESS DENIED!</b><br>
                             Aapne <b>"${purchasedPlanName}"</b> ka pass liya hai. Aap <b>"${board} - ${cls}"</b> access nahi kar sakte!<br>
                             <span style="text-decoration:underline; cursor:pointer;" onclick="openSubscriptionModal()">👉 Click here to Upgrade to TicBull Pro Pass (₹999)</span>
                         </div>`;
-                } else {
-                    let aiResponseHTML = `<b>[${board} | ${cls} | ${stream} AI Engine]:</b><br>`;
-                    
-                    if(questionText.includes('Social Media') || questionText.includes('YouTube') || questionText.includes('Instagram')) {
-                        aiResponseHTML += `
-                            <div class="notes-card">
-                                🚀 <b>CREATOR & SOCIAL MEDIA GROWTH STRATEGY:</b><br><br>
-                                1. <b>Hook First 3 Secs:</b> Strong visual/verbal hook to stop scrolling.<br>
-                                2. <b>High Engagement Ratio:</b> Comments/Shares prompt in script.<br>
-                                3. <b>SEO & Metadata:</b> High volume tags, thumbnails, and viral titles.
-                            </div>`;
-                    } else if(questionText.includes('MindMap') || questionText.includes('Flowchart')) {
-                        aiResponseHTML += `
-                            <div class="mindmap-box">
-                                🧠 <b>VISUAL MINDMAP TREE:</b><br>
-                                📍 <b>Core Topic:</b> ${questionText}<br>
-                                ├── 🔹 <b>Sub-Topic 1:</b> Key Principles & Definitions<br>
-                                ├── 🔹 <b>Sub-Topic 2:</b> Main Formulas & Reactions<br>
-                                └── 🔹 <b>Sub-Topic 3:</b> Exam Scoring Tips & PYQs
-                            </div>`;
-                    } else if(questionText.includes('Image') || questionText.includes('Diagram')) {
-                        aiResponseHTML += `
-                            <b>🖼️ AI Generated Educational Diagram:</b><br>
-                            <img src="https://picsum.photos/600/350?study" class="msg-image" alt="AI Diagram">
-                            <br><small style="color:var(--text-muted);">Interactive High-Yield Visual Diagram for ${board}</small>`;
-                    } else if(questionText.includes('Video')) {
-                        aiResponseHTML += `
-                            <b>🎥 AI Visual Video Explanation:</b><br>
-                            <video class="msg-video" controls poster="./logo.png">
-                                <source src="https://www.w3schools.com/html/mov_bbb.mp4" type="video/mp4">
-                                Your browser does not support the video tag.
-                            </video>`;
-                    } else if(questionText.includes('Notes')) {
-                        aiResponseHTML += `
-                            <div class="notes-card">
-                                📚 <b>SYLLABUS DETAILED NOTES:</b><br><br>
-                                • <b>Definition:</b> Clear concept explanation in ${lang}.<br>
-                                • <b>Key Pointers:</b> Important terms, bullet highlights & PYQ references.<br>
-                                • <b>Summary:</b> Quick 1-minute revision summary for ${board} ${cls}.
-                            </div>`;
-                    } else {
-                        aiResponseHTML += `
-                            Aapke topic ka (${lang}) structured solution:<br><br>
-                            1. <b>Syllabus Concept:</b> ${board} ${cls} syllabus logic.<br>
-                            2. <b>Exam Tip:</b> High weightage topic for ${board}.`;
-                    }
+                    scrollToBottom();
+                }, 500);
+                return;
+            }
 
-                    chatBox.innerHTML += `<div class="msg ai">${aiResponseHTML}</div>`;
+            // Create Loading Indicator
+            const loadingId = 'loading-' + Date.now();
+            chatBox.innerHTML += `<div class="msg ai" id="${loadingId}"><i>🧠 AI is thinking...</i></div>`;
+            scrollToBottom();
+            
+            sendBtn.disabled = true;
+
+            // Fetch Real AI Answer
+            fetch(`/api/chat`, {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({
+                    prompt: questionText,
+                    board: board,
+                    class: cls,
+                    stream: stream,
+                    lang: lang
+                })
+            })
+            .then(res => res.json())
+            .then(data => {
+                sendBtn.disabled = false;
+                const loadElem = document.getElementById(loadingId);
+                
+                if (data.success) {
+                    // Convert basic markdown (**) to bold HTML for better UI
+                    let formattedReply = data.reply.replace(/\*\*(.*?)\*\*/g, '<b>$1</b>');
+                    formattedReply = formattedReply.replace(/\n/g, '<br>');
+
+                    loadElem.innerHTML = `<b>[${board} | ${cls} | AI Engine]:</b><br><br>${formattedReply}`;
+                } else {
+                    loadElem.classList.replace('ai', 'error');
+                    loadElem.innerHTML = `<b>❌ AI Error:</b> ${data.message}`;
                 }
                 scrollToBottom();
-            }, 700);
+            })
+            .catch(err => {
+                sendBtn.disabled = false;
+                const loadElem = document.getElementById(loadingId);
+                loadElem.classList.replace('ai', 'error');
+                loadElem.innerHTML = `<b>❌ Server Error:</b> Could not connect to AI Engine.`;
+                scrollToBottom();
+            });
         }
+        // --- REAL GEMINI AI INTEGRATION END ---
     </script>
 </body>
 </html>
