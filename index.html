@@ -16,12 +16,27 @@
             --border-color: rgba(255, 255, 255, 0.12);
             --success-color: #10b981;
             --gold-color: #f59e0b;
+            --chat-bg: #020617;
+            --input-bg: #0f172a;
+        }
+
+        body.light-theme {
+            --bg-color: #f1f5f9;
+            --card-bg: #ffffff;
+            --accent-color: #2563eb;
+            --accent-glow: rgba(37, 99, 235, 0.2);
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --border-color: #cbd5e1;
+            --success-color: #059669;
+            --gold-color: #d97706;
+            --chat-bg: #f8fafc;
+            --input-bg: #ffffff;
         }
 
         * { margin:0; padding:0; box-sizing:border-box; font-family:-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; -webkit-tap-highlight-color: transparent; }
         
-        /* FIXED MOBILE KEYBOARD SCROLLING ISSUE */
-        html, body { height: 100%; width: 100%; overflow: hidden; background: var(--bg-color); color: var(--text-main); }
+        html, body { height: 100%; width: 100%; overflow: hidden; background: var(--bg-color); color: var(--text-main); transition: background 0.3s, color 0.3s; }
         body { display:flex; flex-direction:column; }
 
         /* 10-SECOND CINEMATIC SPLASH ANIMATION */
@@ -62,7 +77,7 @@
         .auth-card {
             background: var(--card-bg); border: 1px solid var(--border-color);
             border-radius:24px; padding:28px 22px; width:100%; max-width:420px;
-            box-shadow:0 20px 50px rgba(0,0,0,0.8); text-align:center;
+            box-shadow:0 20px 50px rgba(0,0,0,0.5); text-align:center;
         }
         .brand-header { display:flex; flex-direction:column; align-items:center; margin-bottom:18px; }
         .brand-icon-box {
@@ -72,17 +87,19 @@
         }
         .brand-icon-box img { width:90%; height:90%; object-fit:contain; }
 
-        .auth-tabs { display:flex; background:#020617; padding:4px; border-radius:12px; border:1px solid var(--border-color); margin-bottom:16px; }
+        .auth-tabs { display:flex; background:var(--input-bg); padding:4px; border-radius:12px; border:1px solid var(--border-color); margin-bottom:16px; }
         .auth-tab { flex:1; padding:10px; font-size:13px; font-weight:600; color:var(--text-muted); border-radius:8px; cursor:pointer; transition:0.3s; }
         .auth-tab.active { background:var(--accent-color); color:#fff; }
 
         .input-group { position:relative; margin-bottom:12px; text-align:left; }
         .input-group i.left-icon { position:absolute; left:14px; top:50%; transform:translateY(-50%); color:var(--text-muted); font-size:14px; }
-        .input-group input { width:100%; background:#020617; border:1px solid var(--border-color); color:#fff; padding:12px 40px; border-radius:12px; font-size:14px; outline:none; transition:0.3s; }
+        .input-group input { width:100%; background:var(--input-bg); border:1px solid var(--border-color); color:var(--text-main); padding:12px 40px; border-radius:12px; font-size:14px; outline:none; transition:0.3s; }
         .input-group input:focus { border-color:var(--accent-color); box-shadow: 0 0 12px var(--accent-glow); }
         .pwd-toggle { position:absolute; right:14px; top:50%; transform:translateY(-50%); color:var(--text-muted); cursor:pointer; font-size:14px; }
 
         .signup-extra-fields { display:none; flex-direction:column; gap:0px; }
+
+        .forgot-link { font-size:11.5px; color:var(--accent-color); text-decoration:none; display:block; text-align:right; margin:-6px 0 12px 0; cursor:pointer; }
 
         .btn-primary {
             width:100%; background: linear-gradient(135deg, #2563eb, #1d4ed8); color:#fff;
@@ -96,88 +113,105 @@
         
         .header { display:flex; justify-content:space-between; align-items:center; padding:10px 14px; background:var(--card-bg); border-radius:18px; border:1px solid var(--border-color); margin-bottom:8px; flex-shrink:0; }
         .header-brand { display:flex; align-items:center; gap:10px; }
-        .menu-btn { background:none; border:none; color:#fff; font-size:18px; cursor:pointer; padding:6px; }
+        .menu-btn { background:none; border:none; color:var(--text-main); font-size:18px; cursor:pointer; padding:6px; }
         .header-logo { width:38px; height:38px; border-radius:50%; background:#000; border:1px solid rgba(255,255,255,0.2); display:flex; justify-content:center; align-items:center; overflow:hidden; }
         .header-logo img { width:90%; height:90%; object-fit:contain; }
         .user-badge { background:rgba(245, 158, 11, 0.15); border:1px solid rgba(245, 158, 11, 0.4); color:var(--gold-color); padding:5px 10px; border-radius:20px; font-size:11px; font-weight:700; cursor:pointer; }
 
-        .category-grid { display:grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap:6px; margin-bottom:8px; flex-shrink:0; }
-        select { width:100%; background:#0f172a; border:1px solid var(--border-color); color:#fff; padding:8px 10px; border-radius:10px; font-size:11.5px; outline:none; }
+        /* COLLAPSIBLE COURSE SELECTOR BAR FOR BIGGER CHAT SCREEN */
+        .course-bar-toggle {
+            background: var(--card-bg); border: 1px solid var(--border-color);
+            border-radius: 12px; padding: 8px 12px; font-size: 11.5px; color: var(--accent-color);
+            font-weight: 600; margin-bottom: 8px; display: flex; align-items: center; justify-content: space-between;
+            cursor: pointer; flex-shrink: 0;
+        }
+        .category-grid { display:none; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap:6px; margin-bottom:8px; flex-shrink:0; animation: fadeIn 0.3s ease; }
+        .category-grid.show { display:grid; }
+        select { width:100%; background:var(--input-bg); border:1px solid var(--border-color); color:var(--text-main); padding:8px 10px; border-radius:10px; font-size:11.5px; outline:none; }
 
-        .active-course-chip { background:rgba(37, 99, 235, 0.15); border:1px solid var(--accent-color); border-radius:10px; padding:6px 10px; font-size:11px; color:var(--accent-color); font-weight:600; margin-bottom:8px; display:flex; align-items:center; justify-content:space-between; flex-shrink:0; }
-
-        /* CHAT CONTAINER RESIZES WITH KEYBOARD */
+        /* CHAT CONTAINER - MAXIMUM SCREEN HEIGHT */
         .chat-container {
-            background:#020617; border:1px solid var(--border-color); border-radius:18px;
-            padding:12px; flex:1; overflow-y:auto;
+            background:var(--chat-bg); border:1px solid var(--border-color); border-radius:18px;
+            padding:14px; flex:1; overflow-y:auto;
             display:flex; flex-direction:column; gap:10px; margin-bottom:8px; min-height: 150px;
         }
-        .msg { padding:10px 14px; border-radius:16px; font-size:13px; line-height:1.5; max-width:88%; word-wrap:break-word; animation: fadeInSlide 0.3s ease-out; }
+        .msg { padding:12px 15px; border-radius:16px; font-size:13.5px; line-height:1.5; max-width:88%; word-wrap:break-word; animation: fadeInSlide 0.3s ease-out; }
         .msg.user { background:var(--accent-color); color:#fff; align-self:flex-end; border-bottom-right-radius:4px; }
-        .msg.ai { background:#0f172a; color:var(--text-main); border:1px solid var(--border-color); align-self:flex-start; border-bottom-left-radius:4px; }
-        .msg.guide-ai { background:rgba(245, 158, 11, 0.12); border:1px solid rgba(245, 158, 11, 0.5); color:#fef08a; align-self:flex-start; }
+        .msg.ai { background:var(--card-bg); color:var(--text-main); border:1px solid var(--border-color); align-self:flex-start; border-bottom-left-radius:4px; }
+        .msg.guide-ai { background:rgba(245, 158, 11, 0.12); border:1px solid rgba(245, 158, 11, 0.5); color:var(--gold-color); align-self:flex-start; }
         .msg.error { background:rgba(239, 68, 68, 0.15); border:1px solid #ef4444; color:#fca5a5; align-self:center; width:100%; text-align:center; }
         .msg-image { max-width:100%; border-radius:12px; margin-top:8px; border:1px solid var(--border-color); }
 
         @keyframes fadeInSlide { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
+        @keyframes fadeIn { from { opacity:0; } to { opacity:1; } }
+
+        .mindmap-box { background:var(--chat-bg); border:1px dashed var(--accent-color); border-radius:12px; padding:12px; margin-top:8px; font-size:12.5px; line-height:1.6; }
+        .notes-card { background:rgba(16, 185, 129, 0.08); border:1px solid rgba(16, 185, 129, 0.3); border-radius:12px; padding:12px; margin-top:8px; }
 
         /* AI TOOLS POPUP MENU (+) */
         .ai-tools-menu {
-            display:none; position:absolute; bottom:60px; left:10px; background:#0f172a;
+            display:none; position:absolute; bottom:60px; left:10px; background:var(--card-bg);
             border:1px solid var(--border-color); border-radius:16px; padding:8px;
-            box-shadow:0 15px 35px rgba(0,0,0,0.8); z-index:500; width:260px; flex-direction:column; gap:4px;
+            box-shadow:0 15px 35px rgba(0,0,0,0.5); z-index:500; width:260px; flex-direction:column; gap:4px;
         }
-        .tool-btn { display:flex; align-items:center; gap:10px; padding:9px 12px; border-radius:10px; background:transparent; border:none; color:#fff; font-size:12px; cursor:pointer; text-align:left; transition:0.2s; }
+        .tool-btn { display:flex; align-items:center; gap:10px; padding:9px 12px; border-radius:10px; background:transparent; border:none; color:var(--text-main); font-size:12px; cursor:pointer; text-align:left; transition:0.2s; }
         .tool-btn:hover { background:rgba(37, 99, 235, 0.2); color:var(--accent-color); }
 
-        /* CHAT INPUT BAR STAYS ALWAYS VISIBLE ABOVE KEYBOARD */
-        .chat-input-bar { display:flex; align-items:center; background:#0f172a; border:1px solid var(--border-color); border-radius:16px; padding:5px 6px 5px 10px; gap:6px; position:relative; flex-shrink:0; }
-        .chat-input-bar input[type="text"] { flex:1; background:transparent; border:none; color:#fff; outline:none; font-size:13.5px; }
+        /* CHAT INPUT BAR */
+        .chat-input-bar { display:flex; align-items:center; background:var(--card-bg); border:1px solid var(--border-color); border-radius:16px; padding:5px 6px 5px 10px; gap:6px; position:relative; flex-shrink:0; }
+        .chat-input-bar input[type="text"] { flex:1; background:transparent; border:none; color:var(--text-main); outline:none; font-size:13.5px; }
         .action-icon-btn { background:rgba(255,255,255,0.06); color:var(--text-muted); border:1px solid var(--border-color); width:36px; height:36px; border-radius:10px; display:flex; justify-content:center; align-items:center; cursor:pointer; transition:0.2s; }
-        .action-icon-btn:hover { color:#fff; background:rgba(255,255,255,0.12); }
+        .action-icon-btn:hover { color:var(--text-main); background:rgba(255,255,255,0.12); }
         .send-btn { background:var(--accent-color); color:#fff; border:none; width:36px; height:36px; border-radius:10px; display:flex; justify-content:center; align-items:center; cursor:pointer; }
 
-        #imagePreview { display:none; padding:6px 12px; background:#0f172a; border-radius:10px; font-size:12px; color:var(--accent-color); margin-bottom:8px; align-items:center; justify-content:space-between; flex-shrink:0; }
+        #imagePreview { display:none; padding:6px 12px; background:var(--card-bg); border-radius:10px; font-size:12px; color:var(--accent-color); margin-bottom:8px; align-items:center; justify-content:space-between; flex-shrink:0; }
 
-        /* SIDE DRAWER MENU WITH REAL STUDENT PROFILE & STREAK */
+        /* SIDE DRAWER MENU WITH EDIT PROFILE & THEME TOGGLE */
         .drawer-overlay { position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.75); z-index:1000; display:none; }
-        .drawer { position:fixed; top:0; left:-300px; width:300px; height:100%; background:#0f172a; border-right:1px solid var(--border-color); z-index:1001; transition:0.3s; padding:18px; display:flex; flex-direction:column; overflow-y:auto; }
+        .drawer { position:fixed; top:0; left:-310px; width:310px; height:100%; background:var(--card-bg); border-right:1px solid var(--border-color); z-index:1001; transition:0.3s; padding:18px; display:flex; flex-direction:column; overflow-y:auto; }
         .drawer.open { left:0; }
         .drawer-header { display:flex; justify-content:space-between; align-items:center; padding-bottom:12px; border-bottom:1px solid var(--border-color); margin-bottom:12px; }
         
-        .profile-card { background:linear-gradient(135deg, rgba(37, 99, 235, 0.2), rgba(245, 158, 11, 0.15)); border:1px solid var(--border-color); border-radius:16px; padding:14px; margin-bottom:14px; text-align:left; }
+        /* STUDENT PROFILE CARD WITH EDIT & PHOTO UPLOAD */
+        .profile-card { background:linear-gradient(135deg, rgba(37, 99, 235, 0.2), rgba(245, 158, 11, 0.15)); border:1px solid var(--border-color); border-radius:16px; padding:14px; margin-bottom:14px; text-align:left; position:relative; }
         .profile-header { display:flex; align-items:center; gap:12px; margin-bottom:8px; }
-        .profile-avatar { width:42px; height:42px; border-radius:50%; background:var(--accent-color); color:#fff; display:flex; justify-content:center; align-items:center; font-weight:800; font-size:16px; border: 2px solid rgba(255,255,255,0.2); }
+        
+        .profile-avatar-box { position:relative; width:46px; height:46px; }
+        .profile-avatar-img { width:100%; height:100%; border-radius:50%; object-fit:cover; border:2px solid var(--accent-color); }
+        .profile-avatar-initial { width:100%; height:100%; border-radius:50%; background:var(--accent-color); color:#fff; display:flex; justify-content:center; align-items:center; font-weight:800; font-size:18px; border:2px solid rgba(255,255,255,0.2); }
+        .avatar-upload-icon { position:absolute; bottom:-2px; right:-2px; background:var(--gold-color); color:#000; width:18px; height:18px; border-radius:50%; font-size:10px; display:flex; justify-content:center; align-items:center; cursor:pointer; }
+
         .streak-badge { display:inline-flex; align-items:center; gap:4px; background:rgba(245, 158, 11, 0.2); border:1px solid rgba(245, 158, 11, 0.4); color:var(--gold-color); font-size:10.5px; font-weight:700; padding:3px 8px; border-radius:12px; margin-top:4px; }
+
+        .edit-profile-btn { position:absolute; top:12px; right:12px; color:var(--text-muted); font-size:13px; cursor:pointer; }
+        .edit-profile-btn:hover { color:var(--accent-color); }
 
         .drawer-item { padding:11px 12px; border-radius:10px; color:var(--text-main); font-size:12.5px; display:flex; align-items:center; gap:12px; cursor:pointer; transition:0.2s; margin-bottom:6px; }
         .drawer-item:hover { background:rgba(255,255,255,0.06); }
 
         .history-title { font-size:11px; font-weight:700; color:var(--text-muted); text-transform:uppercase; margin:12px 0 6px 4px; }
         .history-list { display:flex; flex-direction:column; gap:6px; overflow-y:auto; max-height:160px; }
-        .history-item { font-size:12px; color:var(--text-muted); padding:8px 10px; border-radius:8px; background:#020617; border:1px solid var(--border-color); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; cursor:pointer; }
-        .history-item:hover { color:#fff; border-color:var(--accent-color); }
+        .history-item { font-size:12px; color:var(--text-muted); padding:8px 10px; border-radius:8px; background:var(--chat-bg); border:1px solid var(--border-color); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; cursor:pointer; }
+        .history-item:hover { color:var(--text-main); border-color:var(--accent-color); }
 
         /* PRICING MODAL */
         .modal-overlay { position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); z-index:2000; display:none; justify-content:center; align-items:center; padding:16px; }
-        .modal-card { background:#0f172a; border:1px solid var(--border-color); border-radius:20px; padding:22px; max-width:480px; width:100%; text-align:center; position:relative; max-height:92vh; display:flex; flex-direction:column; }
+        .modal-card { background:var(--card-bg); border:1px solid var(--border-color); border-radius:20px; padding:22px; max-width:480px; width:100%; text-align:center; position:relative; max-height:92vh; display:flex; flex-direction:column; }
         
         .pricing-list { display:flex; flex-direction:column; gap:8px; margin:12px 0; text-align:left; overflow-y:auto; padding-right:4px; max-height:360px; }
         .price-category-label { font-size:11px; font-weight:800; color:var(--accent-color); text-transform:uppercase; letter-spacing:0.5px; margin:8px 0 4px 2px; }
-        .price-item { background:#020617; border:1px solid var(--border-color); padding:10px 12px; border-radius:10px; display:flex; justify-content:space-between; align-items:center; cursor:pointer; transition:0.2s; }
+        .price-item { background:var(--chat-bg); border:1px solid var(--border-color); padding:10px 12px; border-radius:10px; display:flex; justify-content:space-between; align-items:center; cursor:pointer; transition:0.2s; }
         .price-item:hover, .price-item.selected { border-color:var(--accent-color); background:rgba(37, 99, 235, 0.18); }
-        .price-item .plan-name { font-size:12px; font-weight:600; color:#fff; }
+        .price-item .plan-name { font-size:12px; font-weight:600; color:var(--text-main); }
         .price-item .plan-cost { font-size:12.5px; font-weight:800; color:var(--success-color); }
 
         .pro-banner { background:linear-gradient(135deg, rgba(245, 158, 11, 0.25), rgba(37, 99, 235, 0.25)); border:1px solid rgba(245, 158, 11, 0.6); border-radius:12px; padding:12px; margin-bottom:8px; text-align:left; }
 
-        /* FOOTER */
-        footer { background:#020617; border-top:1px solid var(--border-color); padding:12px; text-align:center; font-size:11px; color:var(--text-muted); margin-top:auto; width:100%; flex-shrink:0; }
-        .support-box { background:#0f172a; border:1px solid var(--border-color); border-radius:12px; padding:8px; margin:4px auto; max-width:400px; display:flex; justify-content:center; gap:14px; }
-        .support-box a { color:#fff; text-decoration:none; font-size:11.5px; font-weight:600; display:flex; align-items:center; gap:6px; }
-        .dev-socials { display:flex; justify-content:center; gap:16px; margin:6px 0; }
-        .dev-socials a { color:var(--text-muted); font-size:15px; transition:0.2s; }
-        .dev-socials a:hover { color:#fff; }
+        /* EDIT PROFILE MODAL */
+        #editProfileModal .modal-card { text-align:left; }
+
+        /* FOOTER CLEARED UP FOR CLEAN CHAT SCREEN */
+        footer { display:none; }
     </style>
 </head>
 <body>
@@ -244,6 +278,8 @@
                 <i class="fa-solid fa-eye pwd-toggle" id="pwdToggle" onclick="togglePassword()"></i>
             </div>
 
+            <span class="forgot-link" onclick="handleForgotPassword()"><i class="fa-solid fa-key"></i> Forgot Password?</span>
+
             <button class="btn-primary" id="authSubmitBtn" onclick="handleAuth()">OPEN LEARNING PORTAL</button>
         </div>
     </div>
@@ -257,15 +293,21 @@
                     <img src="./logo.png" alt="Logo" onerror="this.src='https://raw.githubusercontent.com/yuviyadav16/ticbull-academy/main/logo.png'">
                 </div>
                 <div>
-                    <strong style="color:#fff; font-size:13.5px;" id="portalHeaderName">TicBull Academy</strong>
-                    <p style="font-size:9.5px; color:var(--text-muted);">AI Tutor Engine v7.5</p>
+                    <strong style="color:var(--text-main); font-size:13.5px;" id="portalHeaderName">TicBull Academy</strong>
+                    <p style="font-size:9.5px; color:var(--text-muted);">AI Tutor Engine v8.0</p>
                 </div>
             </div>
             <span class="user-badge" onclick="openSubscriptionModal()"><i class="fa-solid fa-crown"></i> <span id="badgePlanText">Class 12 Science Active</span></span>
         </div>
 
-        <div class="category-grid">
-            <select id="boardSelect">
+        <!-- COLLAPSIBLE COURSE BAR FOR BIGGER CLEAN CHAT SCREEN -->
+        <div class="course-bar-toggle" onclick="toggleCourseSelectors()">
+            <span id="activeCourseLabel"><i class="fa-solid fa-sliders"></i> Course: CBSE | Class 12 | Science (PCM/PCB)</span>
+            <i class="fa-solid fa-chevron-down" id="courseToggleIcon"></i>
+        </div>
+
+        <div class="category-grid" id="categoryGrid">
+            <select id="boardSelect" onchange="updateCourseLabel()">
                 <option value="CBSE Board">CBSE Board</option>
                 <option value="Bihar Board (BSEB)">Bihar Board (BSEB)</option>
                 <option value="UP Board">UP Board</option>
@@ -288,7 +330,7 @@
                 <option value="Coding & AI Skills">Coding, Python & AI Skills</option>
             </select>
 
-            <select id="classSelect">
+            <select id="classSelect" onchange="updateCourseLabel()">
                 <option value="Class 12">Class 12th</option>
                 <option value="Class 11">Class 11th</option>
                 <option value="Class 10">Class 10th</option>
@@ -297,7 +339,7 @@
                 <option value="Skill & Business Learner">Skill & Business Aspirant</option>
             </select>
 
-            <select id="streamSelect">
+            <select id="streamSelect" onchange="updateCourseLabel()">
                 <option value="Science (PCM/PCB)">Science (PCM/PCB)</option>
                 <option value="Commerce">Commerce</option>
                 <option value="Arts / Humanities">Arts / Humanities</option>
@@ -312,8 +354,8 @@
         </div>
 
         <div class="active-course-chip" id="activeCourseChip">
-            <span><i class="fa-solid fa-lock"></i> Purchased Plan: Class 12 Science (PCM/PCB)</span>
-            <span style="font-size:10px; color:#10b981;">Access Unlocked</span>
+            <span><i class="fa-solid fa-lock"></i> Unlocked Pass: Class 12 Science (PCM/PCB)</span>
+            <span style="font-size:10px; color:var(--success-color);">Access Active</span>
         </div>
 
         <div class="chat-container" id="chatBox">
@@ -354,22 +396,28 @@
         </div>
     </div>
 
-    <!-- SIDE DRAWER MENU WITH REAL STUDENT PROFILE & STREAK -->
+    <!-- SIDE DRAWER MENU WITH REAL PROFILE, EDIT, THEME & SOCIALS -->
     <div class="drawer-overlay" id="drawerOverlay" onclick="toggleDrawer()"></div>
     <div class="drawer" id="drawer">
         <div class="drawer-header">
-            <strong style="color:#fff; font-size:15px;">Menu & Profile</strong>
+            <strong style="color:var(--text-main); font-size:15px;">Menu & Profile</strong>
             <i class="fa-solid fa-xmark" style="color:var(--text-muted); cursor:pointer;" onclick="toggleDrawer()"></i>
         </div>
 
-        <!-- DYNAMIC REAL STUDENT PROFILE & STREAK CARD -->
+        <!-- REAL STUDENT PROFILE CARD WITH EDIT & AVATAR UPLOAD -->
         <div class="profile-card">
+            <i class="fa-solid fa-pen-to-square edit-profile-btn" onclick="openEditProfileModal()" title="Edit Profile"></i>
             <div class="profile-header">
-                <div class="profile-avatar" id="drawerAvatar">U</div>
+                <div class="profile-avatar-box">
+                    <img src="" id="drawerAvatarImg" class="profile-avatar-img" style="display:none;" alt="Avatar">
+                    <div class="profile-avatar-initial" id="drawerAvatarInitial">S</div>
+                    <label class="avatar-upload-icon" for="avatarUploadInput" title="Upload Photo"><i class="fa-solid fa-camera"></i></label>
+                    <input type="file" id="avatarUploadInput" accept="image/*" style="display:none;" onchange="handleAvatarUpload(event)">
+                </div>
                 <div>
-                    <strong style="color:#fff; font-size:13.5px;" id="drawerStudentName">User Student</strong>
-                    <div style="font-size:10px; color:var(--text-muted);" id="drawerStudentEmail">email@ticbull.com</div>
-                    <div style="font-size:10px; color:var(--accent-color); font-weight:600; margin-top:2px;" id="drawerStudentAge">Age: Registered Student</div>
+                    <strong style="color:#fff; font-size:13.5px;" id="drawerStudentName">Registered Student</strong>
+                    <div style="font-size:10px; color:var(--text-muted);" id="drawerStudentEmail">student@ticbull.com</div>
+                    <div style="font-size:10px; color:var(--accent-color); font-weight:600; margin-top:2px;" id="drawerStudentAge">Age: Active Learner</div>
                 </div>
             </div>
             <div style="display:flex; justify-content:space-between; align-items:center;">
@@ -378,6 +426,7 @@
             </div>
         </div>
         
+        <div class="drawer-item" onclick="toggleTheme()"><i class="fa-solid fa-circle-half-stroke" style="color:var(--gold-color);"></i> <span id="themeToggleText">Switch to Light Mode</span></div>
         <div class="drawer-item" onclick="triggerAppGuideBot()"><i class="fa-solid fa-robot" style="color:#f59e0b;"></i> 🤖 TicBull Guide Bot (App Info)</div>
         <div class="drawer-item" onclick="openSubscriptionModal()"><i class="fa-solid fa-crown" style="color:#f59e0b;"></i> Upgrade or Switch Course Pass</div>
         <div class="drawer-item" onclick="clearChat()"><i class="fa-solid fa-trash-can" style="color:#ef4444;"></i> Clear Current Chat</div>
@@ -402,6 +451,30 @@
                 <a href="https://t.me/mryuviyadav" target="_blank" style="color:#0088cc;"><i class="fa-brands fa-telegram"></i></a>
                 <a href="https://facebook.com/mryuviyadav" target="_blank" style="color:#1877f2;"><i class="fa-brands fa-facebook"></i></a>
             </div>
+            <div style="font-size:10px; color:var(--text-muted); margin-top:6px;">Official Email: ticbull.support@gmail.com</div>
+        </div>
+    </div>
+
+    <!-- EDIT PROFILE MODAL -->
+    <div class="modal-overlay" id="editProfileModal">
+        <div class="modal-card">
+            <i class="fa-solid fa-xmark" style="position:absolute; right:16px; top:16px; color:var(--text-muted); cursor:pointer;" onclick="closeEditProfileModal()"></i>
+            <h3 style="color:var(--text-main); font-size:17px; margin-bottom:12px;"><i class="fa-solid fa-user-pen"></i> Edit Profile Details</h3>
+            
+            <div class="input-group">
+                <i class="fa-regular fa-user left-icon"></i>
+                <input type="text" id="editStudentName" placeholder="Full Student Name">
+            </div>
+            <div class="input-group">
+                <i class="fa-regular fa-envelope left-icon"></i>
+                <input type="email" id="editStudentEmail" placeholder="Email Address">
+            </div>
+            <div class="input-group">
+                <i class="fa-regular fa-calendar left-icon"></i>
+                <input type="date" id="editStudentDob" placeholder="Date of Birth">
+            </div>
+
+            <button class="btn-primary" onclick="saveProfileChanges()">SAVE CHANGES</button>
         </div>
     </div>
 
@@ -409,7 +482,7 @@
     <div class="modal-overlay" id="subModal">
         <div class="modal-card">
             <i class="fa-solid fa-xmark" style="position:absolute; right:16px; top:16px; color:var(--text-muted); cursor:pointer;" onclick="closeSubscriptionModal()"></i>
-            <h3 style="color:#fff; font-size:18px;">🎓 TicBull Course Pass Pricing</h3>
+            <h3 style="color:var(--text-main); font-size:18px;">🎓 TicBull Course Pass Pricing</h3>
             <p style="font-size:11.5px; color:var(--text-muted); margin-top:2px;">Single course lein ya Pro Pass se sabhi unlocked rakhein</p>
 
             <div class="pro-banner" onclick="selectPlan('TicBull Pro (All Access)', 2999)" style="cursor:pointer;">
@@ -457,26 +530,6 @@
         </div>
     </div>
 
-    <!-- FOOTER -->
-    <footer>
-        <div style="margin-bottom:4px; font-weight:700; color:#fff;">TicBull Official Support Channels:</div>
-        <div class="support-box">
-            <a href="https://www.instagram.com/ticbull" target="_blank" style="color:#e1306c;"><i class="fa-brands fa-instagram"></i> Instagram Support</a>
-            <span style="color:var(--border-color);">|</span>
-            <a href="https://t.me/ticbullteam" target="_blank" style="color:#0088cc;"><i class="fa-brands fa-telegram"></i> Telegram Team</a>
-        </div>
-
-        <div style="margin-top:6px; font-weight:600; color:var(--text-muted);">Developer & Founder: <b style="color:#fff;">MrYuviYadav</b></div>
-        <div class="dev-socials">
-            <a href="https://youtube.com/@mryuviyadav" target="_blank" style="color:#ff0000;" title="YouTube"><i class="fa-brands fa-youtube"></i></a>
-            <a href="https://www.instagram.com/mryuvi_yadav" target="_blank" style="color:#e1306c;" title="Instagram"><i class="fa-brands fa-instagram"></i></a>
-            <a href="https://x.com/mryuviyadav" target="_blank" title="X / Twitter"><i class="fa-brands fa-x-twitter"></i></a>
-            <a href="https://t.me/mryuviyadav" target="_blank" style="color:#0088cc;" title="Telegram"><i class="fa-brands fa-telegram"></i></a>
-            <a href="https://facebook.com/mryuviyadav" target="_blank" style="color:#1877f2;" title="Facebook"><i class="fa-brands fa-facebook"></i></a>
-        </div>
-        <p style="margin-top:4px;">Official Email: <a href="mailto:ticbull.support@gmail.com" style="color:var(--accent-color); text-decoration:none;">ticbull.support@gmail.com</a></p>
-    </footer>
-
     <script>
         let currentAuthMode = 'login';
         let purchasedPlanName = 'Class 12 Science';
@@ -484,6 +537,7 @@
         let selectedPlanName = 'Class 12 Science';
         let selectedPlanPrice = 999;
         let selectedImageBase64 = null;
+        let currentStudentData = { name: '', email: '', dob: '', photo: '' };
 
         // 10 SECONDS SPLASH SCREEN TIMING
         window.addEventListener('load', () => {
@@ -494,10 +548,8 @@
             }, 10000);
         });
 
-        // HANDLE MOBILE KEYBOARD AUTO-SCROLL
-        window.addEventListener('resize', () => {
-            scrollToBottom();
-        });
+        // KEYBOARD RESIZING & SCROLL
+        window.addEventListener('resize', () => scrollToBottom());
 
         function scrollToBottom() {
             setTimeout(() => {
@@ -511,6 +563,12 @@
             pwdInput.type = pwdInput.type === 'password' ? 'text' : 'password';
         }
 
+        function handleForgotPassword() {
+            const email = document.getElementById('email').value;
+            if(!email) { alert("Please enter your Registered Email ID first!"); return; }
+            alert(`A Password Reset Link has been sent to: ${email}`);
+        }
+
         function switchAuth(mode) {
             currentAuthMode = mode;
             document.getElementById('tab-login').classList.toggle('active', mode === 'login');
@@ -519,15 +577,34 @@
             document.getElementById('authSubmitBtn').innerText = mode === 'login' ? 'OPEN LEARNING PORTAL' : 'CREATE STUDENT ACCOUNT';
         }
 
+        function toggleTheme() {
+            document.body.classList.toggle('light-theme');
+            const isLight = document.body.classList.contains('light-theme');
+            document.getElementById('themeToggleText').innerText = isLight ? 'Switch to Dark Mode' : 'Switch to Light Mode';
+        }
+
+        function toggleCourseSelectors() {
+            const grid = document.getElementById('categoryGrid');
+            const icon = document.getElementById('courseToggleIcon');
+            grid.classList.toggle('show');
+            icon.classList.toggle('fa-chevron-up', grid.classList.contains('show'));
+            icon.classList.toggle('fa-chevron-down', !grid.classList.contains('show'));
+        }
+
+        function updateCourseLabel() {
+            const board = document.getElementById('boardSelect').value;
+            const cls = document.getElementById('classSelect').value;
+            const stream = document.getElementById('streamSelect').value;
+            document.getElementById('activeCourseLabel').innerHTML = `<i class="fa-solid fa-sliders"></i> Course: ${board} | ${cls} | ${stream}`;
+        }
+
         function calculateAge(dobString) {
             if(!dobString) return null;
             const birthDate = new Date(dobString);
             const today = new Date();
             let age = today.getFullYear() - birthDate.getFullYear();
             const monthDiff = today.getMonth() - birthDate.getMonth();
-            if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
-                age--;
-            }
+            if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) age--;
             return age;
         }
 
@@ -538,31 +615,79 @@
 
             if(!email) { alert("Please enter Email ID!"); return; }
 
-            // UPDATE DYNAMIC STUDENT PROFILE
-            if(name) {
-                document.getElementById('portalHeaderName').innerText = `Welcome, ${name.split(' ')[0]}`;
-                document.getElementById('drawerStudentName').innerText = name;
-                document.getElementById('drawerStudentEmail').innerText = email;
-                document.getElementById('drawerAvatar').innerText = name.charAt(0).toUpperCase();
-                
-                const userAge = calculateAge(dob);
-                if(userAge !== null) {
-                    document.getElementById('drawerStudentAge').innerText = `Age: ${userAge} Years Old`;
-                } else {
-                    document.getElementById('drawerStudentAge').innerText = `Registered Student`;
-                }
+            currentStudentData.email = email;
+            if(name) currentStudentData.name = name;
+            if(dob) currentStudentData.dob = dob;
 
-                document.getElementById('welcomeAiMessage').innerHTML = `<b>Welcome ${name}! 🚀</b><br>Aapka **Class 12 Science** Pass active hai. Below \`+\` icon click karke Notes, MindMap, MCQs, AI Diagram Image, Video ya Skills Guide generate karo!`;
-            } else if(email) {
-                const emailPrefix = email.split('@')[0];
-                document.getElementById('drawerStudentName').innerText = emailPrefix;
-                document.getElementById('drawerStudentEmail').innerText = email;
-                document.getElementById('drawerAvatar').innerText = emailPrefix.charAt(0).toUpperCase();
-                document.getElementById('drawerStudentAge').innerText = `Registered Student`;
-            }
+            updateProfileUI();
 
             document.getElementById('auth-screen').style.display = 'none';
             document.getElementById('main-dashboard').style.display = 'flex';
+        }
+
+        function updateProfileUI() {
+            const name = currentStudentData.name;
+            const email = currentStudentData.email;
+            const dob = currentStudentData.dob;
+
+            if(name) {
+                document.getElementById('portalHeaderName').innerText = `Welcome, ${name.split(' ')[0]}`;
+                document.getElementById('drawerStudentName').innerText = name;
+                document.getElementById('drawerAvatarInitial').innerText = name.charAt(0).toUpperCase();
+            } else if(email) {
+                const emailPrefix = email.split('@')[0];
+                document.getElementById('drawerStudentName').innerText = emailPrefix;
+                document.getElementById('drawerAvatarInitial').innerText = emailPrefix.charAt(0).toUpperCase();
+            }
+
+            if(email) document.getElementById('drawerStudentEmail').innerText = email;
+
+            const userAge = calculateAge(dob);
+            if(userAge !== null) {
+                document.getElementById('drawerStudentAge').innerText = `Age: ${userAge} Years Old`;
+            } else {
+                document.getElementById('drawerStudentAge').innerText = `Active Student`;
+            }
+
+            if(currentStudentData.photo) {
+                const img = document.getElementById('drawerAvatarImg');
+                img.src = currentStudentData.photo;
+                img.style.display = 'block';
+                document.getElementById('drawerAvatarInitial').style.display = 'none';
+            }
+        }
+
+        function openEditProfileModal() {
+            document.getElementById('editStudentName').value = currentStudentData.name || '';
+            document.getElementById('editStudentEmail').value = currentStudentData.email || '';
+            document.getElementById('editStudentDob').value = currentStudentData.dob || '';
+            document.getElementById('editProfileModal').style.display = 'flex';
+        }
+
+        function closeEditProfileModal() {
+            document.getElementById('editProfileModal').style.display = 'none';
+        }
+
+        function saveProfileChanges() {
+            currentStudentData.name = document.getElementById('editStudentName').value;
+            currentStudentData.email = document.getElementById('editStudentEmail').value;
+            currentStudentData.dob = document.getElementById('editStudentDob').value;
+
+            updateProfileUI();
+            closeEditProfileModal();
+            alert("Profile details updated successfully!");
+        }
+
+        function handleAvatarUpload(event) {
+            const file = event.target.files[0];
+            if(file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    currentStudentData.photo = e.target.result;
+                    updateProfileUI();
+                };
+                reader.readAsDataURL(file);
+            }
         }
 
         function toggleDrawer() {
@@ -602,7 +727,7 @@
                     • <b>App Purpose:</b> AI Powered All-in-One Learning, Exam Engine & Creator Skills Portal.<br>
                     • <b>Key Features:</b> Detailed Notes, MindMaps, Photo Vision Doubt Solver, MCQs, AI Diagram & Video Explanations.<br>
                     • <b>Courses Supported:</b> CBSE, Bihar, UP Board, BPSC, NEET, JEE, UPSC, SSC, Defense, & Social Media/Business Skills.<br>
-                    • <b>How to Use:</b> Select your Board/Class/Skill from top dropdowns, ask doubts or click <b>(+)</b> for instant tools!
+                    • <b>How to Use:</b> Click top bar to change Course/Class/Skill, ask doubts or click <b>(+)</b> for instant tools!
                 </div>`;
             scrollToBottom();
         }
@@ -622,8 +747,8 @@
             
             document.getElementById('badgePlanText').innerText = `${purchasedPlanName} Active`;
             document.getElementById('activeCourseChip').innerHTML = 
-                `<span><i class="fa-solid fa-lock"></i> Purchased Plan: ${purchasedPlanName}</span>
-                 <span style="font-size:10px; color:#10b981;">Access Unlocked</span>`;
+                `<span><i class="fa-solid fa-lock"></i> Unlocked Pass: ${purchasedPlanName}</span>
+                 <span style="font-size:10px; color:var(--success-color);">Access Active</span>`;
             
             closeSubscriptionModal();
             alert(`🎉 ${purchasedPlanName} Pass Activated! Material unlocked.`);
