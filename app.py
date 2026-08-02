@@ -85,8 +85,8 @@ Rules: Out of syllabus sawal mana kar dena. Kabhie mat kehna ki tu AI ya Gemini 
         payload = {"contents": [{"parts": [{"text": full_prompt}]}]}
         headers = {"Content-Type": "application/json"}
         
-        # 15 seconds timeout taaki app "Thinking" par na ruke
-        response = requests.post(api_url, json=payload, headers=headers, timeout=15)
+        # Timeout badha kar 30 seconds kar diya hai
+        response = requests.post(api_url, json=payload, headers=headers, timeout=30)
         res_data = response.json()
         
         if "candidates" in res_data:
@@ -94,10 +94,12 @@ Rules: Out of syllabus sawal mana kar dena. Kabhie mat kehna ki tu AI ya Gemini 
             reply_text = reply_text.replace("Gemini", "TicBull Engine").replace("Google", "TicBull").replace("gemini", "ticbull")
             return jsonify({"success": True, "reply": reply_text})
         else:
-            return jsonify({"success": False, "message": "AI Server busy, try again."}), 500
+            # Agar phir bhi koi error aaye toh fallback message me asli error dikhayenge
+            err_detail = res_data.get("error", {}).get("message", "Unknown API error")
+            return jsonify({"success": False, "message": f"AI Error: {err_detail}"}), 500
             
     except requests.exceptions.Timeout:
-        return jsonify({"success": False, "message": "Request Timeout! Server slow hai."}), 500
+        return jsonify({"success": False, "message": "Server took too long to respond. Try again!"}), 500
     except Exception as e:
         return jsonify({"success": False, "message": f"Error: {str(e)}"}), 500
 
