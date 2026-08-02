@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>TicBull Academy - AI Smart Exam & Study Engine</title>
+    <title>TicBull Academy - AI Smart Learning Engine</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
         :root {
             --bg-color: #060709;
             --card-bg: rgba(15, 17, 23, 0.95);
             --accent-color: #2563eb;
-            --accent-glow: rgba(37, 99, 235, 0.3);
+            --accent-glow: rgba(37, 99, 235, 0.35);
             --text-main: #f3f4f6;
             --text-muted: #9ca3af;
             --border-color: rgba(255, 255, 255, 0.08);
@@ -21,7 +21,7 @@
         * { margin:0; padding:0; box-sizing:border-box; font-family:-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; -webkit-tap-highlight-color: transparent; }
         body { background: var(--bg-color); color: var(--text-main); display:flex; flex-direction:column; min-height:100vh; overflow-x:hidden; }
 
-        /* SPLASH SCREEN WITH REAL BULL LOGO */
+        /* SPLASH SCREEN */
         #splash-screen {
             position: fixed; top:0; left:0; width:100%; height:100%;
             background: #000; display:flex; flex-direction:column;
@@ -39,13 +39,13 @@
             background: #000; border: 2px solid rgba(255,255,255,0.15);
             display:flex; justify-content:center; align-items:center; overflow:hidden;
         }
-        .splash-logo img { width:85%; height:85%; object-fit:contain; }
+        .splash-logo svg { width:70%; height:70%; fill:#fff; }
         .splash-title { margin-top:20px; font-size:24px; font-weight:800; letter-spacing:1px; color:#fff; }
         .developer-tag { margin-top:6px; font-size:12px; color: var(--accent-color); font-weight:600; }
 
         @keyframes pulseGlow { 0% { transform: scale(0.85); opacity: 0.5; } 100% { transform: scale(1.15); opacity: 0.9; } }
 
-        /* AUTH SCREEN */
+        /* AUTH CARD */
         .auth-container { display:flex; flex-direction:column; align-items:center; justify-content:center; flex:1; padding:20px; width:100%; }
         .auth-card {
             background: var(--card-bg); backdrop-filter: blur(16px);
@@ -58,7 +58,7 @@
             display:flex; justify-content:center; align-items:center; margin-bottom:10px;
             box-shadow: 0 8px 25px rgba(0,0,0,0.5); overflow:hidden;
         }
-        .brand-icon-box img { width:85%; height:85%; object-fit:contain; }
+        .brand-icon-box svg { width:70%; height:70%; fill:#fff; }
 
         .auth-tabs { display:flex; background:#111318; padding:4px; border-radius:12px; border:1px solid var(--border-color); margin-bottom:16px; }
         .auth-tab { flex:1; padding:10px; font-size:13px; font-weight:600; color:var(--text-muted); border-radius:8px; cursor:pointer; transition:0.3s; }
@@ -84,12 +84,14 @@
         .header-brand { display:flex; align-items:center; gap:10px; }
         .menu-btn { background:none; border:none; color:#fff; font-size:18px; cursor:pointer; padding:6px; }
         .header-logo { width:38px; height:38px; border-radius:50%; background:#000; border:1px solid rgba(255,255,255,0.1); display:flex; justify-content:center; align-items:center; overflow:hidden; }
-        .header-logo img { width:85%; height:85%; object-fit:contain; }
+        .header-logo svg { width:70%; height:70%; fill:#fff; }
         .user-badge { background:rgba(245, 158, 11, 0.15); border:1px solid rgba(245, 158, 11, 0.3); color:var(--gold-color); padding:5px 10px; border-radius:20px; font-size:11px; font-weight:700; cursor:pointer; }
 
-        /* CATEGORY SELECTOR GRID */
+        /* CATEGORY SELECTORS GRID */
         .category-grid { display:grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap:8px; margin-bottom:10px; }
         select { width:100%; background:#111318; border:1px solid var(--border-color); color:#fff; padding:9px 10px; border-radius:10px; font-size:12px; outline:none; }
+
+        .active-course-chip { background:rgba(37, 99, 235, 0.12); border:1px solid var(--accent-color); border-radius:10px; padding:6px 10px; font-size:11px; color:var(--accent-color); font-weight:600; margin-bottom:10px; display:flex; align-items:center; justify-content:space-between; }
 
         /* CHAT CONTAINER */
         .chat-container {
@@ -110,27 +112,32 @@
 
         #imagePreview { display:none; padding:6px 12px; background:#13161c; border-radius:10px; font-size:12px; color:var(--accent-color); margin-bottom:8px; align-items:center; justify-content:space-between; }
 
-        /* SIDE DRAWER MENU */
-        .drawer-overlay { position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.7); z-index:1000; display:none; }
-        .drawer { position:fixed; top:0; left:-280px; width:280px; height:100%; background:#0d0e12; border-right:1px solid var(--border-color); z-index:1001; transition:0.3s; padding:20px; display:flex; flex-direction:column; }
+        /* SIDE DRAWER MENU & CHAT HISTORY */
+        .drawer-overlay { position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.75); z-index:1000; display:none; }
+        .drawer { position:fixed; top:0; left:-290px; width:290px; height:100%; background:#0d0e12; border-right:1px solid var(--border-color); z-index:1001; transition:0.3s; padding:20px; display:flex; flex-direction:column; }
         .drawer.open { left:0; }
-        .drawer-header { display:flex; justify-content:space-between; align-items:center; padding-bottom:16px; border-bottom:1px solid var(--border-color); margin-bottom:16px; }
-        .drawer-item { padding:12px; border-radius:10px; color:var(--text-main); font-size:13px; display:flex; align-items:center; gap:12px; cursor:pointer; transition:0.2s; margin-bottom:6px; }
+        .drawer-header { display:flex; justify-content:space-between; align-items:center; padding-bottom:14px; border-bottom:1px solid var(--border-color); margin-bottom:14px; }
+        .drawer-item { padding:11px 12px; border-radius:10px; color:var(--text-main); font-size:13px; display:flex; align-items:center; gap:12px; cursor:pointer; transition:0.2s; margin-bottom:6px; }
         .drawer-item:hover { background:rgba(255,255,255,0.05); }
 
-        /* SUBSCRIPTION PRICING MODAL */
+        .history-title { font-size:11px; font-weight:700; color:var(--text-muted); text-transform:uppercase; margin:14px 0 8px 4px; }
+        .history-list { display:flex; flex-direction:column; gap:6px; overflow-y:auto; max-height:220px; }
+        .history-item { font-size:12px; color:var(--text-muted); padding:8px 10px; border-radius:8px; background:#111318; border:1px solid var(--border-color); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; cursor:pointer; }
+        .history-item:hover { color:#fff; border-color:var(--accent-color); }
+
+        /* FULL SUBSCRIPTION PRICING MODAL */
         .modal-overlay { position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); z-index:2000; display:none; justify-content:center; align-items:center; padding:16px; }
-        .modal-card { background:#0f1117; border:1px solid var(--border-color); border-radius:20px; padding:22px; max-width:440px; width:100%; text-align:center; position:relative; max-height:90vh; overflow-y:auto; }
+        .modal-card { background:#0f1117; border:1px solid var(--border-color); border-radius:20px; padding:22px; max-width:460px; width:100%; text-align:center; position:relative; max-height:92vh; overflow-y:auto; }
         
-        .pricing-list { display:flex; flex-direction:column; gap:8px; margin:14px 0; text-align:left; max-height:210px; overflow-y:auto; padding-right:4px; }
+        .pricing-list { display:flex; flex-direction:column; gap:8px; margin:14px 0; text-align:left; max-height:260px; overflow-y:auto; padding-right:4px; }
         .price-item { background:#13161c; border:1px solid var(--border-color); padding:10px 12px; border-radius:10px; display:flex; justify-content:space-between; align-items:center; cursor:pointer; transition:0.2s; }
-        .price-item:hover, .price-item.selected { border-color:var(--accent-color); background:rgba(37, 99, 235, 0.1); }
-        .price-item .plan-name { font-size:12.5px; font-weight:600; color:#fff; }
-        .price-item .plan-cost { font-size:13px; font-weight:800; color:var(--success-color); }
+        .price-item:hover, .price-item.selected { border-color:var(--accent-color); background:rgba(37, 99, 235, 0.12); }
+        .price-item .plan-name { font-size:12px; font-weight:600; color:#fff; }
+        .price-item .plan-cost { font-size:12.5px; font-weight:800; color:var(--success-color); }
 
         .pro-banner { background:linear-gradient(135deg, rgba(245, 158, 11, 0.2), rgba(37, 99, 235, 0.2)); border:1px solid rgba(245, 158, 11, 0.5); border-radius:12px; padding:12px; margin-bottom:12px; text-align:left; }
 
-        /* FOOTER SUPPORT & SOCIALS */
+        /* FOOTER & SOCIALS */
         footer { background:#000; border-top:1px solid var(--border-color); padding:16px; text-align:center; font-size:11px; color:var(--text-muted); margin-top:auto; width:100%; }
         .support-box { background:#111318; border:1px solid var(--border-color); border-radius:12px; padding:10px; margin:8px auto; max-width:400px; display:flex; justify-content:center; gap:14px; }
         .support-box a { color:#fff; text-decoration:none; font-size:12px; font-weight:600; display:flex; align-items:center; gap:6px; }
@@ -141,12 +148,20 @@
 </head>
 <body>
 
-    <!-- ANIMATED SPLASH SCREEN WITH LOGO -->
+    <!-- VECTOR BULL LOGO SVG TEMPLATE -->
+    <svg style="display:none;">
+        <symbol id="bull-logo-icon" viewBox="0 0 24 24">
+            <path d="M12 2C8.5 2 6 4.5 6 7c0 2 1.5 3.5 3 4.5L9 15c0 1.5 1.5 3 3 3s3-1.5 3-3l0-3.5c1.5-1 3-2.5 3-4.5 0-2.5-2.5-5-6-5zm-4 5c0-1.5 1.5-3 4-3s4 1.5 4 3c0 1.2-.8 2.2-2 2.7V15c0 .6-.4 1-1 1s-1-.4-1-1V9.7C9.8 9.2 9 8.2 9 7z"/>
+            <path d="M4 5L2 3v4c0 2.2 1.8 4 4 4h1V9.5C5.8 9.2 4.5 8.2 4 7V5zm16 0v2c-.5 1.2-1.8 2.2-3 2.5V11h1c2.2 0 4-1.8 4-4V3l-2 2z"/>
+        </symbol>
+    </svg>
+
+    <!-- ANIMATED SPLASH SCREEN -->
     <div id="splash-screen">
         <div class="splash-logo-container">
             <div class="splash-logo-glow"></div>
             <div class="splash-logo">
-                <img src="./file_0000000051ac82068c717a68e826b86e" alt="TicBull Logo">
+                <svg><use href="#bull-logo-icon"/></svg>
             </div>
         </div>
         <div class="splash-title">TicBull Academy</div>
@@ -158,7 +173,7 @@
         <div class="auth-card">
             <div class="brand-header">
                 <div class="brand-icon-box">
-                    <img src="./file_0000000051ac82068c717a68e826b86e" alt="Logo">
+                    <svg><use href="#bull-logo-icon"/></svg>
                 </div>
                 <h2 style="font-size:20px; font-weight:800;">TicBull Academy</h2>
                 <p style="font-size:12px; color:var(--text-muted); margin-top:3px;">AI Student Portal & Exam Engine</p>
@@ -190,11 +205,11 @@
             <div class="header-brand">
                 <button class="menu-btn" onclick="toggleDrawer()"><i class="fa-solid fa-bars"></i></button>
                 <div class="header-logo">
-                    <img src="./file_0000000051ac82068c717a68e826b86e" alt="Logo">
+                    <svg><use href="#bull-logo-icon"/></svg>
                 </div>
                 <div>
                     <strong style="color:#fff; font-size:13.5px;">TicBull Academy</strong>
-                    <p style="font-size:9.5px; color:var(--text-muted);">AI Tutor Engine v3.0</p>
+                    <p style="font-size:9.5px; color:var(--text-muted);">AI Tutor Engine v4.0</p>
                 </div>
             </div>
             <span class="user-badge" onclick="openSubscriptionModal()"><i class="fa-solid fa-crown"></i> <span id="badgePlanText">Pro Pass Active</span></span>
@@ -202,34 +217,36 @@
 
         <!-- CATEGORIES SELECTOR GRID -->
         <div class="category-grid">
-            <select id="boardSelect">
+            <select id="boardSelect" onchange="updateCourseContext()">
                 <option value="CBSE Board">CBSE Board</option>
                 <option value="Bihar Board (BSEB)">Bihar Board (BSEB)</option>
                 <option value="UP Board">UP Board</option>
                 <option value="ICSE / ISC">ICSE / ISC Board</option>
                 <option value="NIOS Board">NIOS Board</option>
                 <option value="State Boards">Other State Boards</option>
-                <option value="NEET Exam">NEET Medical</option>
-                <option value="JEE Main/Adv">JEE Main / Advanced</option>
+                <option value="JEE Main">JEE Main Prep</option>
+                <option value="JEE Advanced">JEE Advanced Prep</option>
+                <option value="NEET Exam">NEET Medical Prep</option>
                 <option value="UPSC Civil Services">UPSC Civil Services</option>
                 <option value="CUET Exam">CUET Exam</option>
-                <option value="Banking & SSC">Banking & SSC</option>
+                <option value="SSC / Banking / Railway">SSC / Banking / Railway</option>
+                <option value="NDA / Defense">NDA / Defense Exams</option>
                 <option value="GATE / CAT / CLAT">GATE / CAT / CLAT / CA</option>
             </select>
 
-            <select id="classSelect">
+            <select id="classSelect" onchange="updateCourseContext()">
                 <option value="Class 12">Class 12th</option>
                 <option value="Class 11">Class 11th</option>
                 <option value="Class 10">Class 10th</option>
                 <option value="Class 9">Class 9th</option>
-                <option value="Competitive Exam">Competitive Aspirant</option>
+                <option value="Competitive Aspirant">Competitive Aspirant</option>
             </select>
 
-            <select id="streamSelect">
-                <option value="Science">Science (PCM/PCB)</option>
+            <select id="streamSelect" onchange="updateCourseContext()">
+                <option value="Science (PCM/PCB)">Science (PCM/PCB)</option>
                 <option value="Commerce">Commerce</option>
-                <option value="Arts">Arts / Humanities</option>
-                <option value="General">General / Competitive</option>
+                <option value="Arts / Humanities">Arts / Humanities</option>
+                <option value="General Studies">General / Competitive</option>
             </select>
 
             <select id="langSelect">
@@ -239,8 +256,13 @@
             </select>
         </div>
 
+        <div class="active-course-chip" id="activeCourseChip">
+            <span><i class="fa-solid fa-book-bookmark"></i> Active Context: CBSE Board | Class 12 | Science</span>
+            <span style="font-size:10px; opacity:0.8;">Locked Material</span>
+        </div>
+
         <div class="chat-container" id="chatBox">
-            <div class="msg ai">
+            <div class="msg ai" id="welcomeAiMsg">
                 <b>Welcome to TicBull Academy AI Engine! 🚀</b><br>
                 Main aapka Personal Tutor hoon. Apni Board, Class aur Stream chun kar koi bhi doubt pucho ya question image upload karo!
             </div>
@@ -257,22 +279,29 @@
             </label>
             <input type="file" id="photoInput" accept="image/*" style="display:none;" onchange="handleImageSelect(event)">
             
-            <input type="text" id="userInput" placeholder="Ask question or upload photo topic...">
+            <input type="text" id="userInput" placeholder="Ask syllabus question or upload photo topic...">
             
             <button class="send-btn" onclick="askAI()"><i class="fa-solid fa-paper-plane"></i></button>
         </div>
     </div>
 
-    <!-- SIDE DRAWER MENU -->
+    <!-- SIDE DRAWER MENU & CHAT HISTORY -->
     <div class="drawer-overlay" id="drawerOverlay" onclick="toggleDrawer()"></div>
     <div class="drawer" id="drawer">
         <div class="drawer-header">
             <strong style="color:#fff; font-size:15px;">Menu & Settings</strong>
             <i class="fa-solid fa-xmark" style="color:var(--text-muted); cursor:pointer;" onclick="toggleDrawer()"></i>
         </div>
-        <div class="drawer-item" onclick="openSubscriptionModal()"><i class="fa-solid fa-crown" style="color:#f59e0b;"></i> Student Pass & Pricing</div>
-        <div class="drawer-item" onclick="clearChat()"><i class="fa-solid fa-trash-can" style="color:#ef4444;"></i> Clear Chat History</div>
-        <div class="drawer-item"><i class="fa-solid fa-gear" style="color:var(--accent-color);"></i> AI Explanation Settings</div>
+        
+        <div class="drawer-item" onclick="openSubscriptionModal()"><i class="fa-solid fa-crown" style="color:#f59e0b;"></i> Course Pass & Pricing List</div>
+        <div class="drawer-item" onclick="clearChat()"><i class="fa-solid fa-trash-can" style="color:#ef4444;"></i> Clear Current Chat</div>
+
+        <div class="history-title"><i class="fa-solid fa-clock-rotate-left"></i> Recent Chat History:</div>
+        <div class="history-list" id="historyList">
+            <div class="history-item" onclick="loadHistory(this)">Animal Kingdom Explanation</div>
+            <div class="history-item" onclick="loadHistory(this)">Organic Chemistry Reactions</div>
+            <div class="history-item" onclick="loadHistory(this)">Class 10 Maths Trigonometry</div>
+        </div>
         
         <div style="margin-top:auto; border-top:1px solid var(--border-color); padding-top:14px;">
             <div style="font-size:11px; color:var(--text-muted); margin-bottom:8px;">TICBULL SUPPORT:</div>
@@ -281,55 +310,52 @@
         </div>
     </div>
 
-    <!-- SUBSCRIPTION PRICING MODAL -->
+    <!-- COMPLETE SUBSCRIPTION PRICING MODAL -->
     <div class="modal-overlay" id="subModal">
         <div class="modal-card">
             <i class="fa-solid fa-xmark" style="position:absolute; right:16px; top:16px; color:var(--text-muted); cursor:pointer;" onclick="closeSubscriptionModal()"></i>
-            <h3 style="color:#fff; font-size:18px;">🎓 TicBull Academy Pass</h3>
-            <p style="font-size:11.5px; color:var(--text-muted); margin-top:2px;">Select your preferred annual study plan</p>
+            <h3 style="color:#fff; font-size:18px;">🎓 TicBull Academy Pricing</h3>
+            <p style="font-size:11.5px; color:var(--text-muted); margin-top:2px;">Select your course or get all-access pass</p>
 
-            <div class="pro-banner" onclick="selectPlan('TicBull Pro', 2999)" id="proPlanCard" style="cursor:pointer;">
+            <div class="pro-banner" onclick="selectPlan('TicBull Academy Pro', 2999)" style="cursor:pointer;">
                 <div style="display:flex; justify-content:space-between; align-items:center;">
-                    <strong style="color:#f59e0b; font-size:13px;"><i class="fa-solid fa-crown"></i> TicBull Academy Pro Pass</strong>
-                    <span style="color:#10b981; font-weight:800; font-size:14px;">₹2,999/yr</span>
+                    <strong style="color:#f59e0b; font-size:13px;"><i class="fa-solid fa-crown"></i> TicBull Pro (All-Access Pass)</strong>
+                    <span style="color:#10b981; font-weight:800; font-size:13.5px;">₹2,999/yr</span>
                 </div>
-                <p style="font-size:10.5px; color:#d1d5db; margin-top:4px;">All Boards, Classes, Streams, Competitive Exams, AI Tutor & PYQs Included!</p>
+                <p style="font-size:10px; color:#d1d5db; margin-top:4px;">All Boards, Classes, Science/Commerce/Arts & Competitive Exams included!</p>
             </div>
 
-            <div style="font-size:11px; font-weight:700; color:var(--text-muted); text-align:left; text-transform:uppercase;">Or Select Specific Course:</div>
+            <div style="font-size:11px; font-weight:700; color:var(--text-muted); text-align:left; text-transform:uppercase;">School Boards (All Subjects):</div>
             
-            <div class="pricing-list" id="pricingList">
-                <div class="price-item" onclick="selectPlan('Class 9 School Board', 499)">
-                    <span class="plan-name">Class 9 (CBSE / Bihar / UP)</span>
-                    <span class="plan-cost">₹499/yr</span>
-                </div>
-                <div class="price-item" onclick="selectPlan('Class 10 School Board', 599)">
-                    <span class="plan-name">Class 10 (CBSE / Bihar / UP)</span>
-                    <span class="plan-cost">₹599/yr</span>
-                </div>
-                <div class="price-item" onclick="selectPlan('Class 11 Science', 899)">
-                    <span class="plan-name">Class 11 Science (PCM/PCB)</span>
-                    <span class="plan-cost">₹899/yr</span>
-                </div>
-                <div class="price-item" onclick="selectPlan('Class 12 Science', 999)">
-                    <span class="plan-name">Class 12 Science (PCM/PCB)</span>
-                    <span class="plan-cost">₹999/yr</span>
-                </div>
-                <div class="price-item" onclick="selectPlan('JEE Main / NEET', 1499)">
-                    <span class="plan-name">JEE Main / NEET Exam Prep</span>
-                    <span class="plan-cost">₹1,499/yr</span>
-                </div>
-                <div class="price-item" onclick="selectPlan('UPSC Civil Services', 2499)">
-                    <span class="plan-name">UPSC Civil Services Prep</span>
-                    <span class="plan-cost">₹2,499/yr</span>
-                </div>
+            <div class="pricing-list">
+                <div class="price-item" onclick="selectPlan('Class 9 School Board', 499)"><span class="plan-name">Class 9 (CBSE / Bihar / UP)</span><span class="plan-cost">₹499/yr</span></div>
+                <div class="price-item" onclick="selectPlan('Class 10 School Board', 599)"><span class="plan-name">Class 10 (CBSE / Bihar / UP)</span><span class="plan-cost">₹599/yr</span></div>
+                <div class="price-item" onclick="selectPlan('Class 11 Science', 899)"><span class="plan-name">Class 11 Science (PCM/PCB)</span><span class="plan-cost">₹899/yr</span></div>
+                <div class="price-item" onclick="selectPlan('Class 11 Commerce', 799)"><span class="plan-name">Class 11 Commerce</span><span class="plan-cost">₹799/yr</span></div>
+                <div class="price-item" onclick="selectPlan('Class 11 Arts', 699)"><span class="plan-name">Class 11 Arts / Humanities</span><span class="plan-cost">₹699/yr</span></div>
+                <div class="price-item" onclick="selectPlan('Class 12 Science', 999)"><span class="plan-name">Class 12 Science (PCM/PCB)</span><span class="plan-cost">₹999/yr</span></div>
+                <div class="price-item" onclick="selectPlan('Class 12 Commerce', 899)"><span class="plan-name">Class 12 Commerce</span><span class="plan-cost">₹899/yr</span></div>
+                <div class="price-item" onclick="selectPlan('Class 12 Arts', 799)"><span class="plan-name">Class 12 Arts / Humanities</span><span class="plan-cost">₹799/yr</span></div>
+                
+                <div style="font-size:11px; font-weight:700; color:var(--text-muted); text-align:left; text-transform:uppercase; margin-top:6px;">Competitive Exams:</div>
+                <div class="price-item" onclick="selectPlan('JEE Main Prep', 1499)"><span class="plan-name">JEE Main</span><span class="plan-cost">₹1,499/yr</span></div>
+                <div class="price-item" onclick="selectPlan('JEE Advanced Prep', 1799)"><span class="plan-name">JEE Advanced</span><span class="plan-cost">₹1,799/yr</span></div>
+                <div class="price-item" onclick="selectPlan('NEET Prep', 1499)"><span class="plan-name">NEET Medical</span><span class="plan-cost">₹1,499/yr</span></div>
+                <div class="price-item" onclick="selectPlan('CUET Prep', 999)"><span class="plan-name">CUET Exam</span><span class="plan-cost">₹999/yr</span></div>
+                <div class="price-item" onclick="selectPlan('SSC / Banking / Railway', 999)"><span class="plan-name">SSC / Banking / Railway</span><span class="plan-cost">₹999/yr</span></div>
+                <div class="price-item" onclick="selectPlan('NDA Defense Prep', 999)"><span class="plan-name">NDA / Defense</span><span class="plan-cost">₹999/yr</span></div>
+                <div class="price-item" onclick="selectPlan('UPSC Civil Services', 2499)"><span class="plan-name">UPSC Civil Services</span><span class="plan-cost">₹2,499/yr</span></div>
+                <div class="price-item" onclick="selectPlan('State PSC Prep', 1499)"><span class="plan-name">State PSC</span><span class="plan-cost">₹1,499/yr</span></div>
+                <div class="price-item" onclick="selectPlan('CLAT Entrance', 1299)"><span class="plan-name">CLAT Entrance</span><span class="plan-cost">₹1,299/yr</span></div>
+                <div class="price-item" onclick="selectPlan('GATE Exam Prep', 1999)"><span class="plan-name">GATE Exam</span><span class="plan-cost">₹1,999/yr</span></div>
+                <div class="price-item" onclick="selectPlan('CA / CS / CMA Foundation', 1499)"><span class="plan-name">CA / CS / CMA Foundation</span><span class="plan-cost">₹1,499/yr</span></div>
             </div>
 
-            <button class="btn-primary" onclick="activateSelectedPlan()">ACTIVATE SELECTED PASS</button>
+            <button class="btn-primary" onclick="activateSelectedPlan()">ACTIVATE SELECTED COURSE PASS</button>
         </div>
     </div>
 
-    <!-- FOOTER WITH YOUTUBE & ALL SOCIAL LINKS -->
+    <!-- FOOTER WITH ALL SOCIAL LINKS -->
     <footer>
         <div style="margin-bottom:6px; font-weight:700; color:#fff;">TicBull Official Support Channels:</div>
         <div class="support-box">
@@ -361,6 +387,7 @@
                 splash.style.opacity = '0';
                 setTimeout(() => splash.style.visibility = 'hidden', 500);
             }, 1800);
+            updateCourseContext();
         });
 
         function togglePassword() {
@@ -417,7 +444,17 @@
         function activateSelectedPlan() {
             document.getElementById('badgePlanText').innerText = `${selectedPlanName} Active`;
             closeSubscriptionModal();
-            alert(`Congratulations! ${selectedPlanName} (₹${selectedPlanPrice}/yr) Activated Successfully!`);
+            alert(`🎉 ${selectedPlanName} (₹${selectedPlanPrice}/yr) Activated Successfully! Material unlocked for your selected course.`);
+        }
+
+        function updateCourseContext() {
+            const board = document.getElementById('boardSelect').value;
+            const cls = document.getElementById('classSelect').value;
+            const stream = document.getElementById('streamSelect').value;
+            
+            document.getElementById('activeCourseChip').innerHTML = 
+                `<span><i class="fa-solid fa-book-bookmark"></i> Active Course: ${board} | ${cls} | ${stream}</span>
+                 <span style="font-size:10px; opacity:0.8;">Syllabus Locked Material</span>`;
         }
 
         function handleImageSelect(event) {
@@ -439,7 +476,16 @@
         }
 
         function clearChat() {
-            document.getElementById('chatBox').innerHTML = `<div class="msg ai">Chat history cleared! Feel free to ask any new doubt.</div>`;
+            document.getElementById('chatBox').innerHTML = `<div class="msg ai">Chat cleared! Select your course and ask your doubt.</div>`;
+            if(document.getElementById('drawer').classList.contains('open')) toggleDrawer();
+        }
+
+        function loadHistory(element) {
+            const topic = element.innerText;
+            document.getElementById('chatBox').innerHTML += `
+                <div class="msg user">Loaded History Topic: ${topic}</div>
+                <div class="msg ai">Is topic ka saved syllabus material reload ho gaya hai. Pucho aage kya samajhna hai!</div>`;
+            document.getElementById('chatBox').scrollTop = document.getElementById('chatBox').scrollHeight;
             toggleDrawer();
         }
 
@@ -463,6 +509,12 @@
 
             chatBox.innerHTML += `<div class="msg user">${userMsgContent}</div>`;
             
+            // Save to History List dynamically
+            if(input.value.trim()) {
+                const historyList = document.getElementById('historyList');
+                historyList.innerHTML = `<div class="history-item" onclick="loadHistory(this)">${input.value.trim()}</div>` + historyList.innerHTML;
+            }
+
             input.value = '';
             removeImage();
             chatBox.scrollTop = chatBox.scrollHeight;
@@ -470,11 +522,11 @@
             setTimeout(() => {
                 chatBox.innerHTML += `
                     <div class="msg ai">
-                        <b>[${board} | ${cls} | ${stream} | AI Tutor]:</b><br>
-                        Aapke question ka simple ${lang} explanation:<br><br>
-                        1. <b>Core Concept:</b> Is topic ka basic concept bohot asaan hai. Step-by-step logic samjhein.<br>
-                        2. <b>Exam Tip:</b> Isse related questions board ya competitive exams me frequent aate hain.<br>
-                        3. <b>Summary:</b> Revision ke liye key pointers yaad rakhein!
+                        <b>[${board} | ${cls} | ${stream} Syllabus Tutor]:</b><br>
+                        Aapke course ka specific (${lang}) material solution:<br><br>
+                        1. <b>Syllabus Concept:</b> Sirf ${board} ${cls} ${stream} ke exact exam pattern ka solution hai.<br>
+                        2. <b>High-Yield Point:</b> Ye topic is specific course ke exam me Frequently Asked hai.<br>
+                        3. <b>Exam Tip:</b> Bullet points aur key formulas yaad rakhein.
                     </div>`;
                 chatBox.scrollTop = chatBox.scrollHeight;
             }, 800);
