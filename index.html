@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>TicBull Academy - AI Smart Learning Engine</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
@@ -19,9 +19,12 @@
         }
 
         * { margin:0; padding:0; box-sizing:border-box; font-family:-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; -webkit-tap-highlight-color: transparent; }
-        body { background: var(--bg-color); color: var(--text-main); display:flex; flex-direction:column; min-height:100vh; overflow-x:hidden; }
+        
+        /* FIXED MOBILE KEYBOARD SCROLLING ISSUE */
+        html, body { height: 100%; width: 100%; overflow: hidden; background: var(--bg-color); color: var(--text-main); }
+        body { display:flex; flex-direction:column; }
 
-        /* 10-SECOND CINEMATIC SPLASH ANIMATION WITH SOCIALS */
+        /* 10-SECOND CINEMATIC SPLASH ANIMATION */
         #splash-screen {
             position: fixed; top:0; left:0; width:100%; height:100%;
             background: radial-gradient(circle at center, #0b1329 0%, #020617 100%);
@@ -55,7 +58,7 @@
         @keyframes loadProgress { 0% { width: 0%; } 100% { width: 100%; } }
 
         /* AUTH CARD */
-        .auth-container { display:flex; flex-direction:column; align-items:center; justify-content:center; flex:1; padding:20px; width:100%; }
+        .auth-container { display:flex; flex-direction:column; align-items:center; justify-content:center; flex:1; padding:20px; width:100%; overflow-y:auto; }
         .auth-card {
             background: var(--card-bg); border: 1px solid var(--border-color);
             border-radius:24px; padding:28px 22px; width:100%; max-width:420px;
@@ -88,59 +91,55 @@
         }
         .btn-primary:active { transform:scale(0.98); }
 
-        /* DASHBOARD LAYOUT */
-        #main-dashboard { display:none; flex-direction:column; flex:1; padding:12px; max-width:850px; margin:0 auto; width:100%; position:relative; }
+        /* DASHBOARD FLEX LAYOUT PREVENTING KEYBOARD OVERLAP */
+        #main-dashboard { display:none; flex-direction:column; height:100%; max-width:850px; margin:0 auto; width:100%; position:relative; padding:10px; }
         
-        .header { display:flex; justify-content:space-between; align-items:center; padding:10px 14px; background:var(--card-bg); border-radius:18px; border:1px solid var(--border-color); margin-bottom:10px; }
+        .header { display:flex; justify-content:space-between; align-items:center; padding:10px 14px; background:var(--card-bg); border-radius:18px; border:1px solid var(--border-color); margin-bottom:8px; flex-shrink:0; }
         .header-brand { display:flex; align-items:center; gap:10px; }
         .menu-btn { background:none; border:none; color:#fff; font-size:18px; cursor:pointer; padding:6px; }
-        .header-logo { width:40px; height:40px; border-radius:50%; background:#000; border:1px solid rgba(255,255,255,0.2); display:flex; justify-content:center; align-items:center; overflow:hidden; }
+        .header-logo { width:38px; height:38px; border-radius:50%; background:#000; border:1px solid rgba(255,255,255,0.2); display:flex; justify-content:center; align-items:center; overflow:hidden; }
         .header-logo img { width:90%; height:90%; object-fit:contain; }
-        .user-badge { background:rgba(245, 158, 11, 0.15); border:1px solid rgba(245, 158, 11, 0.4); color:var(--gold-color); padding:6px 12px; border-radius:20px; font-size:11px; font-weight:700; cursor:pointer; }
+        .user-badge { background:rgba(245, 158, 11, 0.15); border:1px solid rgba(245, 158, 11, 0.4); color:var(--gold-color); padding:5px 10px; border-radius:20px; font-size:11px; font-weight:700; cursor:pointer; }
 
-        .category-grid { display:grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap:8px; margin-bottom:10px; }
-        select { width:100%; background:#0f172a; border:1px solid var(--border-color); color:#fff; padding:9.5px 10px; border-radius:10px; font-size:12px; outline:none; }
+        .category-grid { display:grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap:6px; margin-bottom:8px; flex-shrink:0; }
+        select { width:100%; background:#0f172a; border:1px solid var(--border-color); color:#fff; padding:8px 10px; border-radius:10px; font-size:11.5px; outline:none; }
 
-        .active-course-chip { background:rgba(37, 99, 235, 0.15); border:1px solid var(--accent-color); border-radius:10px; padding:8px 12px; font-size:11.5px; color:var(--accent-color); font-weight:600; margin-bottom:10px; display:flex; align-items:center; justify-content:space-between; }
+        .active-course-chip { background:rgba(37, 99, 235, 0.15); border:1px solid var(--accent-color); border-radius:10px; padding:6px 10px; font-size:11px; color:var(--accent-color); font-weight:600; margin-bottom:8px; display:flex; align-items:center; justify-content:space-between; flex-shrink:0; }
 
-        /* CHAT CONTAINER WITH SMOOTH MESSAGE ANIMATIONS */
+        /* CHAT CONTAINER RESIZES WITH KEYBOARD */
         .chat-container {
             background:#020617; border:1px solid var(--border-color); border-radius:18px;
-            padding:14px; flex:1; min-height:380px; max-height:520px; overflow-y:auto;
-            display:flex; flex-direction:column; gap:12px; margin-bottom:10px;
+            padding:12px; flex:1; overflow-y:auto;
+            display:flex; flex-direction:column; gap:10px; margin-bottom:8px; min-height: 150px;
         }
-        .msg { padding:12px 14px; border-radius:16px; font-size:13.5px; line-height:1.5; max-width:88%; word-wrap:break-word; animation: fadeInSlide 0.3s ease-out; }
+        .msg { padding:10px 14px; border-radius:16px; font-size:13px; line-height:1.5; max-width:88%; word-wrap:break-word; animation: fadeInSlide 0.3s ease-out; }
         .msg.user { background:var(--accent-color); color:#fff; align-self:flex-end; border-bottom-right-radius:4px; }
         .msg.ai { background:#0f172a; color:var(--text-main); border:1px solid var(--border-color); align-self:flex-start; border-bottom-left-radius:4px; }
         .msg.guide-ai { background:rgba(245, 158, 11, 0.12); border:1px solid rgba(245, 158, 11, 0.5); color:#fef08a; align-self:flex-start; }
         .msg.error { background:rgba(239, 68, 68, 0.15); border:1px solid #ef4444; color:#fca5a5; align-self:center; width:100%; text-align:center; }
         .msg-image { max-width:100%; border-radius:12px; margin-top:8px; border:1px solid var(--border-color); }
-        .msg-video { width:100%; border-radius:12px; margin-top:8px; background:#000; }
 
         @keyframes fadeInSlide { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
 
-        .mindmap-box { background:#030712; border:1px dashed var(--accent-color); border-radius:12px; padding:12px; margin-top:8px; font-size:12.5px; line-height:1.6; }
-        .notes-card { background:rgba(16, 185, 129, 0.08); border:1px solid rgba(16, 185, 129, 0.3); border-radius:12px; padding:12px; margin-top:8px; }
-
         /* AI TOOLS POPUP MENU (+) */
         .ai-tools-menu {
-            display:none; position:absolute; bottom:65px; left:12px; background:#0f172a;
+            display:none; position:absolute; bottom:60px; left:10px; background:#0f172a;
             border:1px solid var(--border-color); border-radius:16px; padding:8px;
             box-shadow:0 15px 35px rgba(0,0,0,0.8); z-index:500; width:260px; flex-direction:column; gap:4px;
         }
         .tool-btn { display:flex; align-items:center; gap:10px; padding:9px 12px; border-radius:10px; background:transparent; border:none; color:#fff; font-size:12px; cursor:pointer; text-align:left; transition:0.2s; }
         .tool-btn:hover { background:rgba(37, 99, 235, 0.2); color:var(--accent-color); }
 
-        /* CHAT INPUT BAR */
-        .chat-input-bar { display:flex; align-items:center; background:#0f172a; border:1px solid var(--border-color); border-radius:16px; padding:5px 6px 5px 10px; gap:6px; position:relative; }
+        /* CHAT INPUT BAR STAYS ALWAYS VISIBLE ABOVE KEYBOARD */
+        .chat-input-bar { display:flex; align-items:center; background:#0f172a; border:1px solid var(--border-color); border-radius:16px; padding:5px 6px 5px 10px; gap:6px; position:relative; flex-shrink:0; }
         .chat-input-bar input[type="text"] { flex:1; background:transparent; border:none; color:#fff; outline:none; font-size:13.5px; }
         .action-icon-btn { background:rgba(255,255,255,0.06); color:var(--text-muted); border:1px solid var(--border-color); width:36px; height:36px; border-radius:10px; display:flex; justify-content:center; align-items:center; cursor:pointer; transition:0.2s; }
         .action-icon-btn:hover { color:#fff; background:rgba(255,255,255,0.12); }
         .send-btn { background:var(--accent-color); color:#fff; border:none; width:36px; height:36px; border-radius:10px; display:flex; justify-content:center; align-items:center; cursor:pointer; }
 
-        #imagePreview { display:none; padding:6px 12px; background:#0f172a; border-radius:10px; font-size:12px; color:var(--accent-color); margin-bottom:8px; align-items:center; justify-content:space-between; }
+        #imagePreview { display:none; padding:6px 12px; background:#0f172a; border-radius:10px; font-size:12px; color:var(--accent-color); margin-bottom:8px; align-items:center; justify-content:space-between; flex-shrink:0; }
 
-        /* SIDE DRAWER MENU WITH STUDENT PROFILE & STREAK */
+        /* SIDE DRAWER MENU WITH REAL STUDENT PROFILE & STREAK */
         .drawer-overlay { position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.75); z-index:1000; display:none; }
         .drawer { position:fixed; top:0; left:-300px; width:300px; height:100%; background:#0f172a; border-right:1px solid var(--border-color); z-index:1001; transition:0.3s; padding:18px; display:flex; flex-direction:column; overflow-y:auto; }
         .drawer.open { left:0; }
@@ -148,7 +147,7 @@
         
         .profile-card { background:linear-gradient(135deg, rgba(37, 99, 235, 0.2), rgba(245, 158, 11, 0.15)); border:1px solid var(--border-color); border-radius:16px; padding:14px; margin-bottom:14px; text-align:left; }
         .profile-header { display:flex; align-items:center; gap:12px; margin-bottom:8px; }
-        .profile-avatar { width:42px; height:40px; border-radius:50%; background:var(--accent-color); color:#fff; display:flex; justify-content:center; align-items:center; font-weight:800; font-size:16px; }
+        .profile-avatar { width:42px; height:42px; border-radius:50%; background:var(--accent-color); color:#fff; display:flex; justify-content:center; align-items:center; font-weight:800; font-size:16px; border: 2px solid rgba(255,255,255,0.2); }
         .streak-badge { display:inline-flex; align-items:center; gap:4px; background:rgba(245, 158, 11, 0.2); border:1px solid rgba(245, 158, 11, 0.4); color:var(--gold-color); font-size:10.5px; font-weight:700; padding:3px 8px; border-radius:12px; margin-top:4px; }
 
         .drawer-item { padding:11px 12px; border-radius:10px; color:var(--text-main); font-size:12.5px; display:flex; align-items:center; gap:12px; cursor:pointer; transition:0.2s; margin-bottom:6px; }
@@ -173,11 +172,11 @@
         .pro-banner { background:linear-gradient(135deg, rgba(245, 158, 11, 0.25), rgba(37, 99, 235, 0.25)); border:1px solid rgba(245, 158, 11, 0.6); border-radius:12px; padding:12px; margin-bottom:8px; text-align:left; }
 
         /* FOOTER */
-        footer { background:#020617; border-top:1px solid var(--border-color); padding:16px; text-align:center; font-size:11px; color:var(--text-muted); margin-top:auto; width:100%; }
-        .support-box { background:#0f172a; border:1px solid var(--border-color); border-radius:12px; padding:10px; margin:8px auto; max-width:400px; display:flex; justify-content:center; gap:14px; }
-        .support-box a { color:#fff; text-decoration:none; font-size:12px; font-weight:600; display:flex; align-items:center; gap:6px; }
-        .dev-socials { display:flex; justify-content:center; gap:16px; margin:8px 0; }
-        .dev-socials a { color:var(--text-muted); font-size:16px; transition:0.2s; }
+        footer { background:#020617; border-top:1px solid var(--border-color); padding:12px; text-align:center; font-size:11px; color:var(--text-muted); margin-top:auto; width:100%; flex-shrink:0; }
+        .support-box { background:#0f172a; border:1px solid var(--border-color); border-radius:12px; padding:8px; margin:4px auto; max-width:400px; display:flex; justify-content:center; gap:14px; }
+        .support-box a { color:#fff; text-decoration:none; font-size:11.5px; font-weight:600; display:flex; align-items:center; gap:6px; }
+        .dev-socials { display:flex; justify-content:center; gap:16px; margin:6px 0; }
+        .dev-socials a { color:var(--text-muted); font-size:15px; transition:0.2s; }
         .dev-socials a:hover { color:#fff; }
     </style>
 </head>
@@ -259,7 +258,7 @@
                 </div>
                 <div>
                     <strong style="color:#fff; font-size:13.5px;" id="portalHeaderName">TicBull Academy</strong>
-                    <p style="font-size:9.5px; color:var(--text-muted);">AI Tutor Engine v7.0</p>
+                    <p style="font-size:9.5px; color:var(--text-muted);">AI Tutor Engine v7.5</p>
                 </div>
             </div>
             <span class="user-badge" onclick="openSubscriptionModal()"><i class="fa-solid fa-crown"></i> <span id="badgePlanText">Class 12 Science Active</span></span>
@@ -349,13 +348,13 @@
             </label>
             <input type="file" id="photoInput" accept="image/*" style="display:none;" onchange="handleImageSelect(event)">
             
-            <input type="text" id="userInput" placeholder="Type chapter/topic or click (+) for tools...">
+            <input type="text" id="userInput" placeholder="Type chapter/topic or click (+) for tools..." onfocus="scrollToBottom()">
             
             <button class="send-btn" onclick="askAI()"><i class="fa-solid fa-paper-plane"></i></button>
         </div>
     </div>
 
-    <!-- SIDE DRAWER MENU WITH STUDENT PROFILE & STREAK -->
+    <!-- SIDE DRAWER MENU WITH REAL STUDENT PROFILE & STREAK -->
     <div class="drawer-overlay" id="drawerOverlay" onclick="toggleDrawer()"></div>
     <div class="drawer" id="drawer">
         <div class="drawer-header">
@@ -363,18 +362,19 @@
             <i class="fa-solid fa-xmark" style="color:var(--text-muted); cursor:pointer;" onclick="toggleDrawer()"></i>
         </div>
 
-        <!-- STUDENT PROFILE & STREAK CARD -->
+        <!-- DYNAMIC REAL STUDENT PROFILE & STREAK CARD -->
         <div class="profile-card">
             <div class="profile-header">
-                <div class="profile-avatar" id="drawerAvatar">S</div>
+                <div class="profile-avatar" id="drawerAvatar">U</div>
                 <div>
-                    <strong style="color:#fff; font-size:13.5px;" id="drawerStudentName">Student Scholar</strong>
-                    <div style="font-size:10px; color:var(--text-muted);" id="drawerStudentEmail">student@ticbull.com</div>
+                    <strong style="color:#fff; font-size:13.5px;" id="drawerStudentName">User Student</strong>
+                    <div style="font-size:10px; color:var(--text-muted);" id="drawerStudentEmail">email@ticbull.com</div>
+                    <div style="font-size:10px; color:var(--accent-color); font-weight:600; margin-top:2px;" id="drawerStudentAge">Age: Registered Student</div>
                 </div>
             </div>
             <div style="display:flex; justify-content:space-between; align-items:center;">
-                <span class="streak-badge"><i class="fa-solid fa-fire"></i> 5 Days Streak</span>
-                <span style="font-size:10.5px; color:var(--success-color); font-weight:700;">Level 3 Scholar 🏆</span>
+                <span class="streak-badge"><i class="fa-solid fa-fire"></i> 1 Day Streak</span>
+                <span style="font-size:10.5px; color:var(--success-color); font-weight:700;">Level 1 Aspirant 🏆</span>
             </div>
         </div>
         
@@ -459,14 +459,14 @@
 
     <!-- FOOTER -->
     <footer>
-        <div style="margin-bottom:6px; font-weight:700; color:#fff;">TicBull Official Support Channels:</div>
+        <div style="margin-bottom:4px; font-weight:700; color:#fff;">TicBull Official Support Channels:</div>
         <div class="support-box">
             <a href="https://www.instagram.com/ticbull" target="_blank" style="color:#e1306c;"><i class="fa-brands fa-instagram"></i> Instagram Support</a>
             <span style="color:var(--border-color);">|</span>
             <a href="https://t.me/ticbullteam" target="_blank" style="color:#0088cc;"><i class="fa-brands fa-telegram"></i> Telegram Team</a>
         </div>
 
-        <div style="margin-top:12px; font-weight:600; color:var(--text-muted);">Developer & Founder: <b style="color:#fff;">MrYuviYadav</b></div>
+        <div style="margin-top:6px; font-weight:600; color:var(--text-muted);">Developer & Founder: <b style="color:#fff;">MrYuviYadav</b></div>
         <div class="dev-socials">
             <a href="https://youtube.com/@mryuviyadav" target="_blank" style="color:#ff0000;" title="YouTube"><i class="fa-brands fa-youtube"></i></a>
             <a href="https://www.instagram.com/mryuvi_yadav" target="_blank" style="color:#e1306c;" title="Instagram"><i class="fa-brands fa-instagram"></i></a>
@@ -474,7 +474,7 @@
             <a href="https://t.me/mryuviyadav" target="_blank" style="color:#0088cc;" title="Telegram"><i class="fa-brands fa-telegram"></i></a>
             <a href="https://facebook.com/mryuviyadav" target="_blank" style="color:#1877f2;" title="Facebook"><i class="fa-brands fa-facebook"></i></a>
         </div>
-        <p style="margin-top:6px;">Official Email: <a href="mailto:ticbull.support@gmail.com" style="color:var(--accent-color); text-decoration:none;">ticbull.support@gmail.com</a></p>
+        <p style="margin-top:4px;">Official Email: <a href="mailto:ticbull.support@gmail.com" style="color:var(--accent-color); text-decoration:none;">ticbull.support@gmail.com</a></p>
     </footer>
 
     <script>
@@ -494,6 +494,18 @@
             }, 10000);
         });
 
+        // HANDLE MOBILE KEYBOARD AUTO-SCROLL
+        window.addEventListener('resize', () => {
+            scrollToBottom();
+        });
+
+        function scrollToBottom() {
+            setTimeout(() => {
+                const chatBox = document.getElementById('chatBox');
+                if(chatBox) chatBox.scrollTop = chatBox.scrollHeight;
+            }, 200);
+        }
+
         function togglePassword() {
             const pwdInput = document.getElementById('password');
             pwdInput.type = pwdInput.type === 'password' ? 'text' : 'password';
@@ -507,19 +519,46 @@
             document.getElementById('authSubmitBtn').innerText = mode === 'login' ? 'OPEN LEARNING PORTAL' : 'CREATE STUDENT ACCOUNT';
         }
 
+        function calculateAge(dobString) {
+            if(!dobString) return null;
+            const birthDate = new Date(dobString);
+            const today = new Date();
+            let age = today.getFullYear() - birthDate.getFullYear();
+            const monthDiff = today.getMonth() - birthDate.getMonth();
+            if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+                age--;
+            }
+            return age;
+        }
+
         function handleAuth() {
             const email = document.getElementById('email').value;
             const name = document.getElementById('studentName').value;
+            const dob = document.getElementById('studentDob').value;
+
             if(!email) { alert("Please enter Email ID!"); return; }
 
+            // UPDATE DYNAMIC STUDENT PROFILE
             if(name) {
                 document.getElementById('portalHeaderName').innerText = `Welcome, ${name.split(' ')[0]}`;
                 document.getElementById('drawerStudentName').innerText = name;
                 document.getElementById('drawerStudentEmail').innerText = email;
                 document.getElementById('drawerAvatar').innerText = name.charAt(0).toUpperCase();
+                
+                const userAge = calculateAge(dob);
+                if(userAge !== null) {
+                    document.getElementById('drawerStudentAge').innerText = `Age: ${userAge} Years Old`;
+                } else {
+                    document.getElementById('drawerStudentAge').innerText = `Registered Student`;
+                }
+
                 document.getElementById('welcomeAiMessage').innerHTML = `<b>Welcome ${name}! 🚀</b><br>Aapka **Class 12 Science** Pass active hai. Below \`+\` icon click karke Notes, MindMap, MCQs, AI Diagram Image, Video ya Skills Guide generate karo!`;
             } else if(email) {
+                const emailPrefix = email.split('@')[0];
+                document.getElementById('drawerStudentName').innerText = emailPrefix;
                 document.getElementById('drawerStudentEmail').innerText = email;
+                document.getElementById('drawerAvatar').innerText = emailPrefix.charAt(0).toUpperCase();
+                document.getElementById('drawerStudentAge').innerText = `Registered Student`;
             }
 
             document.getElementById('auth-screen').style.display = 'none';
@@ -565,7 +604,7 @@
                     • <b>Courses Supported:</b> CBSE, Bihar, UP Board, BPSC, NEET, JEE, UPSC, SSC, Defense, & Social Media/Business Skills.<br>
                     • <b>How to Use:</b> Select your Board/Class/Skill from top dropdowns, ask doubts or click <b>(+)</b> for instant tools!
                 </div>`;
-            chatBox.scrollTop = chatBox.scrollHeight;
+            scrollToBottom();
         }
 
         function selectPlan(name, price, element) {
@@ -632,7 +671,7 @@
             input.value = '';
             removeImage();
             document.getElementById('aiToolsMenu').style.display = 'none';
-            chatBox.scrollTop = chatBox.scrollHeight;
+            scrollToBottom();
 
             setTimeout(() => {
                 if(!isProUser && !purchasedPlanName.includes(cls) && !purchasedPlanName.includes(board) && !purchasedPlanName.includes(stream)) {
@@ -691,7 +730,7 @@
 
                     chatBox.innerHTML += `<div class="msg ai">${aiResponseHTML}</div>`;
                 }
-                chatBox.scrollTop = chatBox.scrollHeight;
+                scrollToBottom();
             }, 700);
         }
     </script>
