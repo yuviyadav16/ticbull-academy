@@ -196,7 +196,7 @@
 
         .history-title { font-size:11px; font-weight:700; color:var(--text-muted); text-transform:uppercase; margin:12px 0 6px 4px; }
         .history-list { display:flex; flex-direction:column; gap:6px; overflow-y:auto; max-height:160px; }
-        .history-item { font-size:12px; color:var(--text-muted); padding:8px 10px; border-radius:8px; background:var(--chat-bg); border:1px solid var(--border-color); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; cursor:pointer; }
+        .history-item { font-size:12px; color:var(--text-muted); padding:8px 10px; border-radius:8px; background:var(--chat-bg); border:1px solid var(--border-color); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; cursor:pointer; display: flex; justify-content: space-between; align-items: center; }
         .history-item:hover { color:var(--text-main); border-color:var(--accent-color); }
 
         /* MODALS */
@@ -456,16 +456,7 @@
             <span><i class="fa-solid fa-clock-rotate-left"></i> Recent Chat History:</span>
             <i class="fa-solid fa-trash" style="cursor:pointer; color:var(--text-muted); font-size:13px;" onclick="deleteAllHistory()" title="Clear All History"></i>
         </div>
-        <div class="history-list" id="historyList">
-            <div class="history-item" style="display:flex; justify-content:space-between; align-items:center;">
-                <span style="white-space:nowrap; overflow:hidden; text-overflow:ellipsis; width:85%;">Class 12 Physics MindMap</span>
-                <i class="fa-solid fa-xmark delete-chat-icon" onclick="deleteHistoryItem(this, event)"></i>
-            </div>
-            <div class="history-item" style="display:flex; justify-content:space-between; align-items:center;">
-                <span style="white-space:nowrap; overflow:hidden; text-overflow:ellipsis; width:85%;">Social Media Growth Hacks</span>
-                <i class="fa-solid fa-xmark delete-chat-icon" onclick="deleteHistoryItem(this, event)"></i>
-            </div>
-        </div>
+        <div class="history-list" id="historyList"></div>
         
         <div style="margin-top:auto; border-top:1px solid var(--border-color); padding-top:12px;">
             <div style="font-size:11px; color:var(--text-muted); margin-bottom:8px;">TICBULL OFFICIAL SUPPORT:</div>
@@ -514,10 +505,10 @@
             <h3 style="color:var(--text-main); font-size:18px;">🎓 TicBull Course Pass Pricing</h3>
             <p style="font-size:11.5px; color:var(--text-muted); margin-top:2px;">PW Level Most Affordable Pricing in India</p>
 
-            <div class="pro-banner" onclick="selectPlan('TicBull Pro (All Access)', 999)" style="cursor:pointer;">
+            <div class="pro-banner" onclick="selectPlan('TicBull Pro (All Access)', 1599)" style="cursor:pointer;">
                 <div style="display:flex; justify-content:space-between; align-items:center;">
                     <strong style="color:#f59e0b; font-size:13px;"><i class="fa-solid fa-crown"></i> TicBull Pro Pass (All-Access)</strong>
-                    <span style="color:#10b981; font-weight:800; font-size:13.5px;">₹999/yr</span>
+                    <span style="color:#10b981; font-weight:800; font-size:13.5px;">₹1599/yr</span>
                 </div>
                 <p style="font-size:10px; color:#d1d5db; margin-top:4px;">Unlocked All Boards, Classes (9-12), Science/Commerce/Arts, BPSC/UPSC & Skill Courses!</p>
             </div>
@@ -526,25 +517,25 @@
                 <div class="price-category-label">📖 School Boards (CBSE / Bihar / UP / ICSE)</div>
                 <div class="price-item" onclick="selectPlan('Class 9-10 Board', 199, this)"><span class="plan-name">Class 9-10 (All Subjects)</span><span class="plan-cost">₹199/yr</span></div>
                 <div class="price-item" onclick="selectPlan('Class 11 Science', 299, this)"><span class="plan-name">Class 11 Science (PCM/PCB)</span><span class="plan-cost">₹299/yr</span></div> 
-               <div class="price-item" onclick="selectPlan('Class 11 Commerce', 299, this)"><span class="plan-name">Class 11 Commerce</span><span class="plan-cost">₹299/yr</span></div> 
+                <div class="price-item" onclick="selectPlan('Class 11 Commerce', 299, this)"><span class="plan-name">Class 11 Commerce</span><span class="plan-cost">₹299/yr</span></div> 
                 <div class="price-item" onclick="selectPlan('Class 11 Arts', 249, this)"><span class="plan-name">Class 11 Arts / Humanities</span><span class="plan-cost">₹249/yr</span></div>
                 <div class="price-item" onclick="selectPlan('Class 12 Science', 399, this)"><span class="plan-name">Class 12 Science (PCM/PCB)</span><span class="plan-cost">₹399/yr</span></div>
                 <div class="price-item" onclick="selectPlan('Class 12 Commerce', 399, this)"><span class="plan-name">Class 12 Commerce</span><span class="plan-cost">₹399/yr</span></div>
                 <div class="price-item" onclick="selectPlan('Class 12 Arts', 299, this)"><span class="plan-name">Class 12 Arts / Humanities</span><span class="plan-cost">₹299/yr</span></div>
 
                 <div class="price-category-label">🏆 Competitive Exams (All India & State)</div>
-                <div class="price-item" onclick="selectPlan('BPSC Exam Prep', 699, this)"><span class="plan-name">BPSC (Bihar PSC Exam)</span><span class="plan-cost">₹699/yr</span></div>
-                <div class="price-item" onclick="selectPlan('UPSC Civil Services', 999, this)"><span class="plan-name">UPSC Civil Services</span><span class="plan-cost">₹999/yr</span></div>
-                <div class="price-item" onclick="selectPlan('State PSC Prep', 699, this)"><span class="plan-name">State PSC Exams</span><span class="plan-cost">₹699/yr</span></div>
+                <div class="price-item" onclick="selectPlan('BPSC Exam Prep', 499, this)"><span class="plan-name">BPSC (Bihar PSC Exam)</span><span class="plan-cost">₹499/yr</span></div>
+                <div class="price-item" onclick="selectPlan('UPSC Civil Services', 899, this)"><span class="plan-name">UPSC Civil Services</span><span class="plan-cost">₹899/yr</span></div>
+                <div class="price-item" onclick="selectPlan('State PSC Prep', 599, this)"><span class="plan-name">State PSC Exams</span><span class="plan-cost">₹599/yr</span></div>
                 <div class="price-item" onclick="selectPlan('JEE Main Prep', 699, this)"><span class="plan-name">JEE Main Exam</span><span class="plan-cost">₹699/yr</span></div>
-                <div class="price-item" onclick="selectPlan('JEE Advanced Prep', 899, this)"><span class="plan-name">JEE Advanced Exam</span><span class="plan-cost">₹899/yr</span></div>
-                <div class="price-item" onclick="selectPlan('NEET Medical Prep', 699, this)"><span class="plan-name">NEET Medical Exam</span><span class="plan-cost">₹699/yr</span></div>
+                <div class="price-item" onclick="selectPlan('JEE Advanced Prep', 799, this)"><span class="plan-name">JEE Advanced Exam</span><span class="plan-cost">₹799/yr</span></div>
+                <div class="price-item" onclick="selectPlan('NEET Medical Prep', 749, this)"><span class="plan-name">NEET Medical Exam</span><span class="plan-cost">₹749/yr</span></div>
                 <div class="price-item" onclick="selectPlan('CUET Prep', 499, this)"><span class="plan-name">CUET Exam</span><span class="plan-cost">₹499/yr</span></div>
                 <div class="price-item" onclick="selectPlan('SSC / Banking / Railway', 499, this)"><span class="plan-name">SSC / Banking / Railway</span><span class="plan-cost">₹499/yr</span></div>
                 <div class="price-item" onclick="selectPlan('NDA Defense Prep', 499, this)"><span class="plan-name">NDA / Defense Exams</span><span class="plan-cost">₹499/yr</span></div>
-                <div class="price-item" onclick="selectPlan('CLAT Entrance', 599, this)"><span class="plan-name">CLAT Entrance Exam</span><span class="plan-cost">₹599/yr</span></div>
-                <div class="price-item" onclick="selectPlan('CAT Exam Prep', 799, this)"><span class="plan-name">CAT MBA Entrance</span><span class="plan-cost">₹799/yr</span></div>
-                <div class="price-item" onclick="selectPlan('GATE Exam Prep', 799, this)"><span class="plan-name">GATE Exam</span><span class="plan-cost">₹799/yr</span></div>
+                <div class="price-item" onclick="selectPlan('CLAT Entrance', 549, this)"><span class="plan-name">CLAT Entrance Exam</span><span class="plan-cost">₹549/yr</span></div>
+                <div class="price-item" onclick="selectPlan('CAT Exam Prep', 399, this)"><span class="plan-name">CAT MBA Entrance</span><span class="plan-cost">₹399/yr</span></div>
+                <div class="price-item" onclick="selectPlan('GATE Exam Prep', 449, this)"><span class="plan-name">GATE Exam</span><span class="plan-cost">₹449/yr</span></div>
                 <div class="price-item" onclick="selectPlan('CA / CS / CMA Foundation', 699, this)"><span class="plan-name">CA / CS / CMA Foundation</span><span class="plan-cost">₹699/yr</span></div>
 
                 <div class="price-category-label">🚀 Skill & Business Courses</div>
@@ -566,6 +557,38 @@
         let selectedPlanPrice = 499;
         let selectedImageBase64 = null;
         let currentStudentData = { name: '', email: '', dob: '', photo: '' };
+
+        // Auto-Login & Single Device Session Check on Load
+        window.addEventListener('DOMContentLoaded', () => {
+            const savedEmail = localStorage.getItem('ticbull_email');
+            const savedToken = localStorage.getItem('ticbull_token');
+            if(savedEmail && savedToken) {
+                fetch('/api/check-session', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ email: savedEmail, token: savedToken })
+                })
+                .then(res => res.json())
+                .then(data => {
+                    if(data.success && data.active) {
+                        currentStudentData.email = savedEmail;
+                        document.getElementById('auth-screen').style.display = 'none';
+                        document.getElementById('main-dashboard').style.display = 'flex';
+                        updateProfileUI();
+                        loadHistoryFromStorage();
+                    } else {
+                        localStorage.clear();
+                        alert("⚠️ Session Expired! You have logged in from another device.");
+                    }
+                }).catch(() => {
+                    currentStudentData.email = savedEmail;
+                    document.getElementById('auth-screen').style.display = 'none';
+                    document.getElementById('main-dashboard').style.display = 'flex';
+                    updateProfileUI();
+                    loadHistoryFromStorage();
+                });
+            }
+        });
 
         // 10 SECONDS SPLASH SCREEN TIMING
         window.addEventListener('load', () => {
@@ -635,8 +658,6 @@
             return age;
         }
 
-        // --- STRICT BACKEND INTEGRATION START ---
-
         function initiateAuthWithOTP() {
             const email = document.getElementById('email').value.trim();
             const name = document.getElementById('studentName').value.trim();
@@ -685,10 +706,16 @@
             btn.disabled = true;
             btn.innerText = "VERIFYING...";
 
+            let deviceId = localStorage.getItem('ticbull_device_id');
+            if(!deviceId) {
+                deviceId = 'dev_' + Math.random().toString(36).substring(2) + Date.now();
+                localStorage.setItem('ticbull_device_id', deviceId);
+            }
+
             fetch(`/api/verify-otp`, {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({ email: currentStudentData.email, otp: otp })
+                body: JSON.stringify({ email: currentStudentData.email, otp: otp, device_id: deviceId })
             })
             .then(res => res.json())
             .then(data => {
@@ -696,10 +723,14 @@
                 btn.innerText = "VERIFY & CONTINUE";
 
                 if (data.success) {
+                    localStorage.setItem('ticbull_email', currentStudentData.email);
+                    localStorage.setItem('ticbull_token', data.token);
+
                     updateProfileUI();
                     document.getElementById('otpModal').style.display = 'none';
                     document.getElementById('auth-screen').style.display = 'none';
                     document.getElementById('main-dashboard').style.display = 'flex';
+                    loadHistoryFromStorage();
                 } else {
                     alert("❌ GALAT OTP! " + (data.message || "Sahi 6-digit OTP daalein."));
                 }
@@ -710,8 +741,6 @@
                 alert("Server Error! Try again.");
             });
         }
-
-        // --- STRICT BACKEND INTEGRATION END ---
 
         function closeOtpModal() {
             document.getElementById('otpModal').style.display = 'none';
@@ -847,15 +876,49 @@
             alert(`🎉 ${purchasedPlanName} Pass Activated! Material unlocked.`);
         }
 
-        // --- HISTORY DELETE LOGIC ---
-        function deleteHistoryItem(element, event) {
-            event.stopPropagation();
-            element.parentElement.remove();
+        // --- LOCAL STORAGE CHAT HISTORY LOGIC ---
+        function saveHistoryToStorage(question) {
+            let history = JSON.parse(localStorage.getItem('ticbull_chat_history') || '[]');
+            if(!history.includes(question)) {
+                history.unshift(question);
+                if(history.length > 15) history.pop();
+                localStorage.setItem('ticbull_chat_history', JSON.stringify(history));
+                loadHistoryFromStorage();
+            }
         }
+
+        function loadHistoryFromStorage() {
+            const list = document.getElementById('historyList');
+            if(!list) return;
+            let history = JSON.parse(localStorage.getItem('ticbull_chat_history') || '[]');
+            list.innerHTML = '';
+            history.forEach((item, index) => {
+                list.innerHTML += `
+                    <div class="history-item" onclick="loadHistoryItem('${item.replace(/'/g, "\\'")}')">
+                        <span style="white-space:nowrap; overflow:hidden; text-overflow:ellipsis; width:85%;">${item}</span>
+                        <i class="fa-solid fa-xmark delete-chat-icon" onclick="deleteHistoryItem(${index}, event)"></i>
+                    </div>`;
+            });
+        }
+
+        function deleteHistoryItem(index, event) {
+            event.stopPropagation();
+            let history = JSON.parse(localStorage.getItem('ticbull_chat_history') || '[]');
+            history.splice(index, 1);
+            localStorage.setItem('ticbull_chat_history', JSON.stringify(history));
+            loadHistoryFromStorage();
+        }
+
         function deleteAllHistory() {
             if(confirm("Are you sure you want to delete all chat history?")) {
-                document.getElementById('historyList').innerHTML = '';
+                localStorage.removeItem('ticbull_chat_history');
+                loadHistoryFromStorage();
             }
+        }
+
+        function loadHistoryItem(text) {
+            document.getElementById('userInput').value = text;
+            if(document.getElementById('drawer').classList.contains('open')) toggleDrawer();
         }
 
         // --- VOICE TYPING LOGIC ---
@@ -936,6 +999,9 @@
             const questionText = input.value.trim() || "Explain this image";
 
             chatBox.innerHTML += `<div class="msg user">${userMsgContent}</div>`;
+            
+            if(questionText) saveHistoryToStorage(questionText);
+
             input.value = '';
             removeImage();
             document.getElementById('aiToolsMenu').style.display = 'none';
