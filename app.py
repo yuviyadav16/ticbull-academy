@@ -84,7 +84,6 @@ Rules: Out of syllabus sawal mana kar dena. Kabhie mat kehna ki tu AI ya Gemini 
     full_prompt = f"{system_instruction}\n\nStudent Question: {prompt}"
     
     try:
-        # Official Google SDK use kar rahe hain jo kabhi 404 nahi deta
         model = genai.GenerativeModel('gemini-pro')
         response = model.generate_content(full_prompt)
         reply_text = response.text.replace("Gemini", "TicBull Engine").replace("Google", "TicBull").replace("gemini", "ticbull")
@@ -97,4 +96,4 @@ def home():
     return "TicBull Backend is running!"
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port5000)
+    app.run(host='0.0.0.0', port=5000)
