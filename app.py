@@ -86,8 +86,8 @@ CRITICAL RULES:
     full_prompt = f"{system_instruction}\n\nStudent's Question: {prompt}"
     
     try:
-        # DIRECT API CALL TO MOST STABLE MODEL (Gemini 1.5 Pro)
-        api_url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro:generateContent?key={GEMINI_API_KEY}"
+        # UNIVERSAL STABLE MODEL JO KABHI FAIL NAHI HOTA (gemini-pro)
+        api_url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key={GEMINI_API_KEY}"
         payload = {"contents": [{"parts": [{"text": full_prompt}]}]}
         headers = {"Content-Type": "application/json"}
         
@@ -99,7 +99,6 @@ CRITICAL RULES:
             reply_text = reply_text.replace("Gemini", "TicBull Engine").replace("Google", "TicBull").replace("gemini", "ticbull")
             return jsonify({"success": True, "reply": reply_text})
         elif "error" in res_data:
-            # YE LINE GOOGLE KA ASLI ERROR SCREEN PAR DIKHAYEGI
             error_msg = res_data["error"].get("message", "Unknown Google API Error")
             return jsonify({"success": False, "message": f"Google API Issue: {error_msg}"}), 500
         else:
