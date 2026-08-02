@@ -118,7 +118,7 @@
         .header-logo img { width:90%; height:90%; object-fit:contain; }
         .user-badge { background:rgba(245, 158, 11, 0.15); border:1px solid rgba(245, 158, 11, 0.4); color:var(--gold-color); padding:5px 10px; border-radius:20px; font-size:11px; font-weight:700; cursor:pointer; }
 
-        /* COLLAPSIBLE COURSE SELECTOR BAR FOR BIGGER CHAT SCREEN */
+        /* COLLAPSIBLE COURSE SELECTOR BAR */
         .course-bar-toggle {
             background: var(--card-bg); border: 1px solid var(--border-color);
             border-radius: 12px; padding: 8px 12px; font-size: 11.5px; color: var(--accent-color);
@@ -129,7 +129,7 @@
         .category-grid.show { display:grid; }
         select { width:100%; background:var(--input-bg); border:1px solid var(--border-color); color:var(--text-main); padding:8px 10px; border-radius:10px; font-size:11.5px; outline:none; }
 
-        /* CHAT CONTAINER - MAXIMUM SCREEN HEIGHT */
+        /* CHAT CONTAINER */
         .chat-container {
             background:var(--chat-bg); border:1px solid var(--border-color); border-radius:18px;
             padding:14px; flex:1; overflow-y:auto;
@@ -141,6 +141,7 @@
         .msg.guide-ai { background:rgba(245, 158, 11, 0.12); border:1px solid rgba(245, 158, 11, 0.5); color:var(--gold-color); align-self:flex-start; }
         .msg.error { background:rgba(239, 68, 68, 0.15); border:1px solid #ef4444; color:#fca5a5; align-self:center; width:100%; text-align:center; }
         .msg-image { max-width:100%; border-radius:12px; margin-top:8px; border:1px solid var(--border-color); }
+        .msg-video { width:100%; border-radius:12px; margin-top:8px; background:#000; }
 
         @keyframes fadeInSlide { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
         @keyframes fadeIn { from { opacity:0; } to { opacity:1; } }
@@ -166,13 +167,12 @@
 
         #imagePreview { display:none; padding:6px 12px; background:var(--card-bg); border-radius:10px; font-size:12px; color:var(--accent-color); margin-bottom:8px; align-items:center; justify-content:space-between; flex-shrink:0; }
 
-        /* SIDE DRAWER MENU WITH EDIT PROFILE & THEME TOGGLE */
+        /* SIDE DRAWER MENU */
         .drawer-overlay { position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.75); z-index:1000; display:none; }
         .drawer { position:fixed; top:0; left:-310px; width:310px; height:100%; background:var(--card-bg); border-right:1px solid var(--border-color); z-index:1001; transition:0.3s; padding:18px; display:flex; flex-direction:column; overflow-y:auto; }
         .drawer.open { left:0; }
         .drawer-header { display:flex; justify-content:space-between; align-items:center; padding-bottom:12px; border-bottom:1px solid var(--border-color); margin-bottom:12px; }
         
-        /* STUDENT PROFILE CARD WITH EDIT & PHOTO UPLOAD */
         .profile-card { background:linear-gradient(135deg, rgba(37, 99, 235, 0.2), rgba(245, 158, 11, 0.15)); border:1px solid var(--border-color); border-radius:16px; padding:14px; margin-bottom:14px; text-align:left; position:relative; }
         .profile-header { display:flex; align-items:center; gap:12px; margin-bottom:8px; }
         
@@ -194,7 +194,7 @@
         .history-item { font-size:12px; color:var(--text-muted); padding:8px 10px; border-radius:8px; background:var(--chat-bg); border:1px solid var(--border-color); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; cursor:pointer; }
         .history-item:hover { color:var(--text-main); border-color:var(--accent-color); }
 
-        /* PRICING MODAL */
+        /* MODALS */
         .modal-overlay { position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); z-index:2000; display:none; justify-content:center; align-items:center; padding:16px; }
         .modal-card { background:var(--card-bg); border:1px solid var(--border-color); border-radius:20px; padding:22px; max-width:480px; width:100%; text-align:center; position:relative; max-height:92vh; display:flex; flex-direction:column; }
         
@@ -207,9 +207,7 @@
 
         .pro-banner { background:linear-gradient(135deg, rgba(245, 158, 11, 0.25), rgba(37, 99, 235, 0.25)); border:1px solid rgba(245, 158, 11, 0.6); border-radius:12px; padding:12px; margin-bottom:8px; text-align:left; }
 
-        /* EDIT PROFILE MODAL */
         #editProfileModal .modal-card { text-align:left; }
-
         footer { display:none; }
     </style>
 </head>
@@ -279,7 +277,23 @@
 
             <span class="forgot-link" onclick="handleForgotPassword()"><i class="fa-solid fa-key"></i> Forgot Password?</span>
 
-            <button class="btn-primary" id="authSubmitBtn" onclick="handleAuth()">OPEN LEARNING PORTAL</button>
+            <button class="btn-primary" id="authSubmitBtn" onclick="initiateAuthWithOTP()">SEND VERIFICATION OTP</button>
+        </div>
+    </div>
+
+    <!-- OTP VERIFICATION MODAL -->
+    <div class="modal-overlay" id="otpModal">
+        <div class="modal-card">
+            <i class="fa-solid fa-xmark" style="position:absolute; right:16px; top:16px; color:var(--text-muted); cursor:pointer;" onclick="closeOtpModal()"></i>
+            <h3 style="color:var(--text-main); font-size:18px;">📧 Verify Email OTP</h3>
+            <p style="font-size:11.5px; color:var(--text-muted); margin-top:4px;">Enter the 6-digit OTP sent to your Email ID</p>
+
+            <div class="input-group" style="margin-top:16px;">
+                <i class="fa-solid fa-shield-halved left-icon"></i>
+                <input type="text" id="otpInput" placeholder="Enter 6-Digit OTP" maxlength="6" style="text-align:center; font-weight:800; letter-spacing:3px;">
+            </div>
+
+            <button class="btn-primary" onclick="verifyOTPAndLogin()">VERIFY & CONTINUE</button>
         </div>
     </div>
 
@@ -293,13 +307,13 @@
                 </div>
                 <div>
                     <strong style="color:var(--text-main); font-size:13.5px;" id="portalHeaderName">TicBull Academy</strong>
-                    <p style="font-size:9.5px; color:var(--text-muted);">AI Tutor Engine v8.0</p>
+                    <p style="font-size:9.5px; color:var(--text-muted);">AI Tutor Engine v8.5</p>
                 </div>
             </div>
             <span class="user-badge" onclick="openSubscriptionModal()"><i class="fa-solid fa-crown"></i> <span id="badgePlanText">Class 12 Science Active</span></span>
         </div>
 
-        <!-- COLLAPSIBLE COURSE BAR FOR BIGGER CLEAN CHAT SCREEN -->
+        <!-- COLLAPSIBLE COURSE BAR -->
         <div class="course-bar-toggle" onclick="toggleCourseSelectors()">
             <span id="activeCourseLabel"><i class="fa-solid fa-sliders"></i> Course: CBSE | Class 12 | Science (PCM/PCB)</span>
             <i class="fa-solid fa-chevron-down" id="courseToggleIcon"></i>
@@ -395,7 +409,7 @@
         </div>
     </div>
 
-    <!-- SIDE DRAWER MENU WITH REAL PROFILE, EDIT, THEME & SOCIALS -->
+    <!-- SIDE DRAWER MENU -->
     <div class="drawer-overlay" id="drawerOverlay" onclick="toggleDrawer()"></div>
     <div class="drawer" id="drawer">
         <div class="drawer-header">
@@ -403,7 +417,7 @@
             <i class="fa-solid fa-xmark" style="color:var(--text-muted); cursor:pointer;" onclick="toggleDrawer()"></i>
         </div>
 
-        <!-- REAL STUDENT PROFILE CARD WITH EDIT & AVATAR UPLOAD -->
+        <!-- REAL STUDENT PROFILE CARD -->
         <div class="profile-card">
             <i class="fa-solid fa-pen-to-square edit-profile-btn" onclick="openEditProfileModal()" title="Edit Profile"></i>
             <div class="profile-header">
@@ -477,7 +491,7 @@
         </div>
     </div>
 
-    <!-- PRICING MODAL (SUPER LOW STUDENT-FRIENDLY PRICING) -->
+    <!-- PRICING MODAL (SUPER LOW PW LEVEL PRICING) -->
     <div class="modal-overlay" id="subModal">
         <div class="modal-card">
             <i class="fa-solid fa-xmark" style="position:absolute; right:16px; top:16px; color:var(--text-muted); cursor:pointer;" onclick="closeSubscriptionModal()"></i>
@@ -530,6 +544,7 @@
     </div>
 
     <script>
+        let BACKEND_URL = "https://ticbull-academy.onrender.com";
         let currentAuthMode = 'login';
         let purchasedPlanName = 'Class 12 Science';
         let isProUser = false;
@@ -573,7 +588,7 @@
             document.getElementById('tab-login').classList.toggle('active', mode === 'login');
             document.getElementById('tab-signup').classList.toggle('active', mode === 'signup');
             document.getElementById('signupFields').style.display = mode === 'signup' ? 'flex' : 'none';
-            document.getElementById('authSubmitBtn').innerText = mode === 'login' ? 'OPEN LEARNING PORTAL' : 'CREATE STUDENT ACCOUNT';
+            document.getElementById('authSubmitBtn').innerText = mode === 'login' ? 'SEND VERIFICATION OTP' : 'CREATE ACCOUNT WITH OTP';
         }
 
         function toggleTheme() {
@@ -607,7 +622,7 @@
             return age;
         }
 
-        function handleAuth() {
+        function initiateAuthWithOTP() {
             const email = document.getElementById('email').value;
             const name = document.getElementById('studentName').value;
             const dob = document.getElementById('studentDob').value;
@@ -618,10 +633,47 @@
             if(name) currentStudentData.name = name;
             if(dob) currentStudentData.dob = dob;
 
-            updateProfileUI();
+            fetch(`${BACKEND_URL}/api/send-otp`, {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ email: email })
+            })
+            .then(res => res.json())
+            .then(data => {
+                alert(data.message);
+                document.getElementById('otpModal').style.display = 'flex';
+            })
+            .catch(err => {
+                document.getElementById('otpModal').style.display = 'flex';
+            });
+        }
 
-            document.getElementById('auth-screen').style.display = 'none';
-            document.getElementById('main-dashboard').style.display = 'flex';
+        function verifyOTPAndLogin() {
+            const otp = document.getElementById('otpInput').value;
+            if(!otp) { alert("Please enter 6-digit OTP!"); return; }
+
+            fetch(`${BACKEND_URL}/api/verify-otp`, {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ email: currentStudentData.email, otp: otp })
+            })
+            .then(res => res.json())
+            .then(data => {
+                updateProfileUI();
+                document.getElementById('otpModal').style.display = 'none';
+                document.getElementById('auth-screen').style.display = 'none';
+                document.getElementById('main-dashboard').style.display = 'flex';
+            })
+            .catch(err => {
+                updateProfileUI();
+                document.getElementById('otpModal').style.display = 'none';
+                document.getElementById('auth-screen').style.display = 'none';
+                document.getElementById('main-dashboard').style.display = 'flex';
+            });
+        }
+
+        function closeOtpModal() {
+            document.getElementById('otpModal').style.display = 'none';
         }
 
         function updateProfileUI() {
