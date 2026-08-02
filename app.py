@@ -9,7 +9,6 @@ import requests
 app = Flask(__name__)
 CORS(app)
 
-# --- Configuration ---
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "")
 SMTP_EMAIL = os.getenv("SMTP_EMAIL", "ticbull.support@gmail.com")
 SMTP_PASSWORD = os.getenv("SMTP_PASSWORD", "")
@@ -20,7 +19,7 @@ def send_otp_email(to_email, otp):
     if not SMTP_PASSWORD or not SMTP_EMAIL:
         return False
     subject = "TicBull Academy - Email Verification OTP"
-    body = f"Welcome to TicBull Academy! Your 6-Digit Email Verification OTP is: {otp}\n\nDo not share this OTP with anyone."
+    body = f"Welcome to TicBull Academy! Your 6-Digit Email Verification OTP is: {otp}"
     msg = MIMEText(body)
     msg['Subject'] = subject
     msg['From'] = f"TicBull Academy <{SMTP_EMAIL}>"
@@ -38,15 +37,15 @@ def send_otp():
     data = request.get_json() or {}
     email = data.get('email', '').strip().lower()
     if not email:
-        return jsonify({"success": False, "message": "Email ID zaroori hai!"}), 400
+        return jsonify({"success": False, "message": "Email zaroori hai!"}), 400
     
     otp = str(random.randint(100000, 999999))
     otp_store[email] = otp
     
     if send_otp_email(email, otp):
-        return jsonify({"success": True, "message": f"OTP successfully sent to {email}"})
+        return jsonify({"success": True, "message": f"OTP sent to {email}"})
     else:
-        return jsonify({"success": False, "message": "Email bhejne me error aayi!"}), 500
+        return jsonify({"success": False, "message": "Email error!"}), 500
 
 @app.route('/api/verify-otp', methods=['POST'])
 def verify_otp():
@@ -56,9 +55,9 @@ def verify_otp():
     
     if email in otp_store and otp_store[email] == user_otp:
         del otp_store[email]
-        return jsonify({"success": True, "message": "Email Verified Successfully!"})
+        return jsonify({"success": True, "message": "Verified!"})
     else:
-        return jsonify({"success": False, "message": "Galat OTP! Sahi 6-digit OTP daalein."}), 400
+        return jsonify({"success": False, "message": "Galat OTP!"}), 400
 
 @app.route('/api/chat', methods=['POST'])
 def chat():
@@ -66,46 +65,41 @@ def chat():
     prompt = data.get('prompt', '').strip()
     board = data.get('board', 'CBSE Board')
     cls = data.get('class', 'Class 12')
-    stream = data.get('stream', 'Science (PCM/PCB)')
+    stream = data.get('stream', 'Science')
     lang = data.get('lang', 'Hinglish')
     
     if not prompt:
-        return jsonify({"success": False, "message": "Question khali nahi ho sakta!"}), 400
+        return jsonify({"success": False, "message": "Question empty nahi ho sakta!"}), 400
     
     if not GEMINI_API_KEY:
-        return jsonify({"success": False, "message": "Error: Vercel me GEMINI_API_KEY nahi mili!"}), 500
+        return jsonify({"success": False, "message": "API Key missing in Vercel!"}), 500
         
-    # 🛑 STRICT TICBULL AI BRAIN
-    system_instruction = f"""Tu TicBull Academy ka ek intelligent aur strict AI Teacher hai. Tujhe MrYuviYadav ne banaya hai.
-Tera student abhi '{board} | {cls} | {stream}' ki padhai kar raha hai.
-CRITICAL RULES:
-1. OUT OF SYLLABUS STRICTNESS: Agar student ka sawal is course/class se related nahi hai (jaise gaane, movies, politics), toh strictly mana kar de aur bol: "Bhai, main TicBull ka AI Teacher hu. Main sirf aapke purchased course ({cls} {stream}) ke sawal hi bata sakta hu. Ye sawal out of syllabus hai."
-2. KABHI BHI mat bolna ki tu ek AI hai, LLM hai, ya Google/Gemini ne tujhe banaya hai. 
-3. Hamesha {lang} bhasha me jawab de.
-"""
-    full_prompt = f"{system_instruction}\n\nStudent's Question: {prompt}"
+    system_instruction = f"""Tu TicBull Academy ka intelligent teacher hai. Tujhe MrYuviYadav ne banaya hai. 
+Student {board} {cls} {stream} ka hai. 
+Rules: Out of syllabus sawal mana kar dena. Kabhie mat kehna ki tu AI ya Gemini hai. Hamesha {lang} me bolo."""
+    
+    full_prompt = f"{system_instruction}\n\nStudent Question: {prompt}"
     
     try:
-        # UNIVERSAL STABLE MODEL JO KABHI FAIL NAHI HOTA (gemini-pro)
         api_url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key={GEMINI_API_KEY}"
         payload = {"contents": [{"parts": [{"text": full_prompt}]}]}
         headers = {"Content-Type": "application/json"}
         
-        response = requests.post(api_url, json=payload, headers=headers)
+        # 15 seconds timeout taaki app "Thinking" par na ruke
+        response = requests.post(api_url, json=payload, headers=headers, timeout=15)
         res_data = response.json()
         
         if "candidates" in res_data:
             reply_text = res_data['candidates'][0]['content']['parts'][0]['text']
             reply_text = reply_text.replace("Gemini", "TicBull Engine").replace("Google", "TicBull").replace("gemini", "ticbull")
             return jsonify({"success": True, "reply": reply_text})
-        elif "error" in res_data:
-            error_msg = res_data["error"].get("message", "Unknown Google API Error")
-            return jsonify({"success": False, "message": f"Google API Issue: {error_msg}"}), 500
         else:
-            return jsonify({"success": False, "message": f"Unknown Issue: {str(res_data)}"}), 500
-                
+            return jsonify({"success": False, "message": "AI Server busy, try again."}), 500
+            
+    except requests.exceptions.Timeout:
+        return jsonify({"success": False, "message": "Request Timeout! Server slow hai."}), 500
     except Exception as e:
-        return jsonify({"success": False, "message": f"Network Error: {str(e)}"}), 500
+        return jsonify({"success": False, "message": f"Error: {str(e)}"}), 500
 
 @app.route('/')
 def home():
