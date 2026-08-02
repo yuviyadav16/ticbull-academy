@@ -7,13 +7,13 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
         :root {
-            --bg-color: #060709;
-            --card-bg: rgba(15, 17, 23, 0.95);
-            --accent-color: #2563eb;
-            --accent-glow: rgba(37, 99, 235, 0.35);
-            --text-main: #f3f4f6;
-            --text-muted: #9ca3af;
-            --border-color: rgba(255, 255, 255, 0.08);
+            --bg-color: #030712;
+            --card-bg: #0f172a;
+            --accent-color: #3b82f6;
+            --accent-glow: rgba(59, 130, 246, 0.4);
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --border-color: rgba(255, 255, 255, 0.1);
             --success-color: #10b981;
             --gold-color: #f59e0b;
         }
@@ -21,25 +21,25 @@
         * { margin:0; padding:0; box-sizing:border-box; font-family:-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; -webkit-tap-highlight-color: transparent; }
         body { background: var(--bg-color); color: var(--text-main); display:flex; flex-direction:column; min-height:100vh; overflow-x:hidden; }
 
-        /* SPLASH SCREEN WITH REAL TICBULL LOGO */
+        /* SPLASH SCREEN WITH EMBEDDED HIGH-RES BULL LOGO */
         #splash-screen {
             position: fixed; top:0; left:0; width:100%; height:100%;
-            background: #000; display:flex; flex-direction:column;
+            background: #020617; display:flex; flex-direction:column;
             justify-content:center; align-items:center; z-index:9999;
             transition: opacity 0.5s ease, visibility 0.5s ease;
         }
         .splash-logo-container { position: relative; width: 110px; height: 110px; display:flex; justify-content:center; align-items:center; }
         .splash-logo-glow {
             position: absolute; width: 100%; height: 100%; border-radius: 50%;
-            background: radial-gradient(circle, rgba(37, 99, 235, 0.8) 0%, rgba(0,0,0,0) 70%);
-            filter: blur(15px); animation: pulseGlow 2s infinite alternate;
+            background: radial-gradient(circle, rgba(59, 130, 246, 0.8) 0%, rgba(0,0,0,0) 70%);
+            filter: blur(16px); animation: pulseGlow 2s infinite alternate;
         }
         .splash-logo {
-            position: relative; width: 95px; height: 95px; border-radius: 50%;
-            background: #000; border: 2px solid rgba(255,255,255,0.15);
+            position: relative; width: 90px; height: 90px; border-radius: 50%;
+            background: #000; border: 2px solid rgba(59, 130, 246, 0.4);
             display:flex; justify-content:center; align-items:center; overflow:hidden;
         }
-        .splash-logo img { width:85%; height:85%; object-fit:contain; }
+        .splash-logo svg { width:65%; height:65%; fill:#ffffff; }
         .splash-title { margin-top:20px; font-size:24px; font-weight:800; letter-spacing:1px; color:#fff; }
         .developer-tag { margin-top:6px; font-size:12px; color: var(--accent-color); font-weight:600; }
 
@@ -48,30 +48,30 @@
         /* AUTH CARD */
         .auth-container { display:flex; flex-direction:column; align-items:center; justify-content:center; flex:1; padding:20px; width:100%; }
         .auth-card {
-            background: var(--card-bg); backdrop-filter: blur(16px);
-            border: 1px solid var(--border-color); border-radius:24px; padding:28px 22px;
-            width:100%; max-width:420px; box-shadow:0 20px 50px rgba(0,0,0,0.7); text-align:center;
+            background: var(--card-bg); border: 1px solid var(--border-color);
+            border-radius:24px; padding:28px 22px; width:100%; max-width:420px;
+            box-shadow:0 20px 50px rgba(0,0,0,0.8); text-align:center;
         }
         .brand-header { display:flex; flex-direction:column; align-items:center; margin-bottom:18px; }
         .brand-icon-box {
-            width:75px; height:75px; border-radius:50%; background:#000; border:1px solid rgba(255,255,255,0.15);
+            width:75px; height:75px; border-radius:50%; background:#000; border:2px solid rgba(59, 130, 246, 0.3);
             display:flex; justify-content:center; align-items:center; margin-bottom:10px;
             box-shadow: 0 8px 25px rgba(0,0,0,0.5); overflow:hidden;
         }
-        .brand-icon-box img { width:85%; height:85%; object-fit:contain; }
+        .brand-icon-box svg { width:65%; height:65%; fill:#ffffff; }
 
-        .auth-tabs { display:flex; background:#111318; padding:4px; border-radius:12px; border:1px solid var(--border-color); margin-bottom:16px; }
+        .auth-tabs { display:flex; background:#020617; padding:4px; border-radius:12px; border:1px solid var(--border-color); margin-bottom:16px; }
         .auth-tab { flex:1; padding:10px; font-size:13px; font-weight:600; color:var(--text-muted); border-radius:8px; cursor:pointer; transition:0.3s; }
         .auth-tab.active { background:var(--accent-color); color:#fff; }
 
         .input-group { position:relative; margin-bottom:12px; text-align:left; }
         .input-group i.left-icon { position:absolute; left:14px; top:50%; transform:translateY(-50%); color:var(--text-muted); font-size:14px; }
-        .input-group input { width:100%; background:#111318; border:1px solid var(--border-color); color:#fff; padding:12px 40px 12px 40px; border-radius:12px; font-size:14px; outline:none; transition:0.3s; }
+        .input-group input { width:100%; background:#020617; border:1px solid var(--border-color); color:#fff; padding:12px 40px; border-radius:12px; font-size:14px; outline:none; transition:0.3s; }
         .input-group input:focus { border-color:var(--accent-color); box-shadow: 0 0 12px var(--accent-glow); }
         .pwd-toggle { position:absolute; right:14px; top:50%; transform:translateY(-50%); color:var(--text-muted); cursor:pointer; font-size:14px; }
 
         .btn-primary {
-            width:100%; background: linear-gradient(135deg, #2563eb, #1d4ed8); color:#fff;
+            width:100%; background: linear-gradient(135deg, #3b82f6, #1d4ed8); color:#fff;
             font-weight:700; padding:13px; border:none; border-radius:12px; cursor:pointer; font-size:14px;
             letter-spacing:0.5px; box-shadow:0 8px 20px var(--accent-glow); transition:0.2s; margin-top:8px;
         }
@@ -83,39 +83,39 @@
         .header { display:flex; justify-content:space-between; align-items:center; padding:10px 14px; background:var(--card-bg); border-radius:18px; border:1px solid var(--border-color); margin-bottom:10px; }
         .header-brand { display:flex; align-items:center; gap:10px; }
         .menu-btn { background:none; border:none; color:#fff; font-size:18px; cursor:pointer; padding:6px; }
-        .header-logo { width:38px; height:38px; border-radius:50%; background:#000; border:1px solid rgba(255,255,255,0.1); display:flex; justify-content:center; align-items:center; overflow:hidden; }
-        .header-logo img { width:85%; height:85%; object-fit:contain; }
-        .user-badge { background:rgba(245, 158, 11, 0.15); border:1px solid rgba(245, 158, 11, 0.3); color:var(--gold-color); padding:5px 10px; border-radius:20px; font-size:11px; font-weight:700; cursor:pointer; }
+        .header-logo { width:38px; height:38px; border-radius:50%; background:#000; border:1px solid rgba(255,255,255,0.2); display:flex; justify-content:center; align-items:center; overflow:hidden; }
+        .header-logo svg { width:65%; height:65%; fill:#ffffff; }
+        .user-badge { background:rgba(245, 158, 11, 0.15); border:1px solid rgba(245, 158, 11, 0.4); color:var(--gold-color); padding:5px 10px; border-radius:20px; font-size:11px; font-weight:700; cursor:pointer; }
 
         /* CATEGORIES SELECTOR GRID */
         .category-grid { display:grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap:8px; margin-bottom:10px; }
-        select { width:100%; background:#111318; border:1px solid var(--border-color); color:#fff; padding:9px 10px; border-radius:10px; font-size:12px; outline:none; }
+        select { width:100%; background:#0f172a; border:1px solid var(--border-color); color:#fff; padding:9px 10px; border-radius:10px; font-size:12px; outline:none; }
 
-        .active-course-chip { background:rgba(37, 99, 235, 0.12); border:1px solid var(--accent-color); border-radius:10px; padding:6px 10px; font-size:11px; color:var(--accent-color); font-weight:600; margin-bottom:10px; display:flex; align-items:center; justify-content:space-between; }
+        .active-course-chip { background:rgba(59, 130, 246, 0.12); border:1px solid var(--accent-color); border-radius:10px; padding:8px 12px; font-size:11.5px; color:var(--accent-color); font-weight:600; margin-bottom:10px; display:flex; align-items:center; justify-content:space-between; }
 
         /* CHAT CONTAINER */
         .chat-container {
-            background:#090a0d; border:1px solid var(--border-color); border-radius:18px;
+            background:#020617; border:1px solid var(--border-color); border-radius:18px;
             padding:14px; flex:1; min-height:380px; max-height:520px; overflow-y:auto;
             display:flex; flex-direction:column; gap:12px; margin-bottom:10px;
         }
         .msg { padding:12px 14px; border-radius:16px; font-size:13.5px; line-height:1.5; max-width:88%; word-wrap:break-word; }
         .msg.user { background:var(--accent-color); color:#fff; align-self:flex-end; border-bottom-right-radius:4px; }
-        .msg.ai { background:#13161c; color:var(--text-main); border:1px solid var(--border-color); align-self:flex-start; border-bottom-left-radius:4px; }
+        .msg.ai { background:#0f172a; color:var(--text-main); border:1px solid var(--border-color); align-self:flex-start; border-bottom-left-radius:4px; }
         .msg.error { background:rgba(239, 68, 68, 0.15); border:1px solid #ef4444; color:#fca5a5; align-self:center; width:100%; text-align:center; }
         .msg-image { max-width:100%; border-radius:10px; margin-bottom:8px; }
 
         /* CHAT INPUT BAR */
-        .chat-input-bar { display:flex; align-items:center; background:#111318; border:1px solid var(--border-color); border-radius:16px; padding:5px 6px 5px 10px; gap:8px; }
+        .chat-input-bar { display:flex; align-items:center; background:#0f172a; border:1px solid var(--border-color); border-radius:16px; padding:5px 6px 5px 10px; gap:8px; }
         .chat-input-bar input[type="text"] { flex:1; background:transparent; border:none; color:#fff; outline:none; font-size:13.5px; }
         .upload-btn { background:rgba(255,255,255,0.05); color:var(--text-muted); border:1px solid var(--border-color); width:36px; height:36px; border-radius:10px; display:flex; justify-content:center; align-items:center; cursor:pointer; }
         .send-btn { background:var(--accent-color); color:#fff; border:none; width:36px; height:36px; border-radius:10px; display:flex; justify-content:center; align-items:center; cursor:pointer; }
 
-        #imagePreview { display:none; padding:6px 12px; background:#13161c; border-radius:10px; font-size:12px; color:var(--accent-color); margin-bottom:8px; align-items:center; justify-content:space-between; }
+        #imagePreview { display:none; padding:6px 12px; background:#0f172a; border-radius:10px; font-size:12px; color:var(--accent-color); margin-bottom:8px; align-items:center; justify-content:space-between; }
 
         /* SIDE DRAWER MENU */
         .drawer-overlay { position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.75); z-index:1000; display:none; }
-        .drawer { position:fixed; top:0; left:-290px; width:290px; height:100%; background:#0d0e12; border-right:1px solid var(--border-color); z-index:1001; transition:0.3s; padding:20px; display:flex; flex-direction:column; }
+        .drawer { position:fixed; top:0; left:-290px; width:290px; height:100%; background:#0f172a; border-right:1px solid var(--border-color); z-index:1001; transition:0.3s; padding:20px; display:flex; flex-direction:column; }
         .drawer.open { left:0; }
         .drawer-header { display:flex; justify-content:space-between; align-items:center; padding-bottom:14px; border-bottom:1px solid var(--border-color); margin-bottom:14px; }
         .drawer-item { padding:11px 12px; border-radius:10px; color:var(--text-main); font-size:13px; display:flex; align-items:center; gap:12px; cursor:pointer; transition:0.2s; margin-bottom:6px; }
@@ -123,24 +123,25 @@
 
         .history-title { font-size:11px; font-weight:700; color:var(--text-muted); text-transform:uppercase; margin:14px 0 8px 4px; }
         .history-list { display:flex; flex-direction:column; gap:6px; overflow-y:auto; max-height:220px; }
-        .history-item { font-size:12px; color:var(--text-muted); padding:8px 10px; border-radius:8px; background:#111318; border:1px solid var(--border-color); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; cursor:pointer; }
+        .history-item { font-size:12px; color:var(--text-muted); padding:8px 10px; border-radius:8px; background:#020617; border:1px solid var(--border-color); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; cursor:pointer; }
         .history-item:hover { color:#fff; border-color:var(--accent-color); }
 
-        /* FULL SUBSCRIPTION PRICING MODAL */
+        /* FULL PRICING MODAL WITH COMPLETE COURSE LIST */
         .modal-overlay { position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); z-index:2000; display:none; justify-content:center; align-items:center; padding:16px; }
-        .modal-card { background:#0f1117; border:1px solid var(--border-color); border-radius:20px; padding:22px; max-width:460px; width:100%; text-align:center; position:relative; max-height:92vh; overflow-y:auto; }
+        .modal-card { background:#0f172a; border:1px solid var(--border-color); border-radius:20px; padding:22px; max-width:480px; width:100%; text-align:center; position:relative; max-height:92vh; display:flex; flex-direction:column; }
         
-        .pricing-list { display:flex; flex-direction:column; gap:8px; margin:14px 0; text-align:left; max-height:260px; overflow-y:auto; padding-right:4px; }
-        .price-item { background:#13161c; border:1px solid var(--border-color); padding:10px 12px; border-radius:10px; display:flex; justify-content:space-between; align-items:center; cursor:pointer; transition:0.2s; }
-        .price-item:hover, .price-item.selected { border-color:var(--accent-color); background:rgba(37, 99, 235, 0.12); }
+        .pricing-list { display:flex; flex-direction:column; gap:8px; margin:12px 0; text-align:left; overflow-y:auto; padding-right:4px; max-height:340px; }
+        .price-category-label { font-size:11px; font-weight:800; color:var(--accent-color); text-transform:uppercase; letter-spacing:0.5px; margin:8px 0 4px 2px; }
+        .price-item { background:#020617; border:1px solid var(--border-color); padding:10px 12px; border-radius:10px; display:flex; justify-content:space-between; align-items:center; cursor:pointer; transition:0.2s; }
+        .price-item:hover, .price-item.selected { border-color:var(--accent-color); background:rgba(59, 130, 246, 0.15); }
         .price-item .plan-name { font-size:12px; font-weight:600; color:#fff; }
         .price-item .plan-cost { font-size:12.5px; font-weight:800; color:var(--success-color); }
 
-        .pro-banner { background:linear-gradient(135deg, rgba(245, 158, 11, 0.2), rgba(37, 99, 235, 0.2)); border:1px solid rgba(245, 158, 11, 0.5); border-radius:12px; padding:12px; margin-bottom:12px; text-align:left; }
+        .pro-banner { background:linear-gradient(135deg, rgba(245, 158, 11, 0.25), rgba(59, 130, 246, 0.25)); border:1px solid rgba(245, 158, 11, 0.6); border-radius:12px; padding:12px; margin-bottom:8px; text-align:left; }
 
         /* FOOTER & SOCIALS */
-        footer { background:#000; border-top:1px solid var(--border-color); padding:16px; text-align:center; font-size:11px; color:var(--text-muted); margin-top:auto; width:100%; }
-        .support-box { background:#111318; border:1px solid var(--border-color); border-radius:12px; padding:10px; margin:8px auto; max-width:400px; display:flex; justify-content:center; gap:14px; }
+        footer { background:#020617; border-top:1px solid var(--border-color); padding:16px; text-align:center; font-size:11px; color:var(--text-muted); margin-top:auto; width:100%; }
+        .support-box { background:#0f172a; border:1px solid var(--border-color); border-radius:12px; padding:10px; margin:8px auto; max-width:400px; display:flex; justify-content:center; gap:14px; }
         .support-box a { color:#fff; text-decoration:none; font-size:12px; font-weight:600; display:flex; align-items:center; gap:6px; }
         .dev-socials { display:flex; justify-content:center; gap:16px; margin:8px 0; }
         .dev-socials a { color:var(--text-muted); font-size:16px; transition:0.2s; }
@@ -149,12 +150,20 @@
 </head>
 <body>
 
+    <!-- EMBEDDED SHARP VECTOR BULL LOGO SVG -->
+    <svg style="display:none;">
+        <symbol id="bull-logo-icon" viewBox="0 0 24 24">
+            <path d="M12 2C8.5 2 6 4.5 6 7c0 2 1.5 3.5 3 4.5L9 15c0 1.5 1.5 3 3 3s3-1.5 3-3l0-3.5c1.5-1 3-2.5 3-4.5 0-2.5-2.5-5-6-5zm-4 5c0-1.5 1.5-3 4-3s4 1.5 4 3c0 1.2-.8 2.2-2 2.7V15c0 .6-.4 1-1 1s-1-.4-1-1V9.7C9.8 9.2 9 8.2 9 7z"/>
+            <path d="M4 5L2 3v4c0 2.2 1.8 4 4 4h1V9.5C5.8 9.2 4.5 8.2 4 7V5zm16 0v2c-.5 1.2-1.8 2.2-3 2.5V11h1c2.2 0 4-1.8 4-4V3l-2 2z"/>
+        </symbol>
+    </svg>
+
     <!-- ANIMATED SPLASH SCREEN -->
     <div id="splash-screen">
         <div class="splash-logo-container">
             <div class="splash-logo-glow"></div>
             <div class="splash-logo">
-                <img src="./file_0000000051ac82068c717a68e826b86e" alt="TicBull Logo">
+                <svg><use href="#bull-logo-icon"/></svg>
             </div>
         </div>
         <div class="splash-title">TicBull Academy</div>
@@ -166,7 +175,7 @@
         <div class="auth-card">
             <div class="brand-header">
                 <div class="brand-icon-box">
-                    <img src="./file_0000000051ac82068c717a68e826b86e" alt="Logo">
+                    <svg><use href="#bull-logo-icon"/></svg>
                 </div>
                 <h2 style="font-size:20px; font-weight:800;">TicBull Academy</h2>
                 <p style="font-size:12px; color:var(--text-muted); margin-top:3px;">AI Student Portal & Exam Engine</p>
@@ -198,11 +207,11 @@
             <div class="header-brand">
                 <button class="menu-btn" onclick="toggleDrawer()"><i class="fa-solid fa-bars"></i></button>
                 <div class="header-logo">
-                    <img src="./file_0000000051ac82068c717a68e826b86e" alt="Logo">
+                    <svg><use href="#bull-logo-icon"/></svg>
                 </div>
                 <div>
                     <strong style="color:#fff; font-size:13.5px;">TicBull Academy</strong>
-                    <p style="font-size:9.5px; color:var(--text-muted);">AI Tutor Engine v4.0</p>
+                    <p style="font-size:9.5px; color:var(--text-muted);">AI Tutor Engine v4.5</p>
                 </div>
             </div>
             <span class="user-badge" onclick="openSubscriptionModal()"><i class="fa-solid fa-crown"></i> <span id="badgePlanText">Class 12 Science Active</span></span>
@@ -296,31 +305,44 @@
         </div>
     </div>
 
-    <!-- SUBSCRIPTION PRICING MODAL -->
+    <!-- COMPLETE SUBSCRIPTION PRICING MODAL (ALL COURSES FULLY LISTED) -->
     <div class="modal-overlay" id="subModal">
         <div class="modal-card">
             <i class="fa-solid fa-xmark" style="position:absolute; right:16px; top:16px; color:var(--text-muted); cursor:pointer;" onclick="closeSubscriptionModal()"></i>
-            <h3 style="color:#fff; font-size:18px;">🎓 Select Course Pass</h3>
+            <h3 style="color:#fff; font-size:18px;">🎓 TicBull Course Pass Pricing</h3>
             <p style="font-size:11.5px; color:var(--text-muted); margin-top:2px;">Single course lein ya Pro Pass se sabhi unlocked rakhein</p>
 
             <div class="pro-banner" onclick="selectPlan('TicBull Pro (All Access)', 2999)" style="cursor:pointer;">
                 <div style="display:flex; justify-content:space-between; align-items:center;">
-                    <strong style="color:#f59e0b; font-size:13px;"><i class="fa-solid fa-crown"></i> TicBull Pro (All-Access Pass)</strong>
+                    <strong style="color:#f59e0b; font-size:13px;"><i class="fa-solid fa-crown"></i> TicBull Pro Pass (All-Access)</strong>
                     <span style="color:#10b981; font-weight:800; font-size:13.5px;">₹2,999/yr</span>
                 </div>
-                <p style="font-size:10px; color:#d1d5db; margin-top:4px;">Unlocked All Courses (CBSE, State Boards, Science, Commerce, Arts, UPSC, NEET, JEE)!</p>
+                <p style="font-size:10px; color:#d1d5db; margin-top:4px;">Unlocked All Boards, Classes (9-12), Science/Commerce/Arts & Competitive Exams!</p>
             </div>
 
-            <div style="font-size:11px; font-weight:700; color:var(--text-muted); text-align:left; text-transform:uppercase;">Single Course Pass:</div>
-            
             <div class="pricing-list">
-                <div class="price-item" onclick="selectPlan('Class 12 Science', 999)"><span class="plan-name">Class 12 Science (PCM/PCB)</span><span class="plan-cost">₹999/yr</span></div>
+                <div class="price-category-label">📖 School Boards (CBSE / Bihar / UP)</div>
+                <div class="price-item" onclick="selectPlan('Class 9 School Board', 499)"><span class="plan-name">Class 9 (All Subjects)</span><span class="plan-cost">₹499/yr</span></div>
+                <div class="price-item" onclick="selectPlan('Class 10 Board', 599)"><span class="plan-name">Class 10 (All Subjects)</span><span class="plan-cost">₹599/yr</span></div>
                 <div class="price-item" onclick="selectPlan('Class 11 Science', 899)"><span class="plan-name">Class 11 Science (PCM/PCB)</span><span class="plan-cost">₹899/yr</span></div>
-                <div class="price-item" onclick="selectPlan('Class 10 Board', 599)"><span class="plan-name">Class 10 All Subjects</span><span class="plan-cost">₹599/yr</span></div>
-                <div class="price-item" onclick="selectPlan('Class 9 Board', 499)"><span class="plan-name">Class 9 All Subjects</span><span class="plan-cost">₹499/yr</span></div>
+                <div class="price-item" onclick="selectPlan('Class 11 Commerce', 799)"><span class="plan-name">Class 11 Commerce</span><span class="plan-cost">₹799/yr</span></div>
+                <div class="price-item" onclick="selectPlan('Class 11 Arts', 699)"><span class="plan-name">Class 11 Arts / Humanities</span><span class="plan-cost">₹699/yr</span></div>
+                <div class="price-item" onclick="selectPlan('Class 12 Science', 999)"><span class="plan-name">Class 12 Science (PCM/PCB)</span><span class="plan-cost">₹999/yr</span></div>
+                <div class="price-item" onclick="selectPlan('Class 12 Commerce', 899)"><span class="plan-name">Class 12 Commerce</span><span class="plan-cost">₹899/yr</span></div>
+                <div class="price-item" onclick="selectPlan('Class 12 Arts', 799)"><span class="plan-name">Class 12 Arts / Humanities</span><span class="plan-cost">₹799/yr</span></div>
+
+                <div class="price-category-label">🏆 Competitive Exams</div>
                 <div class="price-item" onclick="selectPlan('JEE Main Prep', 1499)"><span class="plan-name">JEE Main Exam</span><span class="plan-cost">₹1,499/yr</span></div>
+                <div class="price-item" onclick="selectPlan('JEE Advanced Prep', 1799)"><span class="plan-name">JEE Advanced Exam</span><span class="plan-cost">₹1,799/yr</span></div>
                 <div class="price-item" onclick="selectPlan('NEET Medical Prep', 1499)"><span class="plan-name">NEET Medical Exam</span><span class="plan-cost">₹1,499/yr</span></div>
+                <div class="price-item" onclick="selectPlan('CUET Prep', 999)"><span class="plan-name">CUET Exam</span><span class="plan-cost">₹999/yr</span></div>
+                <div class="price-item" onclick="selectPlan('SSC / Banking / Railway', 999)"><span class="plan-name">SSC / Banking / Railway</span><span class="plan-cost">₹999/yr</span></div>
+                <div class="price-item" onclick="selectPlan('NDA Defense Prep', 999)"><span class="plan-name">NDA / Defense Exams</span><span class="plan-cost">₹999/yr</span></div>
                 <div class="price-item" onclick="selectPlan('UPSC Civil Services', 2499)"><span class="plan-name">UPSC Civil Services</span><span class="plan-cost">₹2,499/yr</span></div>
+                <div class="price-item" onclick="selectPlan('State PSC Prep', 1499)"><span class="plan-name">State PSC Exams</span><span class="plan-cost">₹1,499/yr</span></div>
+                <div class="price-item" onclick="selectPlan('CLAT Entrance', 1299)"><span class="plan-name">CLAT Entrance Exam</span><span class="plan-cost">₹1,299/yr</span></div>
+                <div class="price-item" onclick="selectPlan('GATE Exam Prep', 1999)"><span class="plan-name">GATE Exam</span><span class="plan-cost">₹1,999/yr</span></div>
+                <div class="price-item" onclick="selectPlan('CA / CS / CMA Foundation', 1499)"><span class="plan-name">CA / CS / CMA Foundation</span><span class="plan-cost">₹1,499/yr</span></div>
             </div>
 
             <button class="btn-primary" onclick="activateSelectedPlan()">ACTIVATE / SWITCH PASS</button>
@@ -364,7 +386,6 @@
 
         function togglePassword() {
             const pwdInput = document.getElementById('password');
-            const icon = document.getElementById('pwdToggle');
             pwdInput.type = pwdInput.type === 'password' ? 'text' : 'password';
         }
 
@@ -415,7 +436,7 @@
                  <span style="font-size:10px; color:#10b981;">Access Unlocked</span>`;
             
             closeSubscriptionModal();
-            alert(`🎉 ${purchasedPlanName} Pass Activated! Access restricted to this course only.`);
+            alert(`🎉 ${purchasedPlanName} Pass Activated! Material unlocked.`);
         }
 
         function handleImageSelect(event) {
@@ -460,20 +481,15 @@
             removeImage();
             chatBox.scrollTop = chatBox.scrollHeight;
 
-            // CHECK ACCESS PERMISSION (COURSE RESTRICTION LOGIC)
-            const currentSelectedCourse = `${cls} ${stream}`;
-            
             setTimeout(() => {
                 if(!isProUser && !purchasedPlanName.includes(cls) && !purchasedPlanName.includes(board)) {
-                    // ACCESS DENIED ERROR MESSAGE
                     chatBox.innerHTML += `
                         <div class="msg error">
                             <b>⛔ COURSE ACCESS DENIED!</b><br>
-                            Aapne <b>"${purchasedPlanName}"</b> ka pass liya hai. Aap <b>"${board} - ${cls}"</b> ka material access nahi kar sakte!<br>
+                            Aapne <b>"${purchasedPlanName}"</b> ka pass liya hai. Aap <b>"${board} - ${cls}"</b> access nahi kar sakte!<br>
                             <span style="text-decoration:underline; cursor:pointer;" onclick="openSubscriptionModal()">👉 Click here to Upgrade to TicBull Pro Pass (₹2,999)</span>
                         </div>`;
                 } else {
-                    // ALLOWED AI RESPONSE
                     chatBox.innerHTML += `
                         <div class="msg ai">
                             <b>[${board} | ${cls} | ${stream} Tutor]:</b><br>
