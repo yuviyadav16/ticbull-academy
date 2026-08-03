@@ -93,7 +93,6 @@ def verify_otp():
             elif auth_mode == 'forgot':
                 requests.patch(f"{FIREBASE_URL}/users/{safe_email}.json", json={"password": password})
             
-            # Fetch user profile data to return
             db_user = requests.get(f"{FIREBASE_URL}/users/{safe_email}.json").json() or {}
             user_data = {"name": db_user.get("name", ""), "dob": db_user.get("dob", ""), "photo": db_user.get("photo", "")}
             
@@ -131,60 +130,59 @@ def check_session():
             
     return jsonify({"success": True, "active": False, "message": "Session Expired! Logged in from another device."})
 
-@app.route('/api/get-chat', methods=['POST'])
-def get_chat():
-    data = request.get_json() or {}
-    email = data.get('email', '').strip().lower()
-    if not email or not FIREBASE_URL:
-        return jsonify({"success": True, "history": []})
-    safe_email = sanitize_email(email)
-    res = requests.get(f"{FIREBASE_URL}/chats/{safe_email}.json")
-    history = res.json() if res.status_code == 200 and res.json() else []
-    return jsonify({"success": True, "history": history})
 
-@app.route('/api/delete-chat-item', methods=['POST'])
-def delete_chat_item():
+# ==========================================
+# TRUE CHATGPT-LIKE MULTI-SESSION ARCHITECTURE
+# ==========================================
+
+@app.route('/api/sync-session', methods=['POST'])
+def sync_session():
     data = request.get_json() or {}
     email = data.get('email', '').strip().lower()
-    index = data.get('index')
-    if email and FIREBASE_URL and index is not None:
+    session_id = data.get('session_id')
+    title = data.get('title', 'New Chat')
+    chat_html = data.get('html', '')
+    
+    if email and session_id and FIREBASE_URL:
         safe_email = sanitize_email(email)
-        res = requests.get(f"{FIREBASE_URL}/chats/{safe_email}.json")
-        history = res.json() if res.status_code == 200 and res.json() else []
-        if 0 <= index < len(history):
-            history.pop(index)
-            requests.put(f"{FIREBASE_URL}/chats/{safe_email}.json", json=history)
+        payload = {"title": title, "html": chat_html}
+        requests.put(f"{FIREBASE_URL}/chat_sessions/{safe_email}/{session_id}.json", json=payload)
     return jsonify({"success": True})
 
-@app.route('/api/sync-chat-ui', methods=['POST'])
-def sync_chat_ui():
-    data = request.get_json() or {}
-    email = data.get('email', '').strip().lower()
-    chat_html = data.get('chat_html', '')
-    if email and FIREBASE_URL:
-        safe_email = sanitize_email(email)
-        requests.put(f"{FIREBASE_URL}/chat_ui/{safe_email}.json", json={"html": chat_html})
-    return jsonify({"success": True})
-
-@app.route('/api/get-chat-ui', methods=['POST'])
-def get_chat_ui():
+@app.route('/api/get-sessions', methods=['POST'])
+def get_sessions():
     data = request.get_json() or {}
     email = data.get('email', '').strip().lower()
     if email and FIREBASE_URL:
         safe_email = sanitize_email(email)
-        res = requests.get(f"{FIREBASE_URL}/chat_ui/{safe_email}.json")
+        res = requests.get(f"{FIREBASE_URL}/chat_sessions/{safe_email}.json")
+        if res.status_code == 200 and res.json():
+            sessions = res.json()
+            session_list = [{"id": k, "title": v.get("title", "Chat")} for k, v in sessions.items() if v]
+            session_list.sort(key=lambda x: x["id"], reverse=True)
+            return jsonify({"success": True, "sessions": session_list})
+    return jsonify({"success": True, "sessions": []})
+
+@app.route('/api/get-session-html', methods=['POST'])
+def get_session_html():
+    data = request.get_json() or {}
+    email = data.get('email', '').strip().lower()
+    session_id = data.get('session_id')
+    if email and session_id and FIREBASE_URL:
+        safe_email = sanitize_email(email)
+        res = requests.get(f"{FIREBASE_URL}/chat_sessions/{safe_email}/{session_id}.json")
         if res.status_code == 200 and res.json():
             return jsonify({"success": True, "html": res.json().get("html", "")})
-    return jsonify({"success": True, "html": ""})
+    return jsonify({"success": False, "html": ""})
 
-@app.route('/api/clear-chat', methods=['POST'])
-def clear_chat():
-    # Only clears UI, does not delete sidebar history prompts
+@app.route('/api/delete-session', methods=['POST'])
+def delete_session():
     data = request.get_json() or {}
     email = data.get('email', '').strip().lower()
-    if email and FIREBASE_URL:
+    session_id = data.get('session_id')
+    if email and session_id and FIREBASE_URL:
         safe_email = sanitize_email(email)
-        requests.delete(f"{FIREBASE_URL}/chat_ui/{safe_email}.json")
+        requests.delete(f"{FIREBASE_URL}/chat_sessions/{safe_email}/{session_id}.json")
     return jsonify({"success": True})
 
 @app.route('/api/chat', methods=['POST'])
@@ -197,7 +195,6 @@ def chat():
     lang = data.get('lang', 'Hinglish')
     student_name = data.get('student_name', 'Student')
     purchased_plan = data.get('purchased_plan', 'Free Demo Plan')
-    email = data.get('email', '').strip().lower()
     
     if not prompt:
         return jsonify({"success": False, "message": "Prompt cannot be empty!"}), 400
@@ -230,16 +227,6 @@ STRICT INTELLIGENCE RULES:
         if "candidates" in res_data:
             reply_text = res_data['candidates'][0]['content']['parts'][0]['text']
             reply_text = reply_text.replace("Gemini", "TicBull").replace("Google", "TicBull")
-            
-            if email and FIREBASE_URL:
-                safe_email = sanitize_email(email)
-                res = requests.get(f"{FIREBASE_URL}/chats/{safe_email}.json")
-                history = res.json() if res.status_code == 200 and res.json() else []
-                if prompt not in history:
-                    history.insert(0, prompt)
-                    if len(history) > 20: history.pop()
-                    requests.put(f"{FIREBASE_URL}/chats/{safe_email}.json", json=history)
-
             return jsonify({"success": True, "reply": reply_text})
         elif "error" in res_data:
             return jsonify({"success": False, "message": f"AI Engine Error: {res_data['error'].get('message')}"}), 500
@@ -251,7 +238,7 @@ STRICT INTELLIGENCE RULES:
 
 @app.route('/')
 def home():
-    return "TicBull Master AI Engine is securely running!"
+    return "TicBull Master AI Engine is securely running with ChatGPT Multi-Session Architecture!"
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)
