@@ -219,8 +219,8 @@
 
         .history-title { font-size:11px; font-weight:700; color:var(--text-muted); text-transform:uppercase; margin:12px 0 6px 4px; }
         .history-list { display:flex; flex-direction:column; gap:6px; overflow-y:auto; max-height:160px; }
-        .history-item { font-size:12px; color:var(--text-muted); padding:8px 10px; border-radius:8px; background:var(--chat-bg); border:1px solid var(--border-color); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; cursor:pointer; display: flex; justify-content: space-between; align-items: center; }
-        .history-item:hover { color:var(--text-main); border-color:var(--accent-color); }
+        .history-item { font-size:12px; color:var(--text-muted); padding:8px 10px; border-radius:8px; background:var(--chat-bg); border:1px solid var(--border-color); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; cursor:pointer; display: flex; justify-content: space-between; align-items: center; transition:0.2s; }
+        .history-item:hover, .history-item.active-session { background:rgba(37, 99, 235, 0.15); color:var(--text-main); border-color:var(--accent-color); }
 
         /* MODALS */
         .modal-overlay { position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); z-index:2000; display:none; justify-content:center; align-items:center; padding:16px; }
@@ -530,7 +530,7 @@
 
         <!-- CHAT HISTORY -->
         <div class="history-title" style="display:flex; justify-content:space-between; align-items:center;">
-            <span><i class="fa-solid fa-clock-rotate-left"></i> Recent Chat Prompts:</span>
+            <span><i class="fa-solid fa-clock-rotate-left"></i> Recent Chat Sessions:</span>
         </div>
         <div class="history-list" id="historyList"></div>
         
@@ -633,6 +633,10 @@
         let selectedPlanPrice = 499;
         let selectedFilesArray = [];
         let currentStudentData = { name: '', email: '', dob: '', photo: '' };
+        
+        // Multi-Session ChatGPT Architecture State
+        let currentSessionId = Date.now().toString();
+        let currentSessionTitle = "New Chat";
 
         // --- WEB AUDIO API FOR CLICK / STARTUP SOUNDS ---
         const AudioContext = window.AudioContext || window.webkitAudioContext;
@@ -652,7 +656,6 @@
             osc.stop(audioCtx.currentTime + 0.1);
         }
 
-        // Add sound to all buttons automatically
         document.addEventListener('click', function(e) {
             if(e.target.closest('button') || e.target.closest('.action-icon-btn') || e.target.closest('.drawer-item') || e.target.closest('.auth-tab')) {
                 playClickSound();
@@ -691,7 +694,7 @@
                         document.getElementById('auth-screen').style.display = 'none';
                         document.getElementById('main-dashboard').style.display = 'flex';
                         updateProfileUI();
-                        loadServerChatHistory();
+                        loadSidebarHistory(); // Load sessions list
                     } else {
                         localStorage.clear();
                         showToast("Session Expired! Logged in from another device.", "error");
@@ -702,7 +705,7 @@
                     document.getElementById('auth-screen').style.display = 'none';
                     document.getElementById('main-dashboard').style.display = 'flex';
                     updateProfileUI();
-                    loadServerChatHistory();
+                    loadSidebarHistory();
                 });
             }
         });
@@ -712,7 +715,7 @@
                 const splash = document.getElementById('splash-screen');
                 splash.style.opacity = '0';
                 setTimeout(() => splash.style.visibility = 'hidden', 800);
-            }, 10000);
+            }, 8000);
         });
 
         window.addEventListener('resize', () => scrollToBottom());
@@ -729,9 +732,7 @@
             pwdInput.type = pwdInput.type === 'password' ? 'text' : 'password';
         }
 
-        function openForgotModal() {
-            document.getElementById('forgotModal').style.display = 'flex';
-        }
+        function openForgotModal() { document.getElementById('forgotModal').style.display = 'flex'; }
 
         function initiateForgotOTP() {
             const email = document.getElementById('forgotEmail').value.trim();
@@ -858,11 +859,8 @@
             btn.disabled = true;
             btn.innerText = "VERIFYING...";
 
-            let deviceId = localStorage.getItem('ticbull_device_id');
-            if(!deviceId) {
-                deviceId = 'dev_' + Math.random().toString(36).substring(2) + Date.now();
-                localStorage.setItem('ticbull_device_id', deviceId);
-            }
+            let deviceId = localStorage.getItem('ticbull_device_id') || ('dev_' + Math.random().toString(36).substring(2) + Date.now());
+            localStorage.setItem('ticbull_device_id', deviceId);
 
             fetch(`/api/verify-otp`, {
                 method: 'POST',
@@ -892,7 +890,7 @@
                     document.getElementById('otpModal').style.display = 'none';
                     document.getElementById('auth-screen').style.display = 'none';
                     document.getElementById('main-dashboard').style.display = 'flex';
-                    loadServerChatHistory();
+                    loadSidebarHistory();
                     showToast("Login Successful!", "success");
                 } else {
                     showToast(data.message || "Invalid OTP!", "error");
@@ -905,9 +903,7 @@
             });
         }
 
-        function closeOtpModal() {
-            document.getElementById('otpModal').style.display = 'none';
-        }
+        function closeOtpModal() { document.getElementById('otpModal').style.display = 'none'; }
 
         function logoutUser() {
             localStorage.clear();
@@ -955,9 +951,7 @@
             document.getElementById('editProfileModal').style.display = 'flex';
         }
 
-        function closeEditProfileModal() {
-            document.getElementById('editProfileModal').style.display = 'none';
-        }
+        function closeEditProfileModal() { document.getElementById('editProfileModal').style.display = 'none'; }
 
         function saveProfileChanges() {
             currentStudentData.name = document.getElementById('editStudentName').value;
@@ -1008,9 +1002,7 @@
             if(document.getElementById('drawer').classList.contains('open')) toggleDrawer();
         }
 
-        function closeSubscriptionModal() {
-            document.getElementById('subModal').style.display = 'none';
-        }
+        function closeSubscriptionModal() { document.getElementById('subModal').style.display = 'none'; }
 
         function toggleToolsMenu() {
             const menu = document.getElementById('aiToolsMenu');
@@ -1042,7 +1034,6 @@
         function selectPlan(name, price, element) {
             selectedPlanName = name;
             selectedPlanPrice = price;
-            
             const items = document.querySelectorAll('.price-item');
             items.forEach(item => item.classList.remove('selected'));
             if(element) element.classList.add('selected');
@@ -1061,96 +1052,113 @@
             showToast(`🎉 ${purchasedPlanName} Pass Activated!`, "success");
         }
 
-        // --- NEW CHAT FEATURE ---
+        // ===============================================
+        // TRUE MULTI-SESSION CHATGPT-LIKE HISTORY SYSTEM
+        // ===============================================
+
         function startNewChat() {
-            document.getElementById('chatBox').innerHTML = `<div class="msg ai"><b>Welcome to TicBull Academy! 🚀</b><br>New Chat started. Ask your question!</div>`;
-            fetch(`/api/clear-chat`, {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({ email: currentStudentData.email })
-            });
+            currentSessionId = Date.now().toString();
+            currentSessionTitle = "New Chat";
+            document.getElementById('chatBox').innerHTML = `<div class="msg ai"><b>Welcome to TicBull Academy! 🚀</b><br>Naya Chat session start ho gaya hai. Puchiye apna sawaal!</div>`;
             if(document.getElementById('drawer').classList.contains('open')) toggleDrawer();
             showToast("New Chat Started!", "success");
         }
 
-        // --- SERVER CHAT HISTORY SYNC ---
-        function loadServerChatHistory() {
-            fetch('/api/get-chat-ui', {
+        function loadSidebarHistory() {
+            fetch('/api/get-sessions', {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify({ email: currentStudentData.email })
             })
             .then(res => res.json())
             .then(data => {
-                if(data.success && data.html) {
-                    document.getElementById('chatBox').innerHTML = data.html;
-                    scrollToBottom();
+                if(data.success && data.sessions) {
+                    renderHistoryList(data.sessions);
+                    // Agar chatbox me abhi default welcome hai aur purani history hai, toh auto-load kar lo
+                    if (data.sessions.length > 0 && document.getElementById('chatBox').innerHTML.includes('Aapka Free Demo Plan active hai')) {
+                        loadSession(data.sessions[0].id, data.sessions[0].title);
+                    }
                 }
             }).catch(() => {});
-
-            fetch(`/api/get-chat`, {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({ email: currentStudentData.email })
-            })
-            .then(res => res.json())
-            .then(data => {
-                if(data.success && data.history) {
-                    renderHistoryList(data.history);
-                }
-            }).catch(() => {});
-        }
-
-        function saveChatUI() {
-            const chatHtml = document.getElementById('chatBox').innerHTML;
-            fetch('/api/sync-chat-ui', {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({ email: currentStudentData.email, chat_html: chatHtml })
-            });
         }
 
         function renderHistoryList(historyArray) {
             const list = document.getElementById('historyList');
             if(!list) return;
             list.innerHTML = '';
-            historyArray.forEach((item, index) => {
+            historyArray.forEach((item) => {
+                const isActive = (item.id === currentSessionId) ? 'active-session' : '';
                 list.innerHTML += `
-                    <div class="history-item" onclick="loadHistoryItem('${item.replace(/'/g, "\\'")}')">
-                        <span style="white-space:nowrap; overflow:hidden; text-overflow:ellipsis; width:85%;">${item}</span>
-                        <i class="fa-solid fa-xmark delete-chat-icon" onclick="promptDeleteHistory(${index}, event)"></i>
+                    <div class="history-item ${isActive}" onclick="loadSession('${item.id}', '${item.title.replace(/'/g, "\\'")}')">
+                        <span style="white-space:nowrap; overflow:hidden; text-overflow:ellipsis; width:85%;">${item.title}</span>
+                        <i class="fa-solid fa-trash delete-chat-icon" title="Delete Chat" onclick="promptDeleteHistory('${item.id}', event)"></i>
                     </div>`;
             });
         }
 
-        function promptDeleteHistory(index, event) {
-            event.stopPropagation();
-            document.getElementById('deleteWarningModal').style.display = 'flex';
-            document.getElementById('confirmDeleteBtn').onclick = function() {
-                deleteHistoryItem(index);
-                document.getElementById('deleteWarningModal').style.display = 'none';
-            };
-        }
-
-        function deleteHistoryItem(index) {
-            fetch(`/api/delete-chat-item`, {
+        // Load a full old chat screen from database
+        function loadSession(id, title) {
+            currentSessionId = id;
+            currentSessionTitle = title;
+            fetch('/api/get-session-html', {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({ email: currentStudentData.email, index: index })
-            }).then(() => {
-                showToast("Chat prompt deleted.", "success");
-                loadServerChatHistory();
+                body: JSON.stringify({ email: currentStudentData.email, session_id: id })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if(data.success && data.html) {
+                    document.getElementById('chatBox').innerHTML = data.html;
+                    scrollToBottom();
+                    if(document.getElementById('drawer').classList.contains('open')) toggleDrawer();
+                    
+                    // Highlight the active session in sidebar
+                    const items = document.querySelectorAll('.history-item');
+                    items.forEach(el => el.classList.remove('active-session'));
+                    event.currentTarget.classList.add('active-session');
+                }
             });
         }
 
-        function clearChat() {
-            startNewChat();
+        let pendingDeleteId = null;
+        function promptDeleteHistory(id, event) {
+            event.stopPropagation();
+            pendingDeleteId = id;
+            document.getElementById('deleteWarningModal').style.display = 'flex';
         }
 
-        function loadHistoryItem(text) {
-            document.getElementById('userInput').value = text;
-            if(document.getElementById('drawer').classList.contains('open')) toggleDrawer();
-            askAI();
+        document.getElementById('confirmDeleteBtn').onclick = function() {
+            if(pendingDeleteId) {
+                fetch(`/api/delete-session`, {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ email: currentStudentData.email, session_id: pendingDeleteId })
+                }).then(() => {
+                    showToast("Chat permanently deleted.", "success");
+                    document.getElementById('deleteWarningModal').style.display = 'none';
+                    if(currentSessionId === pendingDeleteId) { startNewChat(); }
+                    loadSidebarHistory();
+                });
+            }
+        };
+
+        function saveChatUI() {
+            const chatHtml = document.getElementById('chatBox').innerHTML;
+            fetch('/api/sync-session', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ 
+                    email: currentStudentData.email, 
+                    session_id: currentSessionId, 
+                    title: currentSessionTitle, 
+                    html: chatHtml 
+                })
+            }).then(() => loadSidebarHistory());
+        }
+
+        function clearChat() {
+            document.getElementById('deleteWarningModal').style.display = 'flex';
+            pendingDeleteId = currentSessionId;
         }
 
         // --- VOICE TYPING LOGIC ---
@@ -1166,12 +1174,8 @@
                 document.getElementById('userInput').value += " " + text;
                 document.getElementById('voiceBtn').classList.remove('voice-active');
             };
-            recognition.onerror = function() {
-                document.getElementById('voiceBtn').classList.remove('voice-active');
-            };
-            recognition.onend = function() {
-                document.getElementById('voiceBtn').classList.remove('voice-active');
-            };
+            recognition.onerror = function() { document.getElementById('voiceBtn').classList.remove('voice-active'); };
+            recognition.onend = function() { document.getElementById('voiceBtn').classList.remove('voice-active'); };
         }
 
         function toggleVoiceInput() {
@@ -1184,7 +1188,7 @@
                     recognition.start();
                     voiceBtn.classList.add('voice-active');
                 } else {
-                    showToast("Your browser does not support Voice Typing.", "error");
+                    showToast("Voice typing not supported in this browser.", "error");
                 }
             }
         }
@@ -1195,9 +1199,7 @@
                 selectedFilesArray = [];
                 for(let i=0; i<files.length; i++) {
                     const reader = new FileReader();
-                    reader.onload = function(e) {
-                        selectedFilesArray.push(e.target.result);
-                    };
+                    reader.onload = function(e) { selectedFilesArray.push(e.target.result); };
                     reader.readAsDataURL(files[i]);
                 }
                 document.getElementById('imagePreviewText').innerHTML = `<i class="fa-solid fa-paperclip"></i> ${files.length} File(s) Selected`;
@@ -1234,6 +1236,11 @@
             if(input.value.trim()) userMsgContent += input.value.trim();
             const questionText = input.value.trim() || "Analyze attached files";
 
+            // Nayi chat hai toh title generate karo
+            if(currentSessionTitle === "New Chat") {
+                currentSessionTitle = questionText.substring(0, 30) + (questionText.length > 30 ? "..." : "");
+            }
+
             chatBox.innerHTML += `<div class="msg user">${userMsgContent}</div>`;
             
             input.value = '';
@@ -1242,7 +1249,7 @@
             scrollToBottom();
 
             const loadingId = 'loading-' + Date.now();
-            chatBox.innerHTML += `<div class="msg ai" id="${loadingId}"><i>🧠 AI Teacher is thinking...</i></div>`;
+            chatBox.innerHTML += `<div class="msg ai" id="${loadingId}"><i>🧠 TicBull Teacher is thinking...</i></div>`;
             scrollToBottom();
             
             sendBtn.disabled = true;
@@ -1280,9 +1287,7 @@
                     }
 
                     loadElem.innerHTML = `<b>[TicBull Teacher]:</b><br><br>${formattedReply}`;
-                    
-                    saveChatUI();
-                    loadServerChatHistory();
+                    saveChatUI(); // Save full session to DB
                 } else {
                     loadElem.classList.replace('ai', 'error');
                     loadElem.innerHTML = `<b>❌ AI Error:</b> ${data.message}`;
@@ -1294,8 +1299,8 @@
                 sendBtn.disabled = false;
                 const loadElem = document.getElementById(loadingId);
                 loadElem.classList.replace('ai', 'error');
-                loadElem.innerHTML = `<b>❌ Server Error.</b>`;
-                showToast("Server Error", "error");
+                loadElem.innerHTML = `<b>❌ Server Connection Failed.</b>`;
+                showToast("Server Connection Failed", "error");
                 scrollToBottom();
             });
         }
