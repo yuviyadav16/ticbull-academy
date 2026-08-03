@@ -138,41 +138,41 @@ Rules: Out of syllabus sawal mana kar dena. Kabhie mat kehna ki tu AI ya Gemini 
         headers = {"Content-Type": "application/json"}
         payload = {"contents": [{"parts": [{"text": full_prompt}]}]}
         
-        # Step 1: Google se saare models ki list mangenge
-        list_url = f"https://generativelanguage.googleapis.com/v1beta/models?key={GEMINI_API_KEY}"
-        list_res = requests.get(list_url).json()
+        # NO AUTO-DETECT! Sirf 3 official, reliable aur FREE models directly try karenge
+        official_models = [
+            "gemini-1.5-flash",
+            "gemini-1.5-flash-8b",
+            "gemini-1.5-pro"
+        ]
         
-        valid_model = "models/gemini-1.5-flash" # Default fallback
+        res_data = {}
+        success = False
         
-        # Step 2: STRICT FILTERING - Sirf wahi model uthayenge jisme "1.5" likha ho (2.0 aur 2.5 ko completely ignore)
-        if "models" in list_res:
-            for m in list_res["models"]:
-                name = m["name"]
-                if "generateContent" in m.get("supportedGenerationMethods", []) and "1.5" in name and "vision" not in name:
-                    valid_model = name
-                    break # Perfect model mil gaya, ab yahin ruk jao
+        for model_name in official_models:
+            url = f"https://generativelanguage.googleapis.com/v1beta/models/{model_name}:generateContent?key={GEMINI_API_KEY}"
+            response = requests.post(url, json=payload, headers=headers, timeout=25)
+            res_data = response.json()
+            
+            # Agar successfully jawab aagaya, toh aage search karna band kardo
+            if response.status_code == 200 and "candidates" in res_data:
+                success = True
+                break
         
-        # Step 3: Answer generate karo
-        url = f"https://generativelanguage.googleapis.com/v1beta/{valid_model}:generateContent?key={GEMINI_API_KEY}"
-        response = requests.post(url, json=payload, headers=headers, timeout=25)
-        res_data = response.json()
-        
-        if "candidates" in res_data:
+        # Jawab screen par bhejo
+        if success:
             reply_text = res_data['candidates'][0]['content']['parts'][0]['text']
             reply_text = reply_text.replace("Gemini", "TicBull Engine").replace("Google", "TicBull").replace("gemini", "ticbull")
             return jsonify({"success": True, "reply": reply_text})
-        elif "error" in res_data:
-            err_msg = res_data["error"].get("message", "API Error")
-            return jsonify({"success": False, "message": f"AI Error: {err_msg}"}), 500
         else:
-            return jsonify({"success": False, "message": "API Response Error, try again."}), 500
+            err_msg = res_data.get("error", {}).get("message", "API Error")
+            return jsonify({"success": False, "message": f"AI Error: {err_msg}"}), 500
             
     except Exception as e:
         return jsonify({"success": False, "message": f"Server Error: {str(e)}"}), 500
 
 @app.route('/')
 def home():
-    return "TicBull Database, Payment & Auto-AI Backend is running!"
+    return "TicBull Database & Fixed AI Engine is running!"
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)
