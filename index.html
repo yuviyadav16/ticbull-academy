@@ -1425,7 +1425,7 @@
         }
 
         // --- REAL GEMINI AI INTEGRATION ---
-        function askAI() {
+                function askAI() {
             const input = document.getElementById('userInput');
             const chatBox = document.getElementById('chatBox');
             const board = document.getElementById('boardSelect').value;
@@ -1469,6 +1469,7 @@
                 headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify({
                     email: currentStudentData.email,
+                    token: localStorage.getItem('ticbull_token'), // 🚨 NAYA CODE: Sending Token
                     prompt: questionText,
                     board: board,
                     class: cls,
@@ -1483,6 +1484,15 @@
                 sendBtn.disabled = false;
                 const loadElem = document.getElementById(loadingId);
                 
+                // 🚨 Z+ SECURITY: Auto Logout if logged in somewhere else!
+                if(data.session_expired) {
+                    loadElem.classList.replace('ai', 'error');
+                    loadElem.innerHTML = `<b>❌ Security Alert:</b> ${data.message}`;
+                    showToast(data.message, "error");
+                    setTimeout(() => logoutUser(), 3000); // 3 seconds me automatic bahar phek dega
+                    return;
+                }
+
                 if (data.success) {
                     let formattedReply = data.reply.replace(/\*\*(.*?)\*\*/g, '<b>$1</b>');
                     formattedReply = formattedReply.replace(/\n/g, '<br>');
@@ -1514,6 +1524,7 @@
                 scrollToBottom();
             });
         }
+
     </script>
 </body>
 </html>
