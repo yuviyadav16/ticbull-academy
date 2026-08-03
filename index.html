@@ -39,6 +39,21 @@
         html, body { height: 100%; width: 100%; overflow: hidden; background: var(--bg-color); color: var(--text-main); transition: background 0.3s, color 0.3s; }
         body { display:flex; flex-direction:column; }
 
+        /* CUSTOM BRANDED TOAST NOTIFICATION */
+        #custom-toast {
+            position: fixed; top: -100px; left: 50%; transform: translateX(-50%);
+            background: var(--card-bg); color: var(--text-main);
+            border: 1px solid var(--accent-color); padding: 12px 24px;
+            border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            z-index: 10000; display: flex; align-items: center; gap: 12px;
+            font-size: 13.5px; font-weight: 600;
+            transition: top 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+        #custom-toast.show { top: 30px; }
+        .toast-icon { font-size: 18px; }
+        .toast-icon.success { color: var(--success-color); }
+        .toast-icon.error { color: #ef4444; }
+
         /* 10-SECOND CINEMATIC SPLASH ANIMATION */
         #splash-screen {
             position: fixed; top:0; left:0; width:100%; height:100%;
@@ -155,18 +170,16 @@
         .tool-btn { display:flex; align-items:center; gap:10px; padding:9px 12px; border-radius:10px; background:transparent; border:none; color:var(--text-main); font-size:12px; cursor:pointer; text-align:left; transition:0.2s; }
         .tool-btn:hover { background:rgba(37, 99, 235, 0.2); color:var(--accent-color); }
 
-        /* CHAT INPUT BAR WITH MULTIPLE FILES & VOICE */
+        /* CHAT INPUT BAR */
         .chat-input-bar { display:flex; align-items:center; background:var(--card-bg); border:1px solid var(--border-color); border-radius:16px; padding:5px 6px 5px 10px; gap:6px; position:relative; flex-shrink:0; }
         .chat-input-bar input[type="text"] { flex:1; background:transparent; border:none; color:var(--text-main); outline:none; font-size:13.5px; }
         .action-icon-btn { background:rgba(255,255,255,0.06); color:var(--text-muted); border:1px solid var(--border-color); width:36px; height:36px; border-radius:10px; display:flex; justify-content:center; align-items:center; cursor:pointer; transition:0.2s; }
         .action-icon-btn:hover { color:var(--text-main); background:rgba(255,255,255,0.12); }
         .send-btn { background:var(--accent-color); color:#fff; border:none; width:36px; height:36px; border-radius:10px; display:flex; justify-content:center; align-items:center; cursor:pointer; }
         
-        /* VOICE EFFECT CSS */
         .voice-active { background: rgba(239, 68, 68, 0.2); color: #ef4444; border-color: #ef4444; animation: pulseVoice 1.5s infinite; }
         @keyframes pulseVoice { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
         
-        /* TRASH ICON CSS */
         .delete-chat-icon { color: #ef4444; opacity: 0.7; font-size: 13px; padding: 4px; cursor:pointer; }
         .delete-chat-icon:hover { opacity: 1; }
 
@@ -217,6 +230,12 @@
     </style>
 </head>
 <body>
+
+    <!-- CUSTOM BRANDED NOTIFICATION (Replaces browser Alert) -->
+    <div id="custom-toast">
+        <i class="fa-solid fa-circle-check toast-icon success"></i>
+        <span id="toast-message">Notification</span>
+    </div>
 
     <!-- 10 SECONDS CINEMATIC SPLASH ANIMATION -->
     <div id="splash-screen">
@@ -277,12 +296,33 @@
             <div class="input-group">
                 <i class="fa-solid fa-lock left-icon"></i>
                 <input type="password" id="password" placeholder="Password">
-                <i class="fa-solid fa-eye pwd-toggle" id="pwdToggle" onclick="togglePassword()"></i>
+                <i class="fa-solid fa-eye pwd-toggle" id="pwdToggle" onclick="togglePassword('password')"></i>
             </div>
 
-            <span class="forgot-link" onclick="handleForgotPassword()"><i class="fa-solid fa-key"></i> Forgot Password?</span>
+            <span class="forgot-link" onclick="openForgotModal()"><i class="fa-solid fa-key"></i> Forgot Password?</span>
 
             <button class="btn-primary" id="authSubmitBtn" onclick="initiateAuthWithOTP()">SEND VERIFICATION OTP</button>
+        </div>
+    </div>
+
+    <!-- FORGOT PASSWORD MODAL -->
+    <div class="modal-overlay" id="forgotModal">
+        <div class="modal-card">
+            <i class="fa-solid fa-xmark" style="position:absolute; right:16px; top:16px; color:var(--text-muted); cursor:pointer;" onclick="document.getElementById('forgotModal').style.display='none'"></i>
+            <h3 style="color:var(--text-main); font-size:18px;">🔑 Reset Password</h3>
+            <p style="font-size:11.5px; color:var(--text-muted); margin-top:4px;">Enter email and a new password to reset.</p>
+            
+            <div class="input-group" style="margin-top:16px;">
+                <i class="fa-regular fa-envelope left-icon"></i>
+                <input type="email" id="forgotEmail" placeholder="Registered Email ID">
+            </div>
+            <div class="input-group">
+                <i class="fa-solid fa-lock left-icon"></i>
+                <input type="password" id="forgotNewPassword" placeholder="Enter New Password">
+                <i class="fa-solid fa-eye pwd-toggle" onclick="togglePassword('forgotNewPassword')"></i>
+            </div>
+
+            <button class="btn-primary" id="forgotBtn" onclick="initiateForgotOTP()">SEND RESET OTP</button>
         </div>
     </div>
 
@@ -448,12 +488,12 @@
         <div class="drawer-item" onclick="toggleTheme()"><i class="fa-solid fa-circle-half-stroke" style="color:var(--gold-color);"></i> <span id="themeToggleText">Switch to Light Mode</span></div>
         <div class="drawer-item" onclick="triggerAppGuideBot()"><i class="fa-solid fa-robot" style="color:#f59e0b;"></i> 🤖 TicBull Guide Bot (App Info)</div>
         <div class="drawer-item" onclick="openSubscriptionModal()"><i class="fa-solid fa-crown" style="color:#f59e0b;"></i> Upgrade or Switch Course Pass</div>
-        <div class="drawer-item" onclick="clearChat()"><i class="fa-solid fa-trash-can" style="color:#ef4444;"></i> Clear Current Chat</div>
+        <div class="drawer-item" onclick="startNewChat()"><i class="fa-solid fa-plus-circle" style="color:#10b981;"></i> Start New Chat</div>
         <div class="drawer-item" onclick="logoutUser()" style="color:#ef4444;"><i class="fa-solid fa-right-from-bracket"></i> Log Out Account</div>
 
         <!-- CHAT HISTORY -->
         <div class="history-title" style="display:flex; justify-content:space-between; align-items:center;">
-            <span><i class="fa-solid fa-clock-rotate-left"></i> Recent Chat History:</span>
+            <span><i class="fa-solid fa-clock-rotate-left"></i> Recent Chat Prompts:</span>
         </div>
         <div class="history-list" id="historyList"></div>
         
@@ -557,6 +597,14 @@
         let selectedFilesArray = [];
         let currentStudentData = { name: '', email: '', dob: '', photo: '' };
 
+        // --- CUSTOM TOAST NOTIFICATION ---
+        function showToast(msg, type = 'success') {
+            const toast = document.getElementById('custom-toast');
+            toast.innerHTML = `<i class="fa-solid ${type === 'success' ? 'fa-circle-check toast-icon success' : 'fa-circle-exclamation toast-icon error'}"></i> <span>${msg}</span>`;
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 3500);
+        }
+
         // Auto-Login & Single Device Session Check on Load
         window.addEventListener('DOMContentLoaded', () => {
             const savedEmail = localStorage.getItem('ticbull_email');
@@ -580,7 +628,7 @@
                         loadServerChatHistory();
                     } else {
                         localStorage.clear();
-                        alert("⚠️ Session Expired! You have logged in from another device.");
+                        showToast("Session Expired! Logged in from another device.", "error");
                     }
                 }).catch(() => {
                     currentStudentData.email = savedEmail;
@@ -611,37 +659,46 @@
             }, 200);
         }
 
-        function togglePassword() {
-            const pwdInput = document.getElementById('password');
+        function togglePassword(inputId) {
+            const pwdInput = document.getElementById(inputId);
             pwdInput.type = pwdInput.type === 'password' ? 'text' : 'password';
         }
 
-        function handleForgotPassword() {
-            const email = document.getElementById('email').value.trim();
-            if(!email) { alert("Please enter your Registered Email ID first!"); return; }
-            
-            const btn = document.getElementById('authSubmitBtn');
+        function openForgotModal() {
+            document.getElementById('forgotModal').style.display = 'flex';
+        }
+
+        function initiateForgotOTP() {
+            const email = document.getElementById('forgotEmail').value.trim();
+            const newPass = document.getElementById('forgotNewPassword').value.trim();
+            if(!email || !newPass) { showToast("Email aur naya password daalein!", "error"); return; }
+
+            currentStudentData.email = email;
+            currentAuthMode = 'forgot';
+            document.getElementById('password').value = newPass; 
+
+            const btn = document.getElementById('forgotBtn');
             btn.disabled = true;
             btn.innerText = "SENDING OTP...";
-            
+
             fetch(`/api/send-otp`, {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({ email: email, auth_mode: 'login' })
+                body: JSON.stringify({ email: email, auth_mode: 'forgot' })
             }).then(res => res.json()).then(data => {
                 btn.disabled = false;
-                btn.innerText = currentAuthMode === 'login' ? 'SEND VERIFICATION OTP' : 'CREATE ACCOUNT WITH OTP';
-                if (data.success) {
-                    currentStudentData.email = email;
-                    alert(data.message);
+                btn.innerText = "SEND RESET OTP";
+                if(data.success) {
+                    document.getElementById('forgotModal').style.display = 'none';
                     document.getElementById('otpModal').style.display = 'flex';
+                    showToast(data.message, "success");
                 } else {
-                    alert("Error: " + data.message);
+                    showToast(data.message, "error");
                 }
             }).catch(() => {
                 btn.disabled = false;
-                btn.innerText = currentAuthMode === 'login' ? 'SEND VERIFICATION OTP' : 'CREATE ACCOUNT WITH OTP';
-                alert("Server error!");
+                btn.innerText = "SEND RESET OTP";
+                showToast("Server error!", "error");
             });
         }
 
@@ -691,9 +748,9 @@
             const password = document.getElementById('password').value.trim();
             const btn = document.getElementById('authSubmitBtn');
 
-            if(!email) { alert("Please enter Email ID!"); return; }
-            if(!password) { alert("Please enter your Password!"); return; }
-            if(currentAuthMode === 'signup' && !name) { alert("Please enter your Full Name!"); return; }
+            if(!email) { showToast("Email ID zaroori hai!", "error"); return; }
+            if(!password) { showToast("Password zaroori hai!", "error"); return; }
+            if(currentAuthMode === 'signup' && !name) { showToast("Pura naam zaroori hai!", "error"); return; }
 
             currentStudentData.email = email;
             if(name) currentStudentData.name = name;
@@ -705,7 +762,7 @@
             fetch(`/api/send-otp`, {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({ email: email, auth_mode: currentAuthMode })
+                body: JSON.stringify({ email: email, password: password, auth_mode: currentAuthMode })
             })
             .then(res => res.json())
             .then(data => {
@@ -713,16 +770,16 @@
                 btn.innerText = currentAuthMode === 'login' ? 'SEND VERIFICATION OTP' : 'CREATE ACCOUNT WITH OTP';
                 
                 if (data.success) {
-                    alert(data.message);
+                    showToast(data.message, "success");
                     document.getElementById('otpModal').style.display = 'flex';
                 } else {
-                    alert("Error: " + (data.message || "Failed to send OTP."));
+                    showToast(data.message, "error");
                 }
             })
             .catch(() => {
                 btn.disabled = false;
                 btn.innerText = currentAuthMode === 'login' ? 'SEND VERIFICATION OTP' : 'CREATE ACCOUNT WITH OTP';
-                alert("Server error! Backend nahi chal raha hai.");
+                showToast("Server error! Backend nahi chal raha.", "error");
             });
         }
 
@@ -731,7 +788,7 @@
             const password = document.getElementById('password').value.trim();
             const btn = document.getElementById('verifyBtn');
 
-            if(!otp) { alert("Please enter 6-digit OTP!"); return; }
+            if(!otp) { showToast("6-digit OTP daalein!", "error"); return; }
 
             btn.disabled = true;
             btn.innerText = "VERIFYING...";
@@ -763,14 +820,15 @@
                     document.getElementById('auth-screen').style.display = 'none';
                     document.getElementById('main-dashboard').style.display = 'flex';
                     loadServerChatHistory();
+                    showToast("Login Successful!", "success");
                 } else {
-                    alert("❌ GALAT OTP! " + (data.message || "Sahi 6-digit OTP daalein."));
+                    showToast(data.message || "Galat OTP!", "error");
                 }
             })
             .catch(() => {
                 btn.disabled = false;
                 btn.innerText = "VERIFY & CONTINUE";
-                alert("Server Error! Try again.");
+                showToast("Server Error! Try again.", "error");
             });
         }
 
@@ -837,7 +895,7 @@
 
             updateProfileUI();
             closeEditProfileModal();
-            alert("Profile details updated successfully!");
+            showToast("Profile details updated successfully!", "success");
         }
 
         function handleAvatarUpload(event) {
@@ -915,12 +973,23 @@
                  <span style="font-size:10px; color:var(--success-color);">Access Active</span>`;
             
             closeSubscriptionModal();
-            alert(`🎉 ${purchasedPlanName} Pass Activated! Material unlocked.`);
+            showToast(`🎉 ${purchasedPlanName} Pass Activated!`, "success");
         }
 
-        // --- SERVER CHAT HISTORY SYNC (LIKE CHATGPT) ---
+        // --- NEW CHAT FEATURE ---
+        function startNewChat() {
+            document.getElementById('chatBox').innerHTML = `<div class="msg ai"><b>Welcome to TicBull Academy! 🚀</b><br>Naya Chat shuru ho gaya hai. Puchiye apna sawaal!</div>`;
+            fetch(`/api/clear-chat`, {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ email: currentStudentData.email })
+            });
+            if(document.getElementById('drawer').classList.contains('open')) toggleDrawer();
+            showToast("New Chat Started!", "success");
+        }
+
+        // --- SERVER CHAT HISTORY SYNC ---
         function loadServerChatHistory() {
-            // Load full Chat UI inside chatbox
             fetch('/api/get-chat-ui', {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
@@ -934,7 +1003,6 @@
                 }
             }).catch(() => {});
 
-            // Load Sidebar History prompts
             fetch(`/api/get-chat`, {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
@@ -980,21 +1048,13 @@
         }
 
         function clearChat() {
-            fetch(`/api/clear-chat`, {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({ email: currentStudentData.email })
-            }).then(() => {
-                document.getElementById('chatBox').innerHTML = `<div class="msg ai">Chat cleared! Ask any question from your course.</div>`;
-                loadServerChatHistory();
-                if(document.getElementById('drawer').classList.contains('open')) toggleDrawer();
-            });
+            startNewChat();
         }
 
         function loadHistoryItem(text) {
             document.getElementById('userInput').value = text;
             if(document.getElementById('drawer').classList.contains('open')) toggleDrawer();
-            askAI();
+            // Removed askAI() so user can edit the prompt before sending.
         }
 
         // --- VOICE TYPING LOGIC ---
@@ -1028,12 +1088,11 @@
                     recognition.start();
                     voiceBtn.classList.add('voice-active');
                 } else {
-                    alert("Aapka browser voice typing support nahi karta. Please use Chrome.");
+                    showToast("Aapka browser voice typing support nahi karta.", "error");
                 }
             }
         }
 
-        // --- MULTIPLE FILES (PHOTOS / PDF) UPLOAD HANDLER ---
         function handleMultipleFilesSelect(event) {
             const files = event.target.files;
             if(files && files.length > 0) {
@@ -1056,8 +1115,7 @@
             document.getElementById('imagePreview').style.display = 'none';
         }
 
-        // --- REAL GEMINI AI INTEGRATION START ---
-        
+        // --- REAL GEMINI AI INTEGRATION ---
         function askAI() {
             const input = document.getElementById('userInput');
             const chatBox = document.getElementById('chatBox');
@@ -1072,7 +1130,7 @@
             let userMsgContent = '';
             selectedFilesArray.forEach(file => {
                 if(file.includes('pdf')) {
-                    userMsgContent += `<i class="fa-solid fa-file-pdf" style="font-size:24px; color:red;"></i> <b>[PDF Document Attached]</b><br>`;
+                    userMsgContent += `<i class="fa-solid fa-file-pdf" style="font-size:24px; color:red;"></i> <b>[PDF Attached]</b><br>`;
                 } else {
                     userMsgContent += `<img src="${file}" class="msg-image"><br>`;
                 }
@@ -1087,14 +1145,12 @@
             document.getElementById('aiToolsMenu').style.display = 'none';
             scrollToBottom();
 
-            // Create Loading Indicator
             const loadingId = 'loading-' + Date.now();
             chatBox.innerHTML += `<div class="msg ai" id="${loadingId}"><i>🧠 AI Teacher is thinking...</i></div>`;
             scrollToBottom();
             
             sendBtn.disabled = true;
 
-            // Fetch Real AI Answer
             fetch(`/api/chat`, {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
@@ -1118,7 +1174,6 @@
                     let formattedReply = data.reply.replace(/\*\*(.*?)\*\*/g, '<b>$1</b>');
                     formattedReply = formattedReply.replace(/\n/g, '<br>');
 
-                    // MAGIC: IMAGE & VIDEO INJECTION
                     if (questionText.toLowerCase().includes('image') || questionText.toLowerCase().includes('diagram')) {
                         let topicSafe = encodeURIComponent(questionText.replace('Generate Detailed Diagram Image', '').trim() || 'Education');
                         formattedReply += `<br><br><b>🖼️ Visual Reference:</b><br><img src="https://image.pollinations.ai/prompt/${topicSafe}%20educational%20diagram?width=600&height=350&nologo=true" class="msg-image" alt="AI Generated Image" style="border-radius:12px; margin-top:8px; border:1px solid #333;">`;
@@ -1130,7 +1185,6 @@
 
                     loadElem.innerHTML = `<b>[TicBull Teacher]:</b><br><br>${formattedReply}`;
                     
-                    // SAVE CHAT HISTORY UI TO DATABASE
                     saveChatUI();
                     loadServerChatHistory();
                 } else {
@@ -1143,11 +1197,10 @@
                 sendBtn.disabled = false;
                 const loadElem = document.getElementById(loadingId);
                 loadElem.classList.replace('ai', 'error');
-                loadElem.innerHTML = `<b>❌ Server Error:</b> Could not connect to AI Engine.`;
+                loadElem.innerHTML = `<b>❌ Server Error.</b>`;
                 scrollToBottom();
             });
         }
-        // --- REAL GEMINI AI INTEGRATION END ---
     </script>
 </body>
 </html>
