@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TicBull Admin Panel</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        body { margin: 0; font-family: -apple-system, sans-serif; background: #020617; color: #f8fafc; }
+        .container { max-width: 900px; margin: 0 auto; padding: 20px; }
+        
+        .login-box { max-width: 350px; margin: 100px auto; background: #0f172a; padding: 30px; border-radius: 16px; border: 1px solid #1e293b; text-align: center; }
+        .login-box input { width: 100%; padding: 12px; margin: 15px 0; background: #020617; border: 1px solid #334155; color: white; border-radius: 8px; }
+        .btn { background: #2563eb; color: white; border: none; padding: 12px 20px; width: 100%; border-radius: 8px; cursor: pointer; font-weight: bold; }
+        
+        #dashboard { display: none; }
+        .stat-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 30px; }
+        .card { background: #0f172a; padding: 20px; border-radius: 12px; border: 1px solid #1e293b; text-align: center; }
+        .card h3 { margin: 0; color: #94a3b8; font-size: 14px; text-transform: uppercase; }
+        .card h1 { margin: 10px 0 0; font-size: 32px; color: #10b981; }
+
+        table { width: 100%; border-collapse: collapse; background: #0f172a; border-radius: 12px; overflow: hidden; }
+        th, td { padding: 12px 15px; text-align: left; border-bottom: 1px solid #1e293b; font-size: 14px; }
+        th { background: #1e293b; color: #cbd5e1; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <!-- ADMIN LOGIN -->
+        <div class="login-box" id="loginBox">
+            <h2><i class="fa-solid fa-user-shield"></i> TicBull Admin Login</h2>
+            <input type="password" id="adminPwd" placeholder="Enter Admin Password">
+            <button class="btn" onclick="loginAdmin()">LOGIN TO DASHBOARD</button>
+        </div>
+
+        <!-- DASHBOARD -->
+        <div id="dashboard">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <h2><i class="fa-solid fa-chart-line"></i> Analytics Dashboard</h2>
+                <button class="btn" style="width: auto; background: #ef4444;" onclick="location.reload()">Logout</button>
+            </div>
+
+            <div class="stat-cards">
+                <div class="card">
+                    <h3>Total Registered Students</h3>
+                    <h1 id="totalUsers">0</h1>
+                </div>
+                <div class="card">
+                    <h3>Platform Status</h3>
+                    <h1 style="color:#3b82f6;">Active</h1>
+                </div>
+            </div>
+
+            <h3>Recent Student Signups</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Email Address</th>
+                        <th>Join Date</th>
+                    </tr>
+                </thead>
+                <tbody id="userTableBody">
+                    <tr><td colspan="3" style="text-align:center;">Loading data...</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        // Default password set in python is "TicBull@2026"
+        function loginAdmin() {
+            const pwd = document.getElementById('adminPwd').value;
+            if(!pwd) return alert("Enter password");
+            
+            document.querySelector('.btn').innerText = "Verifying...";
+            
+            fetch('/api/admin/data', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ password: pwd })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if(data.success) {
+                    document.getElementById('loginBox').style.display = 'none';
+                    document.getElementById('dashboard').style.display = 'block';
+                    
+                    document.getElementById('totalUsers').innerText = data.total_users;
+                    
+                    const tbody = document.getElementById('userTableBody');
+                    tbody.innerHTML = '';
+                    data.users.reverse().forEach(u => {
+                        tbody.innerHTML += `<tr><td>${u.name}</td><td>${u.email}</td><td>${u.joined}</td></tr>`;
+                    });
+                } else {
+                    document.querySelector('.btn').innerText = "LOGIN TO DASHBOARD";
+                    alert(data.message);
+                }
+            })
+            .catch(() => {
+                document.querySelector('.btn').innerText = "LOGIN TO DASHBOARD";
+                alert("Server error.");
+            });
+        }
+    </script>
+</body>
+</html>
