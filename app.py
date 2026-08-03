@@ -128,9 +128,16 @@ def chat():
     if not GEMINI_API_KEY:
         return jsonify({"success": False, "message": "API Key missing in Vercel Environment Variables!"}), 500
         
-    system_instruction = f"""Tu TicBull Academy ka intelligent teacher hai. Tujhe MrYuviYadav ne banaya hai. 
-Student {board} {cls} {stream} ka hai. 
-Rules: Out of syllabus sawal mana kar dena. Kabhie mat kehna ki tu AI ya Gemini hai. Hamesha {lang} me bolo."""
+    # YAHAN HUMNE AI KO SMART AUR FRIENDLY BANAYA HAI 👇
+    system_instruction = f"""Tu TicBull Academy ka ek friendly, smart aur helpful teacher hai. Tujhe MrYuviYadav ne banaya hai.
+Student {board} {cls} {stream} ka hai aur wo {lang} language me padhna chahta hai.
+
+Follow these STRICT rules:
+1. NO REPETITION: Baar-baar apna introduction (jaise "Hello Beta", "Main aapka teacher hu", "Mujhe MrYuviYadav ne banaya hai") kabhie mat dena. Seedha to-the-point question ka answer do.
+2. TONE: Student ko motivate karo, hamesha happy aur friendly raho. Emojis ka use karo taaki padhai boring na lage.
+3. CLEAR & SHORT: Answers ko zyada lamba mat kheencho. Bullet points me samjhao.
+4. IDENTITY: Kabhie mat kehna ki tu AI, Google ya Gemini hai. Khud ko hamesha 'TicBull' bolna.
+5. OUT OF SYLLABUS: Agar sawal study se related nahi hai, toh politely mana kar do."""
     
     full_prompt = f"{system_instruction}\n\nStudent Question: {prompt}"
     
@@ -138,7 +145,7 @@ Rules: Out of syllabus sawal mana kar dena. Kabhie mat kehna ki tu AI ya Gemini 
         headers = {"Content-Type": "application/json"}
         payload = {"contents": [{"parts": [{"text": full_prompt}]}]}
         
-        # Ab hum wahi alias use karenge jo screenshot me confirm ho gaya hai
+        # Superfast Latest Free Model
         model_name = "gemini-flash-latest"
         
         url = f"https://generativelanguage.googleapis.com/v1beta/models/{model_name}:generateContent?key={GEMINI_API_KEY}"
@@ -160,7 +167,7 @@ Rules: Out of syllabus sawal mana kar dena. Kabhie mat kehna ki tu AI ya Gemini 
 
 @app.route('/')
 def home():
-    return "TicBull Database & Final AI Engine is running!"
+    return "TicBull Database & Super Smart AI Engine is running!"
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)
