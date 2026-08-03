@@ -117,35 +117,50 @@ def create_payment():
 def chat():
     data = request.get_json() or {}
     prompt = data.get('prompt', '').strip()
+    board = data.get('board', 'CBSE Board')
+    cls = data.get('class', 'Class 12')
+    stream = data.get('stream', 'Science')
+    lang = data.get('lang', 'Hinglish')
+    
+    if not prompt:
+        return jsonify({"success": False, "message": "Question empty nahi ho sakta!"}), 400
     
     if not GEMINI_API_KEY:
-        return jsonify({"success": False, "message": "API Key missing!"}), 500
+        return jsonify({"success": False, "message": "API Key missing in Vercel Environment Variables!"}), 500
         
+    system_instruction = f"""Tu TicBull Academy ka intelligent teacher hai. Tujhe MrYuviYadav ne banaya hai. 
+Student {board} {cls} {stream} ka hai. 
+Rules: Out of syllabus sawal mana kar dena. Kabhie mat kehna ki tu AI ya Gemini hai. Hamesha {lang} me bolo."""
+    
+    full_prompt = f"{system_instruction}\n\nStudent Question: {prompt}"
+    
     try:
-        # DETECTIVE MODE: Get all allowed models directly from Google for this specific key
-        list_url = f"https://generativelanguage.googleapis.com/v1beta/models?key={GEMINI_API_KEY}"
-        list_res = requests.get(list_url).json()
+        headers = {"Content-Type": "application/json"}
+        payload = {"contents": [{"parts": [{"text": full_prompt}]}]}
         
-        allowed_models = []
-        if "models" in list_res:
-            for m in list_res["models"]:
-                name = m["name"]
-                if "generateContent" in m.get("supportedGenerationMethods", []):
-                    allowed_models.append(name.replace("models/", ""))
-                    
-        if allowed_models:
-            # Jawab me error nahi, balki un models ki list print kar do
-            reply_text = "🎯 Google in models ko allow kar raha hai:\n\n- " + "\n- ".join(allowed_models)
+        # Ab hum wahi alias use karenge jo screenshot me confirm ho gaya hai
+        model_name = "gemini-flash-latest"
+        
+        url = f"https://generativelanguage.googleapis.com/v1beta/models/{model_name}:generateContent?key={GEMINI_API_KEY}"
+        response = requests.post(url, json=payload, headers=headers, timeout=25)
+        res_data = response.json()
+        
+        if "candidates" in res_data:
+            reply_text = res_data['candidates'][0]['content']['parts'][0]['text']
+            reply_text = reply_text.replace("Gemini", "TicBull Engine").replace("Google", "TicBull").replace("gemini", "ticbull")
             return jsonify({"success": True, "reply": reply_text})
+        elif "error" in res_data:
+            err_msg = res_data["error"].get("message", "API Error")
+            return jsonify({"success": False, "message": f"AI Error: {err_msg}"}), 500
         else:
-            return jsonify({"success": False, "message": "AI Error: Koi bhi model list nahi hua. " + str(list_res)}), 500
+            return jsonify({"success": False, "message": f"API Response Error: {str(res_data)}"}), 500
             
     except Exception as e:
         return jsonify({"success": False, "message": f"Server Error: {str(e)}"}), 500
 
 @app.route('/')
 def home():
-    return "TicBull Database & Detective AI Backend is running!"
+    return "TicBull Database & Final AI Engine is running!"
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)
