@@ -4,7 +4,25 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>TicBull Academy - Premium AI Engine</title>
+    
+    <!-- PWA APP INSTALL LINKS -->
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#2563eb">
+    <link rel="apple-touch-icon" href="logo.png">
+
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <!-- SERVICE WORKER REGISTRATION -->
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('/sw.js')
+            .then(() => console.log('TicBull PWA Service Worker Registered!'))
+            .catch((err) => console.log('SW registration failed: ', err));
+        });
+      }
+    </script>
+
     <style>
         :root {
             --bg-color: #030712;
@@ -453,7 +471,7 @@
             </select>
         </div>
 
-        <div class="active-course-chip" id="activeCourseChip">
+        <div class="active-course-chip" id="activeCourseChip" style="background:rgba(16, 185, 129, 0.1); border:1px solid rgba(16, 185, 129, 0.4); padding:6px 10px; border-radius:12px; font-size:11px; font-weight:700; color:var(--text-main); margin-bottom:8px; display:flex; justify-content:space-between; flex-shrink:0;">
             <span><i class="fa-solid fa-lock"></i> Unlocked Pass: Free Demo Plan</span>
             <span style="font-size:10px; color:var(--success-color);">Active</span>
         </div>
@@ -645,7 +663,7 @@
         </div>
     </div>
 
-    <!-- PRICING MODAL -->
+    <!-- PRICING MODAL (ALL BATCHES RESTORED) -->
     <div class="modal-overlay" id="subModal">
         <div class="modal-card">
             <i class="fa-solid fa-xmark" style="position:absolute; right:16px; top:16px; color:var(--text-muted); cursor:pointer;" onclick="closeSubscriptionModal()"></i>
@@ -669,6 +687,27 @@
                 <div class="price-item" onclick="selectPlan('Class 12 Science', 399, this)"><span class="plan-name">Class 12 Science (PCM/PCB)</span><span class="plan-cost">₹399/yr</span></div>
                 <div class="price-item" onclick="selectPlan('Class 12 Commerce', 399, this)"><span class="plan-name">Class 12 Commerce</span><span class="plan-cost">₹399/yr</span></div>
                 <div class="price-item" onclick="selectPlan('Class 12 Arts', 299, this)"><span class="plan-name">Class 12 Arts / Humanities</span><span class="plan-cost">₹299/yr</span></div>
+
+                <div class="price-category-label">🏆 Competitive Exams (All India & State)</div>
+                <div class="price-item" onclick="selectPlan('BPSC Exam Prep', 499, this)"><span class="plan-name">BPSC (Bihar PSC Exam)</span><span class="plan-cost">₹499/yr</span></div>
+                <div class="price-item" onclick="selectPlan('UPSC Civil Services', 899, this)"><span class="plan-name">UPSC Civil Services</span><span class="plan-cost">₹899/yr</span></div>
+                <div class="price-item" onclick="selectPlan('State PSC Prep', 599, this)"><span class="plan-name">State PSC Exams</span><span class="plan-cost">₹599/yr</span></div>
+                <div class="price-item" onclick="selectPlan('JEE Main Prep', 699, this)"><span class="plan-name">JEE Main Exam</span><span class="plan-cost">₹699/yr</span></div>
+                <div class="price-item" onclick="selectPlan('JEE Advanced Prep', 799, this)"><span class="plan-name">JEE Advanced Exam</span><span class="plan-cost">₹799/yr</span></div>
+                <div class="price-item" onclick="selectPlan('NEET Medical Prep', 749, this)"><span class="plan-name">NEET Medical Exam</span><span class="plan-cost">₹749/yr</span></div>
+                <div class="price-item" onclick="selectPlan('CUET Prep', 499, this)"><span class="plan-name">CUET Exam</span><span class="plan-cost">₹499/yr</span></div>
+                <div class="price-item" onclick="selectPlan('SSC / Banking / Railway', 499, this)"><span class="plan-name">SSC / Banking / Railway</span><span class="plan-cost">₹499/yr</span></div>
+                <div class="price-item" onclick="selectPlan('NDA Defense Prep', 499, this)"><span class="plan-name">NDA / Defense Exams</span><span class="plan-cost">₹499/yr</span></div>
+                <div class="price-item" onclick="selectPlan('CLAT Entrance', 549, this)"><span class="plan-name">CLAT Entrance Exam</span><span class="plan-cost">₹549/yr</span></div>
+                <div class="price-item" onclick="selectPlan('CAT Exam Prep', 399, this)"><span class="plan-name">CAT MBA Entrance</span><span class="plan-cost">₹399/yr</span></div>
+                <div class="price-item" onclick="selectPlan('GATE Exam Prep', 449, this)"><span class="plan-name">GATE Exam</span><span class="plan-cost">₹449/yr</span></div>
+                <div class="price-item" onclick="selectPlan('CA / CS / CMA Foundation', 699, this)"><span class="plan-name">CA / CS / CMA Foundation</span><span class="plan-cost">₹699/yr</span></div>
+
+                <div class="price-category-label">🚀 Skill & Business Courses</div>
+                <div class="price-item" onclick="selectPlan('Social Media Mastery', 299, this)"><span class="plan-name">Social Media & YouTube Creator</span><span class="plan-cost">₹299/yr</span></div>
+                <div class="price-item" onclick="selectPlan('Digital Marketing & Business', 399, this)"><span class="plan-name">Digital Marketing & Startup</span><span class="plan-cost">₹399/yr</span></div>
+                <div class="price-item" onclick="selectPlan('Coding & AI Skills', 399, this)"><span class="plan-name">Coding, Python & AI Mastery</span><span class="plan-cost">₹399/yr</span></div>
+                <div class="price-item" onclick="selectPlan('Finance & Stock Market', 299, this)"><span class="plan-name">Finance & Stock Market Basics</span><span class="plan-cost">₹299/yr</span></div>
             </div>
 
             <button class="btn-primary" onclick="activateSelectedPlan()">ACTIVATE / SWITCH PASS</button>
