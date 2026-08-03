@@ -39,7 +39,7 @@
         html, body { height: 100%; width: 100%; overflow: hidden; background: var(--bg-color); color: var(--text-main); transition: background 0.3s, color 0.3s; }
         body { display:flex; flex-direction:column; }
 
-        /* CUSTOM BRANDED TOAST NOTIFICATION */
+        /* CUSTOM TOAST NOTIFICATION */
         #custom-toast {
             position: fixed; top: -100px; left: 50%; transform: translateX(-50%);
             background: var(--card-bg); color: var(--text-main);
@@ -77,22 +77,25 @@
         .splash-title { margin-top:20px; font-size:26px; font-weight:800; letter-spacing:1px; color:#fff; text-shadow:0 0 15px rgba(255,255,255,0.3); }
         .developer-tag { margin-top:6px; font-size:13px; color: var(--accent-color); font-weight:700; letter-spacing:0.5px; }
 
-        .splash-socials { display:flex; gap:16px; margin-top:16px; }
-        .splash-socials a { color:var(--text-muted); font-size:18px; transition:0.3s; }
+        .splash-socials { display:flex; gap:18px; margin-top:20px; }
+        .splash-socials a { color:var(--text-muted); font-size:22px; transition:0.3s; animation: floatIcon 3s ease-in-out infinite; }
         .splash-socials a:hover { color:#fff; transform:scale(1.2); }
+        
+        .support-info-splash { margin-top: 25px; font-size: 11px; color: var(--text-muted); font-weight: 600; display: flex; align-items: center; gap: 6px; background: rgba(255,255,255,0.05); padding: 8px 16px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.1); }
 
-        .progress-bar-container { width: 180px; height: 4px; background: rgba(255,255,255,0.1); border-radius: 10px; margin-top: 20px; overflow: hidden; }
+        .progress-bar-container { width: 180px; height: 4px; background: rgba(255,255,255,0.1); border-radius: 10px; margin-top: 25px; overflow: hidden; }
         .progress-bar { width: 0%; height: 100%; background: linear-gradient(90deg, #2563eb, #f59e0b); animation: loadProgress 10s linear forwards; }
 
         @keyframes pulseGlow { 0% { transform: scale(0.85); opacity: 0.5; } 100% { transform: scale(1.2); opacity: 0.95; } }
         @keyframes loadProgress { 0% { width: 0%; } 100% { width: 100%; } }
+        @keyframes floatIcon { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); color: var(--accent-color); } }
 
         /* AUTH CARD */
         .auth-container { display:flex; flex-direction:column; align-items:center; justify-content:center; flex:1; padding:20px; width:100%; overflow-y:auto; }
         .auth-card {
             background: var(--card-bg); border: 1px solid var(--border-color);
             border-radius:24px; padding:28px 22px; width:100%; max-width:420px;
-            box-shadow:0 20px 50px rgba(0,0,0,0.5); text-align:center;
+            box-shadow:0 20px 50px rgba(0,0,0,0.5); text-align:center; position: relative;
         }
         .brand-header { display:flex; flex-direction:column; align-items:center; margin-bottom:18px; }
         .brand-icon-box {
@@ -124,6 +127,12 @@
         .btn-primary:active { transform:scale(0.98); }
         .btn-primary:disabled { opacity: 0.6; cursor: not-allowed; }
 
+        .auth-footer-support { margin-top: 24px; border-top: 1px solid var(--border-color); padding-top: 16px; display: flex; flex-direction: column; align-items: center; gap: 8px; }
+        .auth-footer-support p { font-size: 11px; color: var(--text-muted); font-weight: 600; margin: 0; }
+        .auth-footer-socials { display: flex; gap: 14px; }
+        .auth-footer-socials a { color: var(--text-muted); font-size: 16px; transition: 0.2s; }
+        .auth-footer-socials a:hover { color: var(--accent-color); transform: scale(1.1); }
+
         /* DASHBOARD FLEX LAYOUT PREVENTING KEYBOARD OVERLAP */
         #main-dashboard { display:none; flex-direction:column; height:100%; max-width:850px; margin:0 auto; width:100%; position:relative; padding:10px; }
         
@@ -151,14 +160,14 @@
             padding:14px; flex:1; overflow-y:auto;
             display:flex; flex-direction:column; gap:10px; margin-bottom:8px; min-height: 150px;
         }
-        .msg { padding:12px 15px; border-radius:16px; font-size:13.5px; line-height:1.5; max-width:88%; word-wrap:break-word; animation: fadeInSlide 0.3s ease-out; }
-        .msg.user { background:var(--accent-color); color:#fff; align-self:flex-end; border-bottom-right-radius:4px; }
-        .msg.ai { background:var(--card-bg); color:var(--text-main); border:1px solid var(--border-color); align-self:flex-start; border-bottom-left-radius:4px; }
+        .msg { padding:12px 15px; border-radius:16px; font-size:13.5px; line-height:1.5; max-width:88%; word-wrap:break-word; animation: popIn 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards; transform-origin: bottom left; }
+        .msg.user { background:var(--accent-color); color:#fff; align-self:flex-end; border-bottom-right-radius:4px; transform-origin: bottom right; box-shadow: 0 4px 15px var(--accent-glow); }
+        .msg.ai { background:var(--card-bg); color:var(--text-main); border:1px solid var(--border-color); align-self:flex-start; border-bottom-left-radius:4px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
         .msg.guide-ai { background:rgba(245, 158, 11, 0.12); border:1px solid rgba(245, 158, 11, 0.5); color:var(--gold-color); align-self:flex-start; }
         .msg.error { background:rgba(239, 68, 68, 0.15); border:1px solid #ef4444; color:#fca5a5; align-self:center; width:100%; text-align:center; }
         .msg-image { max-width:100%; border-radius:12px; margin-top:8px; border:1px solid var(--border-color); }
 
-        @keyframes fadeInSlide { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
+        @keyframes popIn { 0% { opacity:0; transform:scale(0.8) translateY(10px); } 100% { opacity:1; transform:scale(1) translateY(0); } }
         @keyframes fadeIn { from { opacity:0; } to { opacity:1; } }
 
         /* AI TOOLS POPUP MENU (+) */
@@ -170,13 +179,14 @@
         .tool-btn { display:flex; align-items:center; gap:10px; padding:9px 12px; border-radius:10px; background:transparent; border:none; color:var(--text-main); font-size:12px; cursor:pointer; text-align:left; transition:0.2s; }
         .tool-btn:hover { background:rgba(37, 99, 235, 0.2); color:var(--accent-color); }
 
-        /* CHAT INPUT BAR */
+        /* CHAT INPUT BAR WITH MULTIPLE FILES & VOICE */
         .chat-input-bar { display:flex; align-items:center; background:var(--card-bg); border:1px solid var(--border-color); border-radius:16px; padding:5px 6px 5px 10px; gap:6px; position:relative; flex-shrink:0; }
         .chat-input-bar input[type="text"] { flex:1; background:transparent; border:none; color:var(--text-main); outline:none; font-size:13.5px; }
         .action-icon-btn { background:rgba(255,255,255,0.06); color:var(--text-muted); border:1px solid var(--border-color); width:36px; height:36px; border-radius:10px; display:flex; justify-content:center; align-items:center; cursor:pointer; transition:0.2s; }
         .action-icon-btn:hover { color:var(--text-main); background:rgba(255,255,255,0.12); }
-        .send-btn { background:var(--accent-color); color:#fff; border:none; width:36px; height:36px; border-radius:10px; display:flex; justify-content:center; align-items:center; cursor:pointer; }
-        
+        .send-btn { background:var(--accent-color); color:#fff; border:none; width:36px; height:36px; border-radius:10px; display:flex; justify-content:center; align-items:center; cursor:pointer; transition:0.2s; }
+        .send-btn:active { transform: scale(0.9); }
+
         .voice-active { background: rgba(239, 68, 68, 0.2); color: #ef4444; border-color: #ef4444; animation: pulseVoice 1.5s infinite; }
         @keyframes pulseVoice { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
         
@@ -214,7 +224,7 @@
 
         /* MODALS */
         .modal-overlay { position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); z-index:2000; display:none; justify-content:center; align-items:center; padding:16px; }
-        .modal-card { background:var(--card-bg); border:1px solid var(--border-color); border-radius:20px; padding:22px; max-width:480px; width:100%; text-align:center; position:relative; max-height:92vh; display:flex; flex-direction:column; }
+        .modal-card { background:var(--card-bg); border:1px solid var(--border-color); border-radius:20px; padding:22px; max-width:480px; width:100%; text-align:center; position:relative; max-height:92vh; display:flex; flex-direction:column; animation: popIn 0.3s ease; }
         
         .pricing-list { display:flex; flex-direction:column; gap:8px; margin:12px 0; text-align:left; overflow-y:auto; padding-right:4px; max-height:360px; }
         .price-category-label { font-size:11px; font-weight:800; color:var(--accent-color); text-transform:uppercase; letter-spacing:0.5px; margin:8px 0 4px 2px; }
@@ -254,6 +264,10 @@
             <a href="https://t.me/mryuviyadav" target="_blank" style="color:#0088cc;" title="Telegram"><i class="fa-brands fa-telegram"></i></a>
             <a href="https://x.com/mryuviyadav" target="_blank" title="X"><i class="fa-brands fa-x-twitter"></i></a>
             <a href="https://facebook.com/mryuviyadav" target="_blank" style="color:#1877f2;" title="Facebook"><i class="fa-brands fa-facebook"></i></a>
+        </div>
+        
+        <div class="support-info-splash">
+            <i class="fa-solid fa-headset"></i> Support: ticbull.support@gmail.com
         </div>
 
         <div class="progress-bar-container">
@@ -302,13 +316,22 @@
             <span class="forgot-link" onclick="openForgotModal()"><i class="fa-solid fa-key"></i> Forgot Password?</span>
 
             <button class="btn-primary" id="authSubmitBtn" onclick="initiateAuthWithOTP()">SEND VERIFICATION OTP</button>
+            
+            <div class="auth-footer-support">
+                <p>Need Help? Contact TicBull Support</p>
+                <div class="auth-footer-socials">
+                    <a href="mailto:ticbull.support@gmail.com" title="Email Support"><i class="fa-solid fa-envelope"></i></a>
+                    <a href="https://t.me/ticbullteam" title="Telegram Support"><i class="fa-brands fa-telegram"></i></a>
+                    <a href="https://www.instagram.com/ticbull" title="Instagram Support"><i class="fa-brands fa-instagram"></i></a>
+                </div>
+            </div>
         </div>
     </div>
 
     <!-- FORGOT PASSWORD MODAL -->
     <div class="modal-overlay" id="forgotModal">
         <div class="modal-card">
-            <i class="fa-solid fa-xmark" style="position:absolute; right:16px; top:16px; color:var(--text-muted); cursor:pointer;" onclick="document.getElementById('forgotModal').style.display='none'"></i>
+            <i class="fa-solid fa-xmark" style="position:absolute; right:16px; top:16px; color:var(--text-muted); cursor:pointer;" onclick="document.getElementById('forgotModal').style.display='none'; playClickSound();"></i>
             <h3 style="color:var(--text-main); font-size:18px;">🔑 Reset Password</h3>
             <p style="font-size:11.5px; color:var(--text-muted); margin-top:4px;">Enter email and a new password to reset.</p>
             
@@ -339,6 +362,19 @@
             </div>
 
             <button class="btn-primary" id="verifyBtn" onclick="verifyOTPAndLogin()">VERIFY & CONTINUE</button>
+        </div>
+    </div>
+    
+    <!-- DELETE WARNING MODAL -->
+    <div class="modal-overlay" id="deleteWarningModal">
+        <div class="modal-card" style="max-width:320px;">
+            <i class="fa-solid fa-triangle-exclamation" style="font-size:40px; color:#ef4444; margin-bottom:12px;"></i>
+            <h3 style="color:var(--text-main); font-size:18px;">Delete Chat Prompt?</h3>
+            <p style="font-size:12px; color:var(--text-muted); margin:8px 0 16px;">Are you sure you want to permanently delete this chat prompt from your history? ⚠️</p>
+            <div style="display:flex; gap:10px;">
+                <button class="btn-primary" style="background:transparent; border:1px solid var(--border-color); color:var(--text-main);" onclick="document.getElementById('deleteWarningModal').style.display='none'; playClickSound();">CANCEL</button>
+                <button class="btn-primary" style="background:#ef4444;" id="confirmDeleteBtn">DELETE</button>
+            </div>
         </div>
     </div>
 
@@ -489,6 +525,7 @@
         <div class="drawer-item" onclick="triggerAppGuideBot()"><i class="fa-solid fa-robot" style="color:#f59e0b;"></i> 🤖 TicBull Guide Bot (App Info)</div>
         <div class="drawer-item" onclick="openSubscriptionModal()"><i class="fa-solid fa-crown" style="color:#f59e0b;"></i> Upgrade or Switch Course Pass</div>
         <div class="drawer-item" onclick="startNewChat()"><i class="fa-solid fa-plus-circle" style="color:#10b981;"></i> Start New Chat</div>
+        <div class="drawer-item" onclick="showToast('App Settings menu coming soon!', 'success')"><i class="fa-solid fa-gear" style="color:#94a3b8;"></i> ⚙️ App Settings</div>
         <div class="drawer-item" onclick="logoutUser()" style="color:#ef4444;"><i class="fa-solid fa-right-from-bracket"></i> Log Out Account</div>
 
         <!-- CHAT HISTORY -->
@@ -499,6 +536,7 @@
         
         <div style="margin-top:auto; border-top:1px solid var(--border-color); padding-top:12px;">
             <div style="font-size:11px; color:var(--text-muted); margin-bottom:8px;">TICBULL OFFICIAL SUPPORT:</div>
+            <a href="mailto:ticbull.support@gmail.com" target="_blank" style="color:var(--text-main); text-decoration:none; display:block; margin-bottom:6px; font-size:12px;"><i class="fa-solid fa-envelope" style="color:#2563eb;"></i> ticbull.support@gmail.com</a>
             <a href="https://www.instagram.com/ticbull" target="_blank" style="color:#e1306c; text-decoration:none; display:block; margin-bottom:6px; font-size:12px;"><i class="fa-brands fa-instagram"></i> @ticbull Official Support</a>
             <a href="https://t.me/ticbullteam" target="_blank" style="color:#0088cc; text-decoration:none; display:block; font-size:12px;"><i class="fa-brands fa-telegram"></i> @ticbullteam Telegram Support</a>
             
@@ -510,7 +548,6 @@
                 <a href="https://t.me/mryuviyadav" target="_blank" style="color:#0088cc;"><i class="fa-brands fa-telegram"></i></a>
                 <a href="https://facebook.com/mryuviyadav" target="_blank" style="color:#1877f2;"><i class="fa-brands fa-facebook"></i></a>
             </div>
-            <div style="font-size:10px; color:var(--text-muted); margin-top:6px;">Official Email: ticbull.support@gmail.com</div>
         </div>
     </div>
 
@@ -597,6 +634,31 @@
         let selectedFilesArray = [];
         let currentStudentData = { name: '', email: '', dob: '', photo: '' };
 
+        // --- WEB AUDIO API FOR CLICK / STARTUP SOUNDS ---
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        const audioCtx = new AudioContext();
+
+        function playClickSound() {
+            if(audioCtx.state === 'suspended') audioCtx.resume();
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(800, audioCtx.currentTime);
+            gain.gain.setValueAtTime(0.05, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.1);
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.start();
+            osc.stop(audioCtx.currentTime + 0.1);
+        }
+
+        // Add sound to all buttons automatically
+        document.addEventListener('click', function(e) {
+            if(e.target.closest('button') || e.target.closest('.action-icon-btn') || e.target.closest('.drawer-item') || e.target.closest('.auth-tab')) {
+                playClickSound();
+            }
+        });
+
         // --- CUSTOM TOAST NOTIFICATION ---
         function showToast(msg, type = 'success') {
             const toast = document.getElementById('custom-toast');
@@ -605,7 +667,7 @@
             setTimeout(() => toast.classList.remove('show'), 3500);
         }
 
-        // Auto-Login & Single Device Session Check on Load
+        // Auto-Login Check
         window.addEventListener('DOMContentLoaded', () => {
             const savedEmail = localStorage.getItem('ticbull_email');
             const savedToken = localStorage.getItem('ticbull_token');
@@ -619,9 +681,13 @@
                 .then(data => {
                     if(data.success && data.active) {
                         currentStudentData.email = savedEmail;
-                        currentStudentData.name = localStorage.getItem('ticbull_name') || '';
-                        currentStudentData.dob = localStorage.getItem('ticbull_dob') || '';
-                        currentStudentData.photo = localStorage.getItem('ticbull_photo') || '';
+                        currentStudentData.name = data.user.name || localStorage.getItem('ticbull_name') || '';
+                        currentStudentData.dob = data.user.dob || localStorage.getItem('ticbull_dob') || '';
+                        currentStudentData.photo = data.user.photo || localStorage.getItem('ticbull_photo') || '';
+                        
+                        localStorage.setItem('ticbull_name', currentStudentData.name);
+                        if(currentStudentData.photo) localStorage.setItem('ticbull_photo', currentStudentData.photo);
+
                         document.getElementById('auth-screen').style.display = 'none';
                         document.getElementById('main-dashboard').style.display = 'flex';
                         updateProfileUI();
@@ -641,7 +707,6 @@
             }
         });
 
-        // 10 SECONDS SPLASH SCREEN TIMING
         window.addEventListener('load', () => {
             setTimeout(() => {
                 const splash = document.getElementById('splash-screen');
@@ -671,7 +736,7 @@
         function initiateForgotOTP() {
             const email = document.getElementById('forgotEmail').value.trim();
             const newPass = document.getElementById('forgotNewPassword').value.trim();
-            if(!email || !newPass) { showToast("Email aur naya password daalein!", "error"); return; }
+            if(!email || !newPass) { showToast("Email and New Password are required!", "error"); return; }
 
             currentStudentData.email = email;
             currentAuthMode = 'forgot';
@@ -748,9 +813,9 @@
             const password = document.getElementById('password').value.trim();
             const btn = document.getElementById('authSubmitBtn');
 
-            if(!email) { showToast("Email ID zaroori hai!", "error"); return; }
-            if(!password) { showToast("Password zaroori hai!", "error"); return; }
-            if(currentAuthMode === 'signup' && !name) { showToast("Pura naam zaroori hai!", "error"); return; }
+            if(!email) { showToast("Email ID is required!", "error"); return; }
+            if(!password) { showToast("Password is required!", "error"); return; }
+            if(currentAuthMode === 'signup' && !name) { showToast("Full Name is required!", "error"); return; }
 
             currentStudentData.email = email;
             if(name) currentStudentData.name = name;
@@ -779,7 +844,7 @@
             .catch(() => {
                 btn.disabled = false;
                 btn.innerText = currentAuthMode === 'login' ? 'SEND VERIFICATION OTP' : 'CREATE ACCOUNT WITH OTP';
-                showToast("Server error! Backend nahi chal raha.", "error");
+                showToast("Server error! Backend might be down.", "error");
             });
         }
 
@@ -788,7 +853,7 @@
             const password = document.getElementById('password').value.trim();
             const btn = document.getElementById('verifyBtn');
 
-            if(!otp) { showToast("6-digit OTP daalein!", "error"); return; }
+            if(!otp) { showToast("Enter 6-digit OTP!", "error"); return; }
 
             btn.disabled = true;
             btn.innerText = "VERIFYING...";
@@ -812,8 +877,16 @@
                 if (data.success) {
                     localStorage.setItem('ticbull_email', currentStudentData.email);
                     localStorage.setItem('ticbull_token', data.token);
+                    
+                    if(data.user) {
+                        if(data.user.name) currentStudentData.name = data.user.name;
+                        if(data.user.dob) currentStudentData.dob = data.user.dob;
+                        if(data.user.photo) currentStudentData.photo = data.user.photo;
+                    }
+
                     localStorage.setItem('ticbull_name', currentStudentData.name);
-                    localStorage.setItem('ticbull_dob', currentStudentData.dob);
+                    if(currentStudentData.dob) localStorage.setItem('ticbull_dob', currentStudentData.dob);
+                    if(currentStudentData.photo) localStorage.setItem('ticbull_photo', currentStudentData.photo);
 
                     updateProfileUI();
                     document.getElementById('otpModal').style.display = 'none';
@@ -822,7 +895,7 @@
                     loadServerChatHistory();
                     showToast("Login Successful!", "success");
                 } else {
-                    showToast(data.message || "Galat OTP!", "error");
+                    showToast(data.message || "Invalid OTP!", "error");
                 }
             })
             .catch(() => {
@@ -893,9 +966,15 @@
             localStorage.setItem('ticbull_name', currentStudentData.name);
             localStorage.setItem('ticbull_dob', currentStudentData.dob);
 
-            updateProfileUI();
-            closeEditProfileModal();
-            showToast("Profile details updated successfully!", "success");
+            fetch(`/api/update-profile`, {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ email: currentStudentData.email, name: currentStudentData.name, dob: currentStudentData.dob, photo: currentStudentData.photo })
+            }).then(() => {
+                updateProfileUI();
+                closeEditProfileModal();
+                showToast("Profile details updated successfully!", "success");
+            });
         }
 
         function handleAvatarUpload(event) {
@@ -906,6 +985,12 @@
                     currentStudentData.photo = e.target.result;
                     localStorage.setItem('ticbull_photo', e.target.result);
                     updateProfileUI();
+                    
+                    fetch(`/api/update-profile`, {
+                        method: 'POST',
+                        headers: {'Content-Type': 'application/json'},
+                        body: JSON.stringify({ email: currentStudentData.email, name: currentStudentData.name, dob: currentStudentData.dob, photo: currentStudentData.photo })
+                    });
                 };
                 reader.readAsDataURL(file);
             }
@@ -978,7 +1063,7 @@
 
         // --- NEW CHAT FEATURE ---
         function startNewChat() {
-            document.getElementById('chatBox').innerHTML = `<div class="msg ai"><b>Welcome to TicBull Academy! 🚀</b><br>Naya Chat shuru ho gaya hai. Puchiye apna sawaal!</div>`;
+            document.getElementById('chatBox').innerHTML = `<div class="msg ai"><b>Welcome to TicBull Academy! 🚀</b><br>New Chat started. Ask your question!</div>`;
             fetch(`/api/clear-chat`, {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
@@ -1033,18 +1118,29 @@
                 list.innerHTML += `
                     <div class="history-item" onclick="loadHistoryItem('${item.replace(/'/g, "\\'")}')">
                         <span style="white-space:nowrap; overflow:hidden; text-overflow:ellipsis; width:85%;">${item}</span>
-                        <i class="fa-solid fa-xmark delete-chat-icon" onclick="deleteHistoryItem(${index}, event)"></i>
+                        <i class="fa-solid fa-xmark delete-chat-icon" onclick="promptDeleteHistory(${index}, event)"></i>
                     </div>`;
             });
         }
 
-        function deleteHistoryItem(index, event) {
+        function promptDeleteHistory(index, event) {
             event.stopPropagation();
+            document.getElementById('deleteWarningModal').style.display = 'flex';
+            document.getElementById('confirmDeleteBtn').onclick = function() {
+                deleteHistoryItem(index);
+                document.getElementById('deleteWarningModal').style.display = 'none';
+            };
+        }
+
+        function deleteHistoryItem(index) {
             fetch(`/api/delete-chat-item`, {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify({ email: currentStudentData.email, index: index })
-            }).then(() => loadServerChatHistory());
+            }).then(() => {
+                showToast("Chat prompt deleted.", "success");
+                loadServerChatHistory();
+            });
         }
 
         function clearChat() {
@@ -1054,7 +1150,7 @@
         function loadHistoryItem(text) {
             document.getElementById('userInput').value = text;
             if(document.getElementById('drawer').classList.contains('open')) toggleDrawer();
-            // Removed askAI() so user can edit the prompt before sending.
+            askAI();
         }
 
         // --- VOICE TYPING LOGIC ---
@@ -1088,7 +1184,7 @@
                     recognition.start();
                     voiceBtn.classList.add('voice-active');
                 } else {
-                    showToast("Aapka browser voice typing support nahi karta.", "error");
+                    showToast("Your browser does not support Voice Typing.", "error");
                 }
             }
         }
@@ -1190,6 +1286,7 @@
                 } else {
                     loadElem.classList.replace('ai', 'error');
                     loadElem.innerHTML = `<b>❌ AI Error:</b> ${data.message}`;
+                    showToast(data.message, "error");
                 }
                 scrollToBottom();
             })
@@ -1198,6 +1295,7 @@
                 const loadElem = document.getElementById(loadingId);
                 loadElem.classList.replace('ai', 'error');
                 loadElem.innerHTML = `<b>❌ Server Error.</b>`;
+                showToast("Server Error", "error");
                 scrollToBottom();
             });
         }
