@@ -138,29 +138,24 @@ Rules: Out of syllabus sawal mana kar dena. Kabhie mat kehna ki tu AI ya Gemini 
         headers = {"Content-Type": "application/json"}
         payload = {"contents": [{"parts": [{"text": full_prompt}]}]}
         
-        # Step 1: Direct stable model try karenge
-        url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro-latest:generateContent?key={GEMINI_API_KEY}"
+        # Step 1: Google se saare models ki list mangenge
+        list_url = f"https://generativelanguage.googleapis.com/v1beta/models?key={GEMINI_API_KEY}"
+        list_res = requests.get(list_url).json()
+        
+        valid_model = "models/gemini-1.5-flash" # Default fallback
+        
+        # Step 2: STRICT FILTERING - Sirf wahi model uthayenge jisme "1.5" likha ho (2.0 aur 2.5 ko completely ignore)
+        if "models" in list_res:
+            for m in list_res["models"]:
+                name = m["name"]
+                if "generateContent" in m.get("supportedGenerationMethods", []) and "1.5" in name and "vision" not in name:
+                    valid_model = name
+                    break # Perfect model mil gaya, ab yahin ruk jao
+        
+        # Step 3: Answer generate karo
+        url = f"https://generativelanguage.googleapis.com/v1beta/{valid_model}:generateContent?key={GEMINI_API_KEY}"
         response = requests.post(url, json=payload, headers=headers, timeout=25)
         res_data = response.json()
-        
-        # Step 2: Auto-Detect (lekin 2.5 aur restricted models ko ignore karke)
-        if response.status_code != 200 or "error" in res_data:
-            list_url = f"https://generativelanguage.googleapis.com/v1beta/models?key={GEMINI_API_KEY}"
-            list_res = requests.get(list_url).json()
-            
-            valid_model = None
-            if "models" in list_res:
-                for m in list_res["models"]:
-                    name = m["name"]
-                    # Yahan hum 2.5 ko strictly block kar rahe hain
-                    if "generateContent" in m.get("supportedGenerationMethods", []) and "2.5" not in name and "vision" not in name:
-                        valid_model = name
-                        break
-            
-            if valid_model:
-                url = f"https://generativelanguage.googleapis.com/v1beta/{valid_model}:generateContent?key={GEMINI_API_KEY}"
-                response = requests.post(url, json=payload, headers=headers, timeout=25)
-                res_data = response.json()
         
         if "candidates" in res_data:
             reply_text = res_data['candidates'][0]['content']['parts'][0]['text']
