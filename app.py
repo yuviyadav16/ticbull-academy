@@ -43,6 +43,14 @@ def send_otp():
     if not email:
         return jsonify({"success": False, "message": "Email zaroori hai!"}), 400
     
+    # Check if user already exists in Firebase database to prevent 1000 accounts
+    if FIREBASE_URL:
+        safe_email = sanitize_email(email)
+        existing_user = requests.get(f"{FIREBASE_URL}/users/{safe_email}.json").json()
+        if existing_user:
+            # User already exists, allow login flow via OTP
+            pass
+
     otp = str(random.randint(100000, 999999))
     otp_store[email] = otp
     
@@ -65,6 +73,11 @@ def verify_otp():
             safe_email = sanitize_email(email)
             session_data = {"token": token, "device_id": device_id}
             requests.put(f"{FIREBASE_URL}/sessions/{safe_email}.json", json=session_data)
+            
+            # Save user record if not exists
+            user_check = requests.get(f"{FIREBASE_URL}/users/{safe_email}.json").json()
+            if not user_check:
+                requests.put(f"{FIREBASE_URL}/users/{safe_email}.json", json={"email": email})
             
         return jsonify({"success": True, "message": "Verified!", "token": token})
     return jsonify({"success": False, "message": "Galat OTP!"}), 400
@@ -134,6 +147,7 @@ def chat():
     lang = data.get('lang', 'Hinglish')
     student_name = data.get('student_name', 'Student')
     purchased_plan = data.get('purchased_plan', 'Free Demo Plan')
+    email = data.get('email', '').strip().lower()
     
     if not prompt:
         return jsonify({"success": False, "message": "Question empty nahi ho sakta!"}), 400
@@ -168,8 +182,7 @@ STRICT RULES FOR MASTER TEACHER:
             reply_text = res_data['candidates'][0]['content']['parts'][0]['text']
             reply_text = reply_text.replace("Gemini", "TicBull").replace("Google", "TicBull")
             
-            # Save prompt to history if email provided
-            email = data.get('email', '').strip().lower()
+            # Save prompt to database history
             if email and FIREBASE_URL:
                 safe_email = sanitize_email(email)
                 res = requests.get(f"{FIREBASE_URL}/chats/{safe_email}.json")
