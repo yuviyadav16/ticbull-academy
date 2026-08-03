@@ -22,8 +22,8 @@ def sanitize_email(email):
 def send_otp_email(to_email, otp):
     if not SMTP_PASSWORD or not SMTP_EMAIL:
         return False
-    subject = "TicBull Academy - Verification OTP"
-    body = f"Welcome to TicBull Academy! Your 6-Digit Verification OTP is: {otp}"
+    subject = "TicBull Academy - Secure Verification OTP"
+    body = f"Welcome to TicBull Academy!\n\nYour 6-Digit Secure Verification OTP is: {otp}\n\nPlease do not share this OTP with anyone.\n\nBest Regards,\nTicBull Support Team"
     msg = MIMEText(body)
     msg['Subject'] = subject
     msg['From'] = f"TicBull Academy <{SMTP_EMAIL}>"
@@ -44,32 +44,30 @@ def send_otp():
     auth_mode = data.get('auth_mode', 'login')
     
     if not email:
-        return jsonify({"success": False, "message": "Email zaroori hai!"}), 400
+        return jsonify({"success": False, "message": "Email address is required!"}), 400
         
-    # STRICT DATABASE CHECK
     if FIREBASE_URL:
         safe_email = sanitize_email(email)
         user_check = requests.get(f"{FIREBASE_URL}/users/{safe_email}.json").json()
         
         if auth_mode == 'signup':
             if user_check:
-                return jsonify({"success": False, "message": "Account pehle se hai! Kripya Sign In karein."}), 400
+                return jsonify({"success": False, "message": "Account already exists! Please Sign In."}), 400
         elif auth_mode == 'login':
             if not user_check:
-                return jsonify({"success": False, "message": "Account nahi mila! Kripya Sign Up karein."}), 400
-            # WRONG PASSWORD CHECK
+                return jsonify({"success": False, "message": "Account not found! Please Create an Account first."}), 400
             if user_check.get('password') != password:
-                return jsonify({"success": False, "message": "Galat Password! Kripya sahi password daalein."}), 400
+                return jsonify({"success": False, "message": "Incorrect Password! Please try again."}), 400
         elif auth_mode == 'forgot':
             if not user_check:
-                return jsonify({"success": False, "message": "Account nahi mila! Sahi Email daalein."}), 400
+                return jsonify({"success": False, "message": "Account not found! Enter a registered email."}), 400
     
     otp = str(random.randint(100000, 999999))
     otp_store[email] = otp
     
     if send_otp_email(email, otp):
         return jsonify({"success": True, "message": f"OTP sent successfully to {email}"})
-    return jsonify({"success": False, "message": "Email configuration error!"}), 500
+    return jsonify({"success": False, "message": "System configuration error. Contact Support."}), 500
 
 @app.route('/api/verify-otp', methods=['POST'])
 def verify_otp():
@@ -83,6 +81,7 @@ def verify_otp():
     if email in otp_store and otp_store[email] == user_otp:
         del otp_store[email]
         token = str(random.randint(10000000, 99999999))
+        user_data = {}
         
         if FIREBASE_URL:
             safe_email = sanitize_email(email)
@@ -92,11 +91,25 @@ def verify_otp():
             if auth_mode == 'signup':
                 requests.put(f"{FIREBASE_URL}/users/{safe_email}.json", json={"email": email, "password": password})
             elif auth_mode == 'forgot':
-                # RESET PASSWORD
                 requests.patch(f"{FIREBASE_URL}/users/{safe_email}.json", json={"password": password})
             
-        return jsonify({"success": True, "message": "Verified successfully!", "token": token})
-    return jsonify({"success": False, "message": "Galat OTP!"}), 400
+            # Fetch user profile data to return
+            db_user = requests.get(f"{FIREBASE_URL}/users/{safe_email}.json").json() or {}
+            user_data = {"name": db_user.get("name", ""), "dob": db_user.get("dob", ""), "photo": db_user.get("photo", "")}
+            
+        return jsonify({"success": True, "message": "Verification successful!", "token": token, "user": user_data})
+    return jsonify({"success": False, "message": "Invalid 6-Digit OTP!"}), 400
+
+@app.route('/api/update-profile', methods=['POST'])
+def update_profile():
+    data = request.get_json() or {}
+    email = data.get('email', '').strip().lower()
+    if email and FIREBASE_URL:
+        safe_email = sanitize_email(email)
+        update_data = {"name": data.get("name"), "dob": data.get("dob"), "photo": data.get("photo")}
+        requests.patch(f"{FIREBASE_URL}/users/{safe_email}.json", json=update_data)
+        return jsonify({"success": True, "message": "Profile updated successfully!"})
+    return jsonify({"success": False, "message": "Failed to update profile."})
 
 @app.route('/api/check-session', methods=['POST'])
 def check_session():
@@ -112,11 +125,12 @@ def check_session():
     if res.status_code == 200 and res.json():
         db_session = res.json()
         if db_session.get("token") == token:
-            return jsonify({"success": True, "active": True})
+            db_user = requests.get(f"{FIREBASE_URL}/users/{safe_email}.json").json() or {}
+            user_data = {"name": db_user.get("name", ""), "dob": db_user.get("dob", ""), "photo": db_user.get("photo", "")}
+            return jsonify({"success": True, "active": True, "user": user_data})
             
-    return jsonify({"success": True, "active": False, "message": "Logged in from another device!"})
+    return jsonify({"success": True, "active": False, "message": "Session Expired! Logged in from another device."})
 
-# --- PERMANENT CHAT HISTORY (SIDEBAR LIST) ---
 @app.route('/api/get-chat', methods=['POST'])
 def get_chat():
     data = request.get_json() or {}
@@ -142,7 +156,6 @@ def delete_chat_item():
             requests.put(f"{FIREBASE_URL}/chats/{safe_email}.json", json=history)
     return jsonify({"success": True})
 
-# --- FULL CHAT UI SYNC ---
 @app.route('/api/sync-chat-ui', methods=['POST'])
 def sync_chat_ui():
     data = request.get_json() or {}
@@ -166,6 +179,7 @@ def get_chat_ui():
 
 @app.route('/api/clear-chat', methods=['POST'])
 def clear_chat():
+    # Only clears UI, does not delete sidebar history prompts
     data = request.get_json() or {}
     email = data.get('email', '').strip().lower()
     if email and FIREBASE_URL:
@@ -173,7 +187,6 @@ def clear_chat():
         requests.delete(f"{FIREBASE_URL}/chat_ui/{safe_email}.json")
     return jsonify({"success": True})
 
-# --- AI TEACHER BRAIN ---
 @app.route('/api/chat', methods=['POST'])
 def chat():
     data = request.get_json() or {}
@@ -187,22 +200,21 @@ def chat():
     email = data.get('email', '').strip().lower()
     
     if not prompt:
-        return jsonify({"success": False, "message": "Question empty nahi ho sakta!"}), 400
+        return jsonify({"success": False, "message": "Prompt cannot be empty!"}), 400
     
     if not GEMINI_API_KEY:
-        return jsonify({"success": False, "message": "API Key missing!"}), 500
+        return jsonify({"success": False, "message": "API Key is missing!"}), 500
         
-    system_instruction = f"""Tu TicBull Academy ka Main aur Akela Intelligent Teacher hai. Tujhe MrYuviYadav ne banaya hai.
+    system_instruction = f"""You are the Master AI Teacher for 'TicBull Academy'. Developed exclusively by MrYuviYadav.
 Student Name: {student_name}
-Current Plan: {purchased_plan}
+Current Active Plan: {purchased_plan}
 Selected Course: {board} {cls} {stream}
 Language: {lang}
 
-STRICT RULES:
-1. FREE PLAN LOGIC: Agar student ka plan 'Free Demo Plan' hai, toh basic answer do aur guide karo ki detail me padhne ke liye TicBull Academy ka batch buy karna hoga! 🚀
-2. INTERACTIVE TEACHING: Chote bullet points me aur easy examples ke sath samjhao. Har baar poocho: "{student_name}, kya ye samajh aaya?"
-3. PERSONAL CONNECTION: Student ko uske naam se bulao.
-4. IDENTITY: Tu sirf 'TicBull Teacher' hai. Google, Gemini, AI word use mat karna."""
+STRICT INTELLIGENCE RULES:
+1. FREE PLAN UPSELL: If the student is on 'Free Demo Plan', provide a concise, basic explanation. Softly urge them: "To unlock highly detailed visual notes and complete syllabus, please upgrade to the TicBull Premium Batch! 🚀"
+2. TEACHING STYLE: Use well-structured bullet points, bold keywords, and extremely easy-to-understand examples. Always ask a highly engaging closing question like: "{student_name}, is this concept 100% clear?"
+3. IDENTITY: You are strictly 'TicBull Teacher'. NEVER mention Google, Gemini, OpenAI, or LLM. Respond naturally as an expert human educator."""
     
     full_prompt = f"{system_instruction}\n\nStudent Question: {prompt}"
     
@@ -219,7 +231,6 @@ STRICT RULES:
             reply_text = res_data['candidates'][0]['content']['parts'][0]['text']
             reply_text = reply_text.replace("Gemini", "TicBull").replace("Google", "TicBull")
             
-            # Save prompt to history list
             if email and FIREBASE_URL:
                 safe_email = sanitize_email(email)
                 res = requests.get(f"{FIREBASE_URL}/chats/{safe_email}.json")
@@ -231,16 +242,16 @@ STRICT RULES:
 
             return jsonify({"success": True, "reply": reply_text})
         elif "error" in res_data:
-            return jsonify({"success": False, "message": f"AI Error: {res_data['error'].get('message')}"}), 500
+            return jsonify({"success": False, "message": f"AI Engine Error: {res_data['error'].get('message')}"}), 500
         else:
-            return jsonify({"success": False, "message": "API Response Error"}), 500
+            return jsonify({"success": False, "message": "Invalid API Response."}), 500
             
     except Exception as e:
-        return jsonify({"success": False, "message": f"Server Error: {str(e)}"}), 500
+        return jsonify({"success": False, "message": f"Server Connection Error: {str(e)}"}), 500
 
 @app.route('/')
 def home():
-    return "TicBull Master AI Engine is running!"
+    return "TicBull Master AI Engine is securely running!"
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)
