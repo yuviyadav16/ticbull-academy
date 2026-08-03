@@ -939,9 +939,10 @@
             });
         }
 
-        function loadHistoryItem(text) {
+         function loadHistoryItem(text) {
             document.getElementById('userInput').value = text;
             if(document.getElementById('drawer').classList.contains('open')) toggleDrawer();
+            askAI();
         }
 
         // --- VOICE TYPING LOGIC ---
