@@ -138,25 +138,26 @@ Rules: Out of syllabus sawal mana kar dena. Kabhie mat kehna ki tu AI ya Gemini 
         headers = {"Content-Type": "application/json"}
         payload = {"contents": [{"parts": [{"text": full_prompt}]}]}
         
-        # Step 1: Default try
-        url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={GEMINI_API_KEY}"
+        # Step 1: Direct stable model try karenge
+        url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro-latest:generateContent?key={GEMINI_API_KEY}"
         response = requests.post(url, json=payload, headers=headers, timeout=25)
         res_data = response.json()
         
-        # Step 2: MAGIC TRICK - Agar Google ne model name reject kiya, toh auto-detect karo!
-        if response.status_code == 404 or ("error" in res_data and "not found" in res_data["error"].get("message", "").lower()):
+        # Step 2: Auto-Detect (lekin 2.5 aur restricted models ko ignore karke)
+        if response.status_code != 200 or "error" in res_data:
             list_url = f"https://generativelanguage.googleapis.com/v1beta/models?key={GEMINI_API_KEY}"
             list_res = requests.get(list_url).json()
             
             valid_model = None
             if "models" in list_res:
                 for m in list_res["models"]:
-                    if "generateContent" in m.get("supportedGenerationMethods", []):
-                        valid_model = m["name"] # Google ka khud ka bataya hua naam save kar lo
+                    name = m["name"]
+                    # Yahan hum 2.5 ko strictly block kar rahe hain
+                    if "generateContent" in m.get("supportedGenerationMethods", []) and "2.5" not in name and "vision" not in name:
+                        valid_model = name
                         break
             
             if valid_model:
-                # Retry with the exact Auto-Detected model!
                 url = f"https://generativelanguage.googleapis.com/v1beta/{valid_model}:generateContent?key={GEMINI_API_KEY}"
                 response = requests.post(url, json=payload, headers=headers, timeout=25)
                 res_data = response.json()
