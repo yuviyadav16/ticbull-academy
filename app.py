@@ -64,7 +64,6 @@ def verify_otp():
         del otp_store[email]
         token = str(random.randint(10000000, 99999999))
         
-        # Save session to Firebase (Single Device Check)
         if FIREBASE_URL:
             safe_email = sanitize_email(email)
             session_data = {"token": token, "device_id": device_id}
@@ -136,13 +135,31 @@ Rules: Out of syllabus sawal mana kar dena. Kabhie mat kehna ki tu AI ya Gemini 
     full_prompt = f"{system_instruction}\n\nStudent Question: {prompt}"
     
     try:
-        # 100% Working Official V1 Endpoint for Gemini 1.5 Flash
-        url = f"https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key={GEMINI_API_KEY}"
-        payload = {"contents": [{"parts": [{"text": full_prompt}]}]}
         headers = {"Content-Type": "application/json"}
+        payload = {"contents": [{"parts": [{"text": full_prompt}]}]}
         
+        # Step 1: Default try
+        url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={GEMINI_API_KEY}"
         response = requests.post(url, json=payload, headers=headers, timeout=25)
         res_data = response.json()
+        
+        # Step 2: MAGIC TRICK - Agar Google ne model name reject kiya, toh auto-detect karo!
+        if response.status_code == 404 or ("error" in res_data and "not found" in res_data["error"].get("message", "").lower()):
+            list_url = f"https://generativelanguage.googleapis.com/v1beta/models?key={GEMINI_API_KEY}"
+            list_res = requests.get(list_url).json()
+            
+            valid_model = None
+            if "models" in list_res:
+                for m in list_res["models"]:
+                    if "generateContent" in m.get("supportedGenerationMethods", []):
+                        valid_model = m["name"] # Google ka khud ka bataya hua naam save kar lo
+                        break
+            
+            if valid_model:
+                # Retry with the exact Auto-Detected model!
+                url = f"https://generativelanguage.googleapis.com/v1beta/{valid_model}:generateContent?key={GEMINI_API_KEY}"
+                response = requests.post(url, json=payload, headers=headers, timeout=25)
+                res_data = response.json()
         
         if "candidates" in res_data:
             reply_text = res_data['candidates'][0]['content']['parts'][0]['text']
@@ -152,14 +169,14 @@ Rules: Out of syllabus sawal mana kar dena. Kabhie mat kehna ki tu AI ya Gemini 
             err_msg = res_data["error"].get("message", "API Error")
             return jsonify({"success": False, "message": f"AI Error: {err_msg}"}), 500
         else:
-            return jsonify({"success": False, "message": f"API Response Error: {str(res_data)}"}), 500
+            return jsonify({"success": False, "message": "API Response Error, try again."}), 500
             
     except Exception as e:
         return jsonify({"success": False, "message": f"Server Error: {str(e)}"}), 500
 
 @app.route('/')
 def home():
-    return "TicBull Database & Payment Backend is running!"
+    return "TicBull Database, Payment & Auto-AI Backend is running!"
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)
