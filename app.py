@@ -40,21 +40,29 @@ def send_otp_email(to_email, otp):
 def send_otp():
     data = request.get_json() or {}
     email = data.get('email', '').strip().lower()
+    password = data.get('password', '').strip()
     auth_mode = data.get('auth_mode', 'login')
     
     if not email:
         return jsonify({"success": False, "message": "Email zaroori hai!"}), 400
         
-    # STRICT DATABASE DUPLICATE ACCOUNT CHECK
+    # STRICT DATABASE CHECK
     if FIREBASE_URL:
         safe_email = sanitize_email(email)
         user_check = requests.get(f"{FIREBASE_URL}/users/{safe_email}.json").json()
         
-        if auth_mode == 'signup' and user_check:
-            return jsonify({"success": False, "message": "Account pehle se bana hua hai! Kripya Sign In karein."}), 400
-            
-        if auth_mode == 'login' and not user_check:
-            return jsonify({"success": False, "message": "Account nahi mila! Kripya pehle Sign Up karein."}), 400
+        if auth_mode == 'signup':
+            if user_check:
+                return jsonify({"success": False, "message": "Account pehle se hai! Kripya Sign In karein."}), 400
+        elif auth_mode == 'login':
+            if not user_check:
+                return jsonify({"success": False, "message": "Account nahi mila! Kripya Sign Up karein."}), 400
+            # WRONG PASSWORD CHECK
+            if user_check.get('password') != password:
+                return jsonify({"success": False, "message": "Galat Password! Kripya sahi password daalein."}), 400
+        elif auth_mode == 'forgot':
+            if not user_check:
+                return jsonify({"success": False, "message": "Account nahi mila! Sahi Email daalein."}), 400
     
     otp = str(random.randint(100000, 999999))
     otp_store[email] = otp
@@ -81,12 +89,13 @@ def verify_otp():
             session_data = {"token": token, "device_id": device_id}
             requests.put(f"{FIREBASE_URL}/sessions/{safe_email}.json", json=session_data)
             
-            # Save user credentials if signing up
-            user_check = requests.get(f"{FIREBASE_URL}/users/{safe_email}.json").json()
-            if not user_check and auth_mode == 'signup':
+            if auth_mode == 'signup':
                 requests.put(f"{FIREBASE_URL}/users/{safe_email}.json", json={"email": email, "password": password})
+            elif auth_mode == 'forgot':
+                # RESET PASSWORD
+                requests.patch(f"{FIREBASE_URL}/users/{safe_email}.json", json={"password": password})
             
-        return jsonify({"success": True, "message": "Verified!", "token": token})
+        return jsonify({"success": True, "message": "Verified successfully!", "token": token})
     return jsonify({"success": False, "message": "Galat OTP!"}), 400
 
 @app.route('/api/check-session', methods=['POST'])
@@ -114,7 +123,6 @@ def get_chat():
     email = data.get('email', '').strip().lower()
     if not email or not FIREBASE_URL:
         return jsonify({"success": True, "history": []})
-    
     safe_email = sanitize_email(email)
     res = requests.get(f"{FIREBASE_URL}/chats/{safe_email}.json")
     history = res.json() if res.status_code == 200 and res.json() else []
@@ -134,7 +142,7 @@ def delete_chat_item():
             requests.put(f"{FIREBASE_URL}/chats/{safe_email}.json", json=history)
     return jsonify({"success": True})
 
-# --- FULL CHAT UI SYNC (CHATGPT LIKE) ---
+# --- FULL CHAT UI SYNC ---
 @app.route('/api/sync-chat-ui', methods=['POST'])
 def sync_chat_ui():
     data = request.get_json() or {}
@@ -162,7 +170,6 @@ def clear_chat():
     email = data.get('email', '').strip().lower()
     if email and FIREBASE_URL:
         safe_email = sanitize_email(email)
-        requests.delete(f"{FIREBASE_URL}/chats/{safe_email}.json")
         requests.delete(f"{FIREBASE_URL}/chat_ui/{safe_email}.json")
     return jsonify({"success": True})
 
@@ -192,9 +199,9 @@ Selected Course: {board} {cls} {stream}
 Language: {lang}
 
 STRICT RULES:
-1. FREE PLAN LOGIC: Agar student ka plan 'Free Demo Plan' hai, toh usko short aur basic answer do, aur sath me guide karo ki detail me padhne ke liye TicBull Academy ka batch buy karna hoga! 🚀
-2. INTERACTIVE TEACHING: Chote bullet points me aur easy examples ke sath samjhao. Har baar aakhir me poocho: "{student_name}, kya ye samajh aaya?"
-3. PERSONAL CONNECTION: Student ko uske naam ({student_name}) se bulao.
+1. FREE PLAN LOGIC: Agar student ka plan 'Free Demo Plan' hai, toh basic answer do aur guide karo ki detail me padhne ke liye TicBull Academy ka batch buy karna hoga! 🚀
+2. INTERACTIVE TEACHING: Chote bullet points me aur easy examples ke sath samjhao. Har baar poocho: "{student_name}, kya ye samajh aaya?"
+3. PERSONAL CONNECTION: Student ko uske naam se bulao.
 4. IDENTITY: Tu sirf 'TicBull Teacher' hai. Google, Gemini, AI word use mat karna."""
     
     full_prompt = f"{system_instruction}\n\nStudent Question: {prompt}"
@@ -233,7 +240,7 @@ STRICT RULES:
 
 @app.route('/')
 def home():
-    return "TicBull Master AI Engine & Database is running!"
+    return "TicBull Master AI Engine is running!"
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)
