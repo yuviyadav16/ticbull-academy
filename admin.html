@@ -3,15 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TicBull Admin Panel</title>
+    <title>TicBull Super Admin</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
         body { margin: 0; font-family: -apple-system, sans-serif; background: #020617; color: #f8fafc; }
-        .container { max-width: 900px; margin: 0 auto; padding: 20px; }
+        .container { max-width: 1100px; margin: 0 auto; padding: 20px; }
         
         .login-box { max-width: 350px; margin: 100px auto; background: #0f172a; padding: 30px; border-radius: 16px; border: 1px solid #1e293b; text-align: center; }
         .login-box input { width: 100%; padding: 12px; margin: 15px 0; background: #020617; border: 1px solid #334155; color: white; border-radius: 8px; }
         .btn { background: #2563eb; color: white; border: none; padding: 12px 20px; width: 100%; border-radius: 8px; cursor: pointer; font-weight: bold; }
+        .btn-danger { background: #ef4444; font-size:12px; padding: 8px 12px; }
         
         #dashboard { display: none; }
         .stat-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 30px; }
@@ -22,6 +23,7 @@
         table { width: 100%; border-collapse: collapse; background: #0f172a; border-radius: 12px; overflow: hidden; }
         th, td { padding: 12px 15px; text-align: left; border-bottom: 1px solid #1e293b; font-size: 14px; }
         th { background: #1e293b; color: #cbd5e1; }
+        .chat-pills { font-size:11px; background:#1e293b; padding:4px 8px; border-radius:20px; display:inline-block; margin:2px; color:#3b82f6;}
     </style>
 </head>
 <body>
@@ -29,7 +31,7 @@
     <div class="container">
         <!-- ADMIN LOGIN -->
         <div class="login-box" id="loginBox">
-            <h2><i class="fa-solid fa-user-shield"></i> TicBull Admin Login</h2>
+            <h2><i class="fa-solid fa-user-shield"></i> TicBull Super Admin</h2>
             <input type="password" id="adminPwd" placeholder="Enter Admin Password">
             <button class="btn" onclick="loginAdmin()">LOGIN TO DASHBOARD</button>
         </div>
@@ -37,8 +39,8 @@
         <!-- DASHBOARD -->
         <div id="dashboard">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-                <h2><i class="fa-solid fa-chart-line"></i> Analytics Dashboard</h2>
-                <button class="btn" style="width: auto; background: #ef4444;" onclick="location.reload()">Logout</button>
+                <h2><i class="fa-solid fa-server"></i> Server Analytics & Users</h2>
+                <button class="btn" style="width: auto; background: #334155;" onclick="location.reload()">Logout</button>
             </div>
 
             <div class="stat-cards">
@@ -47,34 +49,37 @@
                     <h1 id="totalUsers">0</h1>
                 </div>
                 <div class="card">
-                    <h3>Platform Status</h3>
-                    <h1 style="color:#3b82f6;">Active</h1>
+                    <h3>Database Status</h3>
+                    <h1 style="color:#3b82f6;">Highly Secure</h1>
                 </div>
             </div>
 
-            <h3>Recent Student Signups</h3>
+            <h3>Student Data & Actions</h3>
             <table>
                 <thead>
                     <tr>
                         <th>Name</th>
                         <th>Email Address</th>
-                        <th>Join Date</th>
+                        <th>Today's AI Prompts</th>
+                        <th>Recent Chat Topics</th>
+                        <th>Actions</th>
                     </tr>
                 </thead>
                 <tbody id="userTableBody">
-                    <tr><td colspan="3" style="text-align:center;">Loading data...</td></tr>
+                    <tr><td colspan="5" style="text-align:center;">Loading data...</td></tr>
                 </tbody>
             </table>
         </div>
     </div>
 
     <script>
-        // Default password set in python is "rakeshbhai@2308ticbull"
+        let currentPassword = "";
+
         function loginAdmin() {
             const pwd = document.getElementById('adminPwd').value;
             if(!pwd) return alert("Enter password");
             
-            document.querySelector('.btn').innerText = "Verifying...";
+            document.querySelector('.btn').innerText = "Authenticating...";
             
             fetch('/api/admin/data', {
                 method: 'POST',
@@ -84,6 +89,7 @@
             .then(res => res.json())
             .then(data => {
                 if(data.success) {
+                    currentPassword = pwd; // Save password for ban action
                     document.getElementById('loginBox').style.display = 'none';
                     document.getElementById('dashboard').style.display = 'block';
                     
@@ -91,8 +97,21 @@
                     
                     const tbody = document.getElementById('userTableBody');
                     tbody.innerHTML = '';
+                    
                     data.users.reverse().forEach(u => {
-                        tbody.innerHTML += `<tr><td>${u.name}</td><td>${u.email}</td><td>${u.joined}</td></tr>`;
+                        let chatHTML = u.recent_chats.length > 0 
+                            ? u.recent_chats.map(c => `<span class="chat-pills">${c}</span>`).join('') 
+                            : '<span style="color:#64748b; font-size:12px;">No chats yet</span>';
+                            
+                        tbody.innerHTML += `
+                            <tr>
+                                <td><strong>${u.name}</strong><br><span style="font-size:10px; color:#64748b;">Joined: ${u.joined}</span></td>
+                                <td style="color:#f59e0b;">${u.email}</td>
+                                <td><strong>${u.today_usage}</strong> Questions</td>
+                                <td>${chatHTML}</td>
+                                <td><button class="btn btn-danger" onclick="banUser('${u.email}')"><i class="fa-solid fa-ban"></i> BAN / DELETE</button></td>
+                            </tr>
+                        `;
                     });
                 } else {
                     document.querySelector('.btn').innerText = "LOGIN TO DASHBOARD";
@@ -103,6 +122,27 @@
                 document.querySelector('.btn').innerText = "LOGIN TO DASHBOARD";
                 alert("Server error.");
             });
+        }
+
+        function banUser(email) {
+            const confirmBan = confirm(`⚠️ WARNING!\nAre you sure you want to PERMANENTLY BAN and delete all data for: ${email}?`);
+            
+            if(confirmBan) {
+                fetch('/api/admin/ban-user', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ password: currentPassword, target_email: email })
+                })
+                .then(res => res.json())
+                .then(data => {
+                    if(data.success) {
+                        alert(data.message);
+                        loginAdmin(); // Refresh the table
+                    } else {
+                        alert("Error: " + data.message);
+                    }
+                });
+            }
         }
     </script>
 </body>
