@@ -321,4 +321,8 @@ def home():
     return "TicBull Master AI Engine is securely running with API Rate Limiting!"
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000)
+    app.run(host='0.0.0.0', port=5000) 
+    
+@app.route('/admin.html')
+def admin_page():
+    return app.send_static_file('admin.html')
