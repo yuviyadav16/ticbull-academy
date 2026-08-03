@@ -155,7 +155,7 @@
         .tool-btn { display:flex; align-items:center; gap:10px; padding:9px 12px; border-radius:10px; background:transparent; border:none; color:var(--text-main); font-size:12px; cursor:pointer; text-align:left; transition:0.2s; }
         .tool-btn:hover { background:rgba(37, 99, 235, 0.2); color:var(--accent-color); }
 
-        /* CHAT INPUT BAR WITH VOICE ICON ADDED */
+        /* CHAT INPUT BAR WITH MULTIPLE FILES & VOICE */
         .chat-input-bar { display:flex; align-items:center; background:var(--card-bg); border:1px solid var(--border-color); border-radius:16px; padding:5px 6px 5px 10px; gap:6px; position:relative; flex-shrink:0; }
         .chat-input-bar input[type="text"] { flex:1; background:transparent; border:none; color:var(--text-main); outline:none; font-size:13.5px; }
         .action-icon-btn { background:rgba(255,255,255,0.06); color:var(--text-muted); border:1px solid var(--border-color); width:36px; height:36px; border-radius:10px; display:flex; justify-content:center; align-items:center; cursor:pointer; transition:0.2s; }
@@ -218,7 +218,7 @@
 </head>
 <body>
 
-    <!-- 10 SECONDS CINEMATIC SPLASH SCREEN WITH SOCIALS -->
+    <!-- 10 SECONDS CINEMATIC SPLASH ANIMATION -->
     <div id="splash-screen">
         <div class="splash-logo-container">
             <div class="splash-logo-glow"></div>
@@ -315,10 +315,10 @@
                     <p style="font-size:9.5px; color:var(--text-muted);">AI Tutor Engine v8.5</p>
                 </div>
             </div>
-            <span class="user-badge" onclick="openSubscriptionModal()"><i class="fa-solid fa-crown"></i> <span id="badgePlanText">Class 12 Science Active</span></span>
+            <span class="user-badge" onclick="openSubscriptionModal()"><i class="fa-solid fa-crown"></i> <span id="badgePlanText">Free Demo Plan Active</span></span>
         </div>
 
-        <!-- COLLAPSIBLE COURSE BAR -->
+        <!-- COLLAPSIBLE COURSE SELECTOR BAR -->
         <div class="course-bar-toggle" onclick="toggleCourseSelectors()">
             <span id="activeCourseLabel"><i class="fa-solid fa-sliders"></i> Course: CBSE | Class 12 | Science (PCM/PCB)</span>
             <i class="fa-solid fa-chevron-down" id="courseToggleIcon"></i>
@@ -372,19 +372,19 @@
         </div>
 
         <div class="active-course-chip" id="activeCourseChip">
-            <span><i class="fa-solid fa-lock"></i> Unlocked Pass: Class 12 Science (PCM/PCB)</span>
-            <span style="font-size:10px; color:var(--success-color);">Access Active</span>
+            <span><i class="fa-solid fa-lock"></i> Unlocked Pass: Free Demo Plan</span>
+            <span style="font-size:10px; color:var(--success-color);">Active</span>
         </div>
 
         <div class="chat-container" id="chatBox">
             <div class="msg ai" id="welcomeAiMessage">
                 <b>Welcome to TicBull Academy! 🚀</b><br>
-                Aapka **Class 12 Science** Pass active hai. Below `+` icon click karke ya text type karke apni queries puche!
+                Aapka Free Demo Plan active hai. Aap apni queries pooch sakte hain ya batch upgrade kar sakte hain!
             </div>
         </div>
 
         <div id="imagePreview">
-            <span><i class="fa-regular fa-image"></i> Photo Question Selected</span>
+            <span id="imagePreviewText"><i class="fa-regular fa-image"></i> Files/Photos Selected</span>
             <i class="fa-solid fa-xmark" style="cursor:pointer;" onclick="removeImage()"></i>
         </div>
 
@@ -398,16 +398,15 @@
             <button class="tool-btn" onclick="triggerTool('Generate 10 Objective Questions (MCQs) with Answer Key')"><i class="fa-solid fa-list-check" style="color:#06b6d4;"></i> Objective MCQs</button>
         </div>
 
-        <!-- CHAT INPUT BAR WITH DUAL ACTION BUTTONS (+ and 📷 AND NEW VOICE 🎤) -->
+        <!-- CHAT INPUT BAR WITH MULTIPLE FILES / PDF & VOICE -->
         <div class="chat-input-bar">
             <button class="action-icon-btn" onclick="toggleToolsMenu()" title="Quick AI Tools (+)"><i class="fa-solid fa-plus"></i></button>
             
-            <label class="action-icon-btn" for="photoInput" title="Upload Question Photo">
-                <i class="fa-solid fa-camera"></i>
+            <label class="action-icon-btn" for="photoInput" title="Upload Photos or PDFs (Multiple)">
+                <i class="fa-solid fa-paperclip"></i>
             </label>
-            <input type="file" id="photoInput" accept="image/*" style="display:none;" onchange="handleImageSelect(event)">
+            <input type="file" id="photoInput" accept="image/*,.pdf" multiple style="display:none;" onchange="handleMultipleFilesSelect(event)">
             
-            <!-- NEW VOICE BUTTON -->
             <button class="action-icon-btn" id="voiceBtn" onclick="toggleVoiceInput()" title="Voice Typing"><i class="fa-solid fa-microphone"></i></button>
             
             <input type="text" id="userInput" placeholder="Type chapter/topic or click (+) for tools..." onfocus="scrollToBottom()">
@@ -450,11 +449,11 @@
         <div class="drawer-item" onclick="triggerAppGuideBot()"><i class="fa-solid fa-robot" style="color:#f59e0b;"></i> 🤖 TicBull Guide Bot (App Info)</div>
         <div class="drawer-item" onclick="openSubscriptionModal()"><i class="fa-solid fa-crown" style="color:#f59e0b;"></i> Upgrade or Switch Course Pass</div>
         <div class="drawer-item" onclick="clearChat()"><i class="fa-solid fa-trash-can" style="color:#ef4444;"></i> Clear Current Chat</div>
+        <div class="drawer-item" onclick="logoutUser()" style="color:#ef4444;"><i class="fa-solid fa-right-from-bracket"></i> Log Out Account</div>
 
-        <!-- CHAT HISTORY WITH TRASH ICON -->
+        <!-- CHAT HISTORY -->
         <div class="history-title" style="display:flex; justify-content:space-between; align-items:center;">
             <span><i class="fa-solid fa-clock-rotate-left"></i> Recent Chat History:</span>
-            <i class="fa-solid fa-trash" style="cursor:pointer; color:var(--text-muted); font-size:13px;" onclick="deleteAllHistory()" title="Clear All History"></i>
         </div>
         <div class="history-list" id="historyList"></div>
         
@@ -551,11 +550,11 @@
 
     <script>
         let currentAuthMode = 'login';
-        let purchasedPlanName = 'Class 12 Science';
+        let purchasedPlanName = 'Free Demo Plan';
         let isProUser = false;
         let selectedPlanName = 'Class 12 Science';
         let selectedPlanPrice = 499;
-        let selectedImageBase64 = null;
+        let selectedFilesArray = [];
         let currentStudentData = { name: '', email: '', dob: '', photo: '' };
 
         // Auto-Login & Single Device Session Check on Load
@@ -578,7 +577,7 @@
                         document.getElementById('auth-screen').style.display = 'none';
                         document.getElementById('main-dashboard').style.display = 'flex';
                         updateProfileUI();
-                        loadHistoryFromStorage();
+                        loadServerChatHistory();
                     } else {
                         localStorage.clear();
                         alert("⚠️ Session Expired! You have logged in from another device.");
@@ -589,7 +588,7 @@
                     document.getElementById('auth-screen').style.display = 'none';
                     document.getElementById('main-dashboard').style.display = 'flex';
                     updateProfileUI();
-                    loadHistoryFromStorage();
+                    loadServerChatHistory();
                 });
             }
         });
@@ -697,7 +696,7 @@
             .catch(() => {
                 btn.disabled = false;
                 btn.innerText = currentAuthMode === 'login' ? 'SEND VERIFICATION OTP' : 'CREATE ACCOUNT WITH OTP';
-                alert("Server error! Backend nahi chal raha hai.");
+                alert("Server error!");
             });
         }
 
@@ -736,7 +735,7 @@
                     document.getElementById('otpModal').style.display = 'none';
                     document.getElementById('auth-screen').style.display = 'none';
                     document.getElementById('main-dashboard').style.display = 'flex';
-                    loadHistoryFromStorage();
+                    loadServerChatHistory();
                 } else {
                     alert("❌ GALAT OTP! " + (data.message || "Sahi 6-digit OTP daalein."));
                 }
@@ -744,12 +743,17 @@
             .catch(() => {
                 btn.disabled = false;
                 btn.innerText = "VERIFY & CONTINUE";
-                alert("Server Error! Try again.");
+                alert("Server Error!");
             });
         }
 
         function closeOtpModal() {
             document.getElementById('otpModal').style.display = 'none';
+        }
+
+        function logoutUser() {
+            localStorage.clear();
+            location.reload();
         }
 
         function updateProfileUI() {
@@ -886,23 +890,26 @@
             alert(`🎉 ${purchasedPlanName} Pass Activated! Material unlocked.`);
         }
 
-        // --- LOCAL STORAGE CHAT HISTORY LOGIC ---
-        function saveHistoryToStorage(question) {
-            let history = JSON.parse(localStorage.getItem('ticbull_chat_history') || '[]');
-            if(!history.includes(question)) {
-                history.unshift(question);
-                if(history.length > 15) history.pop();
-                localStorage.setItem('ticbull_chat_history', JSON.stringify(history));
-                loadHistoryFromStorage();
-            }
+        // --- SERVER CHAT HISTORY SYNC (LIKE GEMINI) ---
+        function loadServerChatHistory() {
+            fetch(`/api/get-chat`, {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ email: currentStudentData.email })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if(data.success && data.history) {
+                    renderHistoryList(data.history);
+                }
+            }).catch(() => {});
         }
 
-        function loadHistoryFromStorage() {
+        function renderHistoryList(historyArray) {
             const list = document.getElementById('historyList');
             if(!list) return;
-            let history = JSON.parse(localStorage.getItem('ticbull_chat_history') || '[]');
             list.innerHTML = '';
-            history.forEach((item, index) => {
+            historyArray.forEach((item, index) => {
                 list.innerHTML += `
                     <div class="history-item" onclick="loadHistoryItem('${item.replace(/'/g, "\\'")}')">
                         <span style="white-space:nowrap; overflow:hidden; text-overflow:ellipsis; width:85%;">${item}</span>
@@ -913,17 +920,23 @@
 
         function deleteHistoryItem(index, event) {
             event.stopPropagation();
-            let history = JSON.parse(localStorage.getItem('ticbull_chat_history') || '[]');
-            history.splice(index, 1);
-            localStorage.setItem('ticbull_chat_history', JSON.stringify(history));
-            loadHistoryFromStorage();
+            fetch(`/api/delete-chat-item`, {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ email: currentStudentData.email, index: index })
+            }).then(() => loadServerChatHistory());
         }
 
-        function deleteAllHistory() {
-            if(confirm("Are you sure you want to delete all chat history?")) {
-                localStorage.removeItem('ticbull_chat_history');
-                loadHistoryFromStorage();
-            }
+        function clearChat() {
+            fetch(`/api/clear-chat`, {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ email: currentStudentData.email })
+            }).then(() => {
+                document.getElementById('chatBox').innerHTML = `<div class="msg ai">Chat cleared! Ask any question.</div>`;
+                loadServerChatHistory();
+                if(document.getElementById('drawer').classList.contains('open')) toggleDrawer();
+            });
         }
 
         function loadHistoryItem(text) {
@@ -967,27 +980,27 @@
             }
         }
 
-        function handleImageSelect(event) {
-            const file = event.target.files[0];
-            if(file) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    selectedImageBase64 = e.target.result;
-                    document.getElementById('imagePreview').style.display = 'flex';
-                };
-                reader.readAsDataURL(file);
+        // --- MULTIPLE FILES (PHOTOS / PDF) UPLOAD HANDLER ---
+        function handleMultipleFilesSelect(event) {
+            const files = event.target.files;
+            if(files && files.length > 0) {
+                selectedFilesArray = [];
+                for(let i=0; i<files.length; i++) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        selectedFilesArray.push(e.target.result);
+                    };
+                    reader.readAsDataURL(files[i]);
+                }
+                document.getElementById('imagePreviewText').innerHTML = `<i class="fa-solid fa-paperclip"></i> ${files.length} File(s) Selected`;
+                document.getElementById('imagePreview').style.display = 'flex';
             }
         }
 
         function removeImage() {
-            selectedImageBase64 = null;
+            selectedFilesArray = [];
             document.getElementById('photoInput').value = '';
             document.getElementById('imagePreview').style.display = 'none';
-        }
-
-        function clearChat() {
-            document.getElementById('chatBox').innerHTML = `<div class="msg ai">Chat cleared! Ask any question from your purchased course.</div>`;
-            if(document.getElementById('drawer').classList.contains('open')) toggleDrawer();
         }
 
         // --- REAL GEMINI AI INTEGRATION START ---
@@ -1001,35 +1014,25 @@
             const lang = document.getElementById('langSelect').value;
             const sendBtn = document.getElementById('sendBtn');
 
-            if(!input.value.trim() && !selectedImageBase64) return;
+            if(!input.value.trim() && selectedFilesArray.length === 0) return;
 
             let userMsgContent = '';
-            if(selectedImageBase64) userMsgContent += `<img src="${selectedImageBase64}" class="msg-image"><br>`;
+            selectedFilesArray.forEach(file => {
+                if(file.includes('pdf')) {
+                    userMsgContent += `<i class="fa-solid fa-file-pdf" style="font-size:24px; color:red;"></i> <b>[PDF Document Attached]</b><br>`;
+                } else {
+                    userMsgContent += `<img src="${file}" class="msg-image"><br>`;
+                }
+            });
             if(input.value.trim()) userMsgContent += input.value.trim();
-            const questionText = input.value.trim() || "Explain this image";
+            const questionText = input.value.trim() || "Analyze attached files";
 
             chatBox.innerHTML += `<div class="msg user">${userMsgContent}</div>`;
             
-            if(questionText) saveHistoryToStorage(questionText);
-
             input.value = '';
             removeImage();
             document.getElementById('aiToolsMenu').style.display = 'none';
             scrollToBottom();
-
-            // Strict Course Check
-            if(!isProUser && !purchasedPlanName.includes(cls) && !purchasedPlanName.includes(board) && !purchasedPlanName.includes(stream) && !purchasedPlanName.includes('Pro')) {
-                setTimeout(() => {
-                    chatBox.innerHTML += `
-                        <div class="msg error">
-                            <b>⛔ COURSE ACCESS DENIED!</b><br>
-                            Aapne <b>"${purchasedPlanName}"</b> ka pass liya hai. Aap <b>"${board} - ${cls}"</b> access nahi kar sakte!<br>
-                            <span style="text-decoration:underline; cursor:pointer;" onclick="openSubscriptionModal()">👉 Click here to Upgrade to TicBull Pro Pass (₹1499)</span>
-                        </div>`;
-                    scrollToBottom();
-                }, 500);
-                return;
-            }
 
             // Create Loading Indicator
             const loadingId = 'loading-' + Date.now();
@@ -1043,12 +1046,14 @@
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify({
+                    email: currentStudentData.email,
                     prompt: questionText,
                     board: board,
                     class: cls,
                     stream: stream,
                     lang: lang,
-                    student_name: currentStudentData.name
+                    student_name: currentStudentData.name,
+                    purchased_plan: purchasedPlanName
                 })
             })
             .then(res => res.json())
@@ -1071,6 +1076,7 @@
                     }
 
                     loadElem.innerHTML = `<b>[TicBull Teacher]:</b><br><br>${formattedReply}`;
+                    loadServerChatHistory();
                 } else {
                     loadElem.classList.replace('ai', 'error');
                     loadElem.innerHTML = `<b>❌ AI Error:</b> ${data.message}`;
