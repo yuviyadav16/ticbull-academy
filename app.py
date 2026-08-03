@@ -15,7 +15,7 @@ GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "")
 SMTP_EMAIL = os.getenv("SMTP_EMAIL", "ticbull.support@gmail.com")
 SMTP_PASSWORD = os.getenv("SMTP_PASSWORD", "")
 FIREBASE_URL = os.getenv("FIREBASE_URL", "").rstrip('/')
-ADMIN_PASSWORD = os.getenv("ADMIN_PASSWORD", "TicBull@2026") # Admin Panel Password
+ADMIN_PASSWORD = os.getenv("ADMIN_PASSWORD", "rakeshbhai@2308bull") # Admin Panel Password
 
 otp_store = {}
 
