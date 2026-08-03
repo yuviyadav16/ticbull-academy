@@ -619,7 +619,30 @@
         function handleForgotPassword() {
             const email = document.getElementById('email').value.trim();
             if(!email) { alert("Please enter your Registered Email ID first!"); return; }
-            initiateAuthWithOTP();
+            
+            const btn = document.getElementById('authSubmitBtn');
+            btn.disabled = true;
+            btn.innerText = "SENDING OTP...";
+            
+            fetch(`/api/send-otp`, {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ email: email, auth_mode: 'login' })
+            }).then(res => res.json()).then(data => {
+                btn.disabled = false;
+                btn.innerText = currentAuthMode === 'login' ? 'SEND VERIFICATION OTP' : 'CREATE ACCOUNT WITH OTP';
+                if (data.success) {
+                    currentStudentData.email = email;
+                    alert(data.message);
+                    document.getElementById('otpModal').style.display = 'flex';
+                } else {
+                    alert("Error: " + data.message);
+                }
+            }).catch(() => {
+                btn.disabled = false;
+                btn.innerText = currentAuthMode === 'login' ? 'SEND VERIFICATION OTP' : 'CREATE ACCOUNT WITH OTP';
+                alert("Server error!");
+            });
         }
 
         function switchAuth(mode) {
@@ -665,9 +688,12 @@
             const email = document.getElementById('email').value.trim();
             const name = document.getElementById('studentName').value.trim();
             const dob = document.getElementById('studentDob').value;
+            const password = document.getElementById('password').value.trim();
             const btn = document.getElementById('authSubmitBtn');
 
             if(!email) { alert("Please enter Email ID!"); return; }
+            if(!password) { alert("Please enter your Password!"); return; }
+            if(currentAuthMode === 'signup' && !name) { alert("Please enter your Full Name!"); return; }
 
             currentStudentData.email = email;
             if(name) currentStudentData.name = name;
@@ -679,7 +705,7 @@
             fetch(`/api/send-otp`, {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({ email: email })
+                body: JSON.stringify({ email: email, auth_mode: currentAuthMode })
             })
             .then(res => res.json())
             .then(data => {
@@ -696,12 +722,13 @@
             .catch(() => {
                 btn.disabled = false;
                 btn.innerText = currentAuthMode === 'login' ? 'SEND VERIFICATION OTP' : 'CREATE ACCOUNT WITH OTP';
-                alert("Server error!");
+                alert("Server error! Backend nahi chal raha hai.");
             });
         }
 
         function verifyOTPAndLogin() {
             const otp = document.getElementById('otpInput').value.trim();
+            const password = document.getElementById('password').value.trim();
             const btn = document.getElementById('verifyBtn');
 
             if(!otp) { alert("Please enter 6-digit OTP!"); return; }
@@ -718,7 +745,7 @@
             fetch(`/api/verify-otp`, {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({ email: currentStudentData.email, otp: otp, device_id: deviceId })
+                body: JSON.stringify({ email: currentStudentData.email, otp: otp, password: password, auth_mode: currentAuthMode, device_id: deviceId })
             })
             .then(res => res.json())
             .then(data => {
@@ -743,7 +770,7 @@
             .catch(() => {
                 btn.disabled = false;
                 btn.innerText = "VERIFY & CONTINUE";
-                alert("Server Error!");
+                alert("Server Error! Try again.");
             });
         }
 
@@ -866,6 +893,7 @@
                     • <b>How to Use:</b> Click top bar to change Course/Class/Skill, ask doubts or click <b>(+)</b> for instant tools!
                 </div>`;
             scrollToBottom();
+            saveChatUI();
         }
 
         function selectPlan(name, price, element) {
@@ -890,8 +918,23 @@
             alert(`🎉 ${purchasedPlanName} Pass Activated! Material unlocked.`);
         }
 
-        // --- SERVER CHAT HISTORY SYNC (LIKE GEMINI) ---
+        // --- SERVER CHAT HISTORY SYNC (LIKE CHATGPT) ---
         function loadServerChatHistory() {
+            // Load full Chat UI inside chatbox
+            fetch('/api/get-chat-ui', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ email: currentStudentData.email })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if(data.success && data.html) {
+                    document.getElementById('chatBox').innerHTML = data.html;
+                    scrollToBottom();
+                }
+            }).catch(() => {});
+
+            // Load Sidebar History prompts
             fetch(`/api/get-chat`, {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
@@ -903,6 +946,15 @@
                     renderHistoryList(data.history);
                 }
             }).catch(() => {});
+        }
+
+        function saveChatUI() {
+            const chatHtml = document.getElementById('chatBox').innerHTML;
+            fetch('/api/sync-chat-ui', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ email: currentStudentData.email, chat_html: chatHtml })
+            });
         }
 
         function renderHistoryList(historyArray) {
@@ -933,13 +985,13 @@
                 headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify({ email: currentStudentData.email })
             }).then(() => {
-                document.getElementById('chatBox').innerHTML = `<div class="msg ai">Chat cleared! Ask any question.</div>`;
+                document.getElementById('chatBox').innerHTML = `<div class="msg ai">Chat cleared! Ask any question from your course.</div>`;
                 loadServerChatHistory();
                 if(document.getElementById('drawer').classList.contains('open')) toggleDrawer();
             });
         }
 
-         function loadHistoryItem(text) {
+        function loadHistoryItem(text) {
             document.getElementById('userInput').value = text;
             if(document.getElementById('drawer').classList.contains('open')) toggleDrawer();
             askAI();
@@ -1077,6 +1129,9 @@
                     }
 
                     loadElem.innerHTML = `<b>[TicBull Teacher]:</b><br><br>${formattedReply}`;
+                    
+                    // SAVE CHAT HISTORY UI TO DATABASE
+                    saveChatUI();
                     loadServerChatHistory();
                 } else {
                     loadElem.classList.replace('ai', 'error');
