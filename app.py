@@ -22,96 +22,88 @@ otp_store = {}
 def sanitize_email(email):
     return email.replace('.', '_').replace('@', '_at_')
 
-def send_otp_email(to_email, otp):
-    if not SMTP_PASSWORD or not SMTP_EMAIL:
-        return False
-    subject = "TicBull Academy - Email Verification OTP"
-    body = f"Welcome to TicBull Academy! Your 6-Digit Email Verification OTP is: {otp}"
-    msg = MIMEText(body)
-    msg['Subject'] = subject
-    msg['From'] = f"TicBull Academy <{SMTP_EMAIL}>"
-    msg['To'] = to_email
-    try:
-        with smtplib.SMTP_SSL('smtp.gmail.com', 465) as server:
-            server.login(SMTP_EMAIL, SMTP_PASSWORD)
-            server.sendmail(SMTP_EMAIL, to_email, msg.as_string())
-        return True
-    except:
-        return False
+# ==========================================
+# 1. AUTHENTICATION & USER ACCOUNTS (1 Email = 1 Account)
+# ==========================================
 
-@app.route('/api/send-otp', methods=['POST'])
-def send_otp():
+@app.route('/api/register', methods=['POST'])
+def register():
     data = request.get_json() or {}
     email = data.get('email', '').strip().lower()
-    if not email:
-        return jsonify({"success": False, "message": "Email zaroori hai!"}), 400
+    password = data.get('password', '').strip()
+    name = data.get('name', 'Student')
     
-    otp = str(random.randint(100000, 999999))
-    otp_store[email] = otp
-    
-    if send_otp_email(email, otp):
-        return jsonify({"success": True, "message": f"OTP sent to {email}"})
-    return jsonify({"success": False, "message": "Email error!"}), 500
-
-@app.route('/api/verify-otp', methods=['POST'])
-def verify_otp():
-    data = request.get_json() or {}
-    email = data.get('email', '').strip().lower()
-    user_otp = data.get('otp', '').strip()
-    device_id = data.get('device_id', 'default_device')
-    
-    if email in otp_store and otp_store[email] == user_otp:
-        del otp_store[email]
-        token = str(random.randint(10000000, 99999999))
+    if not email or not password:
+        return jsonify({"success": False, "message": "Email aur password zaroori hai!"}), 400
         
-        if FIREBASE_URL:
-            safe_email = sanitize_email(email)
-            session_data = {"token": token, "device_id": device_id}
-            requests.put(f"{FIREBASE_URL}/sessions/{safe_email}.json", json=session_data)
-            
-        return jsonify({"success": True, "message": "Verified!", "token": token})
-    return jsonify({"success": False, "message": "Galat OTP!"}), 400
+    if not FIREBASE_URL:
+        return jsonify({"success": False, "message": "Firebase Database connect nahi hai!"}), 500
 
-@app.route('/api/check-session', methods=['POST'])
-def check_session():
+    safe_email = sanitize_email(email)
+    
+    # Check if user already exists
+    check_user = requests.get(f"{FIREBASE_URL}/users/{safe_email}.json").json()
+    if check_user:
+        return jsonify({"success": False, "message": "Account already exists! Kripya Login karein."}), 400
+        
+    # Save new user
+    user_data = {"name": name, "email": email, "password": password, "plan": "None"}
+    requests.put(f"{FIREBASE_URL}/users/{safe_email}.json", json=user_data)
+    
+    return jsonify({"success": True, "message": "Account successfully ban gaya! Ab login karein."})
+
+@app.route('/api/login', methods=['POST'])
+def login():
     data = request.get_json() or {}
     email = data.get('email', '').strip().lower()
-    token = data.get('token', '')
-    device_id = data.get('device_id', '')
+    password = data.get('password', '').strip()
     
     if not FIREBASE_URL:
-        return jsonify({"success": True, "active": True})
-        
-    safe_email = sanitize_email(email)
-    res = requests.get(f"{FIREBASE_URL}/sessions/{safe_email}.json")
-    if res.status_code == 200 and res.json():
-        db_session = res.json()
-        if db_session.get("token") == token and db_session.get("device_id") == device_id:
-            return jsonify({"success": True, "active": True})
-            
-    return jsonify({"success": True, "active": False, "message": "Logged in from another device!"})
+        return jsonify({"success": False, "message": "Database error!"}), 500
 
-@app.route('/api/create-payment', methods=['POST'])
-def create_payment():
-    data = request.get_json() or {}
-    amount = data.get('amount', 0)
+    safe_email = sanitize_email(email)
+    user_data = requests.get(f"{FIREBASE_URL}/users/{safe_email}.json").json()
     
-    if not RAZORPAY_KEY_ID or not RAZORPAY_KEY_SECRET:
-        return jsonify({"success": False, "message": "Payment Gateway setup pending."}), 500
+    if not user_data:
+        return jsonify({"success": False, "message": "Account nahi mila! Pehle Register karein."}), 404
         
-    try:
-        url = "https://api.razorpay.com/v1/orders"
-        payload = {
-            "amount": amount * 100,
-            "currency": "INR",
-            "receipt": f"receipt_{random.randint(1000,9999)}"
-        }
-        res = requests.post(url, json=payload, auth=(RAZORPAY_KEY_ID, RAZORPAY_KEY_SECRET))
-        if res.status_code == 200:
-            return jsonify({"success": True, "order_id": res.json()["id"], "key": RAZORPAY_KEY_ID})
-        return jsonify({"success": False, "message": "Order creation failed"})
-    except Exception as e:
-        return jsonify({"success": False, "message": str(e)}), 500
+    if user_data.get('password') != password:
+        return jsonify({"success": False, "message": "Galat Password!"}), 401
+        
+    token = str(random.randint(10000000, 99999999))
+    return jsonify({"success": True, "message": "Login successful!", "token": token, "user": user_data})
+
+# ==========================================
+# 2. CHAT HISTORY SAVING & FETCHING
+# ==========================================
+
+@app.route('/api/save-chat', methods=['POST'])
+def save_chat():
+    data = request.get_json() or {}
+    email = data.get('email', '').strip().lower()
+    chat_history = data.get('chat_history', []) # Frontend se poori chat array aayegi
+    
+    if email and FIREBASE_URL:
+        safe_email = sanitize_email(email)
+        requests.put(f"{FIREBASE_URL}/chats/{safe_email}.json", json=chat_history)
+        return jsonify({"success": True, "message": "Chat saved securely!"})
+    return jsonify({"success": False, "message": "Failed to save chat."}), 400
+
+@app.route('/api/get-chat', methods=['POST'])
+def get_chat():
+    data = request.get_json() or {}
+    email = data.get('email', '').strip().lower()
+    
+    if email and FIREBASE_URL:
+        safe_email = sanitize_email(email)
+        chat_data = requests.get(f"{FIREBASE_URL}/chats/{safe_email}.json").json()
+        if chat_data:
+            return jsonify({"success": True, "chat_history": chat_data})
+    return jsonify({"success": True, "chat_history": []})
+
+# ==========================================
+# 3. AI CHAT ENGINE (Master Interactive Teacher)
+# ==========================================
 
 @app.route('/api/chat', methods=['POST'])
 def chat():
@@ -121,30 +113,24 @@ def chat():
     cls = data.get('class', 'Class 12')
     stream = data.get('stream', 'Science')
     lang = data.get('lang', 'Hinglish')
-    
-    # YAHAN HUMNE STUDENT KA NAAM AUR DETAILS ADD KI HAI (Memory ke liye)
     student_name = data.get('student_name', 'Mere Pyare Student') 
     
     if not prompt:
         return jsonify({"success": False, "message": "Question empty nahi ho sakta!"}), 400
     
     if not GEMINI_API_KEY:
-        return jsonify({"success": False, "message": "API Key missing in Vercel Environment Variables!"}), 500
+        return jsonify({"success": False, "message": "API Key missing!"}), 500
         
-    # YAHAN HUMNE AI KO "SUPER MEMORY AUR PERSONAL MENTOR" BANAYA HAI 👇
     system_instruction = f"""Tu TicBull Academy ka Main, Akela aur sabse Intelligent Teacher hai. Tujhe MrYuviYadav ne banaya hai.
-    
-🎓 STUDENT PROFILE & MEMORY:
-- Student Name: {student_name}
-- Active Purchased Plan: {board} {cls} {stream}
-- Medium/Language: {lang}
+Student Name: {student_name}
+Active Purchased Plan: {board} {cls} {stream}
+Language: {lang}
 
-STRICT RULES FOR MASTER TEACHER:
-1. WELCOME & BATCH AWARENESS: Tujhe properly pata hai ki student ne '{cls}' ka plan liya hai. Jab student aapse padhai start kare ya puche "kaise padhu", toh usko confidence do aur bolo: "{student_name}, aapne {cls} ka batch le liya hai. Ab tension mat lo, hum har ek chapter ko bilkul detail me, step-by-step padhenge! 🚀"
-2. PERSONAL CONNECTION: Student ko beech-beech me uske naam ({student_name}) se bulao. Aisa feel karao ki tumhara 'memory power' bohot strong hai aur tum uspe special dhyaan de rahe ho.
-3. INTERACTIVE TEACHING: Lamba bookish text mat chaapna. Concept ko step-by-step, chote bullet points me aur easy examples se samjhao. Har chote concept ke baad hamesha poocho: "{student_name}, kya ye samajh aaya? Aage badhein?"
-4. CROSS-CLASS STRICTNESS (UPSELL): Agar student kisi doosri class ka pooche (active plan ke bahar), toh 2 line ka quick revision do aur politely bolo: "Detail me padhne ke liye aapko TicBull Academy ka wo specific batch buy karna padega. 🚀"
-5. IDENTITY: Tu sirf 'TicBull Teacher' hai. Google, Gemini, AI word use nahi karna."""
+STRICT RULES:
+1. INTERACTIVE TEACHING: Lamba bookish text mat chaapna. Concept ko step-by-step, bullet points me aur easy examples se samjhao.
+2. PERSONAL CONNECTION: Student ko beech-beech me uske naam ({student_name}) se bulao. 
+3. CROSS-CLASS STRICTNESS (UPSELL): Agar student active plan ({cls}) ke bahar ka pooche, toh 2 line ka quick revision do aur bolo: "Detail me padhne ke liye aapko TicBull Academy ka wo specific batch buy karna padega. 🚀"
+4. IDENTITY: Tu sirf 'TicBull Teacher' hai. Google, Gemini, AI word use nahi karna."""
     
     full_prompt = f"{system_instruction}\n\nStudent Question: {prompt}"
     
@@ -152,29 +138,26 @@ STRICT RULES FOR MASTER TEACHER:
         headers = {"Content-Type": "application/json"}
         payload = {"contents": [{"parts": [{"text": full_prompt}]}]}
         
-        # Superfast Latest Free Model
         model_name = "gemini-flash-latest"
-        
         url = f"https://generativelanguage.googleapis.com/v1beta/models/{model_name}:generateContent?key={GEMINI_API_KEY}"
         response = requests.post(url, json=payload, headers=headers, timeout=25)
         res_data = response.json()
         
         if "candidates" in res_data:
             reply_text = res_data['candidates'][0]['content']['parts'][0]['text']
-            reply_text = reply_text.replace("Gemini", "TicBull Engine").replace("Google", "TicBull").replace("gemini", "ticbull")
+            reply_text = reply_text.replace("Gemini", "TicBull").replace("Google", "TicBull")
             return jsonify({"success": True, "reply": reply_text})
         elif "error" in res_data:
-            err_msg = res_data["error"].get("message", "API Error")
-            return jsonify({"success": False, "message": f"AI Error: {err_msg}"}), 500
+            return jsonify({"success": False, "message": f"AI Error: {res_data['error'].get('message')}"}), 500
         else:
-            return jsonify({"success": False, "message": f"API Response Error: {str(res_data)}"}), 500
+            return jsonify({"success": False, "message": "API Response Error"}), 500
             
     except Exception as e:
         return jsonify({"success": False, "message": f"Server Error: {str(e)}"}), 500
 
 @app.route('/')
 def home():
-    return "TicBull Database & Super Memory AI Teacher is running!"
+    return "TicBull Secure Database, Auth & AI Engine is running!"
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)
