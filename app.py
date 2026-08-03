@@ -10,11 +10,12 @@ from datetime import datetime
 app = Flask(__name__)
 CORS(app)
 
+# Environment Variables
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "")
 SMTP_EMAIL = os.getenv("SMTP_EMAIL", "ticbull.support@gmail.com")
 SMTP_PASSWORD = os.getenv("SMTP_PASSWORD", "")
 FIREBASE_URL = os.getenv("FIREBASE_URL", "").rstrip('/')
-ADMIN_PASSWORD = os.getenv("ADMIN_PASSWORD", "rakeshbhai@2308bull") # Admin Panel Password
+ADMIN_PASSWORD = os.getenv("ADMIN_PASSWORD", "TicBull@2026") # Admin Panel Password
 
 otp_store = {}
 
@@ -22,16 +23,13 @@ def sanitize_email(email):
     return email.replace('.', '_').replace('@', '_at_')
 
 def send_otp_email(to_email, otp, is_delete=False):
-    if not SMTP_PASSWORD or not SMTP_EMAIL:
-        return False
-        
+    if not SMTP_PASSWORD or not SMTP_EMAIL: return False
     if is_delete:
         subject = "⚠️ URGENT: Account Deletion OTP - TicBull Academy"
         body = f"WARNING!\n\nYou have requested to PERMANENTLY DELETE your account.\n\nYour Deletion OTP is: {otp}\n\nTicBull Support"
     else:
         subject = "TicBull Academy - Secure Verification OTP"
         body = f"Welcome to TicBull Academy!\n\nYour 6-Digit Secure Verification OTP is: {otp}\n\nPlease do not share this.\n\nTicBull Support Team"
-        
     msg = MIMEText(body)
     msg['Subject'] = subject
     msg['From'] = f"TicBull Academy <{SMTP_EMAIL}>"
@@ -45,38 +43,26 @@ def send_otp_email(to_email, otp, is_delete=False):
         return False
 
 # --- AUTHENTICATION ENDPOINTS ---
-
 @app.route('/api/send-otp', methods=['POST'])
 def send_otp():
     data = request.get_json() or {}
     email = data.get('email', '').strip().lower()
     password = data.get('password', '').strip()
     auth_mode = data.get('auth_mode', 'login')
-    
-    if not email:
-        return jsonify({"success": False, "message": "Email address is required!"}), 400
-        
+    if not email: return jsonify({"success": False, "message": "Email address is required!"}), 400
     if FIREBASE_URL:
         safe_email = sanitize_email(email)
         user_check = requests.get(f"{FIREBASE_URL}/users/{safe_email}.json").json()
-        
-        if auth_mode == 'signup':
-            if user_check:
-                return jsonify({"success": False, "message": "Account already exists! Please Sign In."}), 400
+        if auth_mode == 'signup' and user_check:
+            return jsonify({"success": False, "message": "Account already exists! Please Sign In."}), 400
         elif auth_mode == 'login':
-            if not user_check:
-                return jsonify({"success": False, "message": "Account not found! Please Create an Account first."}), 400
-            if user_check.get('password') != password:
-                return jsonify({"success": False, "message": "Incorrect Password!"}), 400
-        elif auth_mode == 'forgot':
-            if not user_check:
-                return jsonify({"success": False, "message": "Account not found!"}), 400
-    
+            if not user_check: return jsonify({"success": False, "message": "Account not found! Please Create an Account first."}), 400
+            if user_check.get('password') != password: return jsonify({"success": False, "message": "Incorrect Password!"}), 400
+        elif auth_mode == 'forgot' and not user_check:
+            return jsonify({"success": False, "message": "Account not found!"}), 400
     otp = str(random.randint(100000, 999999))
     otp_store[email] = otp
-    
-    if send_otp_email(email, otp):
-        return jsonify({"success": True, "message": f"OTP sent to {email}"})
+    if send_otp_email(email, otp): return jsonify({"success": True, "message": f"OTP sent to {email}"})
     return jsonify({"success": False, "message": "System configuration error."}), 500
 
 @app.route('/api/verify-otp', methods=['POST'])
@@ -87,47 +73,36 @@ def verify_otp():
     password = data.get('password', '').strip()
     auth_mode = data.get('auth_mode', 'login')
     device_id = data.get('device_id', 'default_device')
-    
     if email in otp_store and otp_store[email] == user_otp:
         del otp_store[email]
         token = str(random.randint(10000000, 99999999))
         user_data = {}
-        
         if FIREBASE_URL:
             safe_email = sanitize_email(email)
             requests.put(f"{FIREBASE_URL}/sessions/{safe_email}.json", json={"token": token, "device_id": device_id})
-            
             if auth_mode == 'signup':
-                join_date = str(datetime.now().date())
-                requests.put(f"{FIREBASE_URL}/users/{safe_email}.json", json={"email": email, "password": password, "join_date": join_date})
+                requests.put(f"{FIREBASE_URL}/users/{safe_email}.json", json={"email": email, "password": password, "join_date": str(datetime.now().date())})
             elif auth_mode == 'forgot':
                 requests.patch(f"{FIREBASE_URL}/users/{safe_email}.json", json={"password": password})
-            
             db_user = requests.get(f"{FIREBASE_URL}/users/{safe_email}.json").json() or {}
             user_data = {"name": db_user.get("name", ""), "dob": db_user.get("dob", ""), "photo": db_user.get("photo", "")}
-            
         return jsonify({"success": True, "message": "Verification successful!", "token": token, "user": user_data})
     return jsonify({"success": False, "message": "Invalid 6-Digit OTP!"}), 400
 
-# --- ACCOUNT DELETION (USER SIDE) ---
-
+# --- ACCOUNT DELETION ENDPOINTS ---
 @app.route('/api/send-delete-otp', methods=['POST'])
 def send_delete_otp():
-    data = request.get_json() or {}
-    email = data.get('email', '').strip().lower()
+    email = (request.get_json() or {}).get('email', '').strip().lower()
     otp = str(random.randint(100000, 999999))
     otp_store[email] = otp
-    if send_otp_email(email, otp, is_delete=True):
-        return jsonify({"success": True, "message": "Deletion Warning OTP sent"})
+    if send_otp_email(email, otp, is_delete=True): return jsonify({"success": True, "message": "Deletion Warning OTP sent"})
     return jsonify({"success": False, "message": "Error sending email."}), 500
 
 @app.route('/api/delete-account', methods=['POST'])
 def delete_account():
     data = request.get_json() or {}
     email = data.get('email', '').strip().lower()
-    user_otp = data.get('otp', '').strip()
-    
-    if email in otp_store and otp_store[email] == user_otp:
+    if email in otp_store and otp_store[email] == data.get('otp', '').strip():
         del otp_store[email]
         if FIREBASE_URL:
             safe_email = sanitize_email(email)
@@ -137,15 +112,12 @@ def delete_account():
     return jsonify({"success": False, "message": "Invalid Deletion OTP!"}), 400
 
 # --- PROFILE & SESSION ENDPOINTS ---
-
 @app.route('/api/update-profile', methods=['POST'])
 def update_profile():
     data = request.get_json() or {}
     email = data.get('email', '').strip().lower()
     if email and FIREBASE_URL:
-        safe_email = sanitize_email(email)
-        update_data = {"name": data.get("name"), "dob": data.get("dob"), "photo": data.get("photo")}
-        requests.patch(f"{FIREBASE_URL}/users/{safe_email}.json", json=update_data)
+        requests.patch(f"{FIREBASE_URL}/users/{sanitize_email(email)}.json", json={"name": data.get("name"), "dob": data.get("dob"), "photo": data.get("photo")})
         return jsonify({"success": True})
     return jsonify({"success": False})
 
@@ -155,29 +127,24 @@ def check_session():
     email = data.get('email', '').strip().lower()
     token = data.get('token', '')
     if not FIREBASE_URL: return jsonify({"success": True, "active": True})
-    safe_email = sanitize_email(email)
-    res = requests.get(f"{FIREBASE_URL}/sessions/{safe_email}.json").json() or {}
+    res = requests.get(f"{FIREBASE_URL}/sessions/{sanitize_email(email)}.json").json() or {}
     if res.get("token") == token:
-        db_user = requests.get(f"{FIREBASE_URL}/users/{safe_email}.json").json() or {}
-        user_data = {"name": db_user.get("name", ""), "dob": db_user.get("dob", ""), "photo": db_user.get("photo", "")}
-        return jsonify({"success": True, "active": True, "user": user_data})
+        db_user = requests.get(f"{FIREBASE_URL}/users/{sanitize_email(email)}.json").json() or {}
+        return jsonify({"success": True, "active": True, "user": {"name": db_user.get("name", ""), "dob": db_user.get("dob", ""), "photo": db_user.get("photo", "")}})
     return jsonify({"success": True, "active": False, "message": "Session Expired!"})
 
 # --- MULTI-SESSION CHAT ENDPOINTS ---
-
 @app.route('/api/sync-session', methods=['POST'])
 def sync_session():
     data = request.get_json() or {}
     email = data.get('email', '').strip().lower()
     if email and FIREBASE_URL:
-        safe_email = sanitize_email(email)
-        requests.put(f"{FIREBASE_URL}/chat_sessions/{safe_email}/{data.get('session_id')}.json", json={"title": data.get('title', 'New Chat'), "html": data.get('html', '')})
+        requests.put(f"{FIREBASE_URL}/chat_sessions/{sanitize_email(email)}/{data.get('session_id')}.json", json={"title": data.get('title', 'New Chat'), "html": data.get('html', '')})
     return jsonify({"success": True})
 
 @app.route('/api/get-sessions', methods=['POST'])
 def get_sessions():
-    data = request.get_json() or {}
-    email = data.get('email', '').strip().lower()
+    email = (request.get_json() or {}).get('email', '').strip().lower()
     if email and FIREBASE_URL:
         sessions = requests.get(f"{FIREBASE_URL}/chat_sessions/{sanitize_email(email)}.json").json() or {}
         session_list = [{"id": k, "title": v.get("title", "Chat")} for k, v in sessions.items() if v]
@@ -200,8 +167,7 @@ def delete_session():
         requests.delete(f"{FIREBASE_URL}/chat_sessions/{sanitize_email(data.get('email'))}/{data.get('session_id')}.json")
     return jsonify({"success": True})
 
-# --- RATE LIMITING & GEMINI AI ENGINE ---
-
+# --- RATE LIMITING & GEMINI AI ENGINE (Z+ SECURITY ADDED) ---
 @app.route('/api/chat', methods=['POST'])
 def chat():
     data = request.get_json() or {}
@@ -213,12 +179,20 @@ def chat():
     student_name = data.get('student_name', 'Student')
     purchased_plan = data.get('purchased_plan', 'Free Demo Plan')
     email = data.get('email', '').strip().lower()
+    token = data.get('token', '') # Z+ Security Token
     
     if not prompt: return jsonify({"success": False, "message": "Prompt cannot be empty!"}), 400
     if not GEMINI_API_KEY: return jsonify({"success": False, "message": "API Key is missing!"}), 500
     
     if email and FIREBASE_URL:
         safe_email = sanitize_email(email)
+        
+        # 🚨 Z+ SECURITY: STRICT SINGLE DEVICE CHECK 
+        session_data = requests.get(f"{FIREBASE_URL}/sessions/{safe_email}.json").json() or {}
+        if session_data.get("token") != token:
+            return jsonify({"success": False, "session_expired": True, "message": "Security Alert: Account logged in from another device! Logging out..."})
+            
+        # RATE LIMITING LOGIC
         today_str = str(datetime.now().date())
         usage_url = f"{FIREBASE_URL}/usage/{safe_email}/{today_str}.json"
         current_usage = requests.get(usage_url).json() or 0
@@ -231,7 +205,6 @@ def chat():
             else:
                 return jsonify({"success": True, "reply": f"🛑 **Limit Reached!**\nAapne aaj ki maximum limit (50) poori kar li hai."})
     
-    # MAGIC FIX: AI WILL NOT REPEAT NAME
     system_instruction = f"""You are TicBull Teacher. Developed by MrYuviYadav.
 Student: {student_name}
 Plan: {purchased_plan}
@@ -255,58 +228,37 @@ STRICT RULE: Do NOT start your response with "Hello {student_name}". Speak natur
     except Exception as e:
         return jsonify({"success": False, "message": str(e)}), 500
 
-# --- ADMIN PANEL ENDPOINTS (UPGRADED) ---
-
+# --- ADMIN PANEL ENDPOINTS ---
 @app.route('/api/admin/data', methods=['POST'])
 def admin_data():
     data = request.get_json() or {}
     if data.get('password') != ADMIN_PASSWORD:
         return jsonify({"success": False, "message": "Access Denied. Wrong Password!"}), 403
-        
     if FIREBASE_URL:
         users = requests.get(f"{FIREBASE_URL}/users.json").json() or {}
         usage = requests.get(f"{FIREBASE_URL}/usage.json").json() or {}
         chats = requests.get(f"{FIREBASE_URL}/chat_sessions.json").json() or {}
-        
         user_list = []
         today_str = str(datetime.now().date())
-        
         for email_key, udata in users.items():
             email_real = email_key.replace('_at_', '@').replace('_', '.')
-            
-            # Fetch Recent Chat Topics
             user_chats = chats.get(email_key, {})
             recent_prompts = [v.get('title', 'Unknown') for k, v in user_chats.items() if v]
-            
-            # Fetch Today's Usage
             user_usage = usage.get(email_key, {}).get(today_str, 0)
-            
-            user_list.append({
-                "email": email_real, 
-                "name": udata.get("name", "Unknown"), 
-                "joined": udata.get("join_date", "Old User"),
-                "today_usage": user_usage,
-                "recent_chats": recent_prompts[:3] # Show top 3 recent chat titles
-            })
-            
+            user_list.append({"email": email_real, "name": udata.get("name", "Unknown"), "joined": udata.get("join_date", "Old User"), "today_usage": user_usage, "recent_chats": recent_prompts[:3]})
         return jsonify({"success": True, "total_users": len(user_list), "users": user_list})
     return jsonify({"success": False, "message": "Database not connected."})
 
 @app.route('/api/admin/ban-user', methods=['POST'])
 def admin_ban_user():
     data = request.get_json() or {}
-    if data.get('password') != ADMIN_PASSWORD:
-        return jsonify({"success": False, "message": "Access Denied!"}), 403
-    
+    if data.get('password') != ADMIN_PASSWORD: return jsonify({"success": False, "message": "Access Denied!"}), 403
     target_email = data.get('target_email', '').strip()
     if not target_email: return jsonify({"success": False, "message": "Email missing"}), 400
-    
-    safe_email = sanitize_email(target_email)
     if FIREBASE_URL:
-        # Delete user from entire database
         for path in ['users', 'sessions', 'chat_sessions', 'usage']:
-            requests.delete(f"{FIREBASE_URL}/{path}/{safe_email}.json")
-        return jsonify({"success": True, "message": f"User {target_email} permanently BANNED & DELETED!"})
+            requests.delete(f"{FIREBASE_URL}/{path}/{sanitize_email(target_email)}.json")
+        return jsonify({"success": True, "message": f"User {target_email} permanently BANNED!"})
     return jsonify({"success": False, "message": "DB Error"})
 
 @app.route('/admin.html')
