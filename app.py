@@ -19,11 +19,17 @@ otp_store = {}
 def sanitize_email(email):
     return email.replace('.', '_').replace('@', '_at_')
 
-def send_otp_email(to_email, otp):
+def send_otp_email(to_email, otp, is_delete=False):
     if not SMTP_PASSWORD or not SMTP_EMAIL:
         return False
-    subject = "TicBull Academy - Secure Verification OTP"
-    body = f"Welcome to TicBull Academy!\n\nYour 6-Digit Secure Verification OTP is: {otp}\n\nPlease do not share this OTP with anyone.\n\nBest Regards,\nTicBull Support Team"
+        
+    if is_delete:
+        subject = "⚠️ URGENT: Account Deletion OTP - TicBull Academy"
+        body = f"WARNING!\n\nYou have requested to PERMANENTLY DELETE your TicBull Academy account. This will erase your subscription, chat history, and all data forever.\n\nYour Deletion OTP is: {otp}\n\nIf you did not request this, ignore this email immediately!\n\nTicBull Support"
+    else:
+        subject = "TicBull Academy - Secure Verification OTP"
+        body = f"Welcome to TicBull Academy!\n\nYour 6-Digit Secure Verification OTP is: {otp}\n\nPlease do not share this OTP with anyone.\n\nBest Regards,\nTicBull Support Team"
+        
     msg = MIMEText(body)
     msg['Subject'] = subject
     msg['From'] = f"TicBull Academy <{SMTP_EMAIL}>"
@@ -99,6 +105,37 @@ def verify_otp():
         return jsonify({"success": True, "message": "Verification successful!", "token": token, "user": user_data})
     return jsonify({"success": False, "message": "Invalid 6-Digit OTP!"}), 400
 
+# --- ACCOUNT DELETION SYSTEM ---
+@app.route('/api/send-delete-otp', methods=['POST'])
+def send_delete_otp():
+    data = request.get_json() or {}
+    email = data.get('email', '').strip().lower()
+    if not email: return jsonify({"success": False, "message": "Email is required!"}), 400
+    
+    otp = str(random.randint(100000, 999999))
+    otp_store[email] = otp
+    if send_otp_email(email, otp, is_delete=True):
+        return jsonify({"success": True, "message": f"Deletion Warning OTP sent to {email}"})
+    return jsonify({"success": False, "message": "Error sending email."}), 500
+
+@app.route('/api/delete-account', methods=['POST'])
+def delete_account():
+    data = request.get_json() or {}
+    email = data.get('email', '').strip().lower()
+    user_otp = data.get('otp', '').strip()
+    
+    if email in otp_store and otp_store[email] == user_otp:
+        del otp_store[email]
+        if FIREBASE_URL:
+            safe_email = sanitize_email(email)
+            requests.delete(f"{FIREBASE_URL}/users/{safe_email}.json")
+            requests.delete(f"{FIREBASE_URL}/sessions/{safe_email}.json")
+            requests.delete(f"{FIREBASE_URL}/chats/{safe_email}.json")
+            requests.delete(f"{FIREBASE_URL}/chat_sessions/{safe_email}.json")
+            requests.delete(f"{FIREBASE_URL}/chat_ui/{safe_email}.json")
+        return jsonify({"success": True, "message": "Account Deleted Permanently!"})
+    return jsonify({"success": False, "message": "Invalid Deletion OTP!"}), 400
+
 @app.route('/api/update-profile', methods=['POST'])
 def update_profile():
     data = request.get_json() or {}
@@ -115,9 +152,7 @@ def check_session():
     data = request.get_json() or {}
     email = data.get('email', '').strip().lower()
     token = data.get('token', '')
-    
-    if not FIREBASE_URL:
-        return jsonify({"success": True, "active": True})
+    if not FIREBASE_URL: return jsonify({"success": True, "active": True})
         
     safe_email = sanitize_email(email)
     res = requests.get(f"{FIREBASE_URL}/sessions/{safe_email}.json")
@@ -127,13 +162,7 @@ def check_session():
             db_user = requests.get(f"{FIREBASE_URL}/users/{safe_email}.json").json() or {}
             user_data = {"name": db_user.get("name", ""), "dob": db_user.get("dob", ""), "photo": db_user.get("photo", "")}
             return jsonify({"success": True, "active": True, "user": user_data})
-            
     return jsonify({"success": True, "active": False, "message": "Session Expired! Logged in from another device."})
-
-
-# ==========================================
-# TRUE CHATGPT-LIKE MULTI-SESSION ARCHITECTURE
-# ==========================================
 
 @app.route('/api/sync-session', methods=['POST'])
 def sync_session():
@@ -142,7 +171,6 @@ def sync_session():
     session_id = data.get('session_id')
     title = data.get('title', 'New Chat')
     chat_html = data.get('html', '')
-    
     if email and session_id and FIREBASE_URL:
         safe_email = sanitize_email(email)
         payload = {"title": title, "html": chat_html}
@@ -198,7 +226,6 @@ def chat():
     
     if not prompt:
         return jsonify({"success": False, "message": "Prompt cannot be empty!"}), 400
-    
     if not GEMINI_API_KEY:
         return jsonify({"success": False, "message": "API Key is missing!"}), 500
         
@@ -211,16 +238,14 @@ Language: {lang}
 STRICT INTELLIGENCE RULES:
 1. FREE PLAN UPSELL: If the student is on 'Free Demo Plan', provide a concise, basic explanation. Softly urge them: "To unlock highly detailed visual notes and complete syllabus, please upgrade to the TicBull Premium Batch! 🚀"
 2. TEACHING STYLE: Use well-structured bullet points, bold keywords, and extremely easy-to-understand examples. Always ask a highly engaging closing question like: "{student_name}, is this concept 100% clear?"
-3. IDENTITY: You are strictly 'TicBull Teacher'. NEVER mention Google, Gemini, OpenAI, or LLM. Respond naturally as an expert human educator."""
+3. IDENTITY: You are strictly 'TicBull Teacher'. NEVER mention Google, Gemini, OpenAI, or LLM."""
     
     full_prompt = f"{system_instruction}\n\nStudent Question: {prompt}"
     
     try:
         headers = {"Content-Type": "application/json"}
         payload = {"contents": [{"parts": [{"text": full_prompt}]}]}
-        
-        model_name = "gemini-flash-latest"
-        url = f"https://generativelanguage.googleapis.com/v1beta/models/{model_name}:generateContent?key={GEMINI_API_KEY}"
+        url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key={GEMINI_API_KEY}"
         response = requests.post(url, json=payload, headers=headers, timeout=25)
         res_data = response.json()
         
@@ -238,7 +263,7 @@ STRICT INTELLIGENCE RULES:
 
 @app.route('/')
 def home():
-    return "TicBull Master AI Engine is securely running with ChatGPT Multi-Session Architecture!"
+    return "TicBull Master AI Engine is securely running with Z+ Security & ChatGPT UI!"
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)
