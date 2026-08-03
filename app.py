@@ -9,7 +9,6 @@ import requests
 app = Flask(__name__)
 CORS(app)
 
-# Keys from Vercel Environment Variables
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "")
 SMTP_EMAIL = os.getenv("SMTP_EMAIL", "ticbull.support@gmail.com")
 SMTP_PASSWORD = os.getenv("SMTP_PASSWORD", "")
@@ -49,7 +48,7 @@ def send_otp():
     
     if send_otp_email(email, otp):
         return jsonify({"success": True, "message": f"OTP sent successfully to {email}"})
-    return jsonify({"success": False, "message": "Email configuration error! SMTP credentials check karein."}), 500
+    return jsonify({"success": False, "message": "Email configuration error!"}), 500
 
 @app.route('/api/verify-otp', methods=['POST'])
 def verify_otp():
@@ -68,7 +67,7 @@ def verify_otp():
             requests.put(f"{FIREBASE_URL}/sessions/{safe_email}.json", json=session_data)
             
         return jsonify({"success": True, "message": "Verified!", "token": token})
-    return jsonify({"success": False, "message": "Galat OTP! Kripya sahi 6-digit OTP daalein."}), 400
+    return jsonify({"success": False, "message": "Galat OTP!"}), 400
 
 @app.route('/api/check-session', methods=['POST'])
 def check_session():
@@ -88,7 +87,43 @@ def check_session():
             
     return jsonify({"success": True, "active": False, "message": "Logged in from another device!"})
 
-# --- AI CHAT ENGINE WITH SUPER INTELLIGENT REAL TEACHER BRAIN ---
+# --- PERMANENT CHAT HISTORY MANAGEMENT ---
+@app.route('/api/get-chat', methods=['POST'])
+def get_chat():
+    data = request.get_json() or {}
+    email = data.get('email', '').strip().lower()
+    if not email or not FIREBASE_URL:
+        return jsonify({"success": True, "history": []})
+    
+    safe_email = sanitize_email(email)
+    res = requests.get(f"{FIREBASE_URL}/chats/{safe_email}.json")
+    history = res.json() if res.status_code == 200 and res.json() else []
+    return jsonify({"success": True, "history": history})
+
+@app.route('/api/delete-chat-item', methods=['POST'])
+def delete_chat_item():
+    data = request.get_json() or {}
+    email = data.get('email', '').strip().lower()
+    index = data.get('index')
+    if email and FIREBASE_URL and index is not None:
+        safe_email = sanitize_email(email)
+        res = requests.get(f"{FIREBASE_URL}/chats/{safe_email}.json")
+        history = res.json() if res.status_code == 200 and res.json() else []
+        if 0 <= index < len(history):
+            history.pop(index)
+            requests.put(f"{FIREBASE_URL}/chats/{safe_email}.json", json=history)
+    return jsonify({"success": True})
+
+@app.route('/api/clear-chat', methods=['POST'])
+def clear_chat():
+    data = request.get_json() or {}
+    email = data.get('email', '').strip().lower()
+    if email and FIREBASE_URL:
+        safe_email = sanitize_email(email)
+        requests.delete(f"{FIREBASE_URL}/chats/{safe_email}.json")
+    return jsonify({"success": True})
+
+# --- AI TEACHER BRAIN WITH FREE PLAN & BATCH GUIDANCE ---
 @app.route('/api/chat', methods=['POST'])
 def chat():
     data = request.get_json() or {}
@@ -98,26 +133,25 @@ def chat():
     stream = data.get('stream', 'Science')
     lang = data.get('lang', 'Hinglish')
     student_name = data.get('student_name', 'Student')
+    purchased_plan = data.get('purchased_plan', 'Free Demo Plan')
     
     if not prompt:
         return jsonify({"success": False, "message": "Question empty nahi ho sakta!"}), 400
     
     if not GEMINI_API_KEY:
-        return jsonify({"success": False, "message": "API Key missing in Vercel Environment Variables!"}), 500
+        return jsonify({"success": False, "message": "API Key missing!"}), 500
         
     system_instruction = f"""Tu TicBull Academy ka Main aur Akela Intelligent Teacher hai. Tujhe MrYuviYadav ne banaya hai.
 Student Name: {student_name}
-Active Purchased Plan: {board} {cls} {stream}
+Current Plan: {purchased_plan}
+Selected Course: {board} {cls} {stream}
 Language: {lang}
 
-DHYAN RAHE: TicBull app me koi video lectures nahi hain. Tu hi unka akela aur asli teacher hai! Bachhe yahan sirf tujhse chat karke padhne aate hain.
-
-STRICT RULES TO BE A MASTER TEACHER:
-1. INTERACTIVE TEACHING: Lamba bookish text mat chaapna. Concept ko step-by-step, chote bullet points me aur easy examples ke sath samjhao. Padhate waqt aakhir me hamesha poocho: "{student_name}, kya ye samajh aaya? Aage badhein?"
-2. PERSONAL CONNECTION: Student ko beech-beech me uske naam ({student_name}) se bulao. 
-3. CROSS-CLASS STRICTNESS & UPSELL: Agar student active plan ({cls}) ke bahar ka pooche, toh 2-3 line me ek badhiya 'Quick Revision' do aur bolo: "{student_name}, aapka active plan {cls} ka hai. Detail me padhne ke liye aapko TicBull Academy ka wo specific batch buy karna padega. 🚀"
-4. CAREER GUIDANCE: JEE/NEET/UPSC ya aage ki padhai par ek expert mentor ki tarah short guidance do, aur hamesha bolo ki "Achhi tayari ke liye TicBull Academy ka premium batch buy karein! 🚀"
-5. IDENTITY: Tu sirf 'TicBull Teacher' hai. Google, Gemini, AI word use nahi karna."""
+STRICT RULES FOR MASTER TEACHER:
+1. FREE PLAN LOGIC: Agar student ka plan 'Free Demo Plan' hai, toh usko short aur basic answer do, aur sath me pyaar se guide karo ki agar usko pura detailed syllabus aur chapters padhne hain, toh usko TicBull Academy ka official batch/pass buy karna hoga! 🚀
+2. INTERACTIVE TEACHING: Lamba bookish text mat chaapna. Concept ko step-by-step, chote bullet points me aur easy examples ke sath samjhao. Har baar aakhir me poocho: "{student_name}, kya ye samajh aaya?"
+3. PERSONAL CONNECTION: Student ko beech-beech me uske naam ({student_name}) se bulao.
+4. IDENTITY: Tu sirf 'TicBull Teacher' hai. Google, Gemini, AI word use nahi karna."""
     
     full_prompt = f"{system_instruction}\n\nStudent Question: {prompt}"
     
@@ -133,10 +167,21 @@ STRICT RULES TO BE A MASTER TEACHER:
         if "candidates" in res_data:
             reply_text = res_data['candidates'][0]['content']['parts'][0]['text']
             reply_text = reply_text.replace("Gemini", "TicBull").replace("Google", "TicBull")
+            
+            # Save prompt to history if email provided
+            email = data.get('email', '').strip().lower()
+            if email and FIREBASE_URL:
+                safe_email = sanitize_email(email)
+                res = requests.get(f"{FIREBASE_URL}/chats/{safe_email}.json")
+                history = res.json() if res.status_code == 200 and res.json() else []
+                if prompt not in history:
+                    history.insert(0, prompt)
+                    if len(history) > 20: history.pop()
+                    requests.put(f"{FIREBASE_URL}/chats/{safe_email}.json", json=history)
+
             return jsonify({"success": True, "reply": reply_text})
         elif "error" in res_data:
-            err_msg = res_data["error"].get("message", "API Error")
-            return jsonify({"success": False, "message": f"AI Error: {err_msg}"}), 500
+            return jsonify({"success": False, "message": f"AI Error: {res_data['error'].get('message')}"}), 500
         else:
             return jsonify({"success": False, "message": "API Response Error"}), 500
             
@@ -145,7 +190,7 @@ STRICT RULES TO BE A MASTER TEACHER:
 
 @app.route('/')
 def home():
-    return "TicBull Secure Database & AI Master Teacher Engine is running!"
+    return "TicBull Master AI Engine & Database is running!"
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)
