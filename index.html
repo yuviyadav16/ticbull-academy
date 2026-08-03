@@ -572,6 +572,9 @@
                 .then(data => {
                     if(data.success && data.active) {
                         currentStudentData.email = savedEmail;
+                        currentStudentData.name = localStorage.getItem('ticbull_name') || '';
+                        currentStudentData.dob = localStorage.getItem('ticbull_dob') || '';
+                        currentStudentData.photo = localStorage.getItem('ticbull_photo') || '';
                         document.getElementById('auth-screen').style.display = 'none';
                         document.getElementById('main-dashboard').style.display = 'flex';
                         updateProfileUI();
@@ -582,6 +585,7 @@
                     }
                 }).catch(() => {
                     currentStudentData.email = savedEmail;
+                    currentStudentData.name = localStorage.getItem('ticbull_name') || '';
                     document.getElementById('auth-screen').style.display = 'none';
                     document.getElementById('main-dashboard').style.display = 'flex';
                     updateProfileUI();
@@ -614,9 +618,9 @@
         }
 
         function handleForgotPassword() {
-            const email = document.getElementById('email').value;
+            const email = document.getElementById('email').value.trim();
             if(!email) { alert("Please enter your Registered Email ID first!"); return; }
-            alert(`A Password Reset Link has been sent to: ${email}`);
+            initiateAuthWithOTP();
         }
 
         function switchAuth(mode) {
@@ -690,7 +694,7 @@
                     alert("Error: " + (data.message || "Failed to send OTP."));
                 }
             })
-            .catch(err => {
+            .catch(() => {
                 btn.disabled = false;
                 btn.innerText = currentAuthMode === 'login' ? 'SEND VERIFICATION OTP' : 'CREATE ACCOUNT WITH OTP';
                 alert("Server error! Backend nahi chal raha hai.");
@@ -725,6 +729,8 @@
                 if (data.success) {
                     localStorage.setItem('ticbull_email', currentStudentData.email);
                     localStorage.setItem('ticbull_token', data.token);
+                    localStorage.setItem('ticbull_name', currentStudentData.name);
+                    localStorage.setItem('ticbull_dob', currentStudentData.dob);
 
                     updateProfileUI();
                     document.getElementById('otpModal').style.display = 'none';
@@ -735,7 +741,7 @@
                     alert("❌ GALAT OTP! " + (data.message || "Sahi 6-digit OTP daalein."));
                 }
             })
-            .catch(err => {
+            .catch(() => {
                 btn.disabled = false;
                 btn.innerText = "VERIFY & CONTINUE";
                 alert("Server Error! Try again.");
@@ -795,6 +801,9 @@
             currentStudentData.name = document.getElementById('editStudentName').value;
             currentStudentData.dob = document.getElementById('editStudentDob').value;
 
+            localStorage.setItem('ticbull_name', currentStudentData.name);
+            localStorage.setItem('ticbull_dob', currentStudentData.dob);
+
             updateProfileUI();
             closeEditProfileModal();
             alert("Profile details updated successfully!");
@@ -806,6 +815,7 @@
                 const reader = new FileReader();
                 reader.onload = function(e) {
                     currentStudentData.photo = e.target.result;
+                    localStorage.setItem('ticbull_photo', e.target.result);
                     updateProfileUI();
                 };
                 reader.readAsDataURL(file);
@@ -934,7 +944,7 @@
                 document.getElementById('userInput').value += " " + text;
                 document.getElementById('voiceBtn').classList.remove('voice-active');
             };
-            recognition.onerror = function(event) {
+            recognition.onerror = function() {
                 document.getElementById('voiceBtn').classList.remove('voice-active');
             };
             recognition.onend = function() {
@@ -1023,7 +1033,7 @@
 
             // Create Loading Indicator
             const loadingId = 'loading-' + Date.now();
-            chatBox.innerHTML += `<div class="msg ai" id="${loadingId}"><i>🧠 AI is thinking...</i></div>`;
+            chatBox.innerHTML += `<div class="msg ai" id="${loadingId}"><i>🧠 AI Teacher is thinking...</i></div>`;
             scrollToBottom();
             
             sendBtn.disabled = true;
@@ -1037,7 +1047,8 @@
                     board: board,
                     class: cls,
                     stream: stream,
-                    lang: lang
+                    lang: lang,
+                    student_name: currentStudentData.name
                 })
             })
             .then(res => res.json())
@@ -1059,14 +1070,14 @@
                         formattedReply += `<br><br><b>🎥 Video Concept Reference:</b><br><iframe style="width:100%; height:200px; border-radius:12px; margin-top:8px; border:none;" src="https://www.youtube.com/embed?listType=search&list=${topicSafe}+${board}+${cls}" allowfullscreen></iframe>`;
                     }
 
-                    loadElem.innerHTML = `<b>[${board} | ${cls} | AI Engine]:</b><br><br>${formattedReply}`;
+                    loadElem.innerHTML = `<b>[TicBull Teacher]:</b><br><br>${formattedReply}`;
                 } else {
                     loadElem.classList.replace('ai', 'error');
                     loadElem.innerHTML = `<b>❌ AI Error:</b> ${data.message}`;
                 }
                 scrollToBottom();
             })
-            .catch(err => {
+            .catch(() => {
                 sendBtn.disabled = false;
                 const loadElem = document.getElementById(loadingId);
                 loadElem.classList.replace('ai', 'error');
