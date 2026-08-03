@@ -9,102 +9,86 @@ import requests
 app = Flask(__name__)
 CORS(app)
 
-# Keys from Vercel
+# Keys from Vercel Environment Variables
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "")
 SMTP_EMAIL = os.getenv("SMTP_EMAIL", "ticbull.support@gmail.com")
 SMTP_PASSWORD = os.getenv("SMTP_PASSWORD", "")
 FIREBASE_URL = os.getenv("FIREBASE_URL", "").rstrip('/')
-RAZORPAY_KEY_ID = os.getenv("RAZORPAY_KEY_ID", "")
-RAZORPAY_KEY_SECRET = os.getenv("RAZORPAY_KEY_SECRET", "")
 
 otp_store = {}
 
 def sanitize_email(email):
     return email.replace('.', '_').replace('@', '_at_')
 
-# ==========================================
-# 1. AUTHENTICATION & USER ACCOUNTS (1 Email = 1 Account)
-# ==========================================
+def send_otp_email(to_email, otp):
+    if not SMTP_PASSWORD or not SMTP_EMAIL:
+        return False
+    subject = "TicBull Academy - Verification OTP"
+    body = f"Welcome to TicBull Academy! Your 6-Digit Verification OTP is: {otp}"
+    msg = MIMEText(body)
+    msg['Subject'] = subject
+    msg['From'] = f"TicBull Academy <{SMTP_EMAIL}>"
+    msg['To'] = to_email
+    try:
+        with smtplib.SMTP_SSL('smtp.gmail.com', 465) as server:
+            server.login(SMTP_EMAIL, SMTP_PASSWORD)
+            server.sendmail(SMTP_EMAIL, to_email, msg.as_string())
+        return True
+    except:
+        return False
 
-@app.route('/api/register', methods=['POST'])
-def register():
+@app.route('/api/send-otp', methods=['POST'])
+def send_otp():
     data = request.get_json() or {}
     email = data.get('email', '').strip().lower()
-    password = data.get('password', '').strip()
-    name = data.get('name', 'Student')
+    if not email:
+        return jsonify({"success": False, "message": "Email zaroori hai!"}), 400
     
-    if not email or not password:
-        return jsonify({"success": False, "message": "Email aur password zaroori hai!"}), 400
+    otp = str(random.randint(100000, 999999))
+    otp_store[email] = otp
+    
+    if send_otp_email(email, otp):
+        return jsonify({"success": True, "message": f"OTP sent successfully to {email}"})
+    return jsonify({"success": False, "message": "Email configuration error! SMTP credentials check karein."}), 500
+
+@app.route('/api/verify-otp', methods=['POST'])
+def verify_otp():
+    data = request.get_json() or {}
+    email = data.get('email', '').strip().lower()
+    user_otp = data.get('otp', '').strip()
+    device_id = data.get('device_id', 'default_device')
+    
+    if email in otp_store and otp_store[email] == user_otp:
+        del otp_store[email]
+        token = str(random.randint(10000000, 99999999))
         
+        if FIREBASE_URL:
+            safe_email = sanitize_email(email)
+            session_data = {"token": token, "device_id": device_id}
+            requests.put(f"{FIREBASE_URL}/sessions/{safe_email}.json", json=session_data)
+            
+        return jsonify({"success": True, "message": "Verified!", "token": token})
+    return jsonify({"success": False, "message": "Galat OTP! Kripya sahi 6-digit OTP daalein."}), 400
+
+@app.route('/api/check-session', methods=['POST'])
+def check_session():
+    data = request.get_json() or {}
+    email = data.get('email', '').strip().lower()
+    token = data.get('token', '')
+    
     if not FIREBASE_URL:
-        return jsonify({"success": False, "message": "Firebase Database connect nahi hai!"}), 500
-
+        return jsonify({"success": True, "active": True})
+        
     safe_email = sanitize_email(email)
-    
-    # Check if user already exists
-    check_user = requests.get(f"{FIREBASE_URL}/users/{safe_email}.json").json()
-    if check_user:
-        return jsonify({"success": False, "message": "Account already exists! Kripya Login karein."}), 400
-        
-    # Save new user
-    user_data = {"name": name, "email": email, "password": password, "plan": "None"}
-    requests.put(f"{FIREBASE_URL}/users/{safe_email}.json", json=user_data)
-    
-    return jsonify({"success": True, "message": "Account successfully ban gaya! Ab login karein."})
+    res = requests.get(f"{FIREBASE_URL}/sessions/{safe_email}.json")
+    if res.status_code == 200 and res.json():
+        db_session = res.json()
+        if db_session.get("token") == token:
+            return jsonify({"success": True, "active": True})
+            
+    return jsonify({"success": True, "active": False, "message": "Logged in from another device!"})
 
-@app.route('/api/login', methods=['POST'])
-def login():
-    data = request.get_json() or {}
-    email = data.get('email', '').strip().lower()
-    password = data.get('password', '').strip()
-    
-    if not FIREBASE_URL:
-        return jsonify({"success": False, "message": "Database error!"}), 500
-
-    safe_email = sanitize_email(email)
-    user_data = requests.get(f"{FIREBASE_URL}/users/{safe_email}.json").json()
-    
-    if not user_data:
-        return jsonify({"success": False, "message": "Account nahi mila! Pehle Register karein."}), 404
-        
-    if user_data.get('password') != password:
-        return jsonify({"success": False, "message": "Galat Password!"}), 401
-        
-    token = str(random.randint(10000000, 99999999))
-    return jsonify({"success": True, "message": "Login successful!", "token": token, "user": user_data})
-
-# ==========================================
-# 2. CHAT HISTORY SAVING & FETCHING
-# ==========================================
-
-@app.route('/api/save-chat', methods=['POST'])
-def save_chat():
-    data = request.get_json() or {}
-    email = data.get('email', '').strip().lower()
-    chat_history = data.get('chat_history', []) # Frontend se poori chat array aayegi
-    
-    if email and FIREBASE_URL:
-        safe_email = sanitize_email(email)
-        requests.put(f"{FIREBASE_URL}/chats/{safe_email}.json", json=chat_history)
-        return jsonify({"success": True, "message": "Chat saved securely!"})
-    return jsonify({"success": False, "message": "Failed to save chat."}), 400
-
-@app.route('/api/get-chat', methods=['POST'])
-def get_chat():
-    data = request.get_json() or {}
-    email = data.get('email', '').strip().lower()
-    
-    if email and FIREBASE_URL:
-        safe_email = sanitize_email(email)
-        chat_data = requests.get(f"{FIREBASE_URL}/chats/{safe_email}.json").json()
-        if chat_data:
-            return jsonify({"success": True, "chat_history": chat_data})
-    return jsonify({"success": True, "chat_history": []})
-
-# ==========================================
-# 3. AI CHAT ENGINE (Master Interactive Teacher)
-# ==========================================
-
+# --- AI CHAT ENGINE WITH SUPER INTELLIGENT REAL TEACHER BRAIN ---
 @app.route('/api/chat', methods=['POST'])
 def chat():
     data = request.get_json() or {}
@@ -113,24 +97,27 @@ def chat():
     cls = data.get('class', 'Class 12')
     stream = data.get('stream', 'Science')
     lang = data.get('lang', 'Hinglish')
-    student_name = data.get('student_name', 'Mere Pyare Student') 
+    student_name = data.get('student_name', 'Student')
     
     if not prompt:
         return jsonify({"success": False, "message": "Question empty nahi ho sakta!"}), 400
     
     if not GEMINI_API_KEY:
-        return jsonify({"success": False, "message": "API Key missing!"}), 500
+        return jsonify({"success": False, "message": "API Key missing in Vercel Environment Variables!"}), 500
         
-    system_instruction = f"""Tu TicBull Academy ka Main, Akela aur sabse Intelligent Teacher hai. Tujhe MrYuviYadav ne banaya hai.
+    system_instruction = f"""Tu TicBull Academy ka Main aur Akela Intelligent Teacher hai. Tujhe MrYuviYadav ne banaya hai.
 Student Name: {student_name}
 Active Purchased Plan: {board} {cls} {stream}
 Language: {lang}
 
-STRICT RULES:
-1. INTERACTIVE TEACHING: Lamba bookish text mat chaapna. Concept ko step-by-step, bullet points me aur easy examples se samjhao.
+DHYAN RAHE: TicBull app me koi video lectures nahi hain. Tu hi unka akela aur asli teacher hai! Bachhe yahan sirf tujhse chat karke padhne aate hain.
+
+STRICT RULES TO BE A MASTER TEACHER:
+1. INTERACTIVE TEACHING: Lamba bookish text mat chaapna. Concept ko step-by-step, chote bullet points me aur easy examples ke sath samjhao. Padhate waqt aakhir me hamesha poocho: "{student_name}, kya ye samajh aaya? Aage badhein?"
 2. PERSONAL CONNECTION: Student ko beech-beech me uske naam ({student_name}) se bulao. 
-3. CROSS-CLASS STRICTNESS (UPSELL): Agar student active plan ({cls}) ke bahar ka pooche, toh 2 line ka quick revision do aur bolo: "Detail me padhne ke liye aapko TicBull Academy ka wo specific batch buy karna padega. 🚀"
-4. IDENTITY: Tu sirf 'TicBull Teacher' hai. Google, Gemini, AI word use nahi karna."""
+3. CROSS-CLASS STRICTNESS & UPSELL: Agar student active plan ({cls}) ke bahar ka pooche, toh 2-3 line me ek badhiya 'Quick Revision' do aur bolo: "{student_name}, aapka active plan {cls} ka hai. Detail me padhne ke liye aapko TicBull Academy ka wo specific batch buy karna padega. 🚀"
+4. CAREER GUIDANCE: JEE/NEET/UPSC ya aage ki padhai par ek expert mentor ki tarah short guidance do, aur hamesha bolo ki "Achhi tayari ke liye TicBull Academy ka premium batch buy karein! 🚀"
+5. IDENTITY: Tu sirf 'TicBull Teacher' hai. Google, Gemini, AI word use nahi karna."""
     
     full_prompt = f"{system_instruction}\n\nStudent Question: {prompt}"
     
@@ -148,7 +135,8 @@ STRICT RULES:
             reply_text = reply_text.replace("Gemini", "TicBull").replace("Google", "TicBull")
             return jsonify({"success": True, "reply": reply_text})
         elif "error" in res_data:
-            return jsonify({"success": False, "message": f"AI Error: {res_data['error'].get('message')}"}), 500
+            err_msg = res_data["error"].get("message", "API Error")
+            return jsonify({"success": False, "message": f"AI Error: {err_msg}"}), 500
         else:
             return jsonify({"success": False, "message": "API Response Error"}), 500
             
@@ -157,7 +145,7 @@ STRICT RULES:
 
 @app.route('/')
 def home():
-    return "TicBull Secure Database, Auth & AI Engine is running!"
+    return "TicBull Secure Database & AI Master Teacher Engine is running!"
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)
