@@ -40,17 +40,22 @@ def send_otp_email(to_email, otp):
 def send_otp():
     data = request.get_json() or {}
     email = data.get('email', '').strip().lower()
+    auth_mode = data.get('auth_mode', 'login')
+    
     if not email:
         return jsonify({"success": False, "message": "Email zaroori hai!"}), 400
-    
-    # Check if user already exists in Firebase database to prevent 1000 accounts
+        
+    # STRICT DATABASE DUPLICATE ACCOUNT CHECK
     if FIREBASE_URL:
         safe_email = sanitize_email(email)
-        existing_user = requests.get(f"{FIREBASE_URL}/users/{safe_email}.json").json()
-        if existing_user:
-            # User already exists, allow login flow via OTP
-            pass
-
+        user_check = requests.get(f"{FIREBASE_URL}/users/{safe_email}.json").json()
+        
+        if auth_mode == 'signup' and user_check:
+            return jsonify({"success": False, "message": "Account pehle se bana hua hai! Kripya Sign In karein."}), 400
+            
+        if auth_mode == 'login' and not user_check:
+            return jsonify({"success": False, "message": "Account nahi mila! Kripya pehle Sign Up karein."}), 400
+    
     otp = str(random.randint(100000, 999999))
     otp_store[email] = otp
     
@@ -63,6 +68,8 @@ def verify_otp():
     data = request.get_json() or {}
     email = data.get('email', '').strip().lower()
     user_otp = data.get('otp', '').strip()
+    password = data.get('password', '').strip()
+    auth_mode = data.get('auth_mode', 'login')
     device_id = data.get('device_id', 'default_device')
     
     if email in otp_store and otp_store[email] == user_otp:
@@ -74,10 +81,10 @@ def verify_otp():
             session_data = {"token": token, "device_id": device_id}
             requests.put(f"{FIREBASE_URL}/sessions/{safe_email}.json", json=session_data)
             
-            # Save user record if not exists
+            # Save user credentials if signing up
             user_check = requests.get(f"{FIREBASE_URL}/users/{safe_email}.json").json()
-            if not user_check:
-                requests.put(f"{FIREBASE_URL}/users/{safe_email}.json", json={"email": email})
+            if not user_check and auth_mode == 'signup':
+                requests.put(f"{FIREBASE_URL}/users/{safe_email}.json", json={"email": email, "password": password})
             
         return jsonify({"success": True, "message": "Verified!", "token": token})
     return jsonify({"success": False, "message": "Galat OTP!"}), 400
@@ -100,7 +107,7 @@ def check_session():
             
     return jsonify({"success": True, "active": False, "message": "Logged in from another device!"})
 
-# --- PERMANENT CHAT HISTORY MANAGEMENT ---
+# --- PERMANENT CHAT HISTORY (SIDEBAR LIST) ---
 @app.route('/api/get-chat', methods=['POST'])
 def get_chat():
     data = request.get_json() or {}
@@ -127,6 +134,28 @@ def delete_chat_item():
             requests.put(f"{FIREBASE_URL}/chats/{safe_email}.json", json=history)
     return jsonify({"success": True})
 
+# --- FULL CHAT UI SYNC (CHATGPT LIKE) ---
+@app.route('/api/sync-chat-ui', methods=['POST'])
+def sync_chat_ui():
+    data = request.get_json() or {}
+    email = data.get('email', '').strip().lower()
+    chat_html = data.get('chat_html', '')
+    if email and FIREBASE_URL:
+        safe_email = sanitize_email(email)
+        requests.put(f"{FIREBASE_URL}/chat_ui/{safe_email}.json", json={"html": chat_html})
+    return jsonify({"success": True})
+
+@app.route('/api/get-chat-ui', methods=['POST'])
+def get_chat_ui():
+    data = request.get_json() or {}
+    email = data.get('email', '').strip().lower()
+    if email and FIREBASE_URL:
+        safe_email = sanitize_email(email)
+        res = requests.get(f"{FIREBASE_URL}/chat_ui/{safe_email}.json")
+        if res.status_code == 200 and res.json():
+            return jsonify({"success": True, "html": res.json().get("html", "")})
+    return jsonify({"success": True, "html": ""})
+
 @app.route('/api/clear-chat', methods=['POST'])
 def clear_chat():
     data = request.get_json() or {}
@@ -134,9 +163,10 @@ def clear_chat():
     if email and FIREBASE_URL:
         safe_email = sanitize_email(email)
         requests.delete(f"{FIREBASE_URL}/chats/{safe_email}.json")
+        requests.delete(f"{FIREBASE_URL}/chat_ui/{safe_email}.json")
     return jsonify({"success": True})
 
-# --- AI TEACHER BRAIN WITH FREE PLAN & BATCH GUIDANCE ---
+# --- AI TEACHER BRAIN ---
 @app.route('/api/chat', methods=['POST'])
 def chat():
     data = request.get_json() or {}
@@ -161,11 +191,11 @@ Current Plan: {purchased_plan}
 Selected Course: {board} {cls} {stream}
 Language: {lang}
 
-STRICT RULES FOR MASTER TEACHER:
-1. FREE PLAN LOGIC: Agar student ka plan 'Free Demo Plan' hai, toh usko short aur basic answer do, aur sath me pyaar se guide karo ki agar usko pura detailed syllabus aur chapters padhne hain, toh usko TicBull Academy ka official batch/pass buy karna hoga! 🚀
-2. INTERACTIVE TEACHING: Lamba bookish text mat chaapna. Concept ko step-by-step, chote bullet points me aur easy examples ke sath samjhao. Har baar aakhir me poocho: "{student_name}, kya ye samajh aaya?"
-3. PERSONAL CONNECTION: Student ko beech-beech me uske naam ({student_name}) se bulao.
-4. IDENTITY: Tu sirf 'TicBull Teacher' hai. Google, Gemini, AI word use nahi karna."""
+STRICT RULES:
+1. FREE PLAN LOGIC: Agar student ka plan 'Free Demo Plan' hai, toh usko short aur basic answer do, aur sath me guide karo ki detail me padhne ke liye TicBull Academy ka batch buy karna hoga! 🚀
+2. INTERACTIVE TEACHING: Chote bullet points me aur easy examples ke sath samjhao. Har baar aakhir me poocho: "{student_name}, kya ye samajh aaya?"
+3. PERSONAL CONNECTION: Student ko uske naam ({student_name}) se bulao.
+4. IDENTITY: Tu sirf 'TicBull Teacher' hai. Google, Gemini, AI word use mat karna."""
     
     full_prompt = f"{system_instruction}\n\nStudent Question: {prompt}"
     
@@ -182,7 +212,7 @@ STRICT RULES FOR MASTER TEACHER:
             reply_text = res_data['candidates'][0]['content']['parts'][0]['text']
             reply_text = reply_text.replace("Gemini", "TicBull").replace("Google", "TicBull")
             
-            # Save prompt to database history
+            # Save prompt to history list
             if email and FIREBASE_URL:
                 safe_email = sanitize_email(email)
                 res = requests.get(f"{FIREBASE_URL}/chats/{safe_email}.json")
