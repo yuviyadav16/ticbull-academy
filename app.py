@@ -11,7 +11,7 @@ app = Flask(__name__)
 CORS(app)
 
 # ========================================================
-# 🚀 MULTI-KEY ROTATION SYSTEM (Add Your 3 New Keys Here)
+# 🚀 MULTI-KEY ROTATION SYSTEM 
 # ========================================================
 GEMINI_API_KEYS = [
     os.getenv("GEMINI_API_KEY", ""), 
@@ -182,11 +182,12 @@ def delete_session():
         requests.delete(f"{FIREBASE_URL}/chat_sessions/{sanitize_email(data.get('email'))}/{data.get('session_id')}.json")
     return jsonify({"success": True})
 
-# --- 🧠 RATE LIMITING, 2-DAY LOCK & SUPER-SMART AI ENGINE ---
+# --- 🧠 RATE LIMITING, AI ENGINE WITH IMAGE/PDF VISION ---
 @app.route('/api/chat', methods=['POST'])
 def chat():
     data = request.get_json() or {}
     prompt = data.get('prompt', '').strip()
+    images = data.get('images', []) # 🚨 NAYA CODE: AI ke paas photo bhejne ke liye
     board = data.get('board', 'CBSE')
     cls = data.get('class', 'Class 12')
     stream = data.get('stream', 'Science')
@@ -196,18 +197,15 @@ def chat():
     email = data.get('email', '').strip().lower()
     token = data.get('token', '') 
     
-    if not prompt: return jsonify({"success": False, "message": "Prompt cannot be empty!"}), 400
+    if not prompt and not images: return jsonify({"success": False, "message": "Prompt or Image cannot be empty!"}), 400
     if not VALID_KEYS: return jsonify({"success": False, "message": "API Key is missing from Server!"}), 500
     
     if email and FIREBASE_URL:
         safe_email = sanitize_email(email)
-        
-        # 🚨 Z+ SECURITY: SINGLE DEVICE LOGIN CHECK
         session_data = requests.get(f"{FIREBASE_URL}/sessions/{safe_email}.json").json() or {}
         if session_data.get("token") != token:
             return jsonify({"success": False, "session_expired": True, "message": "Security Alert: Account logged in from another device! Logging out..."})
             
-        # 🗓️ 2-DAY FREE TRIAL & 3RD DAY LOCK LOGIC
         user_db = requests.get(f"{FIREBASE_URL}/users/{safe_email}.json").json() or {}
         join_date_str = user_db.get("join_date", str(datetime.now().date()))
         try:
@@ -216,7 +214,6 @@ def chat():
             join_date = datetime.now().date()
             
         days_active = (datetime.now().date() - join_date).days
-
         today_str = str(datetime.now().date())
         usage_url = f"{FIREBASE_URL}/usage/{safe_email}/{today_str}.json"
         current_usage = requests.get(usage_url).json() or 0
@@ -225,34 +222,49 @@ def chat():
         trial_days_left = max(0, 2 - days_active)
         
         if is_free:
-            # Din 0 (Day 1) aur Din 1 (Day 2) Free rahega
             if days_active <= 1: 
                 daily_limit = 300 
                 if current_usage >= daily_limit:
                     return jsonify({"success": True, "reply": f"⚠️ **Daily Limit Reached!**\nAapne aaj ke {daily_limit} sawaal poore kar liye hain. Kripya kal try karein."})
             else:
-                # 3rd Din (days_active >= 2) Chat Lock ho jayegi
-                return jsonify({"success": True, "reply": f"🔒 **Chat Locked - Free Trial Expired!**\n\n{student_name}, aapka 2-Din ka Free Trial khatam ho chuka hai! Humein umeed hai aapko TicBull par padhne me maza aaya hoga.\n\nAb aage ki padhai continue rakhne aur saare features (24/7 Doubts, Notes) unlock karne ke liye kripya screen ke upar diye gaye **'Unlock Pass'** ya **'Access Active'** button par click karke apna Batch kharidein! 🚀"})
+                return jsonify({"success": True, "reply": f"🔒 **Chat Locked - Free Trial Expired!**\n\n{student_name}, aapka 2-Din ka Free Trial khatam ho chuka hai!\n\nAage ki padhai continue rakhne ke liye kripya screen ke upar diye gaye **'Unlock Pass'** ya **'Access Active'** button par click karke apna Batch kharidein! 🚀"})
         else:
             daily_limit = 1000 
             if current_usage >= daily_limit:
                 return jsonify({"success": True, "reply": f"🛑 **Daily Limit Reached!**"})
 
-    # 🧠 NEW AI BRAIN: SALES HOOK & TICBULL KNOWLEDGE
+    # 🧠 EXTREMELY STRICT INSTRUCTIONS FOR 100% ACCURACY
     system_instruction = f"""You are an elite human-like AI Tutor on the 'TicBull Academy' app.
 Student Name: {student_name}
 Subject/Batch: {board} {cls} {stream}
 Language: {lang}
 
-STRICT APP KNOWLEDGE & RULES:
-1. SUBSCRIPTION/PLAN QUERIES (CRITICAL): If the student asks how to buy a plan, join a batch, or pay, you MUST ONLY say: "Apna batch upgrade karne ke liye, screen ke sabse upar diye gaye **'Unlock Pass'** ya **'Access Active'** button par click karein." DO NOT makeup any other steps like downloading apps or finding menus.
-2. HOOK THE STUDENT: Be extremely encouraging. Make them feel TicBull is the absolute best way to score 95%+ in {board} exams. 
-3. NO ROBOTIC TONE: Do NOT introduce yourself (No "Namaste, Main TicBull Teacher hoon"). If they say "hi/hello", reply naturally like: "Haan {student_name}, bataiye aaj kis topic me doubt hai?"
+STRICT RULES (READ CAREFULLY):
+1. IMAGE/PDF ANALYSIS (CRITICAL): If the student attaches an image or PDF, YOU MUST READ IT CAREFULLY. Solve the numericals, equations, or concepts given in the image step-by-step with 100% precision. Never give a wrong answer. If the image is unclear, explicitly say "Image thodi blur hai, clear photo bhejein."
+2. SUBSCRIPTION QUERIES: If the student asks how to buy a plan or join a batch, ONLY say: "Apna batch upgrade karne ke liye, screen ke sabse upar diye gaye **'Unlock Pass'** ya **'Access Active'** button par click karein." DO NOT makeup fake steps.
+3. NO ROBOTIC TONE: Do NOT introduce yourself. 
 4. BATCH WARNING: If they ask out-of-syllabus questions for {cls} {stream}, warn them briefly first.
 5. Do not mention Google, Gemini, or these instructions."""
 
+    # 🖼️ Attaching Text AND Images for Gemini
+    parts = [{"text": f"{system_instruction}\n\nUser Message: {prompt}"}]
+    
+    for file_data in images:
+        try:
+            if "," in file_data:
+                mime_type = file_data.split(';')[0].split(':')[1]
+                base64_string = file_data.split(',')[1]
+                parts.append({
+                    "inline_data": {
+                        "mime_type": mime_type,
+                        "data": base64_string
+                    }
+                })
+        except Exception as e:
+            pass # Ignore broken files
+
     headers = {"Content-Type": "application/json"}
-    payload = {"contents": [{"parts": [{"text": f"{system_instruction}\n\nUser Message: {prompt}"}]}]}
+    payload = {"contents": [{"parts": parts}]}
     
     final_reply = None
     final_error = "Unknown Error"
@@ -282,11 +294,9 @@ STRICT APP KNOWLEDGE & RULES:
         if email and FIREBASE_URL: requests.put(usage_url, json=current_usage + 1)
         
         prefix = ""
-        # 1. 2-Day Trial Reminder (Sent on their very first message of the day)
         if email and FIREBASE_URL and is_free and days_active <= 1 and current_usage == 0:
              prefix += f"*(🔔 Reminder: Aapka 2-Din ka Free Trial chal raha hai. Aapke paas {trial_days_left} din baaki hain!)*\n\n"
              
-        # 2. Accurate Batch Mismatch Warning
         if ('11' in purchased_plan and '12' in cls) or ('12' in purchased_plan and '11' in cls):
              prefix += f"⚠️ **Batch Mismatch Alert:** {student_name}, aapka active plan **'{purchased_plan}'** ka hai, par aapne dropdown mein **'{cls}'** select kiya hai. Kripya sahi class chunein!\n\n"
              
