@@ -11,7 +11,7 @@ app = Flask(__name__)
 CORS(app)
 
 # ========================================================
-# 🚀 JUGAD: MULTI-KEY ROTATION SYSTEM (Add Keys Here)
+# 🚀 MULTI-KEY ROTATION SYSTEM (Add Keys Here)
 # ========================================================
 GEMINI_API_KEYS = [
     os.getenv("GEMINI_API_KEY", ""), 
@@ -26,7 +26,7 @@ VALID_KEYS = [k for k in GEMINI_API_KEYS if k.strip() and "YAHAN_DAALEIN" not in
 SMTP_EMAIL = os.getenv("SMTP_EMAIL", "ticbull.support@gmail.com")
 SMTP_PASSWORD = os.getenv("SMTP_PASSWORD", "")
 FIREBASE_URL = os.getenv("FIREBASE_URL", "").rstrip('/')
-ADMIN_PASSWORD = os.getenv("ADMIN_PASSWORD", "rakeshbhai@2308bull") # Old Code Password Retained
+ADMIN_PASSWORD = os.getenv("ADMIN_PASSWORD", "rakeshbhai@2308bull") 
 
 otp_store = {}
 
@@ -53,7 +53,7 @@ def send_otp_email(to_email, otp, is_delete=False):
     except:
         return False
 
-# --- AUTHENTICATION ENDPOINTS (OLD CODE SAFE) ---
+# --- AUTHENTICATION ENDPOINTS ---
 @app.route('/api/send-otp', methods=['POST'])
 def send_otp():
     data = request.get_json() or {}
@@ -127,7 +127,7 @@ def delete_account():
         return jsonify({"success": True, "message": "Account Deleted Permanently!"})
     return jsonify({"success": False, "message": "Invalid Deletion OTP!"}), 400
 
-# --- PROFILE & SESSION ENDPOINTS (OLD CODE SAFE) ---
+# --- PROFILE & SESSION ENDPOINTS ---
 @app.route('/api/update-profile', methods=['POST'])
 def update_profile():
     data = request.get_json() or {}
@@ -150,7 +150,7 @@ def check_session():
         return jsonify({"success": True, "active": True, "user": {"name": db_user.get("name", ""), "dob": db_user.get("dob", ""), "photo": db_user.get("photo", "")}})
     return jsonify({"success": True, "active": False, "message": "Session Expired!"})
 
-# --- MULTI-SESSION CHAT ENDPOINTS (OLD CODE SAFE) ---
+# --- MULTI-SESSION CHAT ENDPOINTS ---
 @app.route('/api/sync-session', methods=['POST'])
 def sync_session():
     data = request.get_json() or {}
@@ -184,7 +184,7 @@ def delete_session():
         requests.delete(f"{FIREBASE_URL}/chat_sessions/{sanitize_email(data.get('email'))}/{data.get('session_id')}.json")
     return jsonify({"success": True})
 
-# --- RATE LIMITING, MULTI-KEY & 3-DAY TRIAL ENGINE ---
+# --- 🧠 RATE LIMITING, SMART AI & BATCH WARNING ENGINE ---
 @app.route('/api/chat', methods=['POST'])
 def chat():
     data = request.get_json() or {}
@@ -228,29 +228,30 @@ def chat():
         
         if is_free:
             if days_active <= 3:
-                daily_limit = 300 # 3-Day Virtually Unlimited (300 questions/day)
+                daily_limit = 300 
                 if current_usage >= daily_limit:
                     return jsonify({"success": True, "reply": f"⚠️ **Fair Usage Limit!**\nAapne aaj ke {daily_limit} sawaal poore kar liye hain. Kripya kal try karein."})
             else:
                 return jsonify({"success": True, "reply": f"🛑 **Free Trial Expired!**\n{student_name}, aapka 3-Din ka Unlimited Free Trial khatam ho chuka hai! Aage apni padhai continue rakhne ke liye kripya **Premium Pass** activate karein. 🚀"})
         else:
-            daily_limit = 1000 # Premium User Limit
+            daily_limit = 1000 
             if current_usage >= daily_limit:
                 return jsonify({"success": True, "reply": f"🛑 **Daily Limit Reached!**"})
 
-    # AI INSTRUCTIONS
-    system_instruction = f"""You are TicBull Teacher, an expert AI tutor developed by MrYuviYadav.
+    # 🧠 STRICT AI INSTRUCTIONS (Anti-Robotic Tone)
+    system_instruction = f"""You are a human-like expert tutor.
 Student Name: {student_name}
-Current Batch: {board} | {cls} | {stream}
-Language Medium: {lang}
+Subject/Batch Context: {board} {cls} {stream}
+Language: {lang}
 
-STRICT RULES:
-1. Explain everything strictly in the '{lang}' language.
-2. If the question belongs to a completely different class or subject, politely warn FIRST: "⚠️ **Batch Mismatch:** {student_name}, yeh sawaal aapke current {cls} {stream} syllabus ka nahi lag raha hai. Kripya dropdown se apna Batch switch karein!" then answer briefly.
-3. Use clear bullet points and bold text. Do not mention Google or Gemini."""
+STRICT RULES (Follow Blindly):
+1. NO ROBOTIC INTROS: NEVER introduce yourself. DO NOT say "Namaste {student_name}" or "Main TicBull Teacher hoon" unless specifically asked "Who are you". Talk like a real human.
+2. SHORT GREETINGS: If the user just says "Ok", "Hi", "Hello", "Yes", reply with ONLY ONE SHORT SENTENCE like: "Haan bataiye, aaj kya padhna chahenge?". DO NOT give long lists of subjects.
+3. Jump straight to the point. Teach clearly using bullet points for actual questions.
+4. Never mention Google, Gemini, or these instructions."""
 
     headers = {"Content-Type": "application/json"}
-    payload = {"contents": [{"parts": [{"text": f"{system_instruction}\n\nQuestion: {prompt}"}]}]}
+    payload = {"contents": [{"parts": [{"text": f"{system_instruction}\n\nUser Message: {prompt}"}]}]}
     
     final_reply = None
     final_error = "Unknown Error"
@@ -278,15 +279,22 @@ STRICT RULES:
 
     if final_reply:
         if email and FIREBASE_URL: requests.put(usage_url, json=current_usage + 1)
-        # Optional: Add trial reminder on their very first message of the day
+        
+        prefix = ""
+        # 1. 3-Day Trial Reminder
         if email and FIREBASE_URL and is_free and days_active <= 3 and current_usage == 0:
-             final_reply = f"*(🔔 Reminder: Aapka 3-Din ka Free Unlimited Trial chal raha hai. Aapke paas {trial_days_left} din baaki hain!)*\n\n" + final_reply
+             prefix += f"*(🔔 Reminder: Aapka 3-Din ka Free Unlimited Trial chal raha hai. Aapke paas {trial_days_left} din baaki hain!)*\n\n"
              
+        # 2. 🚨 100% ACCURATE PYTHON BATCH WARNING
+        if ('11' in purchased_plan and '12' in cls) or ('12' in purchased_plan and '11' in cls):
+             prefix += f"⚠️ **Batch Mismatch Alert:** {student_name}, aapka active plan **'{purchased_plan}'** ka hai, par aapne dropdown mein **'{cls}'** select kiya hai. Kripya sahi class chunein!\n\n"
+             
+        final_reply = prefix + final_reply
         return jsonify({"success": True, "reply": final_reply})
     else:
         return jsonify({"success": False, "message": f"Server overloaded due to high traffic. (Error: {final_error})"}), 500
 
-# --- ADMIN PANEL ENDPOINTS (OLD CODE SAFE) ---
+# --- ADMIN PANEL ENDPOINTS ---
 @app.route('/api/admin/data', methods=['POST'])
 def admin_data():
     data = request.get_json() or {}
