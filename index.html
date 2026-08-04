@@ -148,22 +148,27 @@
         .course-bar-toggle { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 8px 12px; font-size: 11.5px; color: var(--accent-color); font-weight: 600; margin-bottom: 8px; display: flex; align-items: center; justify-content: space-between; cursor: pointer; flex-shrink: 0; }
         .category-grid { display:none; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap:6px; margin-bottom:8px; flex-shrink:0; animation: fadeIn 0.3s ease; }
         .category-grid.show { display:grid; }
-        select { width:100%; background:var(--input-bg); border:1px solid var(--border-color); color:var(--text-main); padding:8px 10px; border-radius:10px; font-size:11.5px; outline:none; }
+        
+        /* 🎨 PROFESSIONAL STYLISH CUSTOM DROPDOWNS */
+        select { width:100%; background:var(--input-bg); border:1px solid var(--border-color); color:var(--text-main); padding:9px 12px; border-radius:10px; font-size:11.5px; outline:none; appearance: none; -webkit-appearance: none; background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e"); background-repeat: no-repeat; background-position: right 8px center; background-size: 14px; padding-right: 28px; cursor: pointer; transition: 0.2s; }
+        select:focus { border-color: var(--accent-color); box-shadow: 0 0 10px var(--accent-glow); }
+        select option { background: #0f172a; color: #f8fafc; padding: 10px; }
 
         /* CHAT CONTAINER */
         .chat-container { background:var(--chat-bg); border:1px solid var(--border-color); border-radius:18px; padding:14px; flex:1; overflow-y:auto; display:flex; flex-direction:column; gap:10px; margin-bottom:8px; min-height: 150px; }
-        .msg { padding:12px 15px; border-radius:16px; font-size:13.5px; line-height:1.5; max-width:88%; word-wrap:break-word; animation: popIn 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards; transform-origin: bottom left; }
-        .msg.user { background:var(--accent-color); color:#fff; align-self:flex-end; border-bottom-right-radius:4px; transform-origin: bottom right; box-shadow: 0 4px 15px var(--accent-glow); }
         
-        /* THE UI FIX FOR CHAT BOX SQUISHING */
-        .msg.ai { background:var(--card-bg); color:var(--text-main); border:1px solid var(--border-color); align-self:flex-start; border-bottom-left-radius:4px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); width: 100%; max-width: 90%; }
+        /* 💬 FIX FOR TEXT OVERFLOW & WORD WRAPPING */
+        .msg { padding:12px 15px; border-radius:16px; font-size:13.5px; line-height:1.5; max-width:88%; word-break: break-word; overflow-wrap: break-word; animation: popIn 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards; transform-origin: bottom left; }
+        .msg.user { background:var(--accent-color); color:#fff; align-self:flex-end; border-bottom-right-radius:4px; transform-origin: bottom right; box-shadow: 0 4px 15px var(--accent-glow); word-break: break-word; overflow-wrap: break-word; }
+        
+        .msg.ai { background:var(--card-bg); color:var(--text-main); border:1px solid var(--border-color); align-self:flex-start; border-bottom-left-radius:4px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); width: 100%; max-width: 92%; word-break: break-word; overflow-wrap: break-word; }
         
         /* AI TABLES CSS */
         .msg table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 12.5px; }
         .msg th, .msg td { border: 1px solid var(--border-color); padding: 8px; text-align: left; }
         .msg th { background: rgba(37, 99, 235, 0.1); color: var(--accent-color); font-weight: 700; }
 
-        .msg.guide-ai { background:rgba(245, 158, 11, 0.12); border:1px solid rgba(245, 158, 11, 0.5); color:var(--gold-color); align-self:flex-start; width: 100%; max-width: 90%; }
+        .msg.guide-ai { background:rgba(245, 158, 11, 0.12); border:1px solid rgba(245, 158, 11, 0.5); color:var(--gold-color); align-self:flex-start; width: 100%; max-width: 92%; }
         .msg.error { background:rgba(239, 68, 68, 0.15); border:1px solid #ef4444; color:#fca5a5; align-self:center; width:100%; text-align:center; }
         .msg-image { max-width:100%; border-radius:12px; margin-top:8px; border:1px solid var(--border-color); }
 
@@ -175,10 +180,13 @@
         .tool-btn:hover { background:rgba(37, 99, 235, 0.2); color:var(--accent-color); }
 
         .chat-input-bar { display:flex; align-items:center; background:var(--card-bg); border:1px solid var(--border-color); border-radius:16px; padding:5px 6px 5px 10px; gap:6px; position:relative; flex-shrink:0; }
-        .chat-input-bar input[type="text"] { flex:1; background:transparent; border:none; color:var(--text-main); outline:none; font-size:13.5px; }
-        .action-icon-btn { background:rgba(255,255,255,0.06); color:var(--text-muted); border:1px solid var(--border-color); width:36px; height:36px; border-radius:10px; display:flex; justify-content:center; align-items:center; cursor:pointer; transition:0.2s; }
+        
+        /* 💬 TEXT INPUT OVERFLOW FIX */
+        .chat-input-bar input[type="text"] { flex:1; background:transparent; border:none; color:var(--text-main); outline:none; font-size:13.5px; min-width: 0; word-break: break-word; }
+        
+        .action-icon-btn { background:rgba(255,255,255,0.06); color:var(--text-muted); border:1px solid var(--border-color); width:36px; height:36px; border-radius:10px; display:flex; justify-content:center; align-items:center; cursor:pointer; transition:0.2s; flex-shrink:0; }
         .action-icon-btn:hover { color:var(--text-main); background:rgba(255,255,255,0.12); }
-        .send-btn { background:var(--accent-color); color:#fff; border:none; width:36px; height:36px; border-radius:10px; display:flex; justify-content:center; align-items:center; cursor:pointer; transition:0.2s; }
+        .send-btn { background:var(--accent-color); color:#fff; border:none; width:36px; height:36px; border-radius:10px; display:flex; justify-content:center; align-items:center; cursor:pointer; transition:0.2s; flex-shrink:0; }
         .send-btn:active { transform: scale(0.9); }
 
         .voice-active { background: rgba(239, 68, 68, 0.2); color: #ef4444; border-color: #ef4444; animation: pulseVoice 1.5s infinite; }
@@ -556,7 +564,7 @@
         </div>
         
         <div class="drawer-item" onclick="openSyllabusBoard()"><i class="fa-solid fa-list-check" style="color:#0ea5e9;"></i> Syllabus Tracker Board</div>
-        <div class="drawer-item" onclick="openSettingsModal()"><i class="fa-solid fa-gear" style="color:#94a3b8;"></i> App Settings (Change Teacher)</div>
+        <div class="drawer-item" onclick="openSettingsModal()"><i class="fa-solid fa-gear" style="color:#94a3b8;"></i> App Settings (Teacher & AI Engine)</div>
         <div class="drawer-item" onclick="toggleTheme()"><i class="fa-solid fa-circle-half-stroke" style="color:var(--gold-color);"></i> <span id="themeToggleText">Switch to Light Mode</span></div>
         <div class="drawer-item" onclick="triggerAppGuideBot()"><i class="fa-solid fa-robot" style="color:#f59e0b;"></i> 🤖 TicBull Guide Bot</div>
         <div class="drawer-item" onclick="openSubscriptionModal()"><i class="fa-solid fa-crown" style="color:#f59e0b;"></i> Upgrade Course Pass</div>
@@ -586,18 +594,28 @@
         </div>
     </div>
 
-    <!-- APP SETTINGS MODAL (ADDED TEACHER SWITCH HERE) -->
+    <!-- APP SETTINGS MODAL -->
     <div class="modal-overlay" id="settingsModal">
         <div class="modal-card">
             <i class="fa-solid fa-xmark" style="position:absolute; right:16px; top:16px; color:var(--text-muted); cursor:pointer;" onclick="document.getElementById('settingsModal').style.display='none'; playClickSound();"></i>
             <h3 style="color:var(--text-main); font-size:17px; margin-bottom:16px;"><i class="fa-solid fa-gear"></i> App Settings</h3>
             
-            <!-- NEW: TEACHER SELECTION TOGGLE -->
+            <!-- TEACHER SELECTION TOGGLE -->
             <div class="setting-item" style="background: rgba(37, 99, 235, 0.1); padding: 10px; border-radius: 10px; border: 1px solid var(--accent-color);">
                 <span><i class="fa-solid fa-chalkboard-user"></i> AI Teacher</span>
-                <select id="teacherSelect" onchange="changeTeacher(this.value)" style="background:var(--input-bg); color:var(--text-main); border:1px solid var(--border-color); padding:6px 10px; border-radius:8px; outline:none; font-size:12px; font-weight: 600;">
+                <select id="teacherSelect" onchange="changeTeacher(this.value)">
                     <option value="male">Male Teacher (Sir)</option>
                     <option value="female">Female Teacher (Ma'am)</option>
+                </select>
+            </div>
+
+            <!-- 🚀 NEW: META AI / DEEPSEEK ENGINE SELECTOR -->
+            <div class="setting-item" style="background: rgba(16, 185, 129, 0.1); padding: 10px; border-radius: 10px; border: 1px solid var(--success-color);">
+                <span><i class="fa-solid fa-microchip"></i> AI Engine Mode</span>
+                <select id="aiEngineSelect" onchange="changeAiEngine(this.value)">
+                    <option value="gemini">Gemini 1.5 Pro (Standard)</option>
+                    <option value="meta">Meta Llama 3 (Fast Chat)</option>
+                    <option value="deepseek">DeepSeek AI (Smart Coding & Logic)</option>
                 </select>
             </div>
 
@@ -731,13 +749,21 @@
     </div>
 
     <script>
-        // --- NEW TEACHER GENDER SYSTEM ---
+        // --- TEACHER & AI ENGINE PREFERENCES ---
         let currentTeacher = localStorage.getItem('ticbull_teacher') || 'male';
+        let currentAiEngine = localStorage.getItem('ticbull_ai_engine') || 'gemini';
 
         function changeTeacher(val) {
             currentTeacher = val;
             localStorage.setItem('ticbull_teacher', val);
-            showToast(`Teacher changed to ${val === 'male' ? 'Male (Sir)' : 'Female (Ma\'am)'}`, "success");
+            showToast(`Teacher switched to ${val === 'male' ? 'Male Sir' : 'Female Ma\'am'}`, "success");
+        }
+
+        function changeAiEngine(val) {
+            currentAiEngine = val;
+            localStorage.setItem('ticbull_ai_engine', val);
+            const names = { 'gemini': 'Gemini 1.5 Pro', 'meta': 'Meta Llama 3', 'deepseek': 'DeepSeek AI' };
+            showToast(`AI Engine switched to ${names[val]}`, "success");
         }
 
         function getTeacherImage() {
@@ -749,7 +775,6 @@
                 ? 'https://raw.githubusercontent.com/yuviyadav16/ticbull-academy/main/11723.png' 
                 : 'https://raw.githubusercontent.com/yuviyadav16/ticbull-academy/main/11708_2.png';
         }
-        // ---------------------------------
 
         let currentAuthMode = 'login';
         let purchasedPlanName = 'Free Demo Plan';
@@ -764,7 +789,6 @@
         let isInitialLoad = true;
         let appSoundEnabled = true;
 
-        // --- WEB AUDIO API FOR SOUNDS ---
         const AudioContext = window.AudioContext || window.webkitAudioContext;
         const audioCtx = new AudioContext();
 
@@ -810,7 +834,6 @@
 
         function checkAndUpdateStreak() {
             if(!currentStudentData.email) return;
-
             const today = new Date().toLocaleDateString('en-CA'); 
             let lastLogin = localStorage.getItem('ticbull_last_login_' + currentStudentData.email);
             let currentStreak = parseInt(localStorage.getItem('ticbull_streak_' + currentStudentData.email)) || 0;
@@ -821,7 +844,6 @@
                     const currDate = new Date(today);
                     const diffTime = Math.abs(currDate - lastDate);
                     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); 
-
                     if (diffDays === 1) {
                         currentStreak += 1; 
                         setTimeout(() => showToast(`🔥 Daily Streak continued! Day ${currentStreak}`, "success"), 2000);
@@ -835,7 +857,6 @@
                 localStorage.setItem('ticbull_last_login_' + currentStudentData.email, today);
                 localStorage.setItem('ticbull_streak_' + currentStudentData.email, currentStreak);
             }
-            
             document.getElementById('streakCountText').innerText = currentStreak + " Day";
         }
 
@@ -843,7 +864,6 @@
         function openSyllabusBoard() {
             document.getElementById('syllabusModal').style.display = 'flex';
             if(document.getElementById('drawer').classList.contains('open')) toggleDrawer();
-            
             const saved = localStorage.getItem('ticbull_syllabus_' + currentStudentData.email);
             if(saved) syllabusItems = JSON.parse(saved);
             renderSyllabus();
@@ -882,9 +902,10 @@
         }
 
         window.addEventListener('DOMContentLoaded', () => {
-            // Set Teacher Toggle to saved preference
             const tSelect = document.getElementById('teacherSelect');
             if(tSelect) tSelect.value = currentTeacher;
+            const eSelect = document.getElementById('aiEngineSelect');
+            if(eSelect) eSelect.value = currentAiEngine;
 
             const savedEmail = localStorage.getItem('ticbull_email');
             const savedToken = localStorage.getItem('ticbull_token');
@@ -901,7 +922,6 @@
                         currentStudentData.name = data.user.name || localStorage.getItem('ticbull_name') || '';
                         currentStudentData.dob = data.user.dob || localStorage.getItem('ticbull_dob') || '';
                         currentStudentData.photo = data.user.photo || localStorage.getItem('ticbull_photo') || '';
-                        
                         localStorage.setItem('ticbull_name', currentStudentData.name);
                         if(currentStudentData.photo) localStorage.setItem('ticbull_photo', currentStudentData.photo);
 
@@ -1050,7 +1070,6 @@
             .then(data => {
                 btn.disabled = false;
                 btn.innerText = currentAuthMode === 'login' ? 'SEND VERIFICATION OTP' : 'CREATE ACCOUNT WITH OTP';
-                
                 if (data.success) {
                     showToast(data.message, "success");
                     document.getElementById('otpModal').style.display = 'flex';
@@ -1071,7 +1090,6 @@
             const btn = document.getElementById('verifyBtn');
 
             if(!otp) { showToast("Enter 6-digit OTP!", "error"); return; }
-
             btn.disabled = true;
             btn.innerText = "VERIFYING...";
 
@@ -1087,17 +1105,14 @@
             .then(data => {
                 btn.disabled = false;
                 btn.innerText = "VERIFY & CONTINUE";
-
                 if (data.success) {
                     localStorage.setItem('ticbull_email', currentStudentData.email);
                     localStorage.setItem('ticbull_token', data.token);
-                    
                     if(data.user) {
                         if(data.user.name) currentStudentData.name = data.user.name;
                         if(data.user.dob) currentStudentData.dob = data.user.dob;
                         if(data.user.photo) currentStudentData.photo = data.user.photo;
                     }
-
                     localStorage.setItem('ticbull_name', currentStudentData.name);
                     if(currentStudentData.dob) localStorage.setItem('ticbull_dob', currentStudentData.dob);
                     if(currentStudentData.photo) localStorage.setItem('ticbull_photo', currentStudentData.photo);
@@ -1106,7 +1121,6 @@
                     document.getElementById('otpModal').style.display = 'none';
                     document.getElementById('auth-screen').style.display = 'none';
                     document.getElementById('main-dashboard').style.display = 'flex';
-                    
                     loadSidebarHistory();
                     checkAndUpdateStreak();
                     showToast("Login Successful!", "success");
@@ -1166,7 +1180,6 @@
         function verifyAndDeleteAccount() {
             const otp = document.getElementById('delAccOtp').value.trim();
             if(!otp) { showToast("OTP is required!", "error"); return; }
-            
             const btn = document.getElementById('confirmDeleteAccBtn');
             btn.disabled = true;
             btn.innerText = "DELETING PERMANENTLY...";
@@ -1202,19 +1215,16 @@
                 document.getElementById('drawerStudentName').innerText = emailPrefix;
                 document.getElementById('drawerAvatarInitial').innerText = emailPrefix.charAt(0).toUpperCase();
             }
-
             if(email) {
                 document.getElementById('drawerStudentEmail').innerText = email;
                 document.getElementById('editStudentEmail').value = email;
             }
-
             const userAge = calculateAge(dob);
             if(userAge !== null) {
                 document.getElementById('drawerStudentAge').innerText = `Age: ${userAge} Years Old`;
             } else {
                 document.getElementById('drawerStudentAge').innerText = `Active Student`;
             }
-
             if(currentStudentData.photo) {
                 const img = document.getElementById('drawerAvatarImg');
                 img.src = currentStudentData.photo;
@@ -1234,7 +1244,6 @@
         function saveProfileChanges() {
             currentStudentData.name = document.getElementById('editStudentName').value;
             currentStudentData.dob = document.getElementById('editStudentDob').value;
-
             localStorage.setItem('ticbull_name', currentStudentData.name);
             localStorage.setItem('ticbull_dob', currentStudentData.dob);
 
@@ -1257,7 +1266,6 @@
                     currentStudentData.photo = e.target.result;
                     localStorage.setItem('ticbull_photo', e.target.result);
                     updateProfileUI();
-                    
                     fetch(`/api/update-profile`, {
                         method: 'POST',
                         headers: {'Content-Type': 'application/json'},
@@ -1322,12 +1330,10 @@
         function activateSelectedPlan() {
             purchasedPlanName = selectedPlanName;
             isProUser = selectedPlanName.includes('Pro');
-            
             document.getElementById('badgePlanText').innerText = `${purchasedPlanName}`;
             document.getElementById('activeCourseChip').innerHTML = 
                 `<span><i class="fa-solid fa-lock"></i> Unlocked Pass: ${purchasedPlanName}</span>
                  <span style="font-size:10px; color:var(--success-color);">Access Active</span>`;
-            
             closeSubscriptionModal();
             showToast(`🎉 ${purchasedPlanName} Pass Activated!`, "success");
         }
@@ -1338,7 +1344,6 @@
             document.getElementById('chatBox').innerHTML = `<div class="msg ai" id="defaultWelcomeMsg"><b>Welcome to TicBull Academy! 🚀</b><br>New Chat started. Ask your question!</div>`;
             if(document.getElementById('drawer').classList.contains('open')) toggleDrawer();
             showToast("New Chat Started!", "success");
-            
             const items = document.querySelectorAll('.history-item');
             items.forEach(el => el.classList.remove('active-session'));
         }
@@ -1389,7 +1394,6 @@
                     document.getElementById('chatBox').innerHTML = data.html;
                     scrollToBottom();
                     if(document.getElementById('drawer').classList.contains('open')) toggleDrawer();
-                    
                     const items = document.querySelectorAll('.history-item');
                     items.forEach(el => el.classList.remove('active-session'));
                     if(window.event && window.event.currentTarget) {
@@ -1435,17 +1439,12 @@
             }).then(() => loadSidebarHistory());
         }
 
-        function clearChat() {
-            startNewChat();
-        }
-
         let recognition;
         if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
             const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
             recognition = new SpeechRecognition();
             recognition.continuous = false;
             recognition.interimResults = false;
-            
             recognition.onresult = function(event) {
                 const text = event.results[0][0].transcript;
                 document.getElementById('userInput').value += " " + text;
@@ -1524,7 +1523,6 @@
             document.getElementById('aiToolsMenu').style.display = 'none';
             scrollToBottom();
 
-            // UPDATED: USING THE PROPER TEACHER LOGO AND LAYOUT FOR THINKING STATE
             const tImg = getTeacherImage();
             const tFall = getTeacherFallback();
             const loadingId = 'loading-' + Date.now();
@@ -1553,7 +1551,8 @@
                     lang: lang,
                     student_name: currentStudentData.name,
                     purchased_plan: purchasedPlanName,
-                    teacher_gender: currentTeacher // NEW: SENDING THE TEACHER GENDER TO BACKEND
+                    teacher_gender: currentTeacher,
+                    ai_engine: currentAiEngine // 🚀 SENDING AI ENGINE MODE (gemini / meta / deepseek)
                 })
             })
             .then(res => res.json())
@@ -1582,12 +1581,11 @@
                         formattedReply += `<br><br><b>🎥 Video Concept Reference:</b><br><iframe style="width:100%; height:200px; border-radius:12px; margin-top:8px; border:none;" src="https://www.youtube.com/embed?listType=search&list=${topicSafe}+${board}+${cls}" allowfullscreen></iframe>`;
                     }
 
-                    // UPDATED: USING PROPER LAYOUT AND WIDTH SO TEXT IS NEVER SQUISHED
                     loadElem.innerHTML = `<div style="display:flex; align-items:center; gap:10px; margin-bottom:10px; border-bottom: 1px solid var(--border-color); padding-bottom: 8px;">
                         <img src="${tImg}" onerror="this.src='${tFall}'" style="width:36px; height:36px; border-radius:50%; object-fit:cover; border:2px solid var(--gold-color);">
                         <b style="color:var(--gold-color);">TicBull ${currentTeacher === 'female' ? 'Ma\'am' : 'Sir'}</b>
                     </div>
-                    <div style="width:100%; line-height: 1.6; overflow-x: auto;">${formattedReply}</div>`;
+                    <div style="width:100%; line-height: 1.6; overflow-x: auto; word-break: break-word; overflow-wrap: break-word;">${formattedReply}</div>`;
                     
                     saveChatUI(); 
                 } else {
@@ -1613,9 +1611,9 @@
             localStorage.setItem('tb_stream', document.getElementById('streamSelect').value);
             localStorage.setItem('tb_lang', document.getElementById('langSelect').value);
 
-            let selectedBoard = document.getElementById('boardSelect').options[document.getElementById('boardSelect').selectedIndex].text;
-            let selectedClass = document.getElementById('classSelect').options[document.getElementById('classSelect').selectedIndex].text;
-            let selectedStream = document.getElementById('streamSelect').options[document.getElementById('streamSelect').selectedIndex].text;
+            let selectedBoard = document.getElementById('boardSelect').options[document.getElementById('boardSelect'].selectedIndex].text;
+            let selectedClass = document.getElementById('classSelect').options[document.getElementById('classSelect'].selectedIndex].text;
+            let selectedStream = document.getElementById('streamSelect').options[document.getElementById('streamSelect'].selectedIndex].text;
             
             let bannerElement = document.getElementById('activeCourseLabel');
             if(bannerElement) {
@@ -1628,7 +1626,6 @@
             if(localStorage.getItem('tb_class')) document.getElementById('classSelect').value = localStorage.getItem('tb_class');
             if(localStorage.getItem('tb_stream')) document.getElementById('streamSelect').value = localStorage.getItem('tb_stream');
             if(localStorage.getItem('tb_lang')) document.getElementById('langSelect').value = localStorage.getItem('tb_lang');
-            
             syncDropdownsToUI();
         }
 
@@ -1641,4 +1638,3 @@
     </script>
 </body>
 </html>
-
