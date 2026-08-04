@@ -1501,9 +1501,11 @@
             document.getElementById('aiToolsMenu').style.display = 'none';
             scrollToBottom();
 
-            const loadingId = 'loading-' + Date.now();
-            chatBox.innerHTML += `<div class="msg ai" id="${loadingId}"><i>🤖 TicBull Teacher is thinking...</i></div>`;
-            scrollToBottom();
+                    const loadingId = 'loading-' + Date.now();
+        chatBox.innerHTML += `<div class="msg ai" id="${loadingId}" style="display:flex; align-items:center; gap:8px;">
+            <img src="./11708.png" onerror="this.src='https://raw.githubusercontent.com/yuviyadav16/ticbull-academy/main/11708.png'" style="width:26px; height:26px; border-radius:50%; object-fit:cover; border:1px solid var(--accent-color);">
+            <i>TicBull Teacher is thinking...</i>
+        </div>`;
 
             sendBtn.disabled = true;
 
