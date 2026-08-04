@@ -10,12 +10,23 @@ from datetime import datetime
 app = Flask(__name__)
 CORS(app)
 
+# ========================================================
+# 🚀 JUGAD: MULTI-KEY ROTATION SYSTEM (Add Keys Here)
+# ========================================================
+GEMINI_API_KEYS = [
+    os.getenv("GEMINI_API_KEY", ""), 
+    "AAPKI_DUSRI_GMAIL_KI_KEY_YAHAN_DAALEIN",
+    "AAPKI_TEESRI_GMAIL_KI_KEY_YAHAN_DAALEIN",
+    "AAPKI_CHAUTHI_GMAIL_KI_KEY_YAHAN_DAALEIN"
+]
+# Clean empty placeholders automatically
+VALID_KEYS = [k for k in GEMINI_API_KEYS if k.strip() and "YAHAN_DAALEIN" not in k]
+
 # Environment Variables
-GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "")
 SMTP_EMAIL = os.getenv("SMTP_EMAIL", "ticbull.support@gmail.com")
 SMTP_PASSWORD = os.getenv("SMTP_PASSWORD", "")
 FIREBASE_URL = os.getenv("FIREBASE_URL", "").rstrip('/')
-ADMIN_PASSWORD = os.getenv("ADMIN_PASSWORD", "rakeshbhai@2308bull") # Admin Panel Password
+ADMIN_PASSWORD = os.getenv("ADMIN_PASSWORD", "rakeshbhai@2308bull") # Old Code Password Retained
 
 otp_store = {}
 
@@ -42,14 +53,16 @@ def send_otp_email(to_email, otp, is_delete=False):
     except:
         return False
 
-# --- AUTHENTICATION ENDPOINTS ---
+# --- AUTHENTICATION ENDPOINTS (OLD CODE SAFE) ---
 @app.route('/api/send-otp', methods=['POST'])
 def send_otp():
     data = request.get_json() or {}
     email = data.get('email', '').strip().lower()
     password = data.get('password', '').strip()
     auth_mode = data.get('auth_mode', 'login')
+    
     if not email: return jsonify({"success": False, "message": "Email address is required!"}), 400
+    
     if FIREBASE_URL:
         safe_email = sanitize_email(email)
         user_check = requests.get(f"{FIREBASE_URL}/users/{safe_email}.json").json()
@@ -60,6 +73,7 @@ def send_otp():
             if user_check.get('password') != password: return jsonify({"success": False, "message": "Incorrect Password!"}), 400
         elif auth_mode == 'forgot' and not user_check:
             return jsonify({"success": False, "message": "Account not found!"}), 400
+            
     otp = str(random.randint(100000, 999999))
     otp_store[email] = otp
     if send_otp_email(email, otp): return jsonify({"success": True, "message": f"OTP sent to {email}"})
@@ -73,6 +87,7 @@ def verify_otp():
     password = data.get('password', '').strip()
     auth_mode = data.get('auth_mode', 'login')
     device_id = data.get('device_id', 'default_device')
+    
     if email in otp_store and otp_store[email] == user_otp:
         del otp_store[email]
         token = str(random.randint(10000000, 99999999))
@@ -84,12 +99,13 @@ def verify_otp():
                 requests.put(f"{FIREBASE_URL}/users/{safe_email}.json", json={"email": email, "password": password, "join_date": str(datetime.now().date())})
             elif auth_mode == 'forgot':
                 requests.patch(f"{FIREBASE_URL}/users/{safe_email}.json", json={"password": password})
+            
             db_user = requests.get(f"{FIREBASE_URL}/users/{safe_email}.json").json() or {}
             user_data = {"name": db_user.get("name", ""), "dob": db_user.get("dob", ""), "photo": db_user.get("photo", "")}
+            
         return jsonify({"success": True, "message": "Verification successful!", "token": token, "user": user_data})
     return jsonify({"success": False, "message": "Invalid 6-Digit OTP!"}), 400
 
-# --- ACCOUNT DELETION ENDPOINTS ---
 @app.route('/api/send-delete-otp', methods=['POST'])
 def send_delete_otp():
     email = (request.get_json() or {}).get('email', '').strip().lower()
@@ -111,7 +127,7 @@ def delete_account():
         return jsonify({"success": True, "message": "Account Deleted Permanently!"})
     return jsonify({"success": False, "message": "Invalid Deletion OTP!"}), 400
 
-# --- PROFILE & SESSION ENDPOINTS ---
+# --- PROFILE & SESSION ENDPOINTS (OLD CODE SAFE) ---
 @app.route('/api/update-profile', methods=['POST'])
 def update_profile():
     data = request.get_json() or {}
@@ -127,13 +143,14 @@ def check_session():
     email = data.get('email', '').strip().lower()
     token = data.get('token', '')
     if not FIREBASE_URL: return jsonify({"success": True, "active": True})
+    
     res = requests.get(f"{FIREBASE_URL}/sessions/{sanitize_email(email)}.json").json() or {}
     if res.get("token") == token:
         db_user = requests.get(f"{FIREBASE_URL}/users/{sanitize_email(email)}.json").json() or {}
         return jsonify({"success": True, "active": True, "user": {"name": db_user.get("name", ""), "dob": db_user.get("dob", ""), "photo": db_user.get("photo", "")}})
     return jsonify({"success": True, "active": False, "message": "Session Expired!"})
 
-# --- MULTI-SESSION CHAT ENDPOINTS ---
+# --- MULTI-SESSION CHAT ENDPOINTS (OLD CODE SAFE) ---
 @app.route('/api/sync-session', methods=['POST'])
 def sync_session():
     data = request.get_json() or {}
@@ -167,7 +184,7 @@ def delete_session():
         requests.delete(f"{FIREBASE_URL}/chat_sessions/{sanitize_email(data.get('email'))}/{data.get('session_id')}.json")
     return jsonify({"success": True})
 
-# --- RATE LIMITING & GEMINI AI ENGINE (Z+ SECURITY ADDED) ---
+# --- RATE LIMITING, MULTI-KEY & 3-DAY TRIAL ENGINE ---
 @app.route('/api/chat', methods=['POST'])
 def chat():
     data = request.get_json() or {}
@@ -179,77 +196,108 @@ def chat():
     student_name = data.get('student_name', 'Student')
     purchased_plan = data.get('purchased_plan', 'Free Demo Plan')
     email = data.get('email', '').strip().lower()
-    token = data.get('token', '') # Z+ Security Token
+    token = data.get('token', '') 
     
     if not prompt: return jsonify({"success": False, "message": "Prompt cannot be empty!"}), 400
-    if not GEMINI_API_KEY: return jsonify({"success": False, "message": "API Key is missing!"}), 500
+    if not VALID_KEYS: return jsonify({"success": False, "message": "API Key is missing from Server!"}), 500
     
     if email and FIREBASE_URL:
         safe_email = sanitize_email(email)
         
-        # 🚨 Z+ SECURITY: STRICT SINGLE DEVICE CHECK 
+        # 🚨 Z+ SECURITY: SINGLE DEVICE LOGIN CHECK
         session_data = requests.get(f"{FIREBASE_URL}/sessions/{safe_email}.json").json() or {}
         if session_data.get("token") != token:
             return jsonify({"success": False, "session_expired": True, "message": "Security Alert: Account logged in from another device! Logging out..."})
             
-        # RATE LIMITING LOGIC
+        # 🗓️ 3-DAY UNLIMITED TRIAL LOGIC
+        user_db = requests.get(f"{FIREBASE_URL}/users/{safe_email}.json").json() or {}
+        join_date_str = user_db.get("join_date", str(datetime.now().date()))
+        try:
+            join_date = datetime.strptime(join_date_str, "%Y-%m-%d").date()
+        except ValueError:
+            join_date = datetime.now().date()
+            
+        days_active = (datetime.now().date() - join_date).days
+
         today_str = str(datetime.now().date())
         usage_url = f"{FIREBASE_URL}/usage/{safe_email}/{today_str}.json"
         current_usage = requests.get(usage_url).json() or 0
-        is_free = 'Free' in purchased_plan
-        daily_limit = 5 if is_free else 50
         
-        if current_usage >= daily_limit:
-            if is_free:
-                return jsonify({"success": True, "reply": f"⚠️ **Daily Limit Reached!**\nAapne aaj ke 5 free prompts use kar liye hain. Kripya **Premium Pass** activate karein!"})
+        is_free = 'Free' in purchased_plan
+        trial_days_left = max(0, 3 - days_active)
+        
+        if is_free:
+            if days_active <= 3:
+                daily_limit = 300 # 3-Day Virtually Unlimited (300 questions/day)
+                if current_usage >= daily_limit:
+                    return jsonify({"success": True, "reply": f"⚠️ **Fair Usage Limit!**\nAapne aaj ke {daily_limit} sawaal poore kar liye hain. Kripya kal try karein."})
             else:
-                return jsonify({"success": True, "reply": f"🛑 **Limit Reached!**\nAapne aaj ki maximum limit (50) poori kar li hai."})
-    
-    # 🧠 NEW AI BRAIN: STRICT RULES FOR LANGUAGE AND BATCH WARNING
+                return jsonify({"success": True, "reply": f"🛑 **Free Trial Expired!**\n{student_name}, aapka 3-Din ka Unlimited Free Trial khatam ho chuka hai! Aage apni padhai continue rakhne ke liye kripya **Premium Pass** activate karein. 🚀"})
+        else:
+            daily_limit = 1000 # Premium User Limit
+            if current_usage >= daily_limit:
+                return jsonify({"success": True, "reply": f"🛑 **Daily Limit Reached!**"})
+
+    # AI INSTRUCTIONS
     system_instruction = f"""You are TicBull Teacher, an expert AI tutor developed by MrYuviYadav.
 Student Name: {student_name}
 Current Batch: {board} | {cls} | {stream}
 Language Medium: {lang}
 
-STRICT RULES YOU MUST FOLLOW:
-1. Language: You MUST explain everything strictly in the '{lang}' language. If Hindi is selected, use proper Hindi script (देवनागरी).
-2. Batch Context (CRITICAL): You are currently teaching '{cls} {stream}'. Analyze the student's question. If the question clearly belongs to a different class or subject (For example, asking Class 12 questions in a Class 11 batch, or asking Commerce questions in a Science batch), you MUST give a polite warning FIRST in bold: "⚠️ **Batch Mismatch:** {student_name}, yeh sawaal aapke current {cls} {stream} syllabus ka nahi lag raha hai. Agar aap doosri class ka padhna chahte hain, toh kripya dropdown se apna Batch switch karein!" ...and then briefly answer the question.
-3. Start naturally: Do NOT say "Hello {student_name}" repeatedly. Jump straight into the topic.
-4. Format: Use clear bullet points and bold text. Do not mention Google or Gemini."""
+STRICT RULES:
+1. Explain everything strictly in the '{lang}' language.
+2. If the question belongs to a completely different class or subject, politely warn FIRST: "⚠️ **Batch Mismatch:** {student_name}, yeh sawaal aapke current {cls} {stream} syllabus ka nahi lag raha hai. Kripya dropdown se apna Batch switch karein!" then answer briefly.
+3. Use clear bullet points and bold text. Do not mention Google or Gemini."""
 
-    try:
-        headers = {"Content-Type": "application/json"}
-        payload = {"contents": [{"parts": [{"text": f"{system_instruction}\n\nQuestion: {prompt}"}]}]}
-        res = requests.post(f"https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key={GEMINI_API_KEY}", json=payload, headers=headers, timeout=25)
-        res_data = res.json()
-        
-        if "candidates" in res_data:
-            reply = res_data['candidates'][0]['content']['parts'][0]['text']
-            reply = reply.replace("Gemini", "TicBull").replace("Google", "TicBull")
-            
-            if email and FIREBASE_URL: requests.put(usage_url, json=current_usage + 1)
-            return jsonify({"success": True, "reply": reply})
-            
-        elif "error" in res_data:
-            # 🚨 BUG FIX: Now it will show the REAL error instead of generic "AI Error"
-            err_msg = res_data['error'].get('message', 'Unknown API Error')
-            return jsonify({"success": False, "message": f"Gemini API Details: {err_msg}"}), 500
-        else:
-            return jsonify({"success": False, "message": "Content blocked by safety filters."}), 500
-            
-    except Exception as e:
-        return jsonify({"success": False, "message": f"Server Connection Error: {str(e)}"}), 500
+    headers = {"Content-Type": "application/json"}
+    payload = {"contents": [{"parts": [{"text": f"{system_instruction}\n\nQuestion: {prompt}"}]}]}
+    
+    final_reply = None
+    final_error = "Unknown Error"
 
-# --- ADMIN PANEL ENDPOINTS ---
+    for api_key in VALID_KEYS:
+        try:
+            res = requests.post(f"https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key={api_key}", json=payload, headers=headers, timeout=25)
+            res_data = res.json()
+            
+            if "candidates" in res_data:
+                final_reply = res_data['candidates'][0]['content']['parts'][0]['text']
+                final_reply = final_reply.replace("Gemini", "TicBull").replace("Google", "TicBull")
+                break 
+            elif "error" in res_data:
+                err_msg = res_data['error'].get('message', 'Unknown Error').lower()
+                if "quota" in err_msg or "429" in str(res_data):
+                    final_error = "Server Traffic High. Retrying..."
+                    continue 
+                else:
+                    final_error = res_data['error'].get('message')
+                    break 
+        except Exception as e:
+            final_error = str(e)
+            continue 
+
+    if final_reply:
+        if email and FIREBASE_URL: requests.put(usage_url, json=current_usage + 1)
+        # Optional: Add trial reminder on their very first message of the day
+        if email and FIREBASE_URL and is_free and days_active <= 3 and current_usage == 0:
+             final_reply = f"*(🔔 Reminder: Aapka 3-Din ka Free Unlimited Trial chal raha hai. Aapke paas {trial_days_left} din baaki hain!)*\n\n" + final_reply
+             
+        return jsonify({"success": True, "reply": final_reply})
+    else:
+        return jsonify({"success": False, "message": f"Server overloaded due to high traffic. (Error: {final_error})"}), 500
+
+# --- ADMIN PANEL ENDPOINTS (OLD CODE SAFE) ---
 @app.route('/api/admin/data', methods=['POST'])
 def admin_data():
     data = request.get_json() or {}
     if data.get('password') != ADMIN_PASSWORD:
         return jsonify({"success": False, "message": "Access Denied. Wrong Password!"}), 403
+    
     if FIREBASE_URL:
         users = requests.get(f"{FIREBASE_URL}/users.json").json() or {}
         usage = requests.get(f"{FIREBASE_URL}/usage.json").json() or {}
         chats = requests.get(f"{FIREBASE_URL}/chat_sessions.json").json() or {}
+        
         user_list = []
         today_str = str(datetime.now().date())
         for email_key, udata in users.items():
@@ -267,6 +315,7 @@ def admin_ban_user():
     if data.get('password') != ADMIN_PASSWORD: return jsonify({"success": False, "message": "Access Denied!"}), 403
     target_email = data.get('target_email', '').strip()
     if not target_email: return jsonify({"success": False, "message": "Email missing"}), 400
+    
     if FIREBASE_URL:
         for path in ['users', 'sessions', 'chat_sessions', 'usage']:
             requests.delete(f"{FIREBASE_URL}/{path}/{sanitize_email(target_email)}.json")
