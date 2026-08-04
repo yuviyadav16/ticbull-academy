@@ -154,8 +154,16 @@
         .chat-container { background:var(--chat-bg); border:1px solid var(--border-color); border-radius:18px; padding:14px; flex:1; overflow-y:auto; display:flex; flex-direction:column; gap:10px; margin-bottom:8px; min-height: 150px; }
         .msg { padding:12px 15px; border-radius:16px; font-size:13.5px; line-height:1.5; max-width:88%; word-wrap:break-word; animation: popIn 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards; transform-origin: bottom left; }
         .msg.user { background:var(--accent-color); color:#fff; align-self:flex-end; border-bottom-right-radius:4px; transform-origin: bottom right; box-shadow: 0 4px 15px var(--accent-glow); }
-        .msg.ai { background:var(--card-bg); color:var(--text-main); border:1px solid var(--border-color); align-self:flex-start; border-bottom-left-radius:4px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
-        .msg.guide-ai { background:rgba(245, 158, 11, 0.12); border:1px solid rgba(245, 158, 11, 0.5); color:var(--gold-color); align-self:flex-start; }
+        
+        /* THE UI FIX FOR CHAT BOX SQUISHING */
+        .msg.ai { background:var(--card-bg); color:var(--text-main); border:1px solid var(--border-color); align-self:flex-start; border-bottom-left-radius:4px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); width: 100%; max-width: 90%; }
+        
+        /* AI TABLES CSS */
+        .msg table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 12.5px; }
+        .msg th, .msg td { border: 1px solid var(--border-color); padding: 8px; text-align: left; }
+        .msg th { background: rgba(37, 99, 235, 0.1); color: var(--accent-color); font-weight: 700; }
+
+        .msg.guide-ai { background:rgba(245, 158, 11, 0.12); border:1px solid rgba(245, 158, 11, 0.5); color:var(--gold-color); align-self:flex-start; width: 100%; max-width: 90%; }
         .msg.error { background:rgba(239, 68, 68, 0.15); border:1px solid #ef4444; color:#fca5a5; align-self:center; width:100%; text-align:center; }
         .msg-image { max-width:100%; border-radius:12px; margin-top:8px; border:1px solid var(--border-color); }
 
@@ -349,7 +357,7 @@
         </div>
     </div>
 
-    <!-- DELETE ACCOUNT MODAL (Z+ Security) -->
+    <!-- DELETE ACCOUNT MODAL -->
     <div class="modal-overlay" id="deleteAccountModal">
         <div class="modal-card">
             <i class="fa-solid fa-xmark" style="position:absolute; right:16px; top:16px; color:var(--text-muted); cursor:pointer;" onclick="document.getElementById('deleteAccountModal').style.display='none'; playClickSound();"></i>
@@ -416,7 +424,6 @@
                 </div>
             </div>
             <div style="display:flex; align-items:center;">
-                <!-- 🚀 NAYA STREAK BADGE -->
                 <span class="user-badge" style="background:rgba(239, 68, 68, 0.15); border-color:rgba(239, 68, 68, 0.4); color:#ef4444; margin-right: 8px; cursor:default;" title="Daily Study Streak">
                     <i class="fa-solid fa-fire"></i> <span id="streakCountText">0 Day</span>
                 </span>
@@ -530,7 +537,7 @@
             <i class="fa-solid fa-xmark" style="color:var(--text-muted); cursor:pointer;" onclick="toggleDrawer()"></i>
         </div>
 
-        <!-- REAL STUDENT PROFILE CARD (Stripped Streaks/Levels) -->
+        <!-- REAL STUDENT PROFILE CARD -->
         <div class="profile-card">
             <i class="fa-solid fa-pen-to-square edit-profile-btn" onclick="openEditProfileModal()" title="Edit Profile"></i>
             <div class="profile-header">
@@ -549,7 +556,7 @@
         </div>
         
         <div class="drawer-item" onclick="openSyllabusBoard()"><i class="fa-solid fa-list-check" style="color:#0ea5e9;"></i> Syllabus Tracker Board</div>
-        <div class="drawer-item" onclick="openSettingsModal()"><i class="fa-solid fa-gear" style="color:#94a3b8;"></i> App Settings</div>
+        <div class="drawer-item" onclick="openSettingsModal()"><i class="fa-solid fa-gear" style="color:#94a3b8;"></i> App Settings (Change Teacher)</div>
         <div class="drawer-item" onclick="toggleTheme()"><i class="fa-solid fa-circle-half-stroke" style="color:var(--gold-color);"></i> <span id="themeToggleText">Switch to Light Mode</span></div>
         <div class="drawer-item" onclick="triggerAppGuideBot()"><i class="fa-solid fa-robot" style="color:#f59e0b;"></i> 🤖 TicBull Guide Bot</div>
         <div class="drawer-item" onclick="openSubscriptionModal()"><i class="fa-solid fa-crown" style="color:#f59e0b;"></i> Upgrade Course Pass</div>
@@ -579,12 +586,21 @@
         </div>
     </div>
 
-    <!-- APP SETTINGS MODAL -->
+    <!-- APP SETTINGS MODAL (ADDED TEACHER SWITCH HERE) -->
     <div class="modal-overlay" id="settingsModal">
         <div class="modal-card">
             <i class="fa-solid fa-xmark" style="position:absolute; right:16px; top:16px; color:var(--text-muted); cursor:pointer;" onclick="document.getElementById('settingsModal').style.display='none'; playClickSound();"></i>
             <h3 style="color:var(--text-main); font-size:17px; margin-bottom:16px;"><i class="fa-solid fa-gear"></i> App Settings</h3>
             
+            <!-- NEW: TEACHER SELECTION TOGGLE -->
+            <div class="setting-item" style="background: rgba(37, 99, 235, 0.1); padding: 10px; border-radius: 10px; border: 1px solid var(--accent-color);">
+                <span><i class="fa-solid fa-chalkboard-user"></i> AI Teacher</span>
+                <select id="teacherSelect" onchange="changeTeacher(this.value)" style="background:var(--input-bg); color:var(--text-main); border:1px solid var(--border-color); padding:6px 10px; border-radius:8px; outline:none; font-size:12px; font-weight: 600;">
+                    <option value="male">Male Teacher (Sir)</option>
+                    <option value="female">Female Teacher (Ma'am)</option>
+                </select>
+            </div>
+
             <div class="setting-item">
                 <span><i class="fa-solid fa-music"></i> App Click Sounds</span>
                 <label class="switch">
@@ -603,13 +619,6 @@
                 <span><i class="fa-solid fa-camera"></i> Camera & Media</span>
                 <label class="switch">
                     <input type="checkbox" checked>
-                    <span class="slider"></span>
-                </label>
-            </div>
-            <div class="setting-item">
-                <span><i class="fa-solid fa-location-dot"></i> Location Access</span>
-                <label class="switch">
-                    <input type="checkbox">
                     <span class="slider"></span>
                 </label>
             </div>
@@ -670,7 +679,7 @@
         </div>
     </div>
 
-    <!-- PRICING MODAL (ALL BATCHES RESTORED) -->
+    <!-- PRICING MODAL -->
     <div class="modal-overlay" id="subModal">
         <div class="modal-card">
             <i class="fa-solid fa-xmark" style="position:absolute; right:16px; top:16px; color:var(--text-muted); cursor:pointer;" onclick="closeSubscriptionModal()"></i>
@@ -722,6 +731,26 @@
     </div>
 
     <script>
+        // --- NEW TEACHER GENDER SYSTEM ---
+        let currentTeacher = localStorage.getItem('ticbull_teacher') || 'male';
+
+        function changeTeacher(val) {
+            currentTeacher = val;
+            localStorage.setItem('ticbull_teacher', val);
+            showToast(`Teacher changed to ${val === 'male' ? 'Male (Sir)' : 'Female (Ma\'am)'}`, "success");
+        }
+
+        function getTeacherImage() {
+            return currentTeacher === 'female' ? './11723.png' : './11708_2.png';
+        }
+
+        function getTeacherFallback() {
+            return currentTeacher === 'female' 
+                ? 'https://raw.githubusercontent.com/yuviyadav16/ticbull-academy/main/11723.png' 
+                : 'https://raw.githubusercontent.com/yuviyadav16/ticbull-academy/main/11708_2.png';
+        }
+        // ---------------------------------
+
         let currentAuthMode = 'login';
         let purchasedPlanName = 'Free Demo Plan';
         let isProUser = false;
@@ -772,7 +801,6 @@
             showToast("Theme updated!", "success");
         }
 
-        // --- CUSTOM TOAST NOTIFICATION ---
         function showToast(msg, type = 'success') {
             const toast = document.getElementById('custom-toast');
             toast.innerHTML = `<i class="fa-solid ${type === 'success' ? 'fa-circle-check toast-icon success' : 'fa-circle-exclamation toast-icon error'}"></i> <span>${msg}</span>`;
@@ -780,7 +808,6 @@
             setTimeout(() => toast.classList.remove('show'), 3500);
         }
 
-        // --- DAILY STREAK (🔥) LOGIC ---
         function checkAndUpdateStreak() {
             if(!currentStudentData.email) return;
 
@@ -812,7 +839,6 @@
             document.getElementById('streakCountText').innerText = currentStreak + " Day";
         }
 
-        // --- SYLLABUS BOARD LOGIC ---
         let syllabusItems = [];
         function openSyllabusBoard() {
             document.getElementById('syllabusModal').style.display = 'flex';
@@ -855,8 +881,11 @@
             });
         }
 
-        // Auto-Login Check
         window.addEventListener('DOMContentLoaded', () => {
+            // Set Teacher Toggle to saved preference
+            const tSelect = document.getElementById('teacherSelect');
+            if(tSelect) tSelect.value = currentTeacher;
+
             const savedEmail = localStorage.getItem('ticbull_email');
             const savedToken = localStorage.getItem('ticbull_token');
             if(savedEmail && savedToken) {
@@ -880,7 +909,7 @@
                         document.getElementById('main-dashboard').style.display = 'flex';
                         updateProfileUI();
                         loadSidebarHistory();
-                        checkAndUpdateStreak(); // 🚀 Streak trigger
+                        checkAndUpdateStreak(); 
                     } else {
                         localStorage.clear();
                         showToast("Session Expired! Logged in from another device.", "error");
@@ -892,12 +921,11 @@
                     document.getElementById('main-dashboard').style.display = 'flex';
                     updateProfileUI();
                     loadSidebarHistory();
-                    checkAndUpdateStreak(); // 🚀 Streak trigger
+                    checkAndUpdateStreak(); 
                 });
             }
         });
 
-        // Fast Splash Screen Hider
         window.addEventListener('load', () => {
             setTimeout(() => {
                 const splash = document.getElementById('splash-screen');
@@ -1080,7 +1108,7 @@
                     document.getElementById('main-dashboard').style.display = 'flex';
                     
                     loadSidebarHistory();
-                    checkAndUpdateStreak(); // 🚀 Streak trigger after fresh login
+                    checkAndUpdateStreak();
                     showToast("Login Successful!", "success");
                 } else {
                     showToast(data.message || "Invalid OTP!", "error");
@@ -1100,7 +1128,6 @@
             location.reload();
         }
 
-        // --- ACCOUNT DELETION SYSTEM ---
         function openSettingsModal() {
             document.getElementById('settingsModal').style.display = 'flex';
             if(document.getElementById('drawer').classList.contains('open')) toggleDrawer();
@@ -1271,12 +1298,14 @@
             const chatBox = document.getElementById('chatBox');
             chatBox.innerHTML += `
                 <div class="msg guide-ai">
-                    <b>🤖 TICBULL OFFICIAL GUIDE BOT:</b><br><br>
-                    • <b>App Founder & Developer:</b> Created by <b>MrYuviYadav</b>.<br>
-                    • <b>App Purpose:</b> AI Powered All-in-One Learning, Exam Engine & Creator Skills Portal.<br>
-                    • <b>Key Features:</b> Detailed Notes, MindMaps, Photo Vision Doubt Solver, MCQs, AI Diagram & Video Explanations.<br>
-                    • <b>Courses Supported:</b> CBSE, Bihar, UP Board, BPSC, NEET, JEE, UPSC, SSC, Defense, & Social Media/Business Skills.<br>
-                    • <b>How to Use:</b> Click top bar to change Course/Class/Skill, ask doubts or click <b>(+)</b> for instant tools!
+                    <div style="display:flex; align-items:center; gap:10px; margin-bottom:8px;">
+                        <img src="${getTeacherImage()}" onerror="this.src='${getTeacherFallback()}'" style="width:36px; height:36px; border-radius:50%; object-fit:cover; border:2px solid var(--gold-color);">
+                        <b style="color:var(--gold-color);">TicBull ${currentTeacher === 'female' ? 'Ma\'am' : 'Sir'}:</b>
+                    </div>
+                    • <b>App Founder:</b> Created by MrYuviYadav.<br>
+                    • <b>App Purpose:</b> AI Powered Learning, Exam Engine.<br>
+                    • <b>Key Features:</b> Detailed Notes, MCQs, AI Diagram & Video Explanations.<br>
+                    • <b>How to Use:</b> Click top bar to change Course/Class, ask doubts or click <b>(+)</b> for instant tools!
                 </div>`;
             scrollToBottom();
             saveChatUI();
@@ -1302,10 +1331,6 @@
             closeSubscriptionModal();
             showToast(`🎉 ${purchasedPlanName} Pass Activated!`, "success");
         }
-
-        // ===============================================
-        // TRUE MULTI-SESSION CHATGPT-LIKE HISTORY SYSTEM
-        // ===============================================
 
         function startNewChat() {
             currentSessionId = Date.now().toString();
@@ -1414,7 +1439,6 @@
             startNewChat();
         }
 
-        // --- VOICE TYPING LOGIC ---
         let recognition;
         if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
             const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -1466,7 +1490,6 @@
             document.getElementById('imagePreview').style.display = 'none';
         }
 
-        // --- REAL GEMINI AI INTEGRATION ---
         function askAI() {
             const input = document.getElementById('userInput');
             const chatBox = document.getElementById('chatBox');
@@ -1501,12 +1524,19 @@
             document.getElementById('aiToolsMenu').style.display = 'none';
             scrollToBottom();
 
-                    const loadingId = 'loading-' + Date.now();
-        chatBox.innerHTML += `<div class="msg ai" id="${loadingId}" style="display:flex; align-items:center; gap:8px;">
-            <img src="./11708.png" onerror="this.src='https://raw.githubusercontent.com/yuviyadav16/ticbull-academy/main/11708.png'" style="width:26px; height:26px; border-radius:50%; object-fit:cover; border:1px solid var(--accent-color);">
-            <i>TicBull Teacher is thinking...</i>
-        </div>`;
-
+            // UPDATED: USING THE PROPER TEACHER LOGO AND LAYOUT FOR THINKING STATE
+            const tImg = getTeacherImage();
+            const tFall = getTeacherFallback();
+            const loadingId = 'loading-' + Date.now();
+            
+            chatBox.innerHTML += `<div class="msg ai" id="${loadingId}">
+                <div style="display:flex; align-items:center; gap:10px; margin-bottom:8px;">
+                    <img src="${tImg}" onerror="this.src='${tFall}'" style="width:36px; height:36px; border-radius:50%; object-fit:cover; border:2px solid var(--accent-color);">
+                    <i>TicBull ${currentTeacher === 'female' ? 'Ma\'am' : 'Sir'} is thinking...</i>
+                </div>
+            </div>`;
+            
+            scrollToBottom();
             sendBtn.disabled = true;
 
             fetch(`/api/chat`, {
@@ -1522,7 +1552,8 @@
                     stream: stream,
                     lang: lang,
                     student_name: currentStudentData.name,
-                    purchased_plan: purchasedPlanName
+                    purchased_plan: purchasedPlanName,
+                    teacher_gender: currentTeacher // NEW: SENDING THE TEACHER GENDER TO BACKEND
                 })
             })
             .then(res => res.json())
@@ -1530,7 +1561,6 @@
                 sendBtn.disabled = false;
                 const loadElem = document.getElementById(loadingId);
                 
-                // 🚨 Z+ SECURITY: Auto Logout if logged in somewhere else!
                 if(data.session_expired) {
                     loadElem.classList.replace('ai', 'error');
                     loadElem.innerHTML = `<b>❌ Security Alert:</b> ${data.message}`;
@@ -1552,7 +1582,13 @@
                         formattedReply += `<br><br><b>🎥 Video Concept Reference:</b><br><iframe style="width:100%; height:200px; border-radius:12px; margin-top:8px; border:none;" src="https://www.youtube.com/embed?listType=search&list=${topicSafe}+${board}+${cls}" allowfullscreen></iframe>`;
                     }
 
-                    loadElem.innerHTML = `<b>[TicBull Teacher]:</b><br><br>${formattedReply}`;
+                    // UPDATED: USING PROPER LAYOUT AND WIDTH SO TEXT IS NEVER SQUISHED
+                    loadElem.innerHTML = `<div style="display:flex; align-items:center; gap:10px; margin-bottom:10px; border-bottom: 1px solid var(--border-color); padding-bottom: 8px;">
+                        <img src="${tImg}" onerror="this.src='${tFall}'" style="width:36px; height:36px; border-radius:50%; object-fit:cover; border:2px solid var(--gold-color);">
+                        <b style="color:var(--gold-color);">TicBull ${currentTeacher === 'female' ? 'Ma\'am' : 'Sir'}</b>
+                    </div>
+                    <div style="width:100%; line-height: 1.6; overflow-x: auto;">${formattedReply}</div>`;
+                    
                     saveChatUI(); 
                 } else {
                     loadElem.classList.replace('ai', 'error');
@@ -1571,7 +1607,6 @@
             });
         }
         
-        // --- 🧠 DROPDOWN MEMORY & UI AUTO-UPDATE SAVER (PERFECT FIX) ---
         function syncDropdownsToUI() {
             localStorage.setItem('tb_board', document.getElementById('boardSelect').value);
             localStorage.setItem('tb_class', document.getElementById('classSelect').value);
@@ -1606,3 +1641,4 @@
     </script>
 </body>
 </html>
+
