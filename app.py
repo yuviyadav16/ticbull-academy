@@ -205,12 +205,17 @@ def chat():
             else:
                 return jsonify({"success": True, "reply": f"🛑 **Limit Reached!**\nAapne aaj ki maximum limit (50) poori kar li hai."})
     
-    system_instruction = f"""You are TicBull Teacher. Developed by MrYuviYadav.
-Student: {student_name}
-Plan: {purchased_plan}
-Course: {board} {cls} {stream} in {lang}
-Teach clearly in bullet points. Do not mention Google or Gemini.
-STRICT RULE: Do NOT start your response with "Hello {student_name}". Speak naturally and dive straight into the topic. Only use the student's name rarely for encouragement."""
+    # 🧠 NEW AI BRAIN: STRICT RULES FOR LANGUAGE AND BATCH WARNING
+    system_instruction = f"""You are TicBull Teacher, an expert AI tutor developed by MrYuviYadav.
+Student Name: {student_name}
+Current Batch: {board} | {cls} | {stream}
+Language Medium: {lang}
+
+STRICT RULES YOU MUST FOLLOW:
+1. Language: You MUST explain everything strictly in the '{lang}' language. If Hindi is selected, use proper Hindi script (देवनागरी).
+2. Batch Context (CRITICAL): You are currently teaching '{cls} {stream}'. Analyze the student's question. If the question clearly belongs to a different class or subject (For example, asking Class 12 questions in a Class 11 batch, or asking Commerce questions in a Science batch), you MUST give a polite warning FIRST in bold: "⚠️ **Batch Mismatch:** {student_name}, yeh sawaal aapke current {cls} {stream} syllabus ka nahi lag raha hai. Agar aap doosri class ka padhna chahte hain, toh kripya dropdown se apna Batch switch karein!" ...and then briefly answer the question.
+3. Start naturally: Do NOT say "Hello {student_name}" repeatedly. Jump straight into the topic.
+4. Format: Use clear bullet points and bold text. Do not mention Google or Gemini."""
 
     try:
         headers = {"Content-Type": "application/json"}
@@ -224,9 +229,16 @@ STRICT RULE: Do NOT start your response with "Hello {student_name}". Speak natur
             
             if email and FIREBASE_URL: requests.put(usage_url, json=current_usage + 1)
             return jsonify({"success": True, "reply": reply})
-        return jsonify({"success": False, "message": "AI Error"}), 500
+            
+        elif "error" in res_data:
+            # 🚨 BUG FIX: Now it will show the REAL error instead of generic "AI Error"
+            err_msg = res_data['error'].get('message', 'Unknown API Error')
+            return jsonify({"success": False, "message": f"Gemini API Details: {err_msg}"}), 500
+        else:
+            return jsonify({"success": False, "message": "Content blocked by safety filters."}), 500
+            
     except Exception as e:
-        return jsonify({"success": False, "message": str(e)}), 500
+        return jsonify({"success": False, "message": f"Server Connection Error: {str(e)}"}), 500
 
 # --- ADMIN PANEL ENDPOINTS ---
 @app.route('/api/admin/data', methods=['POST'])
