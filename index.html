@@ -1452,33 +1452,36 @@
             }
 
             chatBox.innerHTML += `<div class="msg user">${userMsgContent}</div>`;
-            
-            input.value = '';
-            removeImage();
-            document.getElementById('aiToolsMenu').style.display = 'none';
-            scrollToBottom();
+           
+        const filesToSend = [...selectedFilesArray]; 
+        input.value = '';
+        removeImage(); 
+        document.getElementById('aiToolsMenu').style.display = 'none';
+        scrollToBottom();
 
-            const loadingId = 'loading-' + Date.now();
-            chatBox.innerHTML += `<div class="msg ai" id="${loadingId}"><i>🧠 TicBull Teacher is thinking...</i></div>`;
-            scrollToBottom();
-            
-            sendBtn.disabled = true;
+        const loadingId = 'loading-' + Date.now();
+        chatBox.innerHTML += `<div class="msg ai" id="${loadingId}"><i>🤖 TicBull Teacher is thinking...</i></div>`;
+        scrollToBottom();
 
-                        fetch(`/api/chat`, {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({
-                    email: currentStudentData.email,
-                    token: localStorage.getItem('ticbull_token'), // 🚨 NAYA CODE: Sending Token
-                    prompt: questionText,
-                    images: selectedFilesArray, // 📸 NAYA CODE: Photo Backend ko bhejne ke liye
-                    board: board,
-                    class: cls,
-                    stream: stream,
-                    lang: lang,
-                    student_name: currentStudentData.name,
-                    purchased_plan: purchasedPlanName
-                })
+        sendBtn.disabled = true;
+
+        fetch(`/api/chat`, {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({
+                email: currentStudentData.email,
+                token: localStorage.getItem('ticbull_token'), 
+                prompt: questionText,
+                images: filesToSend, // 📸 NAYA CODE: Ab yahan 'selectedFilesArray' nahi, 'filesToSend' likha hai
+                board: board,
+                class: cls,
+                stream: stream,
+                lang: lang,
+                student_name: currentStudentData.name,
+                purchased_plan: purchasedPlanName
+            })
+        })
+
             })
 
             .then(res => res.json())
