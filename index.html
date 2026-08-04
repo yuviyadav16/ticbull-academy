@@ -68,7 +68,7 @@
         .toast-icon.success { color: var(--success-color); }
         .toast-icon.error { color: #ef4444; }
 
-        /* 10-SECOND CINEMATIC SPLASH ANIMATION */
+        /* CINEMATIC SPLASH ANIMATION */
         #splash-screen {
             position: fixed; top:0; left:0; width:100%; height:100%;
             background: radial-gradient(circle at center, #0b1329 0%, #020617 100%);
@@ -98,7 +98,7 @@
         .support-info-splash { margin-top: 25px; font-size: 11px; color: var(--text-muted); font-weight: 600; display: flex; align-items: center; gap: 6px; background: rgba(255,255,255,0.05); padding: 8px 16px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.1); }
 
         .progress-bar-container { width: 180px; height: 4px; background: rgba(255,255,255,0.1); border-radius: 10px; margin-top: 25px; overflow: hidden; }
-        .progress-bar { width: 0%; height: 100%; background: linear-gradient(90deg, var(--accent-color), #f59e0b); animation: loadProgress 10s linear forwards; }
+        .progress-bar { width: 0%; height: 100%; background: linear-gradient(90deg, var(--accent-color), #f59e0b); animation: loadProgress 3.5s linear forwards; }
 
         @keyframes pulseGlow { 0% { transform: scale(0.85); opacity: 0.5; } 100% { transform: scale(1.2); opacity: 0.95; } }
         @keyframes loadProgress { 0% { width: 0%; } 100% { width: 100%; } }
@@ -247,7 +247,7 @@
         <span id="toast-message">Notification</span>
     </div>
 
-    <!-- 10 SECONDS CINEMATIC SPLASH ANIMATION -->
+    <!-- CINEMATIC SPLASH ANIMATION -->
     <div id="splash-screen">
         <div class="splash-logo-container">
             <div class="splash-logo-glow"></div>
@@ -415,7 +415,14 @@
                     <p style="font-size:9.5px; color:var(--text-muted);">AI Tutor Engine v8.5</p>
                 </div>
             </div>
-            <span class="user-badge" onclick="openSubscriptionModal()"><i class="fa-solid fa-crown"></i> <span id="badgePlanText">Free Demo Plan Active</span></span>
+            <div style="display:flex; align-items:center;">
+                <!-- 🚀 NAYA STREAK BADGE -->
+                <span class="user-badge" style="background:rgba(239, 68, 68, 0.15); border-color:rgba(239, 68, 68, 0.4); color:#ef4444; margin-right: 8px; cursor:default;" title="Daily Study Streak">
+                    <i class="fa-solid fa-fire"></i> <span id="streakCountText">0 Day</span>
+                </span>
+                
+                <span class="user-badge" onclick="openSubscriptionModal()"><i class="fa-solid fa-crown"></i> <span id="badgePlanText">Free Demo Plan</span></span>
+            </div>
         </div>
 
         <!-- COLLAPSIBLE COURSE SELECTOR BAR -->
@@ -773,6 +780,38 @@
             setTimeout(() => toast.classList.remove('show'), 3500);
         }
 
+        // --- DAILY STREAK (🔥) LOGIC ---
+        function checkAndUpdateStreak() {
+            if(!currentStudentData.email) return;
+
+            const today = new Date().toLocaleDateString('en-CA'); 
+            let lastLogin = localStorage.getItem('ticbull_last_login_' + currentStudentData.email);
+            let currentStreak = parseInt(localStorage.getItem('ticbull_streak_' + currentStudentData.email)) || 0;
+
+            if (lastLogin !== today) {
+                if (lastLogin) {
+                    const lastDate = new Date(lastLogin);
+                    const currDate = new Date(today);
+                    const diffTime = Math.abs(currDate - lastDate);
+                    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); 
+
+                    if (diffDays === 1) {
+                        currentStreak += 1; 
+                        setTimeout(() => showToast(`🔥 Daily Streak continued! Day ${currentStreak}`, "success"), 2000);
+                    } else {
+                        currentStreak = 1; 
+                        if(diffDays > 1) setTimeout(() => showToast(`Oh no! Streak broken. Starting fresh at Day 1 🔥`, "error"), 2000);
+                    }
+                } else {
+                    currentStreak = 1; 
+                }
+                localStorage.setItem('ticbull_last_login_' + currentStudentData.email, today);
+                localStorage.setItem('ticbull_streak_' + currentStudentData.email, currentStreak);
+            }
+            
+            document.getElementById('streakCountText').innerText = currentStreak + " Day";
+        }
+
         // --- SYLLABUS BOARD LOGIC ---
         let syllabusItems = [];
         function openSyllabusBoard() {
@@ -841,6 +880,7 @@
                         document.getElementById('main-dashboard').style.display = 'flex';
                         updateProfileUI();
                         loadSidebarHistory();
+                        checkAndUpdateStreak(); // 🚀 Streak trigger
                     } else {
                         localStorage.clear();
                         showToast("Session Expired! Logged in from another device.", "error");
@@ -852,16 +892,18 @@
                     document.getElementById('main-dashboard').style.display = 'flex';
                     updateProfileUI();
                     loadSidebarHistory();
+                    checkAndUpdateStreak(); // 🚀 Streak trigger
                 });
             }
         });
 
+        // Fast Splash Screen Hider
         window.addEventListener('load', () => {
             setTimeout(() => {
                 const splash = document.getElementById('splash-screen');
                 splash.style.opacity = '0';
-                setTimeout(() => splash.style.visibility = 'hidden', 800);
-            }, 8000);
+                setTimeout(() => splash.style.visibility = 'hidden', 500);
+            }, 3500);
         });
 
         window.addEventListener('resize', () => scrollToBottom());
@@ -1038,6 +1080,7 @@
                     document.getElementById('main-dashboard').style.display = 'flex';
                     
                     loadSidebarHistory();
+                    checkAndUpdateStreak(); // 🚀 Streak trigger after fresh login
                     showToast("Login Successful!", "success");
                 } else {
                     showToast(data.message || "Invalid OTP!", "error");
@@ -1251,7 +1294,7 @@
             purchasedPlanName = selectedPlanName;
             isProUser = selectedPlanName.includes('Pro');
             
-            document.getElementById('badgePlanText').innerText = `${purchasedPlanName} Active`;
+            document.getElementById('badgePlanText').innerText = `${purchasedPlanName}`;
             document.getElementById('activeCourseChip').innerHTML = 
                 `<span><i class="fa-solid fa-lock"></i> Unlocked Pass: ${purchasedPlanName}</span>
                  <span style="font-size:10px; color:var(--success-color);">Access Active</span>`;
@@ -1307,7 +1350,6 @@
             });
         }
 
-        // --- THE MAGIC FIX: LOADING FULL CHAT UI ---
         function loadSession(id, title) {
             currentSessionId = id;
             currentSessionTitle = title;
@@ -1425,7 +1467,7 @@
         }
 
         // --- REAL GEMINI AI INTEGRATION ---
-                function askAI() {
+        function askAI() {
             const input = document.getElementById('userInput');
             const chatBox = document.getElementById('chatBox');
             const board = document.getElementById('boardSelect').value;
@@ -1453,37 +1495,34 @@
 
             chatBox.innerHTML += `<div class="msg user">${userMsgContent}</div>`;
            
-        const filesToSend = [...selectedFilesArray]; 
-        input.value = '';
-        removeImage(); 
-        document.getElementById('aiToolsMenu').style.display = 'none';
-        scrollToBottom();
+            const filesToSend = [...selectedFilesArray]; 
+            input.value = '';
+            removeImage(); 
+            document.getElementById('aiToolsMenu').style.display = 'none';
+            scrollToBottom();
 
-        const loadingId = 'loading-' + Date.now();
-        chatBox.innerHTML += `<div class="msg ai" id="${loadingId}"><i>🤖 TicBull Teacher is thinking...</i></div>`;
-        scrollToBottom();
+            const loadingId = 'loading-' + Date.now();
+            chatBox.innerHTML += `<div class="msg ai" id="${loadingId}"><i>🤖 TicBull Teacher is thinking...</i></div>`;
+            scrollToBottom();
 
-        sendBtn.disabled = true;
+            sendBtn.disabled = true;
 
-        fetch(`/api/chat`, {
-            method: 'POST',
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({
-                email: currentStudentData.email,
-                token: localStorage.getItem('ticbull_token'), 
-                prompt: questionText,
-                images: filesToSend, // 📸 NAYA CODE: Ab yahan 'selectedFilesArray' nahi, 'filesToSend' likha hai
-                board: board,
-                class: cls,
-                stream: stream,
-                lang: lang,
-                student_name: currentStudentData.name,
-                purchased_plan: purchasedPlanName
+            fetch(`/api/chat`, {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({
+                    email: currentStudentData.email,
+                    token: localStorage.getItem('ticbull_token'), 
+                    prompt: questionText,
+                    images: filesToSend, 
+                    board: board,
+                    class: cls,
+                    stream: stream,
+                    lang: lang,
+                    student_name: currentStudentData.name,
+                    purchased_plan: purchasedPlanName
+                })
             })
-        })
-
-            })
-
             .then(res => res.json())
             .then(data => {
                 sendBtn.disabled = false;
@@ -1494,7 +1533,7 @@
                     loadElem.classList.replace('ai', 'error');
                     loadElem.innerHTML = `<b>❌ Security Alert:</b> ${data.message}`;
                     showToast(data.message, "error");
-                    setTimeout(() => logoutUser(), 3000); // 3 seconds me automatic bahar phek dega
+                    setTimeout(() => logoutUser(), 3000); 
                     return;
                 }
 
@@ -1530,20 +1569,17 @@
             });
         }
         
-                // --- 🧠 DROPDOWN MEMORY & UI AUTO-UPDATE SAVER (PERFECT FIX) ---
+        // --- 🧠 DROPDOWN MEMORY & UI AUTO-UPDATE SAVER (PERFECT FIX) ---
         function syncDropdownsToUI() {
-            // 1. Data ko LocalStorage me save karna
             localStorage.setItem('tb_board', document.getElementById('boardSelect').value);
             localStorage.setItem('tb_class', document.getElementById('classSelect').value);
             localStorage.setItem('tb_stream', document.getElementById('streamSelect').value);
             localStorage.setItem('tb_lang', document.getElementById('langSelect').value);
 
-            // 2. Dropdown se text nikalna
             let selectedBoard = document.getElementById('boardSelect').options[document.getElementById('boardSelect').selectedIndex].text;
             let selectedClass = document.getElementById('classSelect').options[document.getElementById('classSelect').selectedIndex].text;
             let selectedStream = document.getElementById('streamSelect').options[document.getElementById('streamSelect').selectedIndex].text;
             
-            // 3. Aapke asli ID ('activeCourseLabel') ko update karna
             let bannerElement = document.getElementById('activeCourseLabel');
             if(bannerElement) {
                 bannerElement.innerHTML = `<i class="fa-solid fa-sliders"></i> Course: ${selectedBoard} | ${selectedClass} | ${selectedStream}`;
@@ -1551,24 +1587,20 @@
         }
         
         function loadDropdowns() {
-            // Purani setting wapas lana
             if(localStorage.getItem('tb_board')) document.getElementById('boardSelect').value = localStorage.getItem('tb_board');
             if(localStorage.getItem('tb_class')) document.getElementById('classSelect').value = localStorage.getItem('tb_class');
             if(localStorage.getItem('tb_stream')) document.getElementById('streamSelect').value = localStorage.getItem('tb_stream');
             if(localStorage.getItem('tb_lang')) document.getElementById('langSelect').value = localStorage.getItem('tb_lang');
             
-            // Page load hote hi UI sync karna
             syncDropdownsToUI();
         }
 
-        // Dropdown change hone par trigger
         document.getElementById('boardSelect').addEventListener('change', syncDropdownsToUI);
         document.getElementById('classSelect').addEventListener('change', syncDropdownsToUI);
         document.getElementById('streamSelect').addEventListener('change', syncDropdownsToUI);
         document.getElementById('langSelect').addEventListener('change', syncDropdownsToUI);
 
         window.addEventListener('DOMContentLoaded', loadDropdowns);
-        // ----------------------------------------------------------------------
-         </script>
+    </script>
 </body>
 </html>
