@@ -1527,29 +1527,45 @@
             });
         }
         
-        // --- 🧠 DROPDOWN MEMORY SAVER (Class & Board Yaad Rakhne Ke Liye) ---
-        function saveDropdowns() {
+                // --- 🧠 DROPDOWN MEMORY & UI AUTO-UPDATE SAVER (PERFECT FIX) ---
+        function syncDropdownsToUI() {
+            // 1. Data ko LocalStorage me save karna
             localStorage.setItem('tb_board', document.getElementById('boardSelect').value);
             localStorage.setItem('tb_class', document.getElementById('classSelect').value);
             localStorage.setItem('tb_stream', document.getElementById('streamSelect').value);
             localStorage.setItem('tb_lang', document.getElementById('langSelect').value);
+
+            // 2. Dropdown se text nikalna
+            let selectedBoard = document.getElementById('boardSelect').options[document.getElementById('boardSelect').selectedIndex].text;
+            let selectedClass = document.getElementById('classSelect').options[document.getElementById('classSelect').selectedIndex].text;
+            let selectedStream = document.getElementById('streamSelect').options[document.getElementById('streamSelect').selectedIndex].text;
+            
+            // 3. Aapke asli ID ('activeCourseLabel') ko update karna
+            let bannerElement = document.getElementById('activeCourseLabel');
+            if(bannerElement) {
+                bannerElement.innerHTML = `<i class="fa-solid fa-sliders"></i> Course: ${selectedBoard} | ${selectedClass} | ${selectedStream}`;
+            }
         }
         
         function loadDropdowns() {
+            // Purani setting wapas lana
             if(localStorage.getItem('tb_board')) document.getElementById('boardSelect').value = localStorage.getItem('tb_board');
             if(localStorage.getItem('tb_class')) document.getElementById('classSelect').value = localStorage.getItem('tb_class');
             if(localStorage.getItem('tb_stream')) document.getElementById('streamSelect').value = localStorage.getItem('tb_stream');
             if(localStorage.getItem('tb_lang')) document.getElementById('langSelect').value = localStorage.getItem('tb_lang');
+            
+            // Page load hote hi UI sync karna
+            syncDropdownsToUI();
         }
 
-        document.getElementById('boardSelect').addEventListener('change', saveDropdowns);
-        document.getElementById('classSelect').addEventListener('change', saveDropdowns);
-        document.getElementById('streamSelect').addEventListener('change', saveDropdowns);
-        document.getElementById('langSelect').addEventListener('change', saveDropdowns);
+        // Dropdown change hone par trigger
+        document.getElementById('boardSelect').addEventListener('change', syncDropdownsToUI);
+        document.getElementById('classSelect').addEventListener('change', syncDropdownsToUI);
+        document.getElementById('streamSelect').addEventListener('change', syncDropdownsToUI);
+        document.getElementById('langSelect').addEventListener('change', syncDropdownsToUI);
 
         window.addEventListener('DOMContentLoaded', loadDropdowns);
         // ----------------------------------------------------------------------
-
-    </script>
+         </script>
 </body>
 </html>
