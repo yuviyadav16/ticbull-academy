@@ -1464,13 +1464,14 @@
             
             sendBtn.disabled = true;
 
-            fetch(`/api/chat`, {
+                        fetch(`/api/chat`, {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify({
                     email: currentStudentData.email,
                     token: localStorage.getItem('ticbull_token'), // 🚨 NAYA CODE: Sending Token
                     prompt: questionText,
+                    images: selectedFilesArray, // 📸 NAYA CODE: Photo Backend ko bhejne ke liye
                     board: board,
                     class: cls,
                     stream: stream,
@@ -1479,6 +1480,7 @@
                     purchased_plan: purchasedPlanName
                 })
             })
+
             .then(res => res.json())
             .then(data => {
                 sendBtn.disabled = false;
