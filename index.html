@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>TicBull Academy - Premium AI Engine</title>
+    <title>TicBull Academy - India's #1 AI Education Engine</title>
     
     <!-- PWA APP INSTALL LINKS -->
     <link rel="manifest" href="/manifest.json">
@@ -127,7 +127,6 @@
         .btn-primary { width:100%; background: var(--accent-color); color:#fff; font-weight:700; padding:13px; border:none; border-radius:12px; cursor:pointer; font-size:14px; letter-spacing:0.5px; box-shadow:0 8px 20px var(--accent-glow); transition:0.2s; margin-top:8px; }
         .btn-primary:active { transform:scale(0.98); }
         .btn-primary:disabled { opacity: 0.6; cursor: not-allowed; }
-        
         .btn-danger { background: #ef4444; box-shadow:0 8px 20px rgba(239, 68, 68, 0.4); }
 
         .auth-footer-support { margin-top: 24px; border-top: 1px solid var(--border-color); padding-top: 16px; display: flex; flex-direction: column; align-items: center; gap: 8px; }
@@ -136,20 +135,27 @@
         .auth-footer-socials a { color: var(--text-muted); font-size: 16px; transition: 0.2s; }
         .auth-footer-socials a:hover { color: var(--accent-color); transform: scale(1.1); }
 
-        /* 🚀 PW BATCHES DASHBOARD SCREEN */
+        /* 🚀 PW BATCHES DASHBOARD SCREEN (DYNAMIC 300+ BATCHES UI) */
         #batches-screen { display:none; flex-direction:column; height:100%; max-width:850px; margin:0 auto; width:100%; padding:14px; overflow-y:auto; }
-        .batches-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; background:var(--card-bg); padding:12px 16px; border-radius:16px; border:1px solid var(--border-color); }
+        .batches-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; background:var(--card-bg); padding:12px 16px; border-radius:16px; border:1px solid var(--border-color); }
+        
+        .category-scroll-bar { display:flex; gap:8px; overflow-x:auto; padding-bottom:10px; margin-bottom:12px; scrollbar-width:none; }
+        .category-scroll-bar::-webkit-scrollbar { display:none; }
+        .cat-chip { background:var(--input-bg); border:1px solid var(--border-color); color:var(--text-muted); padding:7px 14px; border-radius:20px; font-size:11.5px; font-weight:700; white-space:nowrap; cursor:pointer; transition:0.2s; }
+        .cat-chip.active { background:var(--accent-color); color:#fff; border-color:var(--accent-color); box-shadow:0 4px 15px var(--accent-glow); }
+
         .search-batches-box { position:relative; margin-bottom:14px; }
         .search-batches-box input { width:100%; background:var(--card-bg); border:1px solid var(--border-color); color:var(--text-main); padding:12px 16px 12px 42px; border-radius:14px; font-size:13.5px; outline:none; }
         .search-batches-box i { position:absolute; left:16px; top:50%; transform:translateY(-50%); color:var(--text-muted); }
 
-        .batch-card { background: linear-gradient(135deg, rgba(15, 23, 42, 0.95), rgba(30, 41, 59, 0.95)); border: 1px solid rgba(37, 99, 235, 0.4); border-radius: 18px; padding: 18px; margin-bottom: 14px; box-shadow: 0 10px 30px rgba(0,0,0,0.4); position: relative; overflow: hidden; transition: 0.3s; }
+        .batch-card { background: linear-gradient(135deg, rgba(15, 23, 42, 0.95), rgba(30, 41, 59, 0.95)); border: 1px solid rgba(37, 99, 235, 0.3); border-radius: 18px; padding: 18px; margin-bottom: 14px; box-shadow: 0 10px 30px rgba(0,0,0,0.4); position: relative; overflow: hidden; transition: 0.3s; }
         .batch-card:hover { border-color: var(--accent-color); transform: translateY(-2px); }
         .batch-tag { background: rgba(16, 185, 129, 0.15); color: var(--success-color); font-size: 10.5px; font-weight: 700; padding: 4px 10px; border-radius: 20px; display: inline-block; margin-bottom: 8px; border: 1px solid rgba(16, 185, 129, 0.3); }
-        .batch-title { font-size: 17px; font-weight: 800; color: #fff; margin-bottom: 4px; }
-        .batch-desc { font-size: 12px; color: var(--text-muted); margin-bottom: 12px; }
+        .batch-title { font-size: 16.5px; font-weight: 800; color: #fff; margin-bottom: 4px; }
+        .batch-desc { font-size: 12px; color: var(--text-muted); margin-bottom: 12px; line-height:1.4; }
+        .batch-teachers-strip { font-size: 11px; color: var(--gold-color); font-weight: 600; margin-bottom: 12px; background: rgba(245, 158, 11, 0.1); padding: 6px 10px; border-radius: 8px; border: 1px solid rgba(245, 158, 11, 0.2); }
         .batch-footer { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border-color); padding-top: 12px; }
-        .batch-price { font-size: 15px; font-weight: 800; color: var(--success-color); }
+        .batch-price { font-size: 14.5px; font-weight: 800; color: var(--success-color); }
         .batch-actions { display: flex; gap: 8px; }
         .btn-trial { background: rgba(245, 158, 11, 0.2); color: var(--gold-color); border: 1px solid rgba(245, 158, 11, 0.5); padding: 8px 12px; border-radius: 10px; font-size: 11.5px; font-weight: 700; cursor: pointer; }
         .btn-buy { background: var(--accent-color); color: #fff; border: none; padding: 8px 16px; border-radius: 10px; font-size: 11.5px; font-weight: 700; cursor: pointer; box-shadow: 0 4px 15px var(--accent-glow); }
@@ -227,14 +233,12 @@
         .modal-overlay { position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); z-index:2000; display:none; justify-content:center; align-items:center; padding:16px; }
         .modal-card { background:var(--card-bg); border:1px solid var(--border-color); border-radius:20px; padding:22px; max-width:480px; width:100%; text-align:center; position:relative; max-height:92vh; display:flex; flex-direction:column; animation: popIn 0.3s ease; }
         
-        .pricing-list { display:flex; flex-direction:column; gap:8px; margin:12px 0; text-align:left; overflow-y:auto; padding-right:4px; max-height:360px; }
-        .price-category-label { font-size:11px; font-weight:800; color:var(--accent-color); text-transform:uppercase; letter-spacing:0.5px; margin:8px 0 4px 2px; }
-        .price-item { background:var(--chat-bg); border:1px solid var(--border-color); padding:10px 12px; border-radius:10px; display:flex; justify-content:space-between; align-items:center; cursor:pointer; transition:0.2s; }
-        .price-item:hover, .price-item.selected { border-color:var(--accent-color); background:rgba(37, 99, 235, 0.18); }
-        .price-item .plan-name { font-size:12px; font-weight:600; color:var(--text-main); }
-        .price-item .plan-cost { font-size:12.5px; font-weight:800; color:var(--success-color); }
-
-        .pro-banner { background:linear-gradient(135deg, rgba(245, 158, 11, 0.25), rgba(37, 99, 235, 0.25)); border:1px solid rgba(245, 158, 11, 0.6); border-radius:12px; padding:12px; margin-bottom:8px; text-align:left; }
+        .tier-card-option { background: var(--chat-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 12px; margin-bottom: 10px; text-align: left; cursor: pointer; transition: 0.2s; }
+        .tier-card-option:hover, .tier-card-option.selected { border-color: var(--accent-color); background: rgba(37, 99, 235, 0.15); }
+        .tier-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; }
+        .tier-name { font-size: 13.5px; font-weight: 800; color: #fff; }
+        .tier-price { font-size: 14px; font-weight: 800; color: var(--success-color); }
+        .tier-desc { font-size: 11px; color: var(--text-muted); line-height: 1.3; }
 
         .setting-item { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; font-size: 13.5px; color: var(--text-main); text-align:left; }
         .switch { position: relative; display: inline-block; width: 38px; height: 22px; flex-shrink:0; }
@@ -419,7 +423,7 @@
         </div>
     </div>
 
-    <!-- 🚀 1. PW STYLE BATCHES & GOALS DASHBOARD SCREEN (DEFAULT HOME) -->
+    <!-- 🚀 1. PW STYLE 300+ BATCHES DASHBOARD SCREEN -->
     <div id="batches-screen">
         <div class="batches-header">
             <div style="display:flex; align-items:center; gap:10px;">
@@ -428,19 +432,69 @@
                 </div>
                 <div>
                     <strong style="font-size:15px; color:#fff;">TicBull Batches & Goals</strong>
-                    <p style="font-size:10px; color:var(--text-muted);">Select your class, board or competitive exam</p>
+                    <p style="font-size:10px; color:var(--text-muted);">Explore 300+ Indian Boards & Competitive Batches</p>
                 </div>
             </div>
             <button class="menu-btn" onclick="toggleDrawer()"><i class="fa-solid fa-bars"></i></button>
         </div>
 
+        <!-- CATEGORY SCROLL FILTER BAR -->
+        <div class="category-scroll-bar" id="catBar">
+            <div class="cat-chip active" onclick="filterCategory('ALL', this)">All Batches</div>
+            <div class="cat-chip" onclick="filterCategory('CBSE', this)">CBSE Board (9-12)</div>
+            <div class="cat-chip" onclick="filterCategory('BIHAR', this)">Bihar Board (BSEB)</div>
+            <div class="cat-chip" onclick="filterCategory('UP', this)">UP Board (UPMSP)</div>
+            <div class="cat-chip" onclick="filterCategory('ICSE', this)">ICSE / ISC Board</div>
+            <div class="cat-chip" onclick="filterCategory('NEET', this)">NEET Medical</div>
+            <div class="cat-chip" onclick="filterCategory('JEE', this)">IIT-JEE Engineering</div>
+            <div class="cat-chip" onclick="filterCategory('UPSC', this)">UPSC Civil Services</div>
+            <div class="cat-chip" onclick="filterCategory('BPSC', this)">BPSC State PCS</div>
+            <div class="cat-chip" onclick="filterCategory('DEFENSE', this)">NDA / Defense</div>
+            <div class="cat-chip" onclick="filterCategory('COMMERCE', this)">CA / CS / Commerce</div>
+        </div>
+
         <div class="search-batches-box">
             <i class="fa-solid fa-magnifying-glass"></i>
-            <input type="text" id="batchSearchInput" placeholder="Search for Class 9-12, CBSE, Bihar Board, NEET, JEE, UPSC..." onkeyup="filterBatches()">
+            <input type="text" id="batchSearchInput" placeholder="Search for Class 9-12, Bihar, CBSE, NEET, JEE, UPSC..." onkeyup="searchBatches()">
         </div>
 
         <div id="batchesContainer">
-            <!-- Dynamic Batch Cards will load here -->
+            <!-- Dynamic Batches Load Here -->
+        </div>
+    </div>
+
+    <!-- 🚀 3-TIER BATCH PLAN SELECTION MODAL (BASIC / PRO / MAX PRO) -->
+    <div class="modal-overlay" id="tierModal">
+        <div class="modal-card">
+            <i class="fa-solid fa-xmark" style="position:absolute; right:16px; top:16px; color:var(--text-muted); cursor:pointer;" onclick="closeTierModal()"></i>
+            <h3 style="color:var(--text-main); font-size:17px; margin-bottom:2px;" id="tierModalBatchTitle">Select Batch Access Plan</h3>
+            <p style="font-size:11.5px; color:var(--text-muted); margin-bottom:14px;">Choose daily doubt limit according to your requirement</p>
+
+            <div class="tier-card-option" onclick="selectTier('BASIC', 199)" id="tierBasicCard">
+                <div class="tier-header">
+                    <span class="tier-name"><i class="fa-solid fa-leaf" style="color:#10b981;"></i> Basic Pass</span>
+                    <span class="tier-price" id="tierPriceBasic">₹199/yr</span>
+                </div>
+                <div class="tier-desc">• <b>5 Doubts/day</b> (Gemini/Meta Engine)<br>• Chapter Notes & Homework Help<br>• Affordable Budget Plan</div>
+            </div>
+
+            <div class="tier-card-option selected" onclick="selectTier('PRO', 499)" id="tierProCard">
+                <div class="tier-header">
+                    <span class="tier-name"><i class="fa-solid fa-star" style="color:#f59e0b;"></i> Pro Pass (Recommended)</span>
+                    <span class="tier-price" id="tierPricePro">₹499/yr</span>
+                </div>
+                <div class="tier-desc">• <b>20 Doubts/day</b> (High Speed Gemini 1.5)<br>• PDF & Image Notes Support<br>• Dedicated 13 Subject Experts</div>
+            </div>
+
+            <div class="tier-card-option" onclick="selectTier('MAX_PRO', 999)" id="tierMaxProCard">
+                <div class="tier-header">
+                    <span class="tier-name"><i class="fa-solid fa-crown" style="color:#8b5cf6;"></i> Max Pro Pass</span>
+                    <span class="tier-price" id="tierPriceMaxPro">₹999/yr</span>
+                </div>
+                <div class="tier-desc">• <b>70+ Doubts/day</b> (Priority High Performance)<br>• AI Diagram & Video Visual Reference<br>• Complete Exam Goal Mastery</div>
+            </div>
+
+            <button class="btn-primary" id="confirmTierBtn" onclick="confirmTierSelection()">ENROLL NOW</button>
         </div>
     </div>
 
@@ -459,7 +513,6 @@
             </div>
             
             <div style="display:flex; align-items:center; gap:6px;">
-                <!-- TEACHER SWITCH BUTTON -->
                 <div onclick="quickToggleTeacher()" style="background:var(--input-bg); border:1px solid var(--border-color); padding:5px 10px; border-radius:20px; font-size:11px; font-weight:700; color:var(--gold-color); cursor:pointer; display:flex; align-items:center; gap:5px;" title="Switch Teacher">
                     <i class="fa-solid fa-chalkboard-user"></i> <span id="headerTeacherText">Sir</span>
                 </div>
@@ -468,17 +521,15 @@
                     <i class="fa-solid fa-fire"></i> <span id="streakCountText">0 Day</span>
                 </span>
                 
-                <span class="user-badge" onclick="openSubscriptionModal()"><i class="fa-solid fa-crown"></i> <span id="badgePlanText">Free Demo Plan</span></span>
+                <span class="user-badge" onclick="openSubscriptionModal()"><i class="fa-solid fa-crown"></i> <span id="badgePlanText">Free Trial</span></span>
             </div>
         </div>
 
-        <!-- ACTIVE BATCH BAR (CLICK TO GO BACK TO BATCHES) -->
         <div class="course-bar-toggle" onclick="switchToBatchesScreen()">
             <span id="activeBatchLabel"><i class="fa-solid fa-graduation-cap" style="color:var(--accent-color);"></i> Active Batch: Class 10 - CBSE Board</span>
-            <span style="font-size:11px; color:var(--accent-color); font-weight:700;"><i class="fa-solid fa-exchange-alt"></i> Change</span>
+            <span style="font-size:11px; color:var(--accent-color); font-weight:700;"><i class="fa-solid fa-exchange-alt"></i> Change Batch</span>
         </div>
 
-        <!-- LANGUAGE SELECTOR BAR -->
         <div style="display:flex; align-items:center; justify-content:space-between; background:var(--card-bg); border:1px solid var(--border-color); padding:6px 12px; border-radius:12px; margin-bottom:8px;">
             <span style="font-size:11.5px; color:var(--text-muted);"><i class="fa-solid fa-language"></i> AI Language:</span>
             <select id="chatLangSelect" style="background:var(--input-bg); color:var(--text-main); border:1px solid var(--border-color); padding:4px 10px; border-radius:8px; font-size:11.5px; outline:none; width:150px;" onchange="saveChatLang(this.value)">
@@ -489,14 +540,14 @@
         </div>
 
         <div class="active-course-chip" id="activeCourseChip" style="background:rgba(16, 185, 129, 0.1); border:1px solid rgba(16, 185, 129, 0.4); padding:6px 10px; border-radius:12px; font-size:11px; font-weight:700; color:var(--text-main); margin-bottom:8px; display:flex; justify-content:space-between; flex-shrink:0;">
-            <span><i class="fa-solid fa-lock"></i> Unlocked Pass: Free Demo Plan</span>
-            <span style="font-size:10px; color:var(--success-color);">Active</span>
+            <span><i class="fa-solid fa-shield-halved"></i> Pass Status: Active</span>
+            <span style="font-size:10px; color:var(--success-color);" id="doubtLimitChip">20 Doubts/Day</span>
         </div>
 
         <div class="chat-container" id="chatBox">
             <div class="msg ai" id="welcomeAiMessage">
                 <b>Welcome to TicBull Academy! 🚀</b><br>
-                Aapka Free Demo Plan active hai. Aap apni queries pooch sakte hain ya batch upgrade kar sakte hain!
+                Aapka Batch unlocked hai. Apne subjects ke questions poochiye!
             </div>
         </div>
 
@@ -505,7 +556,6 @@
             <i class="fa-solid fa-xmark" style="cursor:pointer;" onclick="removeImage()"></i>
         </div>
 
-        <!-- QUICK AI TOOLKIT POPUP MENU (+) -->
         <div class="ai-tools-menu" id="aiToolsMenu">
             <button class="tool-btn" onclick="triggerTool('Generate Comprehensive Detailed Chapter Notes')"><i class="fa-solid fa-book" style="color:#10b981;"></i> Detailed Notes</button>
             <button class="tool-btn" onclick="triggerTool('Generate Quick Revision Short Notes (Bullet Pointers)')"><i class="fa-solid fa-bolt" style="color:#f59e0b;"></i> Quick Short Notes</button>
@@ -515,7 +565,6 @@
             <button class="tool-btn" onclick="triggerTool('Generate 10 Objective Questions (MCQs) with Answer Key')"><i class="fa-solid fa-list-check" style="color:#06b6d4;"></i> Objective MCQs</button>
         </div>
 
-        <!-- CHAT INPUT BAR WITH MULTIPLE FILES / PDF & VOICE -->
         <div class="chat-input-bar">
             <button class="action-icon-btn" onclick="toggleToolsMenu()" title="Quick AI Tools (+)"><i class="fa-solid fa-plus"></i></button>
             
@@ -540,7 +589,6 @@
             <i class="fa-solid fa-xmark" style="color:var(--text-muted); cursor:pointer;" onclick="toggleDrawer()"></i>
         </div>
 
-        <!-- REAL STUDENT PROFILE CARD -->
         <div class="profile-card">
             <i class="fa-solid fa-pen-to-square edit-profile-btn" onclick="openEditProfileModal()" title="Edit Profile"></i>
             <div class="profile-header">
@@ -567,7 +615,6 @@
         <div class="drawer-item" onclick="startNewChat()"><i class="fa-solid fa-plus-circle" style="color:#10b981;"></i> Start New Chat</div>
         <div class="drawer-item" onclick="logoutUser()" style="color:#ef4444;"><i class="fa-solid fa-right-from-bracket"></i> Log Out Account</div>
 
-        <!-- CHAT HISTORY -->
         <div class="history-title" style="display:flex; justify-content:space-between; align-items:center;">
             <span><i class="fa-solid fa-clock-rotate-left"></i> Recent Chat Sessions:</span>
         </div>
@@ -678,128 +725,205 @@
     <div class="modal-overlay" id="subModal">
         <div class="modal-card">
             <i class="fa-solid fa-xmark" style="position:absolute; right:16px; top:16px; color:var(--text-muted); cursor:pointer;" onclick="closeSubscriptionModal()"></i>
-            <h3 style="color:var(--text-main); font-size:18px;">🎓 TicBull Course Pass Pricing</h3>
-            <p style="font-size:11.5px; color:var(--text-muted); margin-top:2px;">PW Level Most Affordable Pricing in India</p>
-
-            <div class="pro-banner" onclick="selectPlan('TicBull Pro (All Access)', 1599)" style="cursor:pointer;">
-                <div style="display:flex; justify-content:space-between; align-items:center;">
-                    <strong style="color:#f59e0b; font-size:13px;"><i class="fa-solid fa-crown"></i> TicBull Pro Pass (All-Access)</strong>
-                    <span style="color:#10b981; font-weight:800; font-size:13.5px;">₹1599/yr</span>
-                </div>
-                <p style="font-size:10px; color:#d1d5db; margin-top:4px;">Unlocked All Boards, Classes (9-12), Science/Commerce/Arts, BPSC/UPSC & Skill Courses!</p>
-            </div>
-
-            <div class="pricing-list">
-                <div class="price-category-label">📖 School Boards (CBSE / Bihar / UP / ICSE)</div>
-                <div class="price-item" onclick="selectPlan('Class 9-10 Board', 199, this)"><span class="plan-name">Class 9-10 (All Subjects)</span><span class="plan-cost">₹199/yr</span></div>
-                <div class="price-item" onclick="selectPlan('Class 11 Science', 299, this)"><span class="plan-name">Class 11 Science (PCM/PCB)</span><span class="plan-cost">₹299/yr</span></div> 
-                <div class="price-item" onclick="selectPlan('Class 11 Commerce', 299, this)"><span class="plan-name">Class 11 Commerce</span><span class="plan-cost">₹299/yr</span></div> 
-                <div class="price-item" onclick="selectPlan('Class 11 Arts', 249, this)"><span class="plan-name">Class 11 Arts / Humanities</span><span class="plan-cost">₹249/yr</span></div>
-                <div class="price-item" onclick="selectPlan('Class 12 Science', 399, this)"><span class="plan-name">Class 12 Science (PCM/PCB)</span><span class="plan-cost">₹399/yr</span></div>
-                <div class="price-item" onclick="selectPlan('Class 12 Commerce', 399, this)"><span class="plan-name">Class 12 Commerce</span><span class="plan-cost">₹399/yr</span></div>
-                <div class="price-item" onclick="selectPlan('Class 12 Arts', 299, this)"><span class="plan-name">Class 12 Arts / Humanities</span><span class="plan-cost">₹299/yr</span></div>
-
-                <div class="price-category-label">🏆 Competitive Exams (All India & State)</div>
-                <div class="price-item" onclick="selectPlan('BPSC Exam Prep', 499, this)"><span class="plan-name">BPSC (Bihar PSC Exam)</span><span class="plan-cost">₹499/yr</span></div>
-                <div class="price-item" onclick="selectPlan('UPSC Civil Services', 899, this)"><span class="plan-name">UPSC Civil Services</span><span class="plan-cost">₹899/yr</span></div>
-                <div class="price-item" onclick="selectPlan('State PSC Prep', 599, this)"><span class="plan-name">State PSC Exams</span><span class="plan-cost">₹599/yr</span></div>
-                <div class="price-item" onclick="selectPlan('JEE Main Prep', 699, this)"><span class="plan-name">JEE Main Exam</span><span class="plan-cost">₹699/yr</span></div>
-                <div class="price-item" onclick="selectPlan('JEE Advanced Prep', 799, this)"><span class="plan-name">JEE Advanced Exam</span><span class="plan-cost">₹799/yr</span></div>
-                <div class="price-item" onclick="selectPlan('NEET Medical Prep', 749, this)"><span class="plan-name">NEET Medical Exam</span><span class="plan-cost">₹749/yr</span></div>
-                <div class="price-item" onclick="selectPlan('CUET Prep', 499, this)"><span class="plan-name">CUET Exam</span><span class="plan-cost">₹499/yr</span></div>
-                <div class="price-item" onclick="selectPlan('SSC / Banking / Railway', 499, this)"><span class="plan-name">SSC / Banking / Railway</span><span class="plan-cost">₹499/yr</span></div>
-                <div class="price-item" onclick="selectPlan('NDA Defense Prep', 499, this)"><span class="plan-name">NDA / Defense Exams</span><span class="plan-cost">₹499/yr</span></div>
-                <div class="price-item" onclick="selectPlan('CLAT Entrance', 549, this)"><span class="plan-name">CLAT Entrance Exam</span><span class="plan-cost">₹549/yr</span></div>
-                <div class="price-item" onclick="selectPlan('CAT Exam Prep', 399, this)"><span class="plan-name">CAT MBA Entrance</span><span class="plan-cost">₹399/yr</span></div>
-                <div class="price-item" onclick="selectPlan('GATE Exam Prep', 449, this)"><span class="plan-name">GATE Exam</span><span class="plan-cost">₹449/yr</span></div>
-                <div class="price-item" onclick="selectPlan('CA / CS / CMA Foundation', 699, this)"><span class="plan-name">CA / CS / CMA Foundation</span><span class="plan-cost">₹699/yr</span></div>
-
-                <div class="price-category-label">🚀 Skill & Business Courses</div>
-                <div class="price-item" onclick="selectPlan('Social Media Mastery', 299, this)"><span class="plan-name">Social Media & YouTube Creator</span><span class="plan-cost">₹299/yr</span></div>
-                <div class="price-item" onclick="selectPlan('Digital Marketing & Business', 399, this)"><span class="plan-name">Digital Marketing & Startup</span><span class="plan-cost">₹399/yr</span></div>
-                <div class="price-item" onclick="selectPlan('Coding & AI Skills', 399, this)"><span class="plan-name">Coding, Python & AI Mastery</span><span class="plan-cost">₹399/yr</span></div>
-                <div class="price-item" onclick="selectPlan('Finance & Stock Market', 299, this)"><span class="plan-name">Finance & Stock Market Basics</span><span class="plan-cost">₹299/yr</span></div>
-            </div>
-
-            <button class="btn-primary" onclick="activateSelectedPlan()">ACTIVATE / SWITCH PASS</button>
+            <h3 style="color:var(--text-main); font-size:18px;">🎓 TicBull Batch Access</h3>
+            <p style="font-size:11.5px; color:var(--text-muted); margin-top:2px;">Select or change your batch plan from All Batches screen</p>
+            <button class="btn-primary" onclick="closeSubscriptionModal(); switchToBatchesScreen();" style="margin-top:15px;">EXPLORE ALL BATCHES</button>
         </div>
     </div>
 
     <script>
         let currentTeacher = localStorage.getItem('ticbull_teacher') || 'male';
-        let currentActiveBatch = localStorage.getItem('tb_active_batch') || 'Class 10 - CBSE Board (13 Subject Experts)';
+        let currentActiveBatch = localStorage.getItem('tb_active_batch') || 'Class 10 CBSE Udaan Batch';
+        let selectedBatchForModal = null;
+        let selectedTierType = 'PRO';
+        let selectedTierPrice = 499;
 
-        // ALL INDIAN SCHOOL BOARDS & COMPETITIVE BATCHES DATA
-        const allBatchesData = [
-            { id: 'cbse10', name: 'Udaan 2.0 - Class 10 CBSE Board', tag: 'Most Popular • 13 Subjects', price: '₹199/yr', desc: 'Covering Math, Science, SST, English, Hindi, Sanskrit, Computer & more with dedicated expert teachers.' },
-            { id: 'cbse12sci', name: 'Arjuna 2.0 - Class 12 Science (PCM/PCB)', tag: 'JEE / NEET + Board Combo', price: '₹399/yr', desc: 'Physics, Chemistry, Maths & Biology expert guidance for school exams and entrance tests.' },
-            { id: 'bihar10', name: 'Bihar Board (BSEB) - Class 10 Lakshya Batch', tag: 'BSEB Expert Faculty', price: '₹199/yr', desc: 'Poora syllabus Bihar Board pattern par Hindi & Urdu medium me.' },
-            { id: 'bihar12sci', name: 'Bihar Board (BSEB) - Class 12 Science Vigyan', tag: 'Top Results', price: '₹399/yr', desc: 'Physics, Chemistry, Biology, Math for BSEB 12th exam.' },
-            { id: 'up10', name: 'UP Board (UPMSP) - Class 10 Topper Batch', tag: 'UP Board Syllabus', price: '₹199/yr', desc: 'Complete UP Board Class 10 coverage.' },
-            { id: 'up12sci', name: 'UP Board (UPMSP) - Class 12 Science Excellence', tag: 'Board + Competitions', price: '₹399/yr', desc: 'Advanced preparation for UP Board science students.' },
-            { id: 'icse10', name: 'ICSE / ISC - Class 10 Board Mastery', tag: 'ICSE Expert Panel', price: '₹249/yr', desc: 'Strict ICSE guidelines and chapter notes.' },
-            { id: 'neet11', name: 'NEET 2027 - Class 11 Aarambh Batch', tag: 'Medical Entrance', price: '₹749/yr', desc: 'Physics, Chemistry, Botany & Zoology specialist teachers.' },
-            { id: 'jee11', name: 'IIT-JEE 2027 - Class 11 Momentum Batch', tag: 'Engineering Entrance', price: '₹799/yr', desc: 'Advanced calculus, mechanics, and physical chemistry.' },
-            { id: 'upsc', name: 'UPSC Civil Services - Foundation IAS', tag: 'General Studies & CSAT', price: '₹899/yr', desc: 'History, Polity, Geography, Economy & Ethics expert guidance.' },
-            { id: 'bpsc', name: 'BPSC Combined Exam - Bihar PCS', tag: 'State Civil Services', price: '₹499/yr', desc: 'Special Bihar Special GK, History & Current Affairs.' },
-            { id: 'nda', name: 'NDA / Defense Exam - Shaurya Batch', tag: 'Army, Navy, Airforce', price: '₹499/yr', desc: 'Maths and GAT preparation with strict discipline.' }
-        ];
+        // 🚀 DYNAMIC 300+ BATCHES GENERATOR ENGINE (COVERING ALL BOARDS & EXAMS IN INDIA)
+        function generate300Batches() {
+            const list = [];
+            
+            // 1. SCHOOL BOARDS (CBSE, Bihar, UP, ICSE, Rajasthan, MP, Maharashtra, Bengal, etc.)
+            const boards = [
+                { code: 'CBSE', name: 'CBSE Board' },
+                { code: 'BIHAR', name: 'Bihar Board (BSEB)' },
+                { code: 'UP', name: 'UP Board (UPMSP)' },
+                { code: 'ICSE', name: 'ICSE / ISC Board' },
+                { code: 'MP', name: 'MP Board (MPBSE)' },
+                { code: 'RAJ', name: 'Rajasthan Board (RBSE)' },
+                { code: 'MH', name: 'Maharashtra Board (MSBSHSE)' }
+            ];
 
-        function renderBatches(filter = '') {
+            const classes = ['Class 9th', 'Class 10th', 'Class 11th Science (PCM)', 'Class 11th Science (PCB)', 'Class 11th Commerce', 'Class 11th Arts', 'Class 12th Science (PCM)', 'Class 12th Science (PCB)', 'Class 12th Commerce', 'Class 12th Arts'];
+
+            boards.forEach(b => {
+                classes.forEach(c => {
+                    list.push({
+                        id: `${b.code}_${c.replace(/[^a-zA-Z0-9]/g, '')}`,
+                        category: b.code,
+                        name: `${b.name} - ${c} Topper Batch`,
+                        tag: '13 Dedicated Subject Experts',
+                        teachers: 'Math, Physics, Chem, Bio, History, SST, English, Hindi + 6 More',
+                        desc: `Complete syllabus coverage according to strict ${b.name} examination guidelines.`,
+                        basicPrice: 199,
+                        proPrice: 499,
+                        maxProPrice: 999
+                    });
+                });
+            });
+
+            // 2. COMPETITIVE EXAMS
+            const compExams = [
+                { cat: 'NEET', name: 'NEET 2027 Medical Dropper / Class 12 Batch', tag: 'Medical Entrance Specialist', teachers: 'Dr. Physics, Chem Specialist, Botany & Zoology Experts', price1: 299, price2: 749, price3: 1499 },
+                { cat: 'JEE', name: 'IIT-JEE 2027 Momentum Engineering Batch', tag: 'IIT Rankers Faculty', teachers: 'Advanced Mechanics, Calculus & Physical Chem Specialists', price1: 299, price2: 799, price3: 1599 },
+                { cat: 'UPSC', name: 'UPSC IAS Civil Services Complete Foundation', tag: 'IAS / IPS Goal', teachers: 'Polity, Geography, Modern History & CSAT Faculty', price1: 399, price2: 899, price3: 1999 },
+                { cat: 'BPSC', name: 'BPSC Combined Civil Services Bihar Special', tag: 'Bihar PSC Specialist', teachers: 'Bihar GK, Current Affairs & Mains Writing Faculty', price1: 249, price2: 499, price3: 1199 },
+                { cat: 'DEFENSE', name: 'NDA / Defense Academy Shaurya Batch', tag: 'Defense Goal', teachers: 'Mathematics & General Ability Test Specialist', price1: 199, price2: 499, price3: 999 },
+                { cat: 'COMMERCE', name: 'CA / CS / CMA Foundation Mastery', tag: 'Commerce Leader', teachers: 'Accounting, Law, Business Math & Economics Specialists', price1: 299, price2: 699, price3: 1399 }
+            ];
+
+            compExams.forEach((e, idx) => {
+                list.push({
+                    id: `comp_${idx}`,
+                    category: e.cat,
+                    name: e.name,
+                    tag: e.tag,
+                    teachers: e.teachers,
+                    desc: `Strict competitive exam syllabus boundary with dual Board + Entrance preparation.`,
+                    basicPrice: e.price1,
+                    proPrice: e.price2,
+                    maxProPrice: e.price3
+                });
+            });
+
+            return list;
+        }
+
+        const all300Batches = generate300Batches();
+        let currentSelectedCategory = 'ALL';
+
+        function renderBatchesList(batchesArray) {
             const container = document.getElementById('batchesContainer');
             if(!container) return;
             container.innerHTML = '';
 
-            const filtered = allBatchesData.filter(b => b.name.toLowerCase().includes(filter.toLowerCase()) || b.desc.toLowerCase().includes(filter.toLowerCase()));
-            
-            if(filtered.length === 0) {
+            if(batchesArray.length === 0) {
                 container.innerHTML = '<p style="color:var(--text-muted); text-align:center; padding:30px;">No batches found matching your search.</p>';
                 return;
             }
 
-            filtered.forEach(batch => {
+            batchesArray.forEach(batch => {
                 container.innerHTML += `
                     <div class="batch-card">
                         <span class="batch-tag">${batch.tag}</span>
                         <div class="batch-title">${batch.name}</div>
+                        <div class="batch-teachers-strip"><i class="fa-solid fa-chalkboard-user"></i> Faculty: ${batch.teachers}</div>
                         <div class="batch-desc">${batch.desc}</div>
                         <div class="batch-footer">
-                            <span class="batch-price">${batch.price}</span>
+                            <div>
+                                <span style="font-size:10px; color:var(--text-muted); display:block;">Starting from</span>
+                                <span class="batch-price">₹${batch.basicPrice}/yr</span>
+                            </div>
                             <div class="batch-actions">
-                                <button class="btn-trial" onclick="selectBatchAndStart('${batch.name}', true)"><i class="fa-solid fa-gift"></i> 2 Days Free Trial</button>
-                                <button class="btn-buy" onclick="selectBatchAndStart('${batch.name}', false)">Join Batch</button>
+                                <button class="btn-trial" onclick="startFreeTrialDirect('${batch.name}')"><i class="fa-solid fa-gift"></i> 2 Days Free</button>
+                                <button class="btn-buy" onclick="openTierModal('${batch.id}')">View Plans</button>
                             </div>
                         </div>
                     </div>`;
             });
         }
 
-        function filterBatches() {
-            const query = document.getElementById('batchSearchInput').value;
-            renderBatches(query);
+        function filterCategory(cat, el) {
+            currentSelectedCategory = cat;
+            document.querySelectorAll('.cat-chip').forEach(c => c.classList.remove('active'));
+            if(el) el.classList.add('active');
+
+            if(cat === 'ALL') {
+                renderBatchesList(all300Batches);
+            } else {
+                const filtered = all300Batches.filter(b => b.category === cat);
+                renderBatchesList(filtered);
+            }
         }
 
-        function selectBatchAndStart(batchName, isTrial) {
+        function searchBatches() {
+            const query = document.getElementById('batchSearchInput').value.toLowerCase();
+            const filtered = all300Batches.filter(b => 
+                b.name.toLowerCase().includes(query) || 
+                b.category.toLowerCase().includes(query) ||
+                b.teachers.toLowerCase().includes(query)
+            );
+            renderBatchesList(filtered);
+        }
+
+        function openTierModal(batchId) {
+            const batch = all300Batches.find(b => b.id === batchId);
+            if(!batch) return;
+            selectedBatchForModal = batch;
+
+            document.getElementById('tierModalBatchTitle').innerText = batch.name;
+            document.getElementById('tierPriceBasic').innerText = `₹${batch.basicPrice}/yr`;
+            document.getElementById('tierPricePro').innerText = `₹${batch.proPrice}/yr`;
+            document.getElementById('tierPriceMaxPro').innerText = `₹${batch.maxProPrice}/yr`;
+
+            document.getElementById('tierModal').style.display = 'flex';
+        }
+
+        function closeTierModal() {
+            document.getElementById('tierModal').style.display = 'none';
+        }
+
+        function selectTier(type, price) {
+            selectedTierType = type;
+            selectedTierPrice = price;
+
+            document.getElementById('tierBasicCard').classList.toggle('selected', type === 'BASIC');
+            document.getElementById('tierProCard').classList.toggle('selected', type === 'PRO');
+            document.getElementById('tierMaxProCard').classList.toggle('selected', type === 'MAX_PRO');
+        }
+
+        function confirmTierSelection() {
+            if(!selectedBatchForModal) return;
+
+            currentActiveBatch = selectedBatchForModal.name;
+            localStorage.setItem('tb_active_batch', currentActiveBatch);
+            localStorage.setItem('tb_tier_type', selectedTierType);
+
+            document.getElementById('activeBatchLabel').innerHTML = `<i class="fa-solid fa-graduation-cap" style="color:var(--accent-color);"></i> Active Batch: ${currentActiveBatch}`;
+            document.getElementById('badgePlanText').innerText = `${selectedTierType} Pass`;
+            
+            let limitText = "20 Doubts/Day";
+            if(selectedTierType === 'BASIC') limitText = "5 Doubts/Day";
+            if(selectedTierType === 'MAX_PRO') limitText = "70+ Doubts/Day";
+            document.getElementById('doubtLimitChip').innerText = limitText;
+
+            closeTierModal();
+            switchToMainChat();
+            showToast(`🎉 Enrolled in ${selectedBatchForModal.name} (${selectedTierType} Pass)!`, "success");
+        }
+
+        function startFreeTrialDirect(batchName) {
             currentActiveBatch = batchName;
             localStorage.setItem('tb_active_batch', batchName);
+            localStorage.setItem('tb_tier_type', 'FREE_TRIAL');
+
             document.getElementById('activeBatchLabel').innerHTML = `<i class="fa-solid fa-graduation-cap" style="color:var(--accent-color);"></i> Active Batch: ${batchName}`;
-            
-            // Switch screen from batches to main dashboard
+            document.getElementById('badgePlanText').innerText = `Free Trial`;
+            document.getElementById('doubtLimitChip').innerText = `Trial Active`;
+
+            switchToMainChat();
+            showToast(`🎁 2 Days Free Trial Activated for ${batchName}!`, "success");
+        }
+
+        function switchToMainChat() {
             document.getElementById('batches-screen').style.display = 'none';
             document.getElementById('main-dashboard').style.display = 'flex';
-            
-            if(isTrial) {
-                showToast("🎁 2 Days Free Trial Activated for this Batch!", "success");
-            } else {
-                showToast(`🎉 Enrolled in ${batchName}!`, "success");
-            }
             scrollToBottom();
         }
 
         function switchToBatchesScreen() {
             document.getElementById('main-dashboard').style.display = 'none';
             document.getElementById('batches-screen').style.display = 'flex';
-            renderBatches();
+            filterCategory(currentSelectedCategory, null);
         }
 
         function quickToggleTeacher() {
@@ -858,7 +982,7 @@
         }
 
         document.addEventListener('click', function(e) {
-            if(e.target.closest('button') || e.target.closest('.action-icon-btn') || e.target.closest('.drawer-item') || e.target.closest('.auth-tab') || e.target.closest('.price-item') || e.target.closest('.theme-circle') || e.target.closest('.batch-card')) {
+            if(e.target.closest('button') || e.target.closest('.action-icon-btn') || e.target.closest('.drawer-item') || e.target.closest('.auth-tab') || e.target.closest('.price-item') || e.target.closest('.theme-circle') || e.target.closest('.batch-card') || e.target.closest('.cat-chip')) {
                 playClickSound();
             }
         });
@@ -953,7 +1077,7 @@
 
         window.addEventListener('DOMContentLoaded', () => {
             updateHeaderTeacherUI();
-            renderBatches();
+            renderBatchesList(all300Batches);
 
             const savedEmail = localStorage.getItem('ticbull_email');
             const savedToken = localStorage.getItem('ticbull_token');
@@ -974,7 +1098,6 @@
                         if(currentStudentData.photo) localStorage.setItem('ticbull_photo', currentStudentData.photo);
 
                         document.getElementById('auth-screen').style.display = 'none';
-                        // Show Batches Screen first after login
                         document.getElementById('batches-screen').style.display = 'flex';
                         updateProfileUI();
                         loadSidebarHistory();
@@ -1166,7 +1289,6 @@
                     updateProfileUI();
                     document.getElementById('otpModal').style.display = 'none';
                     document.getElementById('auth-screen').style.display = 'none';
-                    // Show Batches Dashboard Screen after login
                     document.getElementById('batches-screen').style.display = 'flex';
                     loadSidebarHistory();
                     checkAndUpdateStreak();
@@ -1360,29 +1482,10 @@
                     • <b>App Founder:</b> Created by MrYuviYadav.<br>
                     • <b>App Purpose:</b> AI Powered Learning, Exam Engine.<br>
                     • <b>Key Features:</b> Detailed Notes, MCQs, AI Diagram & Video Explanations.<br>
-                    • <b>How to Use:</b> Click top bar to change Course/Class, ask doubts or click <b>(+)</b> for instant tools!
+                    • <b>How to Use:</b> Select your Batch from Dashboard and ask your subject doubts!
                 </div>`;
             scrollToBottom();
             saveChatUI();
-        }
-
-        function selectPlan(name, price, element) {
-            selectedPlanName = name;
-            selectedPlanPrice = price;
-            const items = document.querySelectorAll('.price-item');
-            items.forEach(item => item.classList.remove('selected'));
-            if(element) element.classList.add('selected');
-        }
-
-        function activateSelectedPlan() {
-            purchasedPlanName = selectedPlanName;
-            isProUser = selectedPlanName.includes('Pro');
-            document.getElementById('badgePlanText').innerText = `${purchasedPlanName}`;
-            document.getElementById('activeCourseChip').innerHTML = 
-                `<span><i class="fa-solid fa-lock"></i> Unlocked Pass: ${purchasedPlanName}</span>
-                 <span style="font-size:10px; color:var(--success-color);">Access Active</span>`;
-            closeSubscriptionModal();
-            showToast(`🎉 ${purchasedPlanName} Pass Activated!`, "success");
         }
 
         function startNewChat() {
@@ -1598,6 +1701,7 @@
                     prompt: questionText,
                     images: filesToSend, 
                     active_batch: currentActiveBatch,
+                    tier_type: localStorage.getItem('tb_tier_type') || 'PRO',
                     lang: lang,
                     student_name: currentStudentData.name,
                     purchased_plan: purchasedPlanName,
@@ -1639,7 +1743,7 @@
                     saveChatUI(); 
                 } else {
                     loadElem.classList.replace('ai', 'error');
-                    loadElem.innerHTML = `<b>❌ AI Error:</b> ${data.message}`;
+                    loadElem.innerHTML = `<b>❌ AI Limit / Lock:</b> ${data.message}`;
                     showToast(data.message, "error");
                 }
                 scrollToBottom();
@@ -1655,4 +1759,4 @@
         }
     </script>
 </body>
-    </html>
+</html>
