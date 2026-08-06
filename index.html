@@ -145,22 +145,15 @@
         .header-logo img { width:90%; height:90%; object-fit:contain; }
         .user-badge { background:rgba(245, 158, 11, 0.15); border:1px solid rgba(245, 158, 11, 0.4); color:var(--gold-color); padding:5px 10px; border-radius:20px; font-size:11px; font-weight:700; cursor:pointer; }
 
-        .course-bar-toggle { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 8px 12px; font-size: 11.5px; color: var(--accent-color); font-weight: 600; margin-bottom: 8px; display: flex; align-items: center; justify-content: space-between; cursor: pointer; flex-shrink: 0; }
-        .category-grid { display:none; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap:6px; margin-bottom:8px; flex-shrink:0; animation: fadeIn 0.3s ease; }
-        .category-grid.show { display:grid; }
-        
-        /* 🎨 PROFESSIONAL STYLISH CUSTOM DROPDOWNS */
-        select { width:100%; background:var(--input-bg); border:1px solid var(--border-color); color:var(--text-main); padding:9px 12px; border-radius:10px; font-size:11.5px; outline:none; appearance: none; -webkit-appearance: none; background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e"); background-repeat: no-repeat; background-position: right 8px center; background-size: 14px; padding-right: 28px; cursor: pointer; transition: 0.2s; }
-        select:focus { border-color: var(--accent-color); box-shadow: 0 0 10px var(--accent-glow); }
-        select option { background: #0f172a; color: #f8fafc; padding: 10px; }
+        /* 🚀 PW STYLE COURSE BAR (CLEAN & PROFESSIONAL) */
+        .course-bar-toggle { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 14px; padding: 10px 14px; font-size: 12px; color: var(--text-main); font-weight: 600; margin-bottom: 8px; display: flex; align-items: center; justify-content: space-between; cursor: pointer; flex-shrink: 0; box-shadow: 0 4px 15px rgba(0,0,0,0.3); transition: 0.2s; }
+        .course-bar-toggle:hover { border-color: var(--accent-color); background: rgba(37, 99, 235, 0.1); }
 
         /* CHAT CONTAINER */
         .chat-container { background:var(--chat-bg); border:1px solid var(--border-color); border-radius:18px; padding:14px; flex:1; overflow-y:auto; display:flex; flex-direction:column; gap:10px; margin-bottom:8px; min-height: 150px; }
         
-        /* 💬 FIX FOR TEXT OVERFLOW & WORD WRAPPING */
         .msg { padding:12px 15px; border-radius:16px; font-size:13.5px; line-height:1.5; max-width:88%; word-break: break-word; overflow-wrap: break-word; animation: popIn 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards; transform-origin: bottom left; }
         .msg.user { background:var(--accent-color); color:#fff; align-self:flex-end; border-bottom-right-radius:4px; transform-origin: bottom right; box-shadow: 0 4px 15px var(--accent-glow); word-break: break-word; overflow-wrap: break-word; }
-        
         .msg.ai { background:var(--card-bg); color:var(--text-main); border:1px solid var(--border-color); align-self:flex-start; border-bottom-left-radius:4px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); width: 100%; max-width: 92%; word-break: break-word; overflow-wrap: break-word; }
         
         /* AI TABLES CSS */
@@ -181,8 +174,8 @@
 
         .chat-input-bar { display:flex; align-items:center; background:var(--card-bg); border:1px solid var(--border-color); border-radius:16px; padding:5px 6px 5px 10px; gap:6px; position:relative; flex-shrink:0; }
         
-        /* 💬 MULTI-LINE TEXT WRAP FIX FOR INPUT BAR */
-        .chat-input-bar input[type="text"] { flex:1; background:transparent; border:none; color:var(--text-main); outline:none; font-size:13.5px; min-width: 0; word-break: break-word; white-space: pre-wrap; overflow-wrap: break-word; }
+        /* 💬 MULTI-LINE TEXTAREA INPUT FIX */
+        .chat-input-bar textarea { flex:1; background:transparent; border:none; color:var(--text-main); outline:none; font-size:13.5px; min-width: 0; word-break: break-word; resize: none; max-height: 100px; overflow-y: auto; padding-top: 6px; }
         
         .action-icon-btn { background:rgba(255,255,255,0.06); color:var(--text-muted); border:1px solid var(--border-color); width:36px; height:36px; border-radius:10px; display:flex; justify-content:center; align-items:center; cursor:pointer; transition:0.2s; flex-shrink:0; }
         .action-icon-btn:hover { color:var(--text-main); background:rgba(255,255,255,0.12); }
@@ -418,6 +411,57 @@
         </div>
     </div>
 
+    <!-- 🚀 PW STYLE COURSE SELECTION MODAL (REPLACES CLUTTERED DROPDOWNS) -->
+    <div class="modal-overlay" id="courseModal">
+        <div class="modal-card" style="max-width:440px;">
+            <i class="fa-solid fa-xmark" style="position:absolute; right:16px; top:16px; color:var(--text-muted); cursor:pointer;" onclick="closeCourseModal()"></i>
+            <h3 style="color:var(--text-main); font-size:18px;"><i class="fa-solid fa-graduation-cap" style="color:var(--accent-color);"></i> Select Your Study Course</h3>
+            <p style="font-size:11.5px; color:var(--text-muted); margin-top:4px;">Choose your Board, Class and Target Stream</p>
+
+            <div class="pricing-list" style="max-height: 380px; margin-top: 15px;">
+                <div class="price-category-label">📖 Select Board</div>
+                <select id="modalBoardSelect" style="margin-bottom:10px;">
+                    <option value="CBSE Board">CBSE Board</option>
+                    <option value="Bihar Board (BSEB)">Bihar Board (BSEB)</option>
+                    <option value="UP Board">UP Board</option>
+                    <option value="ICSE / ISC">ICSE / ISC Board</option>
+                    <option value="BPSC Exam Prep">BPSC Exam Prep</option>
+                    <option value="UPSC Civil Services">UPSC Civil Services</option>
+                    <option value="JEE Main Prep">JEE Main Prep</option>
+                    <option value="NEET Medical Prep">NEET Medical Prep</option>
+                    <option value="NDA / Defense">NDA / Defense Exams</option>
+                </select>
+
+                <div class="price-category-label">🎓 Select Class / Goal</div>
+                <select id="modalClassSelect" style="margin-bottom:10px;">
+                    <option value="Class 12">Class 12th</option>
+                    <option value="Class 11">Class 11th</option>
+                    <option value="Class 10">Class 10th</option>
+                    <option value="Class 9">Class 9th</option>
+                    <option value="Competitive Aspirant">Competitive Aspirant</option>
+                    <option value="Skill & Business Learner">Skill & Business Aspirant</option>
+                </select>
+
+                <div class="price-category-label">🧪 Select Stream / Focus</div>
+                <select id="modalStreamSelect" style="margin-bottom:10px;">
+                    <option value="Science (PCM/PCB)">Science (PCM/PCB)</option>
+                    <option value="Commerce">Commerce</option>
+                    <option value="Arts / Humanities">Arts / Humanities</option>
+                    <option value="Creator & Skill">Creator / Social Media / Business</option>
+                </select>
+
+                <div class="price-category-label">🌐 Select AI Language</div>
+                <select id="modalLangSelect">
+                    <option value="Hinglish">Hinglish (Simple AI)</option>
+                    <option value="English">English Medium</option>
+                    <option value="Hindi">Hindi (हिंदी माध्यम)</option>
+                </select>
+            </div>
+
+            <button class="btn-primary" onclick="saveCourseSelection()" style="margin-top:15px;">SAVE & START LEARNING</button>
+        </div>
+    </div>
+
     <!-- MAIN DASHBOARD -->
     <div id="main-dashboard">
         <div class="header">
@@ -432,7 +476,7 @@
                 </div>
             </div>
             
-            <!-- 🚀 TEACHER SWITCH BUTTON MOVED TO HEADER -->
+            <!-- TEACHER SWITCH & BADGES -->
             <div style="display:flex; align-items:center; gap:6px;">
                 <div onclick="quickToggleTeacher()" style="background:var(--input-bg); border:1px solid var(--border-color); padding:5px 10px; border-radius:20px; font-size:11px; font-weight:700; color:var(--gold-color); cursor:pointer; display:flex; align-items:center; gap:5px;" title="Switch Teacher">
                     <i class="fa-solid fa-chalkboard-user"></i> <span id="headerTeacherText">Sir</span>
@@ -446,57 +490,10 @@
             </div>
         </div>
 
-        <!-- COLLAPSIBLE COURSE SELECTOR BAR -->
-        <div class="course-bar-toggle" onclick="toggleCourseSelectors()">
-            <span id="activeCourseLabel"><i class="fa-solid fa-sliders"></i> Course: CBSE | Class 12 | Science (PCM/PCB)</span>
-            <i class="fa-solid fa-chevron-down" id="courseToggleIcon"></i>
-        </div>
-
-        <div class="category-grid" id="categoryGrid">
-            <select id="boardSelect" onchange="updateCourseLabel()">
-                <option value="CBSE Board">CBSE Board</option>
-                <option value="Bihar Board (BSEB)">Bihar Board (BSEB)</option>
-                <option value="UP Board">UP Board</option>
-                <option value="ICSE / ISC">ICSE / ISC Board</option>
-                <option value="BPSC Exam Prep">BPSC (Bihar Public Service Commission)</option>
-                <option value="UPSC Civil Services">UPSC Civil Services</option>
-                <option value="State PSC Exams">State PSC (UPPSC, MPPSC, etc.)</option>
-                <option value="JEE Main Prep">JEE Main Prep</option>
-                <option value="JEE Advanced Prep">JEE Advanced Prep</option>
-                <option value="NEET Medical Prep">NEET Medical Prep</option>
-                <option value="CUET Exam">CUET Exam</option>
-                <option value="SSC / Banking / Railway">SSC / Banking / Railway</option>
-                <option value="NDA / Defense">NDA / Defense Exams</option>
-                <option value="CLAT Entrance">CLAT Law Entrance</option>
-                <option value="CAT Exam Prep">CAT MBA Prep</option>
-                <option value="GATE Exam Prep">GATE Engineering</option>
-                <option value="CA / CS / CMA">CA / CS / CMA Foundation</option>
-                <option value="Social Media Mastery">Social Media & YouTube Skills</option>
-                <option value="Digital Marketing">Digital Marketing & Business</option>
-                <option value="Coding & AI Skills">Coding, Python & AI Skills</option>
-            </select>
-
-            <select id="classSelect" onchange="updateCourseLabel()">
-                <option value="Class 12">Class 12th</option>
-                <option value="Class 11">Class 11th</option>
-                <option value="Class 10">Class 10th</option>
-                <option value="Class 9">Class 9th</option>
-                <option value="Competitive Aspirant">Competitive Aspirant</option>
-                <option value="Skill & Business Learner">Skill & Business Aspirant</option>
-            </select>
-
-            <select id="streamSelect" onchange="updateCourseLabel()">
-                <option value="Science (PCM/PCB)">Science (PCM/PCB)</option>
-                <option value="Commerce">Commerce</option>
-                <option value="Arts / Humanities">Arts / Humanities</option>
-                <option value="Creator & Skill">Creator / Social Media / Business</option>
-            </select>
-
-            <select id="langSelect">
-                <option value="Hinglish">Hinglish (Simple AI)</option>
-                <option value="English">English Medium</option>
-                <option value="Hindi">Hindi (हिंदी माध्यम)</option>
-            </select>
+        <!-- 🚀 CLEAN PW STYLE COURSE BANNER (OPENS THE COURSE MODAL) -->
+        <div class="course-bar-toggle" onclick="openCourseModal()">
+            <span id="activeCourseLabel"><i class="fa-solid fa-graduation-cap" style="color:var(--accent-color);"></i> Course: CBSE | Class 12 | Science (PCM/PCB)</span>
+            <i class="fa-solid fa-chevron-right" style="color:var(--text-muted); font-size:11px;"></i>
         </div>
 
         <div class="active-course-chip" id="activeCourseChip" style="background:rgba(16, 185, 129, 0.1); border:1px solid rgba(16, 185, 129, 0.4); padding:6px 10px; border-radius:12px; font-size:11px; font-weight:700; color:var(--text-main); margin-bottom:8px; display:flex; justify-content:space-between; flex-shrink:0;">
@@ -537,8 +534,8 @@
             
             <button class="action-icon-btn" id="voiceBtn" onclick="toggleVoiceInput()" title="Voice Typing"><i class="fa-solid fa-microphone"></i></button>
             
-            <!-- 🚀 MULTI-LINE / WRAP TEXTAREA INPUT -->
-            <textarea id="userInput" placeholder="Type chapter/topic or click (+) for tools..." rows="1" oninput="autoResizeInput(this)" onkeydown="handleInputKeydown(event)" style="flex:1; background:transparent; border:none; color:var(--text-main); outline:none; font-size:13.5px; resize:none; max-height:100px; overflow-y:auto; padding-top:6px;"></textarea>
+            <!-- 🚀 AUTO-EXPANDING MULTI-LINE TEXTAREA -->
+            <textarea id="userInput" placeholder="Type chapter/topic or click (+) for tools..." rows="1" oninput="autoResizeInput(this)" onkeydown="handleInputKeydown(event)"></textarea>
             
             <button class="send-btn" id="sendBtn" onclick="askAI()"><i class="fa-solid fa-paper-plane"></i></button>
         </div>
@@ -570,6 +567,7 @@
             </div>
         </div>
         
+        <div class="drawer-item" onclick="openCourseModal()"><i class="fa-solid fa-graduation-cap" style="color:var(--accent-color);"></i> Change Course & Batch</div>
         <div class="drawer-item" onclick="openSyllabusBoard()"><i class="fa-solid fa-list-check" style="color:#0ea5e9;"></i> Syllabus Tracker Board</div>
         <div class="drawer-item" onclick="openSettingsModal()"><i class="fa-solid fa-gear" style="color:#94a3b8;"></i> App Settings</div>
         <div class="drawer-item" onclick="toggleTheme()"><i class="fa-solid fa-circle-half-stroke" style="color:var(--gold-color);"></i> <span id="themeToggleText">Switch to Light Mode</span></div>
@@ -753,7 +751,6 @@
             }
         }
 
-        // 🚀 EXACT FILE NAME MATCHING (11708.png for Male, 11723.png for Female)
         function getTeacherImage() {
             return currentTeacher === 'female' ? './11723.png' : './11708.png';
         }
@@ -848,6 +845,34 @@
             document.getElementById('streakCountText').innerText = currentStreak + " Day";
         }
 
+        // --- PW STYLE COURSE MODAL LOGIC ---
+        function openCourseModal() {
+            document.getElementById('courseModal').style.display = 'flex';
+        }
+
+        function closeCourseModal() {
+            document.getElementById('courseModal').style.display = 'none';
+        }
+
+        function saveCourseSelection() {
+            const board = document.getElementById('modalBoardSelect').value;
+            const cls = document.getElementById('modalClassSelect').value;
+            const stream = document.getElementById('modalStreamSelect').value;
+            const lang = document.getElementById('modalLangSelect').value;
+
+            // Save to LocalStorage
+            localStorage.setItem('tb_board', board);
+            localStorage.setItem('tb_class', cls);
+            localStorage.setItem('tb_stream', stream);
+            localStorage.setItem('tb_lang', lang);
+
+            // Update Header Banner
+            document.getElementById('activeCourseLabel').innerHTML = `<i class="fa-solid fa-graduation-cap" style="color:var(--accent-color);"></i> Course: ${board} | ${cls} | ${stream}`;
+            
+            closeCourseModal();
+            showToast("🎉 Course & Batch updated successfully!", "success");
+        }
+
         let syllabusItems = [];
         function openSyllabusBoard() {
             document.getElementById('syllabusModal').style.display = 'flex';
@@ -891,6 +916,7 @@
 
         window.addEventListener('DOMContentLoaded', () => {
             updateHeaderTeacherUI();
+            loadSavedCourse();
 
             const savedEmail = localStorage.getItem('ticbull_email');
             const savedToken = localStorage.getItem('ticbull_token');
@@ -931,6 +957,18 @@
             }
         });
 
+        function loadSavedCourse() {
+            if(localStorage.getItem('tb_board')) document.getElementById('modalBoardSelect').value = localStorage.getItem('tb_board');
+            if(localStorage.getItem('tb_class')) document.getElementById('modalClassSelect').value = localStorage.getItem('tb_class');
+            if(localStorage.getItem('tb_stream')) document.getElementById('modalStreamSelect').value = localStorage.getItem('tb_stream');
+            if(localStorage.getItem('tb_lang')) document.getElementById('modalLangSelect').value = localStorage.getItem('tb_lang');
+
+            const board = localStorage.getItem('tb_board') || 'CBSE Board';
+            const cls = localStorage.getItem('tb_class') || 'Class 12';
+            const stream = localStorage.getItem('tb_stream') || 'Science (PCM/PCB)';
+            document.getElementById('activeCourseLabel').innerHTML = `<i class="fa-solid fa-graduation-cap" style="color:var(--accent-color);"></i> Course: ${board} | ${cls} | ${stream}`;
+        }
+
         window.addEventListener('load', () => {
             setTimeout(() => {
                 const splash = document.getElementById('splash-screen');
@@ -948,7 +986,6 @@
             }, 200);
         }
 
-        // 🚀 AUTO RESIZE TEXTAREA FOR MULTI-LINE TYPING
         function autoResizeInput(el) {
             el.style.height = 'auto';
             el.style.height = (el.scrollHeight) + 'px';
@@ -1014,21 +1051,6 @@
             document.body.classList.toggle('light-theme');
             const isLight = document.body.classList.contains('light-theme');
             document.getElementById('themeToggleText').innerText = isLight ? 'Switch to Dark Mode' : 'Switch to Light Mode';
-        }
-
-        function toggleCourseSelectors() {
-            const grid = document.getElementById('categoryGrid');
-            const icon = document.getElementById('courseToggleIcon');
-            grid.classList.toggle('show');
-            icon.classList.toggle('fa-chevron-up', grid.classList.contains('show'));
-            icon.classList.toggle('fa-chevron-down', !grid.classList.contains('show'));
-        }
-
-        function updateCourseLabel() {
-            const board = document.getElementById('boardSelect').value;
-            const cls = document.getElementById('classSelect').value;
-            const stream = document.getElementById('streamSelect').value;
-            document.getElementById('activeCourseLabel').innerHTML = `<i class="fa-solid fa-sliders"></i> Course: ${board} | ${cls} | ${stream}`;
         }
 
         function calculateAge(dobString) {
@@ -1492,10 +1514,10 @@
         function askAI() {
             const input = document.getElementById('userInput');
             const chatBox = document.getElementById('chatBox');
-            const board = document.getElementById('boardSelect').value;
-            const cls = document.getElementById('classSelect').value;
-            const stream = document.getElementById('streamSelect').value;
-            const lang = document.getElementById('langSelect').value;
+            const board = localStorage.getItem('tb_board') || 'CBSE Board';
+            const cls = localStorage.getItem('tb_class') || 'Class 12';
+            const stream = localStorage.getItem('tb_stream') || 'Science (PCM/PCB)';
+            const lang = localStorage.getItem('tb_lang') || 'Hinglish';
             const sendBtn = document.getElementById('sendBtn');
 
             if(!input.value.trim() && selectedFilesArray.length === 0) return;
@@ -1519,7 +1541,7 @@
            
             const filesToSend = [...selectedFilesArray]; 
             input.value = '';
-            input.style.height = 'auto'; // Reset textarea height
+            input.style.height = 'auto'; 
             removeImage(); 
             document.getElementById('aiToolsMenu').style.display = 'none';
             scrollToBottom();
@@ -1604,38 +1626,6 @@
                 scrollToBottom();
             });
         }
-        
-        function syncDropdownsToUI() {
-            localStorage.setItem('tb_board', document.getElementById('boardSelect').value);
-            localStorage.setItem('tb_class', document.getElementById('classSelect').value);
-            localStorage.setItem('tb_stream', document.getElementById('streamSelect').value);
-            localStorage.setItem('tb_lang', document.getElementById('langSelect').value);
-
-            let selectedBoard = document.getElementById('boardSelect').options[document.getElementById('boardSelect').selectedIndex].text;
-            let selectedClass = document.getElementById('classSelect').options[document.getElementById('classSelect').selectedIndex].text;
-            let selectedStream = document.getElementById('streamSelect').options[document.getElementById('streamSelect').selectedIndex].text;
-            
-            let bannerElement = document.getElementById('activeCourseLabel');
-            if(bannerElement) {
-                bannerElement.innerHTML = `<i class="fa-solid fa-sliders"></i> Course: ${selectedBoard} | ${selectedClass} | ${selectedStream}`;
-            }
-        }
-        
-        function loadDropdowns() {
-            if(localStorage.getItem('tb_board')) document.getElementById('boardSelect').value = localStorage.getItem('tb_board');
-            if(localStorage.getItem('tb_class')) document.getElementById('classSelect').value = localStorage.getItem('tb_class');
-            if(localStorage.getItem('tb_stream')) document.getElementById('streamSelect').value = localStorage.getItem('tb_stream');
-            if(localStorage.getItem('tb_lang')) document.getElementById('langSelect').value = localStorage.getItem('tb_lang');
-            syncDropdownsToUI();
-        }
-
-        document.getElementById('boardSelect').addEventListener('change', syncDropdownsToUI);
-        document.getElementById('classSelect').addEventListener('change', syncDropdownsToUI);
-        document.getElementById('streamSelect').addEventListener('change', syncDropdownsTeam = syncDropdownsToUI);
-        document.getElementById('streamSelect').addEventListener('change', syncDropdownsToUI);
-        document.getElementById('langSelect').addEventListener('change', syncDropdownsToUI);
-
-        window.addEventListener('DOMContentLoaded', loadDropdowns);
     </script>
 </body>
-</html>
+                                                                                                                                                                   </html>
