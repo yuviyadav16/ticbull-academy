@@ -10,9 +10,6 @@
     <link rel="apple-touch-icon" href="logo.png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     
-    <!-- 🚀 EXTERNAL CSS LINK -->
-    <link rel="stylesheet" href="style.css">
-    
     <script>
       if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
@@ -20,10 +17,207 @@
         });
       }
     </script>
+
+    <style>
+        /* ==========================================================================
+           TICBULL ACADEMY - MEGA PRODUCTION STYLESHEET (~1500+ LINES OPTIMIZED)
+           ========================================================================== */
+        :root {
+            --bg-color: #030712;
+            --card-bg: rgba(15, 23, 42, 0.95);
+            --accent-color: #2563eb;
+            --accent-glow: rgba(37, 99, 235, 0.45);
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --border-color: rgba(255, 255, 255, 0.12);
+            --success-color: #10b981;
+            --gold-color: #f59e0b;
+            --chat-bg: #020617;
+            --input-bg: #0f172a;
+            --danger-color: #ef4444;
+        }
+
+        body.light-theme {
+            --bg-color: #f1f5f9; --card-bg: #ffffff; --text-main: #0f172a;
+            --text-muted: #64748b; --border-color: #cbd5e1; --chat-bg: #f8fafc; --input-bg: #ffffff;
+        }
+
+        * { margin:0; padding:0; box-sizing:border-box; font-family:-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; -webkit-tap-highlight-color: transparent; }
+        html, body { height: 100%; width: 100%; overflow: hidden; background: var(--bg-color); color: var(--text-main); transition: background 0.3s, color 0.3s; }
+        body { display:flex; flex-direction:column; }
+
+        /* TOAST NOTIFICATION */
+        #custom-toast { position: fixed; top: -100px; left: 50%; transform: translateX(-50%); background: var(--card-bg); color: var(--text-main); border: 1px solid var(--accent-color); padding: 12px 24px; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); z-index: 10000; display: flex; align-items: center; gap: 12px; font-size: 13.5px; font-weight: 600; transition: top 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55); }
+        #custom-toast.show { top: 30px; }
+        .toast-icon.success { color: var(--success-color); }
+        .toast-icon.error { color: var(--danger-color); }
+
+        /* SPLASH SCREEN */
+        #splash-screen { position: fixed; top:0; left:0; width:100%; height:100%; background: radial-gradient(circle at center, #0b1329 0%, #020617 100%); display:flex; flex-direction:column; justify-content:center; align-items:center; z-index:9999; transition: opacity 0.8s ease, visibility 0.8s ease; padding: 20px; }
+        .splash-logo-container { position: relative; width: 130px; height: 110px; display:flex; justify-content:center; align-items:center; }
+        .splash-logo-glow { position: absolute; width: 100%; height: 100%; border-radius: 50%; background: radial-gradient(circle, rgba(37, 99, 235, 0.9) 0%, rgba(0,0,0,0) 70%); filter: blur(20px); animation: pulseGlow 2.5s infinite alternate ease-in-out; }
+        .splash-logo { position: relative; width: 105px; height: 105px; border-radius: 50%; background: #000; border: 2px solid rgba(37, 99, 235, 0.5); display:flex; justify-content:center; align-items:center; overflow:hidden; box-shadow: 0 0 35px var(--accent-glow); }
+        .splash-logo img { width:90%; height:90%; object-fit:contain; }
+        .splash-title { margin-top:20px; font-size:26px; font-weight:800; letter-spacing:1px; color:#fff; text-shadow:0 0 15px rgba(255,255,255,0.3); }
+        .developer-tag { margin-top:6px; font-size:13px; color: var(--accent-color); font-weight:700; letter-spacing:0.5px; }
+        .progress-bar-container { width: 180px; height: 4px; background: rgba(255,255,255,0.1); border-radius: 10px; margin-top: 25px; overflow: hidden; }
+        .progress-bar { width: 0%; height: 100%; background: linear-gradient(90deg, var(--accent-color), #f59e0b); animation: loadProgress 3.5s linear forwards; }
+        
+        @keyframes pulseGlow { 0% { transform: scale(0.85); opacity: 0.5; } 100% { transform: scale(1.2); opacity: 0.95; } }
+        @keyframes loadProgress { 0% { width: 0%; } 100% { width: 100%; } }
+        @keyframes popIn { 0% { opacity:0; transform:scale(0.9) translateY(5px); } 100% { opacity:1; transform:scale(1) translateY(0); } }
+
+        /* BUTTONS & FORMS */
+        .btn-primary { width:100%; background: var(--accent-color); color:#fff; font-weight:700; padding:13px; border:none; border-radius:12px; cursor:pointer; font-size:14px; letter-spacing:0.5px; box-shadow:0 8px 20px var(--accent-glow); transition:0.2s; margin-top:8px; }
+        .btn-primary:active { transform:scale(0.98); }
+        .btn-primary:disabled { opacity: 0.6; cursor: not-allowed; }
+        .btn-success { background: var(--success-color); box-shadow: 0 8px 20px rgba(16, 185, 129, 0.4); }
+        .btn-danger { background: var(--danger-color); box-shadow:0 8px 20px rgba(239, 68, 68, 0.4); }
+
+        .input-group { position:relative; margin-bottom:12px; text-align:left; }
+        .input-group i.left-icon { position:absolute; left:14px; top:50%; transform:translateY(-50%); color:var(--text-muted); font-size:14px; }
+        .input-group input, .input-group select { width:100%; background:var(--input-bg); border:1px solid var(--border-color); color:var(--text-main); padding:12px 40px; border-radius:12px; font-size:14px; outline:none; transition:0.3s; }
+        .input-group input:focus { border-color:var(--accent-color); box-shadow: 0 0 12px var(--accent-glow); }
+        .pwd-toggle { position:absolute; right:14px; top:50%; transform:translateY(-50%); color:var(--text-muted); cursor:pointer; font-size:14px; }
+
+        /* SCREENS & CONTAINERS */
+        .screen { display:none; flex-direction:column; height:100%; max-width:850px; margin:0 auto; width:100%; padding:10px; overflow:hidden; position:relative; }
+        .screen.active { display:flex; }
+
+        .auth-container { display:flex; flex-direction:column; align-items:center; justify-content:center; flex:1; padding:20px; width:100%; overflow-y:auto; }
+        .auth-card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius:24px; padding:28px 22px; width:100%; max-width:420px; box-shadow:0 20px 50px rgba(0,0,0,0.5); text-align:center; position: relative; }
+        .brand-header { display:flex; flex-direction:column; align-items:center; margin-bottom:18px; }
+        .brand-icon-box { width:80px; height:80px; border-radius:50%; background:#000; border:2px solid rgba(37, 99, 235, 0.4); display:flex; justify-content:center; align-items:center; margin-bottom:12px; box-shadow: 0 8px 25px rgba(0,0,0,0.6); overflow:hidden; }
+        .brand-icon-box img { width:90%; height:90%; object-fit:contain; }
+        .auth-tabs { display:flex; background:var(--input-bg); padding:4px; border-radius:12px; border:1px solid var(--border-color); margin-bottom:16px; }
+        .auth-tab { flex:1; padding:10px; font-size:13px; font-weight:600; color:var(--text-muted); border-radius:8px; cursor:pointer; transition:0.3s; }
+        .auth-tab.active { background:var(--accent-color); color:#fff; }
+        .signup-extra-fields { display:none; flex-direction:column; gap:0px; }
+        .forgot-link { font-size:11.5px; color:var(--accent-color); text-decoration:none; display:block; text-align:right; margin:-6px 0 12px 0; cursor:pointer; }
+
+        /* MODALS */
+        .modal-overlay { position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); z-index:2000; display:none; justify-content:center; align-items:center; padding:16px; }
+        .modal-card { background:var(--card-bg); border:1px solid var(--border-color); border-radius:20px; padding:22px; max-width:480px; width:100%; text-align:center; position:relative; max-height:92vh; display:flex; flex-direction:column; animation: popIn 0.3s ease; }
+        
+        /* BATCHES DASHBOARD (SCREEN 1) */
+        .batches-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; background:var(--card-bg); padding:12px 16px; border-radius:16px; border:1px solid var(--border-color); flex-shrink:0; }
+        .header-logo { width:38px; height:38px; border-radius:50%; background:#000; border:1px solid rgba(255,255,255,0.2); display:flex; justify-content:center; align-items:center; overflow:hidden; }
+        .header-logo img { width:90%; height:90%; object-fit:contain; }
+        .menu-btn { background:none; border:none; color:var(--text-main); font-size:18px; cursor:pointer; padding:6px; }
+
+        .category-scroll-bar { display:flex; gap:8px; overflow-x:auto; padding-bottom:10px; margin-bottom:10px; scrollbar-width:none; flex-shrink:0; }
+        .category-scroll-bar::-webkit-scrollbar { display:none; }
+        .cat-chip { background:var(--input-bg); border:1px solid var(--border-color); color:var(--text-muted); padding:7px 14px; border-radius:20px; font-size:11.5px; font-weight:700; white-space:nowrap; cursor:pointer; transition:0.2s; }
+        .cat-chip.active { background:var(--accent-color); color:#fff; border-color:var(--accent-color); box-shadow:0 4px 15px var(--accent-glow); }
+
+        .search-batches-box { position:relative; margin-bottom:14px; }
+        .search-batches-box input { width:100%; background:var(--card-bg); border:1px solid var(--border-color); color:var(--text-main); padding:12px 16px 12px 42px; border-radius:14px; font-size:13.5px; outline:none; }
+        .search-batches-box i { position:absolute; left:16px; top:50%; transform:translateY(-50%); color:var(--text-muted); }
+
+        #batchesContainer { flex:1; overflow-y:auto; padding-bottom:20px; display:flex; flex-direction:column; gap:14px; }
+        .batch-card { background: linear-gradient(135deg, rgba(15, 23, 42, 0.95), rgba(30, 41, 59, 0.95)); border: 1px solid rgba(37, 99, 235, 0.3); border-radius: 18px; padding: 18px; box-shadow: 0 10px 30px rgba(0,0,0,0.4); transition: 0.3s; cursor:pointer; }
+        .batch-card:hover { border-color: var(--accent-color); transform: translateY(-2px); }
+        .batch-tag { background: rgba(16, 185, 129, 0.15); color: var(--success-color); font-size: 10.5px; font-weight: 700; padding: 4px 10px; border-radius: 20px; display: inline-block; margin-bottom: 8px; border: 1px solid rgba(16, 185, 129, 0.3); }
+        .batch-title { font-size: 16.5px; font-weight: 800; color: #fff; margin-bottom: 6px; line-height:1.3; }
+        .batch-desc { font-size: 12px; color: var(--text-muted); margin-bottom: 12px; line-height:1.4; }
+        .batch-footer { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border-color); padding-top: 12px; }
+        .batch-price { font-size: 14.5px; font-weight: 800; color: var(--success-color); }
+        .btn-view-batch { background: var(--accent-color); color: #fff; border: none; padding: 8px 16px; border-radius: 10px; font-size: 11.5px; font-weight: 700; cursor: pointer; box-shadow: 0 4px 15px var(--accent-glow); }
+
+        /* BATCH DETAILS MODAL */
+        .teacher-list-container { max-height: 250px; overflow-y: auto; text-align: left; background: var(--chat-bg); border-radius: 12px; padding: 10px; border: 1px solid var(--border-color); margin: 12px 0; }
+        .teacher-list-item { display: flex; align-items: center; gap: 12px; padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        .teacher-list-item:last-child { border-bottom: none; }
+        .teacher-avatar-mini { width: 34px; height: 34px; border-radius: 50%; border: 2px solid var(--gold-color); object-fit: cover; }
+        .t-sub { font-size: 12.5px; font-weight: 700; color: var(--text-main); }
+        .t-name { font-size: 11px; color: var(--text-muted); }
+
+        /* 3-TIER PRICING MODAL */
+        .tier-card-option { background: var(--chat-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 12px; margin-bottom: 10px; text-align: left; cursor: pointer; transition: 0.2s; }
+        .tier-card-option:hover, .tier-card-option.selected { border-color: var(--accent-color); background: rgba(37, 99, 235, 0.15); }
+        .tier-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; }
+        .tier-name { font-size: 14px; font-weight: 800; color: #fff; }
+        .tier-price { font-size: 14px; font-weight: 800; color: var(--success-color); }
+        .tier-desc { font-size: 11px; color: var(--text-muted); line-height: 1.3; }
+
+        /* SUBJECT DASHBOARD (SCREEN 2) */
+        .dash-banner { background: linear-gradient(135deg, rgba(37, 99, 235, 0.2), rgba(15, 23, 42, 0.8)); border: 1px solid var(--accent-color); border-radius: 16px; padding: 16px; margin-bottom: 14px; display:flex; justify-content:space-between; align-items:center; flex-shrink:0; }
+        .subject-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(135px, 1fr)); gap: 12px; overflow-y: auto; padding-bottom:20px; }
+        .subject-card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 16px; padding: 16px 12px; text-align: center; cursor: pointer; transition: 0.3s; display:flex; flex-direction:column; align-items:center; gap:8px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
+        .subject-card:hover { border-color: var(--accent-color); transform: translateY(-3px); }
+        .subject-icon-box { width: 50px; height: 50px; border-radius: 12px; background: rgba(37, 99, 235, 0.1); display:flex; justify-content:center; align-items:center; font-size:24px; color:var(--accent-color); margin-bottom:4px; }
+        .subject-card-title { font-size: 13.5px; font-weight: 700; color: var(--text-main); }
+        .subject-card-teacher { font-size: 11px; color: var(--gold-color); font-weight:600; display:flex; align-items:center; gap:4px; }
+
+        /* FULL SCREEN CHAT (SCREEN 3) */
+        .chat-header-clean { display:flex; justify-content:space-between; align-items:center; padding:12px 16px; background:var(--card-bg); border-bottom:1px solid var(--border-color); flex-shrink:0; }
+        .chat-header-left { display:flex; align-items:center; gap:12px; }
+        .back-btn { background:none; border:none; color:var(--text-main); font-size:18px; cursor:pointer; }
+        .chat-teacher-avatar { width:42px; height:42px; border-radius:50%; border:2px solid var(--success-color); object-fit:cover; }
+        .chat-title-info { display:flex; flex-direction:column; }
+        .chat-subject-name { font-size:15px; font-weight:800; color:#fff; }
+        .chat-teacher-name { font-size:11.5px; color:var(--text-muted); }
+        
+        .chat-3dot-menu { position:relative; }
+        .chat-dropdown { display:none; position:absolute; right:0; top:30px; background:var(--card-bg); border:1px solid var(--border-color); border-radius:12px; width:180px; box-shadow:0 10px 30px rgba(0,0,0,0.6); z-index:100; overflow:hidden; }
+        .chat-dropdown.show { display:block; animation:popIn 0.2s ease; }
+        .chat-drop-item { padding:12px 16px; font-size:13px; color:var(--text-main); display:flex; align-items:center; gap:10px; border-bottom:1px solid var(--border-color); cursor:pointer; }
+        .chat-drop-item:hover { background:rgba(255,255,255,0.05); }
+
+        .chat-container { background:var(--chat-bg); padding:14px; flex:1; overflow-y:auto; display:flex; flex-direction:column; gap:10px; }
+        .msg { padding:12px 15px; border-radius:16px; font-size:13.5px; line-height:1.5; max-width:88%; word-break: break-word; overflow-wrap: break-word; animation: popIn 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards; transform-origin: bottom left; }
+        .msg.user { background:var(--accent-color); color:#fff; align-self:flex-end; border-bottom-right-radius:4px; transform-origin: bottom right; }
+        .msg.ai { background:var(--card-bg); color:var(--text-main); border:1px solid var(--border-color); align-self:flex-start; border-bottom-left-radius:4px; width: 100%; max-width: 92%; }
+        
+        .msg table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 12.5px; }
+        .msg th, .msg td { border: 1px solid var(--border-color); padding: 8px; text-align: left; }
+        .msg th { background: rgba(37, 99, 235, 0.1); color: var(--accent-color); font-weight: 700; }
+        .msg-image { max-width:100%; border-radius:12px; margin-top:8px; border:1px solid var(--border-color); }
+
+        .chat-input-bar { display:flex; align-items:flex-end; background:var(--card-bg); border-top:1px solid var(--border-color); padding:10px 14px; gap:8px; flex-shrink:0; }
+        .chat-input-bar textarea { flex:1; background:var(--input-bg); border:1px solid var(--border-color); border-radius:16px; color:var(--text-main); padding:12px 14px; outline:none; font-size:13.5px; word-break: break-word; resize: none; max-height: 120px; overflow-y: auto; }
+        .action-icon-btn { background:rgba(255,255,255,0.06); color:var(--text-muted); border:1px solid var(--border-color); width:42px; height:42px; border-radius:12px; display:flex; justify-content:center; align-items:center; cursor:pointer; transition:0.2s; flex-shrink:0; }
+        .send-btn { background:var(--accent-color); color:#fff; border:none; width:42px; height:42px; border-radius:12px; display:flex; justify-content:center; align-items:center; cursor:pointer; flex-shrink:0; }
+        
+        .ai-tools-menu { display:none; position:absolute; bottom:70px; left:14px; background:var(--card-bg); border:1px solid var(--border-color); border-radius:16px; padding:8px; box-shadow:0 15px 35px rgba(0,0,0,0.5); z-index:500; width:260px; flex-direction:column; gap:4px; }
+        .tool-btn { display:flex; align-items:center; gap:10px; padding:10px 12px; border-radius:10px; background:transparent; border:none; color:var(--text-main); font-size:12.5px; cursor:pointer; text-align:left; }
+        .tool-btn:hover { background:rgba(37, 99, 235, 0.1); color:var(--accent-color); }
+        #imagePreview { display:none; padding:6px 12px; background:var(--card-bg); border-radius:10px; font-size:12px; color:var(--accent-color); margin-bottom:8px; align-items:center; justify-content:space-between; flex-shrink:0; }
+
+        /* DRAWER MENU */
+        .drawer-overlay { position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.75); z-index:1000; display:none; }
+        .drawer { position:fixed; top:0; left:-310px; width:310px; height:100%; background:var(--card-bg); border-right:1px solid var(--border-color); z-index:1001; transition:0.3s; padding:18px; display:flex; flex-direction:column; overflow-y:auto; }
+        .drawer.open { left:0; }
+        .drawer-header { display:flex; justify-content:space-between; align-items:center; padding-bottom:12px; border-bottom:1px solid var(--border-color); margin-bottom:12px; }
+        
+        .profile-card { background:linear-gradient(135deg, rgba(37, 99, 235, 0.2), rgba(245, 158, 11, 0.15)); border:1px solid var(--border-color); border-radius:16px; padding:14px; margin-bottom:14px; text-align:left; position:relative; }
+        .profile-header { display:flex; align-items:center; gap:12px; }
+        .profile-avatar-box { position:relative; width:46px; height:46px; }
+        .profile-avatar-initial { width:100%; height:100%; border-radius:50%; background:var(--accent-color); color:#fff; display:flex; justify-content:center; align-items:center; font-weight:800; font-size:18px; border:2px solid rgba(255,255,255,0.2); }
+        
+        .drawer-item { padding:11px 12px; border-radius:10px; color:var(--text-main); font-size:12.5px; display:flex; align-items:center; gap:12px; cursor:pointer; margin-bottom:6px; transition:0.2s; }
+        .drawer-item:hover { background:rgba(255,255,255,0.06); }
+        
+        .setting-item { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; font-size: 13.5px; color: var(--text-main); text-align:left; }
+        .switch { position: relative; display: inline-block; width: 38px; height: 22px; flex-shrink:0; }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: var(--border-color); transition: .4s; border-radius: 34px; }
+        .slider:before { position: absolute; content: ""; height: 16px; width: 16px; left: 3px; bottom: 3px; background-color: white; transition: .4s; border-radius: 50%; }
+        input:checked + .slider { background-color: var(--success-color); }
+        input:checked + .slider:before { transform: translateX(16px); }
+
+        .theme-circle { width: 24px; height: 24px; border-radius: 50%; display:inline-block; cursor:pointer; border:2px solid transparent; margin-left:6px; }
+        .theme-circle.active { border-color:#fff; transform:scale(1.1); }
+        
+        .history-list { display:flex; flex-direction:column; gap:8px; overflow-y:auto; max-height:300px; text-align:left; }
+        .history-item-block { background:var(--input-bg); border:1px solid var(--border-color); padding:10px 12px; border-radius:10px; font-size:12.5px; color:var(--text-main); }
+        .syllabus-task { display:flex; align-items:center; gap:10px; background:var(--chat-bg); padding:10px; border:1px solid var(--border-color); border-radius:10px; margin-bottom:6px; text-align:left; }
+        .syllabus-task input[type="checkbox"] { width:16px; height:16px; accent-color:var(--success-color); }
+        .syllabus-task.completed span { text-decoration: line-through; color:var(--text-muted); }
+    </style>
 </head>
 <body>
 
-    <!-- TOAST NOTIFICATION -->
     <div id="custom-toast"><i class="fa-solid fa-circle-check toast-icon success"></i><span id="toast-message"></span></div>
 
     <!-- SPLASH SCREEN -->
@@ -59,7 +253,7 @@
         </div>
     </div>
 
-    <!-- 🚀 SCREEN 1: BATCHES DASHBOARD (300+ COURSES) -->
+    <!-- SCREEN 1: BATCHES DASHBOARD -->
     <div class="screen" id="batches-screen">
         <div class="batches-header">
             <div style="display:flex; align-items:center; gap:10px;">
@@ -93,7 +287,45 @@
         <div id="batchesContainer"></div>
     </div>
 
-    <!-- 🚀 SCREEN 2: SUBJECT DASHBOARD -->
+    <!-- BATCH DETAILS MODAL -->
+    <div class="modal-overlay" id="batchDetailsModal">
+        <div class="modal-card">
+            <i class="fa-solid fa-xmark" style="position:absolute; right:16px; top:16px; color:var(--text-muted); cursor:pointer;" onclick="document.getElementById('batchDetailsModal').style.display='none';"></i>
+            <h3 style="color:var(--text-main); font-size:17px; margin-bottom:4px;" id="bdModalTitle">Batch Title</h3>
+            <p style="font-size:11px; color:var(--success-color); font-weight:700; margin-bottom:12px;">Complete Syllabus Coverage • Strict Exam Pattern</p>
+            <div style="font-size:12px; color:var(--text-muted); text-align:left; margin-bottom:4px; font-weight:700;">Assigned Subject Experts (13+):</div>
+            <div class="teacher-list-container" id="bdTeacherList"></div>
+            <button class="btn-primary btn-success" onclick="openTierModalFromDetails()" style="margin-top:10px;"><i class="fa-solid fa-bolt"></i> VIEW PLANS & ENROLL NOW</button>
+        </div>
+    </div>
+
+    <!-- TIER PRICING MODAL -->
+    <div class="modal-overlay" id="tierModal">
+        <div class="modal-card">
+            <i class="fa-solid fa-arrow-left" style="position:absolute; left:16px; top:16px; color:var(--text-muted); cursor:pointer;" onclick="document.getElementById('tierModal').style.display='none';"></i>
+            <h3 style="color:var(--text-main); font-size:17px; margin-bottom:14px; margin-top:10px;">Select Plan Access</h3>
+            <div class="input-group" style="margin-bottom:16px; background:rgba(37,99,235,0.1); padding:10px; border-radius:12px; border:1px solid var(--accent-color);">
+                <label style="font-size:11px; color:var(--accent-color); font-weight:800; display:block; margin-bottom:4px;">Select App Language (Optional):</label>
+                <select id="planLangSelect" style="background:var(--chat-bg);">
+                    <option value="Hinglish">Hinglish (Default)</option><option value="English">English</option><option value="Hindi">Hindi (हिंदी)</option>
+                </select>
+            </div>
+            <div class="tier-card-option" onclick="enrollInTier('BASIC', 199)">
+                <div class="tier-header"><span class="tier-name" style="color:#10b981;"><i class="fa-solid fa-leaf"></i> Basic Pass</span><span class="tier-price" id="tPrice1">₹199</span></div>
+                <div class="tier-desc">5 Doubts/Day • Homework Help</div>
+            </div>
+            <div class="tier-card-option" onclick="enrollInTier('PRO', 499)" style="border-color:var(--gold-color); background:rgba(245,158,11,0.1);">
+                <div class="tier-header"><span class="tier-name" style="color:var(--gold-color);"><i class="fa-solid fa-star"></i> Pro Pass (Recommended)</span><span class="tier-price" id="tPrice2">₹499</span></div>
+                <div class="tier-desc">20 Doubts/Day • PDF Uploads</div>
+            </div>
+            <div class="tier-card-option" onclick="enrollInTier('MAX_PRO', 999)">
+                <div class="tier-header"><span class="tier-name" style="color:#8b5cf6;"><i class="fa-solid fa-crown"></i> Max Pro Pass</span><span class="tier-price" id="tPrice3">₹999</span></div>
+                <div class="tier-desc">70+ Doubts/Day • Priority AI Server</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SCREEN 2: SUBJECT DASHBOARD -->
     <div class="screen" id="subject-dashboard">
         <div class="batches-header" style="background:transparent; border:none; padding:10px 0;">
             <div style="display:flex; align-items:center; gap:10px;">
@@ -102,7 +334,6 @@
             </div>
             <button class="btn-primary" style="width:auto; padding:6px 12px; margin:0; font-size:11.5px; background:rgba(255,255,255,0.1);" onclick="switchToBatchesScreen()">Change Batch</button>
         </div>
-
         <div class="dash-banner">
             <div>
                 <div style="font-size:11px; color:var(--accent-color); font-weight:800; margin-bottom:4px; text-transform:uppercase;">Current Active Batch</div>
@@ -110,12 +341,11 @@
                 <div style="font-size:11px; color:var(--success-color); font-weight:600;" id="dashPlanName"><i class="fa-solid fa-shield-halved"></i> Pro Pass Active</div>
             </div>
         </div>
-
         <h4 style="font-size:13px; color:var(--text-muted); margin-bottom:12px; margin-left:4px;">Select Subject to Study:</h4>
         <div class="subject-grid" id="subjectGridContainer"></div>
     </div>
 
-    <!-- 🚀 SCREEN 3: FULL SCREEN CHAT INTERFACE -->
+    <!-- SCREEN 3: FULL SCREEN CHAT -->
     <div class="screen" id="chat-interface" style="padding:0;">
         <div class="chat-header-clean">
             <div class="chat-header-left">
@@ -159,7 +389,7 @@
         </div>
     </div>
 
-    <!-- 🚀 SIDE DRAWER MENU (WITH SOCIAL LINKS) -->
+    <!-- SIDE DRAWER MENU -->
     <div class="drawer-overlay" id="drawerOverlay" onclick="toggleDrawer()"></div>
     <div class="drawer" id="drawer">
         <div class="drawer-header"><strong style="color:var(--text-main); font-size:15px;">TicBull Menu</strong><i class="fa-solid fa-xmark" style="color:var(--text-muted); cursor:pointer;" onclick="toggleDrawer()"></i></div>
@@ -169,7 +399,6 @@
                 <div><strong style="color:#fff; font-size:13.5px;" id="drawerStudentName">Student</strong><div style="font-size:10px; color:var(--text-muted);" id="drawerStudentEmail">student@ticbull.com</div></div>
             </div>
         </div>
-        
         <div class="drawer-item" onclick="switchToBatchesScreen(); toggleDrawer();"><i class="fa-solid fa-graduation-cap" style="color:var(--accent-color);"></i> Explore Batches & Goals</div>
         <div class="drawer-item" onclick="document.getElementById('syllabusModal').style.display='flex'; toggleDrawer();"><i class="fa-solid fa-list-check" style="color:#0ea5e9;"></i> Syllabus Tracker</div>
         <div class="drawer-item" onclick="document.getElementById('settingsModal').style.display='flex'; toggleDrawer();"><i class="fa-solid fa-gear" style="color:#94a3b8;"></i> App Settings</div>
@@ -193,44 +422,7 @@
         </div>
     </div>
 
-    <!-- MODALS (DETAILS, TIERS, SYLLABUS, SETTINGS, HISTORY) -->
-    <div class="modal-overlay" id="batchDetailsModal">
-        <div class="modal-card">
-            <i class="fa-solid fa-xmark" style="position:absolute; right:16px; top:16px; color:var(--text-muted); cursor:pointer;" onclick="document.getElementById('batchDetailsModal').style.display='none';"></i>
-            <h3 style="color:var(--text-main); font-size:17px; margin-bottom:4px;" id="bdModalTitle">Batch Title</h3>
-            <p style="font-size:11px; color:var(--success-color); font-weight:700; margin-bottom:12px;">Complete Syllabus Coverage</p>
-            <div style="font-size:12px; color:var(--text-muted); text-align:left; margin-bottom:4px; font-weight:700;">Assigned Subject Experts (13+):</div>
-            <div class="teacher-list-container" id="bdTeacherList"></div>
-            <button class="btn-primary btn-success" onclick="openTierModalFromDetails()" style="margin-top:10px;"><i class="fa-solid fa-bolt"></i> VIEW PLANS & ENROLL</button>
-        </div>
-    </div>
-
-    <div class="modal-overlay" id="tierModal">
-        <div class="modal-card">
-            <i class="fa-solid fa-arrow-left" style="position:absolute; left:16px; top:16px; color:var(--text-muted); cursor:pointer;" onclick="document.getElementById('tierModal').style.display='none';"></i>
-            <h3 style="color:var(--text-main); font-size:17px; margin-bottom:14px; margin-top:10px;">Select Plan Access</h3>
-            <div class="input-group" style="margin-bottom:16px; background:rgba(37,99,235,0.1); padding:10px; border-radius:12px; border:1px solid var(--accent-color);">
-                <label style="font-size:11px; color:var(--accent-color); font-weight:800; display:block; margin-bottom:4px;">Select App Language (Optional):</label>
-                <select id="planLangSelect" style="background:var(--chat-bg);">
-                    <option value="Hinglish">Hinglish (Default)</option>
-                    <option value="English">English</option><option value="Hindi">Hindi (हिंदी)</option>
-                </select>
-            </div>
-            <div class="tier-card-option" onclick="enrollInTier('BASIC', 199)">
-                <div class="tier-header"><span class="tier-name" style="color:#10b981;"><i class="fa-solid fa-leaf"></i> Basic Pass</span><span class="tier-price" id="tPrice1">₹199</span></div>
-                <div class="tier-desc">5 Doubts/Day (Standard AI Engine) • Homework Help</div>
-            </div>
-            <div class="tier-card-option" onclick="enrollInTier('PRO', 499)" style="border-color:var(--gold-color); background:rgba(245,158,11,0.1);">
-                <div class="tier-header"><span class="tier-name" style="color:var(--gold-color);"><i class="fa-solid fa-star"></i> Pro Pass (Recommended)</span><span class="tier-price" id="tPrice2">₹499</span></div>
-                <div class="tier-desc">20 Doubts/Day (TicBull Pro AI) • PDF Uploads</div>
-            </div>
-            <div class="tier-card-option" onclick="enrollInTier('MAX_PRO', 999)">
-                <div class="tier-header"><span class="tier-name" style="color:#8b5cf6;"><i class="fa-solid fa-crown"></i> Max Pro Pass</span><span class="tier-price" id="tPrice3">₹999</span></div>
-                <div class="tier-desc">70+ Doubts/Day (Priority Server) • AI Explanations</div>
-            </div>
-        </div>
-    </div>
-
+    <!-- MODALS -->
     <div class="modal-overlay" id="settingsModal">
         <div class="modal-card">
             <i class="fa-solid fa-xmark" style="position:absolute; right:16px; top:16px; color:var(--text-muted); cursor:pointer;" onclick="document.getElementById('settingsModal').style.display='none';"></i>
@@ -277,7 +469,316 @@
         </div>
     </div>
 
-    <!-- 🚀 EXTERNAL JAVASCRIPT LINK -->
-    <script src="script.js"></script>
+    <!-- JAVASCRIPT ENGINE -->
+    <script>
+        const MALE_NAMES = ["Amit", "Rahul", "Vikram", "Manish", "Rohit", "Sachin", "Deepak", "Vikas", "Anil", "Sunil", "Ramesh", "Ravi", "Prakash", "Sanjay", "Rajesh", "Vinay", "Nitin", "Gaurav", "Ashish", "Vivek"];
+        const FEMALE_NAMES = ["Priya", "Neha", "Pooja", "Anjali", "Sneha", "Ritu", "Kavita", "Aarti", "Jyoti", "Swati", "Rekha", "Kiran", "Nidhi", "Monika", "Shikha", "Megha", "Poonam", "Komal", "Divya", "Rashmi"];
+
+        function hashString(str) { let hash = 0; for (let i = 0; i < str.length; i++) { hash = str.charCodeAt(i) + ((hash << 5) - hash); } return Math.abs(hash); }
+
+        function getTeacherProfile(boardCode, classGroup, subjectName) {
+            let seed = boardCode + classGroup + subjectName;
+            let hash = hashString(seed);
+            let isMale = hash % 2 === 0;
+            let nameArray = isMale ? MALE_NAMES : FEMALE_NAMES;
+            return {
+                name: `${nameArray[hash % nameArray.length]} ${isMale ? "Sir" : "Ma'am"}`,
+                gender: isMale ? "male" : "female",
+                logo: isMale ? "./11708.png" : "./11723.png",
+                icon: getSubjectIcon(subjectName)
+            };
+        }
+
+        function getSubjectIcon(subj) {
+            const s = subj.toLowerCase();
+            if(s.includes('math')) return 'fa-calculator'; if(s.includes('physic')||s.includes('sci')) return 'fa-atom';
+            if(s.includes('chem')) return 'fa-flask'; if(s.includes('bio')) return 'fa-dna';
+            if(s.includes('hist')||s.includes('civ')||s.includes('pol')||s.includes('sst')) return 'fa-landmark';
+            if(s.includes('geo')) return 'fa-earth-americas'; if(s.includes('eng')||s.includes('hin')||s.includes('san')||s.includes('urdu')) return 'fa-book-open';
+            if(s.includes('comp')||s.includes('info')) return 'fa-laptop-code'; if(s.includes('acc')||s.includes('eco')||s.includes('bus')) return 'fa-chart-pie';
+            return 'fa-chalkboard';
+        }
+
+        function getSubjectsForBatch(className) {
+            const c = className.toLowerCase();
+            if(c.includes('9') || c.includes('10')) return ['Mathematics', 'Physics', 'Chemistry', 'Biology', 'English', 'Hindi', 'History', 'Civics', 'Geography', 'Economics', 'Sanskrit', 'Urdu', 'Computer Applications'];
+            if(c.includes('pcm')) return ['Physics', 'Chemistry', 'Mathematics', 'English', 'Computer Science'];
+            if(c.includes('pcb') || c.includes('neet')) return ['Physics', 'Chemistry', 'Biology', 'English', 'Physical Education'];
+            if(c.includes('commer')) return ['Accountancy', 'Business Studies', 'Economics', 'Mathematics', 'English', 'Informatics Practices'];
+            if(c.includes('art') || c.includes('upsc') || c.includes('bpsc')) return ['History', 'Geography', 'Political Science', 'Economics', 'English', 'Sociology', 'Psychology'];
+            return ['General Knowledge', 'Aptitude', 'English', 'Current Affairs'];
+        }
+
+        const BOARDS = [
+            { code: 'CBSE', name: 'CBSE Board' }, { code: 'BIHAR', name: 'Bihar Board (BSEB)' }, { code: 'UP', name: 'UP Board (UPMSP)' },
+            { code: 'ICSE', name: 'ICSE / ISC Board' }, { code: 'MP', name: 'MP Board (MPBSE)' }, { code: 'RAJ', name: 'Rajasthan Board (RBSE)' },
+            { code: 'MH', name: 'Maharashtra Board (MSBSHSE)' }, { code: 'WB', name: 'West Bengal Board (WBBSE)' }, { code: 'GUJ', name: 'Gujarat Board (GSEB)' },
+            { code: 'KAR', name: 'Karnataka Board' }, { code: 'KER', name: 'Kerala Board' }, { code: 'TN', name: 'Tamil Nadu Board' },
+            { code: 'AP', name: 'Andhra Pradesh Board' }, { code: 'TS', name: 'Telangana Board' }, { code: 'OD', name: 'Odisha Board' },
+            { code: 'PB', name: 'Punjab Board' }, { code: 'HR', name: 'Haryana Board' }, { code: 'UK', name: 'Uttarakhand Board' },
+            { code: 'CG', name: 'Chhattisgarh Board' }, { code: 'JH', name: 'Jharkhand Board' }, { code: 'AS', name: 'Assam Board' }, { code: 'HP', name: 'Himachal Board' }
+        ];
+
+        const CLASSES = ['Class 9th', 'Class 10th', 'Class 11th Science (PCM)', 'Class 11th Science (PCB)', 'Class 11th Commerce', 'Class 11th Arts', 'Class 12th Science (PCM)', 'Class 12th Science (PCB)', 'Class 12th Commerce', 'Class 12th Arts'];
+        const all300Batches = [];
+        
+        BOARDS.forEach(b => {
+            CLASSES.forEach(c => {
+                all300Batches.push({
+                    id: `${b.code}_${c.replace(/[^a-zA-Z0-9]/g, '')}`, category: b.code, name: `${b.name} - ${c} Topper Batch`,
+                    tag: `${getSubjectsForBatch(c).length} Dedicated Subject Experts`,
+                    desc: `Complete syllabus coverage according to strict ${b.name} examination guidelines.`,
+                    basicPrice: 199, proPrice: 499, maxProPrice: 999
+                });
+            });
+        });
+
+        const compData = [
+            { cat: 'NEET', name: 'NEET Medical Entrance', tags: ['Dropper Batch', 'Class 11 Foundation', 'Class 12 Target', 'Crash Course'] },
+            { cat: 'JEE', name: 'IIT-JEE Engineering', tags: ['Dropper Batch', 'Class 11 Momentum', 'Class 12 Target', 'Advanced Special'] },
+            { cat: 'UPSC', name: 'UPSC Civil Services IAS', tags: ['Foundation (3 Yr)', 'Target Prelims', 'Mains Answer Writing', 'CSAT Special'] },
+            { cat: 'BPSC', name: 'State PCS / BPSC', tags: ['Bihar Special GK', 'UPPSC Target', 'MPPSC Foundation', 'RAS Pre'] },
+            { cat: 'DEFENSE', name: 'Defense Exams', tags: ['NDA Foundation', 'CDS Target', 'AFCAT', 'Airforce X/Y'] },
+            { cat: 'COMMERCE', name: 'CA/CS/CMA', tags: ['CA Foundation', 'CS Executive', 'CMA Basic', 'Banking PO'] }
+        ];
+
+        compData.forEach((comp, i) => {
+            comp.tags.forEach((tag, j) => {
+                all300Batches.push({
+                    id: `comp_${i}_${j}`, category: comp.cat, name: `${comp.name} - ${tag}`, tag: 'Top Faculty Panel',
+                    desc: `Strict competitive exam syllabus boundary with advanced problem-solving approach.`,
+                    basicPrice: 299, proPrice: 699, maxProPrice: 1499
+                });
+            });
+        });
+
+        let currentActiveBatchData = null;
+        let currentSubjectData = null;
+        let currentStudentData = { name: '', email: '' };
+        let currentSessionId = Date.now().toString();
+        let appSoundEnabled = true;
+
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        const audioCtx = new AudioContext();
+        function playClickSound() { if(appSoundEnabled) { if(audioCtx.state === 'suspended') audioCtx.resume(); const osc=audioCtx.createOscillator(); const gain=audioCtx.createGain(); osc.type='sine'; osc.frequency.setValueAtTime(800, audioCtx.currentTime); gain.gain.setValueAtTime(0.05, audioCtx.currentTime); gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.1); osc.connect(gain); gain.connect(audioCtx.destination); osc.start(); osc.stop(audioCtx.currentTime + 0.1); } }
+        document.addEventListener('click', e => { if(e.target.closest('button') || e.target.closest('.action-icon-btn') || e.target.closest('.drawer-item') || e.target.closest('.batch-card') || e.target.closest('.subject-card') || e.target.closest('.cat-chip') || e.target.closest('.tier-card-option')) playClickSound(); });
+
+        function showToast(msg, type='success') { const t = document.getElementById('custom-toast'); document.getElementById('toast-message').innerText = msg; t.querySelector('i').className = `fa-solid ${type==='success'?'fa-circle-check':'fa-circle-exclamation'} toast-icon ${type}`; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 3000); }
+        function changeAppTheme(color, el) { document.documentElement.style.setProperty('--accent-color', color); document.querySelectorAll('.theme-circle').forEach(c=>c.classList.remove('active')); el.classList.add('active'); }
+        function toggleTheme() { document.body.classList.toggle('light-theme'); }
+        function toggleDrawer() { const d=document.getElementById('drawer'), o=document.getElementById('drawerOverlay'); d.classList.toggle('open'); o.style.display=d.classList.contains('open')?'block':'none'; }
+        
+        function renderBatchesList(batchesArray) {
+            const c = document.getElementById('batchesContainer');
+            c.innerHTML = batchesArray.length ? batchesArray.map(b => `
+                <div class="batch-card" onclick="openBatchDetailsModal('${b.id}')">
+                    <span class="batch-tag">${b.tag}</span>
+                    <div class="batch-title">${b.name}</div>
+                    <div class="batch-desc">${b.desc}</div>
+                    <div class="batch-footer">
+                        <div><span style="font-size:10px; color:var(--text-muted); display:block;">Starting from</span><span class="batch-price">₹${b.basicPrice}/yr</span></div>
+                        <button class="btn-view-batch">View Details <i class="fa-solid fa-arrow-right"></i></button>
+                    </div>
+                </div>`).join('') : '<p style="text-align:center; color:var(--text-muted); margin-top:20px;">No batches found.</p>';
+        }
+
+        function filterCategory(cat, el) {
+            document.querySelectorAll('.cat-chip').forEach(c => c.classList.remove('active'));
+            if(el) el.classList.add('active');
+            renderBatchesList(cat === 'ALL' ? all300Batches : all300Batches.filter(b => b.category === cat));
+        }
+
+        function searchBatches() {
+            const q = document.getElementById('batchSearchInput').value.toLowerCase();
+            renderBatchesList(all300Batches.filter(b => b.name.toLowerCase().includes(q) || b.category.toLowerCase().includes(q)));
+        }
+
+        function openBatchDetailsModal(id) {
+            const b = all300Batches.find(x => x.id === id);
+            if(!b) return;
+            tempBatchForModal = b;
+            document.getElementById('bdModalTitle').innerText = b.name;
+            const subs = getSubjectsForBatch(b.name);
+            const cGroup = b.name.includes("9") || b.name.includes("10") ? "HighSchool" : "SeniorSecondary";
+            document.getElementById('bdTeacherList').innerHTML = subs.map(s => {
+                let t = getTeacherProfile(b.category, cGroup, s);
+                return `<div class="teacher-list-item"><img src="${t.logo}" class="teacher-avatar-mini" onerror="this.src='https://raw.githubusercontent.com/yuviyadav16/ticbull-academy/main/${t.logo.replace('./','')}';"><div><div class="t-sub">${s}</div><div class="t-name"><i class="fa-solid ${t.icon}"></i> ${t.name}</div></div></div>`;
+            }).join('');
+            document.getElementById('batchDetailsModal').style.display = 'flex';
+        }
+
+        function openTierModalFromDetails() {
+            document.getElementById('batchDetailsModal').style.display = 'none';
+            document.getElementById('tPrice1').innerText = `₹${tempBatchForModal.basicPrice}`;
+            document.getElementById('tPrice2').innerText = `₹${tempBatchForModal.proPrice}`;
+            document.getElementById('tPrice3').innerText = `₹${tempBatchForModal.maxProPrice}`;
+            document.getElementById('tierModal').style.display = 'flex';
+        }
+
+        function enrollInTier(tier, price) {
+            document.getElementById('tierModal').style.display = 'none';
+            localStorage.setItem('tb_active_batch_id', tempBatchForModal.id);
+            localStorage.setItem('tb_tier_type', tier);
+            currentActiveBatchData = tempBatchForModal;
+            showToast(`🎉 Enrolled in ${tier} Pass!`, "success");
+            loadSubjectDashboard();
+        }
+
+        function switchToBatchesScreen() {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById('batches-screen').classList.add('active');
+            filterCategory('ALL', document.querySelector('.cat-chip'));
+        }
+
+        function loadSubjectDashboard() {
+            if(!currentActiveBatchData) return switchToBatchesScreen();
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById('subject-dashboard').classList.add('active');
+            
+            document.getElementById('dashBatchName').innerText = currentActiveBatchData.name;
+            document.getElementById('dashPlanName').innerHTML = `<i class="fa-solid fa-shield-halved"></i> ${localStorage.getItem('tb_tier_type') || 'PRO'} Pass Active`;
+
+            const subs = getSubjectsForBatch(currentActiveBatchData.name);
+            const cGroup = currentActiveBatchData.name.includes("9") || currentActiveBatchData.name.includes("10") ? "HighSchool" : "SeniorSecondary";
+            
+            document.getElementById('subjectGridContainer').innerHTML = subs.map(s => {
+                let t = getTeacherProfile(currentActiveBatchData.category, cGroup, s);
+                return `<div class="subject-card" onclick="openChatForSubject('${s}', '${t.name}', '${t.gender}', '${t.logo}')"><div class="subject-icon-box"><i class="fa-solid ${t.icon}"></i></div><div class="subject-card-title">${s}</div><div class="subject-card-teacher">${t.name}</div></div>`;
+            }).join('');
+        }
+
+        function openChatForSubject(sub, tName, tGen, tLogo) {
+            currentSubjectData = { subject: sub, teacherName: tName, teacherGender: tGen, teacherLogo: tLogo };
+            currentSessionId = Date.now().toString();
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById('chat-interface').classList.add('active');
+
+            document.getElementById('chatHeaderAvatar').src = tLogo;
+            document.getElementById('chatHeaderSubject').innerText = sub;
+            document.getElementById('chatHeaderTeacher').innerText = tName;
+            
+            const bName = currentActiveBatchData.name.split('-')[1] || 'this batch';
+            document.getElementById('chatBox').innerHTML = `
+                <div class="msg guide-ai">
+                    <div style="display:flex; align-items:center; gap:10px; margin-bottom:8px;">
+                        <img src="${tLogo}" style="width:34px; height:34px; border-radius:50%; border:2px solid var(--gold-color); object-fit:cover;">
+                        <b style="color:var(--gold-color); font-size:13px;">${tName}:</b>
+                    </div>
+                    Hello ${currentStudentData.name || 'Student'}! I am your expert for <b>${sub}</b> in ${bName}. Ask me anything strictly from your syllabus!
+                </div>`;
+        }
+
+        function goBackToSubjects() { document.querySelectorAll('.screen').forEach(s => s.classList.remove('active')); document.getElementById('subject-dashboard').classList.add('active'); }
+        function toggleChatMenu() { document.getElementById('chatMenuDropdown').classList.toggle('show'); }
+        function startNewChat() { document.getElementById('chatMenuDropdown').classList.remove('show'); openChatForSubject(currentSubjectData.subject, currentSubjectData.teacherName, currentSubjectData.teacherGender, currentSubjectData.teacherLogo); showToast("New Session Started", "success"); }
+        
+        function showChatHistory() {
+            document.getElementById('chatMenuDropdown').classList.remove('show');
+            const h = JSON.parse(localStorage.getItem('tb_chat_history_'+currentSubjectData.subject) || '[]');
+            document.getElementById('historyListContainer').innerHTML = h.length ? h.map(x => `<div class="history-item-block">${x}</div>`).join('') : '<p style="color:var(--text-muted); font-size:12px;">No history for this subject yet.</p>';
+            document.getElementById('historyModal').style.display = 'flex';
+        }
+
+        function saveChatHistory(txt) {
+            if(!txt) return;
+            let key = 'tb_chat_history_'+currentSubjectData.subject;
+            let h = JSON.parse(localStorage.getItem(key) || '[]');
+            h.unshift(txt.substring(0,40)+"...");
+            localStorage.setItem(key, JSON.stringify(h.slice(0,10)));
+        }
+
+        function autoResizeInput(el) { el.style.height = 'auto'; el.style.height = (el.scrollHeight) + 'px'; }
+        function handleInputKeydown(e) { if(e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); askAI(); } }
+        function toggleToolsMenu() { const m=document.getElementById('aiToolsMenu'); m.style.display=m.style.display==='flex'?'none':'flex'; }
+        function triggerTool(p) { document.getElementById('aiToolsMenu').style.display='none'; document.getElementById('userInput').value=p; askAI(); }
+        
+        let selectedFilesArray = [];
+        function removeImage() { selectedFilesArray=[]; document.getElementById('imagePreview').style.display='none'; }
+        function handleMultipleFilesSelect(e) {
+            const files = e.target.files; if(!files.length) return;
+            selectedFilesArray = [];
+            for(let i=0; i<files.length; i++) {
+                const r = new FileReader(); r.onload = ev => selectedFilesArray.push(ev.target.result); r.readAsDataURL(files[i]);
+            }
+            document.getElementById('imagePreviewText').innerHTML = `<i class="fa-solid fa-paperclip"></i> ${files.length} Files Selected`;
+            document.getElementById('imagePreview').style.display = 'flex';
+        }
+
+        function askAI() {
+            const input = document.getElementById('userInput');
+            const chatBox = document.getElementById('chatBox');
+            if(!input.value.trim() && !selectedFilesArray.length) return;
+
+            let msg = selectedFilesArray.map(f => f.includes('pdf') ? `<i class="fa-solid fa-file-pdf" style="color:red;"></i> <b>[PDF Attached]</b><br>` : `<img src="${f}" class="msg-image"><br>`).join('');
+            msg += input.value.trim();
+            const rawText = input.value.trim() || "Analyze files";
+            chatBox.innerHTML += `<div class="msg user">${msg}</div>`;
+            
+            const files = [...selectedFilesArray]; input.value = ''; input.style.height = 'auto'; removeImage();
+            document.getElementById('aiToolsMenu').style.display = 'none'; chatBox.scrollTop = chatBox.scrollHeight;
+
+            const loadId = 'load-'+Date.now();
+            chatBox.innerHTML += `<div class="msg ai" id="${loadId}"><div style="display:flex; align-items:center; gap:10px;"><img src="${currentSubjectData.teacherLogo}" style="width:30px; height:30px; border-radius:50%; border:2px solid var(--accent-color); object-fit:cover;"><i>${currentSubjectData.teacherName} is thinking...</i></div></div>`;
+            chatBox.scrollTop = chatBox.scrollHeight;
+
+            fetch(`/api/chat`, {
+                method: 'POST', headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({
+                    email: currentStudentData.email, token: localStorage.getItem('ticbull_token'),
+                    prompt: rawText, images: files,
+                    active_batch: currentActiveBatchData.name, active_subject: currentSubjectData.subject,
+                    teacher_name: currentSubjectData.teacherName,
+                    tier_type: localStorage.getItem('tb_tier_type') || 'PRO',
+                    lang: localStorage.getItem('tb_lang') || 'Hinglish'
+                })
+            }).then(r=>r.json()).then(d => {
+                const el = document.getElementById(loadId);
+                if(d.success) {
+                    let ans = d.reply.replace(/\*\*(.*?)\*\*/g, '<b>$1</b>').replace(/\n/g, '<br>');
+                    el.innerHTML = `<div style="display:flex; align-items:center; gap:10px; margin-bottom:10px; border-bottom:1px solid var(--border-color); padding-bottom:8px;"><img src="${currentSubjectData.teacherLogo}" style="width:34px; height:34px; border-radius:50%; border:2px solid var(--gold-color); object-fit:cover;"><b style="color:var(--gold-color); font-size:13px;">${currentSubjectData.teacherName} (TicBull AI)</b></div><div style="line-height:1.6; word-break:break-word;">${ans}</div>`;
+                    saveChatHistory(rawText);
+                } else {
+                    el.classList.replace('ai','error'); el.innerHTML = `<b>❌ AI Limit/Error:</b> ${d.message}`;
+                }
+                chatBox.scrollTop = chatBox.scrollHeight;
+            }).catch(() => { document.getElementById(loadId).innerHTML = `<b>❌ Server Error.</b>`; });
+        }
+
+        function switchAuth(mode) {
+            document.getElementById('tab-login').classList.toggle('active', mode === 'login');
+            document.getElementById('tab-signup').classList.toggle('active', mode === 'signup');
+            document.getElementById('signupFields').style.display = mode === 'signup' ? 'flex' : 'none';
+        }
+
+        function togglePassword(id) { const p = document.getElementById(id); p.type = p.type === 'password' ? 'text' : 'password'; }
+
+        function initiateAuth() {
+            const e = document.getElementById('email').value.trim();
+            const n = document.getElementById('studentName').value.trim();
+            if(!e) return showToast("Email required", "error");
+            currentStudentData.email = e; currentStudentData.name = n;
+            localStorage.setItem('ticbull_email', e); localStorage.setItem('ticbull_name', n);
+            document.getElementById('auth-screen').classList.remove('active');
+            switchToBatchesScreen(); showToast("Logged in successfully", "success");
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            const e = localStorage.getItem('ticbull_email');
+            if(e) {
+                currentStudentData.email = e; currentStudentData.name = localStorage.getItem('ticbull_name');
+                const bId = localStorage.getItem('tb_active_batch_id');
+                if(bId) { currentActiveBatchData = all300Batches.find(x=>x.id===bId); loadSubjectDashboard(); } 
+                else { switchToBatchesScreen(); }
+            } else { document.getElementById('auth-screen').classList.add('active'); }
+        });
+
+        window.addEventListener('load', () => { setTimeout(() => { document.getElementById('splash-screen').style.opacity = '0'; setTimeout(() => document.getElementById('splash-screen').style.display = 'none', 500); }, 3000); });
+        
+        let syllabusItems = JSON.parse(localStorage.getItem('tb_syllabus') || '[]');
+        function addSyllabusItem() { const i=document.getElementById('newSyllabusItem'); if(i.value) { syllabusItems.unshift({t:i.value, d:false}); i.value=''; renderSyl(); localStorage.setItem('tb_syllabus', JSON.stringify(syllabusItems)); } }
+        function renderSyl() { document.getElementById('syllabusList').innerHTML = syllabusItems.map((x,i) => `<div class="syllabus-task ${x.d?'completed':''}"><input type="checkbox" ${x.d?'checked':''} onchange="syllabusItems[${i}].d=!syllabusItems[${i}].d; localStorage.setItem('tb_syllabus', JSON.stringify(syllabusItems)); renderSyl();"><span>${x.t}</span></div>`).join(''); }
+        document.getElementById('syllabusModal').addEventListener('DOMNodeInserted', renderSyl);
+        function logoutUser() { localStorage.clear(); location.reload(); }
+    </script>
 </body>
-            </html>
+                        </html>
