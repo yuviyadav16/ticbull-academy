@@ -136,7 +136,25 @@
         .auth-footer-socials a { color: var(--text-muted); font-size: 16px; transition: 0.2s; }
         .auth-footer-socials a:hover { color: var(--accent-color); transform: scale(1.1); }
 
-        /* DASHBOARD */
+        /* 🚀 PW BATCHES DASHBOARD SCREEN */
+        #batches-screen { display:none; flex-direction:column; height:100%; max-width:850px; margin:0 auto; width:100%; padding:14px; overflow-y:auto; }
+        .batches-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; background:var(--card-bg); padding:12px 16px; border-radius:16px; border:1px solid var(--border-color); }
+        .search-batches-box { position:relative; margin-bottom:14px; }
+        .search-batches-box input { width:100%; background:var(--card-bg); border:1px solid var(--border-color); color:var(--text-main); padding:12px 16px 12px 42px; border-radius:14px; font-size:13.5px; outline:none; }
+        .search-batches-box i { position:absolute; left:16px; top:50%; transform:translateY(-50%); color:var(--text-muted); }
+
+        .batch-card { background: linear-gradient(135deg, rgba(15, 23, 42, 0.95), rgba(30, 41, 59, 0.95)); border: 1px solid rgba(37, 99, 235, 0.4); border-radius: 18px; padding: 18px; margin-bottom: 14px; box-shadow: 0 10px 30px rgba(0,0,0,0.4); position: relative; overflow: hidden; transition: 0.3s; }
+        .batch-card:hover { border-color: var(--accent-color); transform: translateY(-2px); }
+        .batch-tag { background: rgba(16, 185, 129, 0.15); color: var(--success-color); font-size: 10.5px; font-weight: 700; padding: 4px 10px; border-radius: 20px; display: inline-block; margin-bottom: 8px; border: 1px solid rgba(16, 185, 129, 0.3); }
+        .batch-title { font-size: 17px; font-weight: 800; color: #fff; margin-bottom: 4px; }
+        .batch-desc { font-size: 12px; color: var(--text-muted); margin-bottom: 12px; }
+        .batch-footer { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border-color); padding-top: 12px; }
+        .batch-price { font-size: 15px; font-weight: 800; color: var(--success-color); }
+        .batch-actions { display: flex; gap: 8px; }
+        .btn-trial { background: rgba(245, 158, 11, 0.2); color: var(--gold-color); border: 1px solid rgba(245, 158, 11, 0.5); padding: 8px 12px; border-radius: 10px; font-size: 11.5px; font-weight: 700; cursor: pointer; }
+        .btn-buy { background: var(--accent-color); color: #fff; border: none; padding: 8px 16px; border-radius: 10px; font-size: 11.5px; font-weight: 700; cursor: pointer; box-shadow: 0 4px 15px var(--accent-glow); }
+
+        /* MAIN CHAT DASHBOARD */
         #main-dashboard { display:none; flex-direction:column; height:100%; max-width:850px; margin:0 auto; width:100%; position:relative; padding:10px; }
         .header { display:flex; justify-content:space-between; align-items:center; padding:10px 14px; background:var(--card-bg); border-radius:18px; border:1px solid var(--border-color); margin-bottom:8px; flex-shrink:0; }
         .header-brand { display:flex; align-items:center; gap:10px; }
@@ -145,18 +163,14 @@
         .header-logo img { width:90%; height:90%; object-fit:contain; }
         .user-badge { background:rgba(245, 158, 11, 0.15); border:1px solid rgba(245, 158, 11, 0.4); color:var(--gold-color); padding:5px 10px; border-radius:20px; font-size:11px; font-weight:700; cursor:pointer; }
 
-        /* 🚀 PW STYLE COURSE BAR (CLEAN & PROFESSIONAL) */
-        .course-bar-toggle { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 14px; padding: 10px 14px; font-size: 12px; color: var(--text-main); font-weight: 600; margin-bottom: 8px; display: flex; align-items: center; justify-content: space-between; cursor: pointer; flex-shrink: 0; box-shadow: 0 4px 15px rgba(0,0,0,0.3); transition: 0.2s; }
-        .course-bar-toggle:hover { border-color: var(--accent-color); background: rgba(37, 99, 235, 0.1); }
+        .course-bar-toggle { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 14px; padding: 10px 14px; font-size: 12px; color: var(--text-main); font-weight: 600; margin-bottom: 8px; display: flex; align-items: center; justify-content: space-between; cursor: pointer; flex-shrink: 0; box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
 
         /* CHAT CONTAINER */
         .chat-container { background:var(--chat-bg); border:1px solid var(--border-color); border-radius:18px; padding:14px; flex:1; overflow-y:auto; display:flex; flex-direction:column; gap:10px; margin-bottom:8px; min-height: 150px; }
-        
         .msg { padding:12px 15px; border-radius:16px; font-size:13.5px; line-height:1.5; max-width:88%; word-break: break-word; overflow-wrap: break-word; animation: popIn 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards; transform-origin: bottom left; }
-        .msg.user { background:var(--accent-color); color:#fff; align-self:flex-end; border-bottom-right-radius:4px; transform-origin: bottom right; box-shadow: 0 4px 15px var(--accent-glow); word-break: break-word; overflow-wrap: break-word; }
-        .msg.ai { background:var(--card-bg); color:var(--text-main); border:1px solid var(--border-color); align-self:flex-start; border-bottom-left-radius:4px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); width: 100%; max-width: 92%; word-break: break-word; overflow-wrap: break-word; }
+        .msg.user { background:var(--accent-color); color:#fff; align-self:flex-end; border-bottom-right-radius:4px; transform-origin: bottom right; box-shadow: 0 4px 15px var(--accent-glow); }
+        .msg.ai { background:var(--card-bg); color:var(--text-main); border:1px solid var(--border-color); align-self:flex-start; border-bottom-left-radius:4px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); width: 100%; max-width: 92%; }
         
-        /* AI TABLES CSS */
         .msg table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 12.5px; }
         .msg th, .msg td { border: 1px solid var(--border-color); padding: 8px; text-align: left; }
         .msg th { background: rgba(37, 99, 235, 0.1); color: var(--accent-color); font-weight: 700; }
@@ -166,15 +180,12 @@
         .msg-image { max-width:100%; border-radius:12px; margin-top:8px; border:1px solid var(--border-color); }
 
         @keyframes popIn { 0% { opacity:0; transform:scale(0.8) translateY(10px); } 100% { opacity:1; transform:scale(1) translateY(0); } }
-        @keyframes fadeIn { from { opacity:0; } to { opacity:1; } }
 
         .ai-tools-menu { display:none; position:absolute; bottom:60px; left:10px; background:var(--card-bg); border:1px solid var(--border-color); border-radius:16px; padding:8px; box-shadow:0 15px 35px rgba(0,0,0,0.5); z-index:500; width:260px; flex-direction:column; gap:4px; }
         .tool-btn { display:flex; align-items:center; gap:10px; padding:9px 12px; border-radius:10px; background:transparent; border:none; color:var(--text-main); font-size:12px; cursor:pointer; text-align:left; transition:0.2s; }
         .tool-btn:hover { background:rgba(37, 99, 235, 0.2); color:var(--accent-color); }
 
         .chat-input-bar { display:flex; align-items:center; background:var(--card-bg); border:1px solid var(--border-color); border-radius:16px; padding:5px 6px 5px 10px; gap:6px; position:relative; flex-shrink:0; }
-        
-        /* 💬 MULTI-LINE TEXTAREA INPUT FIX */
         .chat-input-bar textarea { flex:1; background:transparent; border:none; color:var(--text-main); outline:none; font-size:13.5px; min-width: 0; word-break: break-word; resize: none; max-height: 100px; overflow-y: auto; padding-top: 6px; }
         
         .action-icon-btn { background:rgba(255,255,255,0.06); color:var(--text-muted); border:1px solid var(--border-color); width:36px; height:36px; border-radius:10px; display:flex; justify-content:center; align-items:center; cursor:pointer; transition:0.2s; flex-shrink:0; }
@@ -182,7 +193,7 @@
         .send-btn { background:var(--accent-color); color:#fff; border:none; width:36px; height:36px; border-radius:10px; display:flex; justify-content:center; align-items:center; cursor:pointer; transition:0.2s; flex-shrink:0; }
         .send-btn:active { transform: scale(0.9); }
 
-        .voice-active { background: rgba(239, 68, 68, 0.2); color: #ef4444; border-color: #ef4444; animation: pulseVoice 1.5s infinite; }
+        .voice-active { background: rgba(239, 68, 68, 0.2); color: #ef4444; border-color: #ef4444; }
         
         .delete-chat-icon { color: #ef4444; opacity: 0.7; font-size: 13px; padding: 4px; cursor:pointer; }
         .delete-chat-icon:hover { opacity: 1; }
@@ -202,9 +213,7 @@
         .profile-avatar-img { width:100%; height:100%; border-radius:50%; object-fit:cover; border:2px solid var(--accent-color); }
         .profile-avatar-initial { width:100%; height:100%; border-radius:50%; background:var(--accent-color); color:#fff; display:flex; justify-content:center; align-items:center; font-weight:800; font-size:18px; border:2px solid rgba(255,255,255,0.2); }
         .avatar-upload-icon { position:absolute; bottom:-2px; right:-2px; background:var(--gold-color); color:#000; width:18px; height:18px; border-radius:50%; font-size:10px; display:flex; justify-content:center; align-items:center; cursor:pointer; }
-
         .edit-profile-btn { position:absolute; top:12px; right:12px; color:var(--text-muted); font-size:13px; cursor:pointer; }
-        .edit-profile-btn:hover { color:var(--accent-color); }
 
         .drawer-item { padding:11px 12px; border-radius:10px; color:var(--text-main); font-size:12.5px; display:flex; align-items:center; gap:12px; cursor:pointer; transition:0.2s; margin-bottom:6px; }
         .drawer-item:hover { background:rgba(255,255,255,0.06); }
@@ -227,7 +236,6 @@
 
         .pro-banner { background:linear-gradient(135deg, rgba(245, 158, 11, 0.25), rgba(37, 99, 235, 0.25)); border:1px solid rgba(245, 158, 11, 0.6); border-radius:12px; padding:12px; margin-bottom:8px; text-align:left; }
 
-        /* SETTINGS & SYLLABUS UI */
         .setting-item { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; font-size: 13.5px; color: var(--text-main); text-align:left; }
         .switch { position: relative; display: inline-block; width: 38px; height: 22px; flex-shrink:0; }
         .switch input { opacity: 0; width: 0; height: 0; }
@@ -411,58 +419,32 @@
         </div>
     </div>
 
-    <!-- 🚀 PW STYLE COURSE SELECTION MODAL (REPLACES CLUTTERED DROPDOWNS) -->
-    <div class="modal-overlay" id="courseModal">
-        <div class="modal-card" style="max-width:440px;">
-            <i class="fa-solid fa-xmark" style="position:absolute; right:16px; top:16px; color:var(--text-muted); cursor:pointer;" onclick="closeCourseModal()"></i>
-            <h3 style="color:var(--text-main); font-size:18px;"><i class="fa-solid fa-graduation-cap" style="color:var(--accent-color);"></i> Select Your Study Course</h3>
-            <p style="font-size:11.5px; color:var(--text-muted); margin-top:4px;">Choose your Board, Class and Target Stream</p>
-
-            <div class="pricing-list" style="max-height: 380px; margin-top: 15px;">
-                <div class="price-category-label">📖 Select Board</div>
-                <select id="modalBoardSelect" style="margin-bottom:10px;">
-                    <option value="CBSE Board">CBSE Board</option>
-                    <option value="Bihar Board (BSEB)">Bihar Board (BSEB)</option>
-                    <option value="UP Board">UP Board</option>
-                    <option value="ICSE / ISC">ICSE / ISC Board</option>
-                    <option value="BPSC Exam Prep">BPSC Exam Prep</option>
-                    <option value="UPSC Civil Services">UPSC Civil Services</option>
-                    <option value="JEE Main Prep">JEE Main Prep</option>
-                    <option value="NEET Medical Prep">NEET Medical Prep</option>
-                    <option value="NDA / Defense">NDA / Defense Exams</option>
-                </select>
-
-                <div class="price-category-label">🎓 Select Class / Goal</div>
-                <select id="modalClassSelect" style="margin-bottom:10px;">
-                    <option value="Class 12">Class 12th</option>
-                    <option value="Class 11">Class 11th</option>
-                    <option value="Class 10">Class 10th</option>
-                    <option value="Class 9">Class 9th</option>
-                    <option value="Competitive Aspirant">Competitive Aspirant</option>
-                    <option value="Skill & Business Learner">Skill & Business Aspirant</option>
-                </select>
-
-                <div class="price-category-label">🧪 Select Stream / Focus</div>
-                <select id="modalStreamSelect" style="margin-bottom:10px;">
-                    <option value="Science (PCM/PCB)">Science (PCM/PCB)</option>
-                    <option value="Commerce">Commerce</option>
-                    <option value="Arts / Humanities">Arts / Humanities</option>
-                    <option value="Creator & Skill">Creator / Social Media / Business</option>
-                </select>
-
-                <div class="price-category-label">🌐 Select AI Language</div>
-                <select id="modalLangSelect">
-                    <option value="Hinglish">Hinglish (Simple AI)</option>
-                    <option value="English">English Medium</option>
-                    <option value="Hindi">Hindi (हिंदी माध्यम)</option>
-                </select>
+    <!-- 🚀 1. PW STYLE BATCHES & GOALS DASHBOARD SCREEN (DEFAULT HOME) -->
+    <div id="batches-screen">
+        <div class="batches-header">
+            <div style="display:flex; align-items:center; gap:10px;">
+                <div class="header-logo" style="width:34px; height:34px;">
+                    <img src="./logo.png" alt="Logo" onerror="this.src='https://raw.githubusercontent.com/yuviyadav16/ticbull-academy/main/logo.png'">
+                </div>
+                <div>
+                    <strong style="font-size:15px; color:#fff;">TicBull Batches & Goals</strong>
+                    <p style="font-size:10px; color:var(--text-muted);">Select your class, board or competitive exam</p>
+                </div>
             </div>
+            <button class="menu-btn" onclick="toggleDrawer()"><i class="fa-solid fa-bars"></i></button>
+        </div>
 
-            <button class="btn-primary" onclick="saveCourseSelection()" style="margin-top:15px;">SAVE & START LEARNING</button>
+        <div class="search-batches-box">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input type="text" id="batchSearchInput" placeholder="Search for Class 9-12, CBSE, Bihar Board, NEET, JEE, UPSC..." onkeyup="filterBatches()">
+        </div>
+
+        <div id="batchesContainer">
+            <!-- Dynamic Batch Cards will load here -->
         </div>
     </div>
 
-    <!-- MAIN DASHBOARD -->
+    <!-- 🚀 2. MAIN CHAT DASHBOARD -->
     <div id="main-dashboard">
         <div class="header">
             <div class="header-brand">
@@ -476,8 +458,8 @@
                 </div>
             </div>
             
-            <!-- TEACHER SWITCH & BADGES -->
             <div style="display:flex; align-items:center; gap:6px;">
+                <!-- TEACHER SWITCH BUTTON -->
                 <div onclick="quickToggleTeacher()" style="background:var(--input-bg); border:1px solid var(--border-color); padding:5px 10px; border-radius:20px; font-size:11px; font-weight:700; color:var(--gold-color); cursor:pointer; display:flex; align-items:center; gap:5px;" title="Switch Teacher">
                     <i class="fa-solid fa-chalkboard-user"></i> <span id="headerTeacherText">Sir</span>
                 </div>
@@ -490,10 +472,20 @@
             </div>
         </div>
 
-        <!-- 🚀 CLEAN PW STYLE COURSE BANNER (OPENS THE COURSE MODAL) -->
-        <div class="course-bar-toggle" onclick="openCourseModal()">
-            <span id="activeCourseLabel"><i class="fa-solid fa-graduation-cap" style="color:var(--accent-color);"></i> Course: CBSE | Class 12 | Science (PCM/PCB)</span>
-            <i class="fa-solid fa-chevron-right" style="color:var(--text-muted); font-size:11px;"></i>
+        <!-- ACTIVE BATCH BAR (CLICK TO GO BACK TO BATCHES) -->
+        <div class="course-bar-toggle" onclick="switchToBatchesScreen()">
+            <span id="activeBatchLabel"><i class="fa-solid fa-graduation-cap" style="color:var(--accent-color);"></i> Active Batch: Class 10 - CBSE Board</span>
+            <span style="font-size:11px; color:var(--accent-color); font-weight:700;"><i class="fa-solid fa-exchange-alt"></i> Change</span>
+        </div>
+
+        <!-- LANGUAGE SELECTOR BAR -->
+        <div style="display:flex; align-items:center; justify-content:space-between; background:var(--card-bg); border:1px solid var(--border-color); padding:6px 12px; border-radius:12px; margin-bottom:8px;">
+            <span style="font-size:11.5px; color:var(--text-muted);"><i class="fa-solid fa-language"></i> AI Language:</span>
+            <select id="chatLangSelect" style="background:var(--input-bg); color:var(--text-main); border:1px solid var(--border-color); padding:4px 10px; border-radius:8px; font-size:11.5px; outline:none; width:150px;" onchange="saveChatLang(this.value)">
+                <option value="Hinglish">Hinglish</option>
+                <option value="Hindi">Hindi (हिंदी)</option>
+                <option value="English">English</option>
+            </select>
         </div>
 
         <div class="active-course-chip" id="activeCourseChip" style="background:rgba(16, 185, 129, 0.1); border:1px solid rgba(16, 185, 129, 0.4); padding:6px 10px; border-radius:12px; font-size:11px; font-weight:700; color:var(--text-main); margin-bottom:8px; display:flex; justify-content:space-between; flex-shrink:0;">
@@ -534,7 +526,6 @@
             
             <button class="action-icon-btn" id="voiceBtn" onclick="toggleVoiceInput()" title="Voice Typing"><i class="fa-solid fa-microphone"></i></button>
             
-            <!-- 🚀 AUTO-EXPANDING MULTI-LINE TEXTAREA -->
             <textarea id="userInput" placeholder="Type chapter/topic or click (+) for tools..." rows="1" oninput="autoResizeInput(this)" onkeydown="handleInputKeydown(event)"></textarea>
             
             <button class="send-btn" id="sendBtn" onclick="askAI()"><i class="fa-solid fa-paper-plane"></i></button>
@@ -567,7 +558,7 @@
             </div>
         </div>
         
-        <div class="drawer-item" onclick="openCourseModal()"><i class="fa-solid fa-graduation-cap" style="color:var(--accent-color);"></i> Change Course & Batch</div>
+        <div class="drawer-item" onclick="switchToBatchesScreen(); toggleDrawer();"><i class="fa-solid fa-graduation-cap" style="color:var(--accent-color);"></i> All Batches & Goals</div>
         <div class="drawer-item" onclick="openSyllabusBoard()"><i class="fa-solid fa-list-check" style="color:#0ea5e9;"></i> Syllabus Tracker Board</div>
         <div class="drawer-item" onclick="openSettingsModal()"><i class="fa-solid fa-gear" style="color:#94a3b8;"></i> App Settings</div>
         <div class="drawer-item" onclick="toggleTheme()"><i class="fa-solid fa-circle-half-stroke" style="color:var(--gold-color);"></i> <span id="themeToggleText">Switch to Light Mode</span></div>
@@ -736,6 +727,80 @@
 
     <script>
         let currentTeacher = localStorage.getItem('ticbull_teacher') || 'male';
+        let currentActiveBatch = localStorage.getItem('tb_active_batch') || 'Class 10 - CBSE Board (13 Subject Experts)';
+
+        // ALL INDIAN SCHOOL BOARDS & COMPETITIVE BATCHES DATA
+        const allBatchesData = [
+            { id: 'cbse10', name: 'Udaan 2.0 - Class 10 CBSE Board', tag: 'Most Popular • 13 Subjects', price: '₹199/yr', desc: 'Covering Math, Science, SST, English, Hindi, Sanskrit, Computer & more with dedicated expert teachers.' },
+            { id: 'cbse12sci', name: 'Arjuna 2.0 - Class 12 Science (PCM/PCB)', tag: 'JEE / NEET + Board Combo', price: '₹399/yr', desc: 'Physics, Chemistry, Maths & Biology expert guidance for school exams and entrance tests.' },
+            { id: 'bihar10', name: 'Bihar Board (BSEB) - Class 10 Lakshya Batch', tag: 'BSEB Expert Faculty', price: '₹199/yr', desc: 'Poora syllabus Bihar Board pattern par Hindi & Urdu medium me.' },
+            { id: 'bihar12sci', name: 'Bihar Board (BSEB) - Class 12 Science Vigyan', tag: 'Top Results', price: '₹399/yr', desc: 'Physics, Chemistry, Biology, Math for BSEB 12th exam.' },
+            { id: 'up10', name: 'UP Board (UPMSP) - Class 10 Topper Batch', tag: 'UP Board Syllabus', price: '₹199/yr', desc: 'Complete UP Board Class 10 coverage.' },
+            { id: 'up12sci', name: 'UP Board (UPMSP) - Class 12 Science Excellence', tag: 'Board + Competitions', price: '₹399/yr', desc: 'Advanced preparation for UP Board science students.' },
+            { id: 'icse10', name: 'ICSE / ISC - Class 10 Board Mastery', tag: 'ICSE Expert Panel', price: '₹249/yr', desc: 'Strict ICSE guidelines and chapter notes.' },
+            { id: 'neet11', name: 'NEET 2027 - Class 11 Aarambh Batch', tag: 'Medical Entrance', price: '₹749/yr', desc: 'Physics, Chemistry, Botany & Zoology specialist teachers.' },
+            { id: 'jee11', name: 'IIT-JEE 2027 - Class 11 Momentum Batch', tag: 'Engineering Entrance', price: '₹799/yr', desc: 'Advanced calculus, mechanics, and physical chemistry.' },
+            { id: 'upsc', name: 'UPSC Civil Services - Foundation IAS', tag: 'General Studies & CSAT', price: '₹899/yr', desc: 'History, Polity, Geography, Economy & Ethics expert guidance.' },
+            { id: 'bpsc', name: 'BPSC Combined Exam - Bihar PCS', tag: 'State Civil Services', price: '₹499/yr', desc: 'Special Bihar Special GK, History & Current Affairs.' },
+            { id: 'nda', name: 'NDA / Defense Exam - Shaurya Batch', tag: 'Army, Navy, Airforce', price: '₹499/yr', desc: 'Maths and GAT preparation with strict discipline.' }
+        ];
+
+        function renderBatches(filter = '') {
+            const container = document.getElementById('batchesContainer');
+            if(!container) return;
+            container.innerHTML = '';
+
+            const filtered = allBatchesData.filter(b => b.name.toLowerCase().includes(filter.toLowerCase()) || b.desc.toLowerCase().includes(filter.toLowerCase()));
+            
+            if(filtered.length === 0) {
+                container.innerHTML = '<p style="color:var(--text-muted); text-align:center; padding:30px;">No batches found matching your search.</p>';
+                return;
+            }
+
+            filtered.forEach(batch => {
+                container.innerHTML += `
+                    <div class="batch-card">
+                        <span class="batch-tag">${batch.tag}</span>
+                        <div class="batch-title">${batch.name}</div>
+                        <div class="batch-desc">${batch.desc}</div>
+                        <div class="batch-footer">
+                            <span class="batch-price">${batch.price}</span>
+                            <div class="batch-actions">
+                                <button class="btn-trial" onclick="selectBatchAndStart('${batch.name}', true)"><i class="fa-solid fa-gift"></i> 2 Days Free Trial</button>
+                                <button class="btn-buy" onclick="selectBatchAndStart('${batch.name}', false)">Join Batch</button>
+                            </div>
+                        </div>
+                    </div>`;
+            });
+        }
+
+        function filterBatches() {
+            const query = document.getElementById('batchSearchInput').value;
+            renderBatches(query);
+        }
+
+        function selectBatchAndStart(batchName, isTrial) {
+            currentActiveBatch = batchName;
+            localStorage.setItem('tb_active_batch', batchName);
+            document.getElementById('activeBatchLabel').innerHTML = `<i class="fa-solid fa-graduation-cap" style="color:var(--accent-color);"></i> Active Batch: ${batchName}`;
+            
+            // Switch screen from batches to main dashboard
+            document.getElementById('batches-screen').style.display = 'none';
+            document.getElementById('main-dashboard').style.display = 'flex';
+            
+            if(isTrial) {
+                showToast("🎁 2 Days Free Trial Activated for this Batch!", "success");
+            } else {
+                showToast(`🎉 Enrolled in ${batchName}!`, "success");
+            }
+            scrollToBottom();
+        }
+
+        function switchToBatchesScreen() {
+            document.getElementById('main-dashboard').style.display = 'none';
+            document.getElementById('batches-screen').style.display = 'flex';
+            renderBatches();
+        }
 
         function quickToggleTeacher() {
             currentTeacher = currentTeacher === 'male' ? 'female' : 'male';
@@ -793,7 +858,7 @@
         }
 
         document.addEventListener('click', function(e) {
-            if(e.target.closest('button') || e.target.closest('.action-icon-btn') || e.target.closest('.drawer-item') || e.target.closest('.auth-tab') || e.target.closest('.price-item') || e.target.closest('.theme-circle')) {
+            if(e.target.closest('button') || e.target.closest('.action-icon-btn') || e.target.closest('.drawer-item') || e.target.closest('.auth-tab') || e.target.closest('.price-item') || e.target.closest('.theme-circle') || e.target.closest('.batch-card')) {
                 playClickSound();
             }
         });
@@ -845,34 +910,6 @@
             document.getElementById('streakCountText').innerText = currentStreak + " Day";
         }
 
-        // --- PW STYLE COURSE MODAL LOGIC ---
-        function openCourseModal() {
-            document.getElementById('courseModal').style.display = 'flex';
-        }
-
-        function closeCourseModal() {
-            document.getElementById('courseModal').style.display = 'none';
-        }
-
-        function saveCourseSelection() {
-            const board = document.getElementById('modalBoardSelect').value;
-            const cls = document.getElementById('modalClassSelect').value;
-            const stream = document.getElementById('modalStreamSelect').value;
-            const lang = document.getElementById('modalLangSelect').value;
-
-            // Save to LocalStorage
-            localStorage.setItem('tb_board', board);
-            localStorage.setItem('tb_class', cls);
-            localStorage.setItem('tb_stream', stream);
-            localStorage.setItem('tb_lang', lang);
-
-            // Update Header Banner
-            document.getElementById('activeCourseLabel').innerHTML = `<i class="fa-solid fa-graduation-cap" style="color:var(--accent-color);"></i> Course: ${board} | ${cls} | ${stream}`;
-            
-            closeCourseModal();
-            showToast("🎉 Course & Batch updated successfully!", "success");
-        }
-
         let syllabusItems = [];
         function openSyllabusBoard() {
             document.getElementById('syllabusModal').style.display = 'flex';
@@ -916,7 +953,7 @@
 
         window.addEventListener('DOMContentLoaded', () => {
             updateHeaderTeacherUI();
-            loadSavedCourse();
+            renderBatches();
 
             const savedEmail = localStorage.getItem('ticbull_email');
             const savedToken = localStorage.getItem('ticbull_token');
@@ -937,7 +974,8 @@
                         if(currentStudentData.photo) localStorage.setItem('ticbull_photo', currentStudentData.photo);
 
                         document.getElementById('auth-screen').style.display = 'none';
-                        document.getElementById('main-dashboard').style.display = 'flex';
+                        // Show Batches Screen first after login
+                        document.getElementById('batches-screen').style.display = 'flex';
                         updateProfileUI();
                         loadSidebarHistory();
                         checkAndUpdateStreak(); 
@@ -949,25 +987,13 @@
                     currentStudentData.email = savedEmail;
                     currentStudentData.name = localStorage.getItem('ticbull_name') || '';
                     document.getElementById('auth-screen').style.display = 'none';
-                    document.getElementById('main-dashboard').style.display = 'flex';
+                    document.getElementById('batches-screen').style.display = 'flex';
                     updateProfileUI();
                     loadSidebarHistory();
                     checkAndUpdateStreak(); 
                 });
             }
         });
-
-        function loadSavedCourse() {
-            if(localStorage.getItem('tb_board')) document.getElementById('modalBoardSelect').value = localStorage.getItem('tb_board');
-            if(localStorage.getItem('tb_class')) document.getElementById('modalClassSelect').value = localStorage.getItem('tb_class');
-            if(localStorage.getItem('tb_stream')) document.getElementById('modalStreamSelect').value = localStorage.getItem('tb_stream');
-            if(localStorage.getItem('tb_lang')) document.getElementById('modalLangSelect').value = localStorage.getItem('tb_lang');
-
-            const board = localStorage.getItem('tb_board') || 'CBSE Board';
-            const cls = localStorage.getItem('tb_class') || 'Class 12';
-            const stream = localStorage.getItem('tb_stream') || 'Science (PCM/PCB)';
-            document.getElementById('activeCourseLabel').innerHTML = `<i class="fa-solid fa-graduation-cap" style="color:var(--accent-color);"></i> Course: ${board} | ${cls} | ${stream}`;
-        }
 
         window.addEventListener('load', () => {
             setTimeout(() => {
@@ -1140,7 +1166,8 @@
                     updateProfileUI();
                     document.getElementById('otpModal').style.display = 'none';
                     document.getElementById('auth-screen').style.display = 'none';
-                    document.getElementById('main-dashboard').style.display = 'flex';
+                    // Show Batches Dashboard Screen after login
+                    document.getElementById('batches-screen').style.display = 'flex';
                     loadSidebarHistory();
                     checkAndUpdateStreak();
                     showToast("Login Successful!", "success");
@@ -1511,13 +1538,15 @@
             document.getElementById('imagePreview').style.display = 'none';
         }
 
+        function saveChatLang(val) {
+            localStorage.setItem('tb_lang', val);
+            showToast(`AI Language set to ${val}`, "success");
+        }
+
         function askAI() {
             const input = document.getElementById('userInput');
             const chatBox = document.getElementById('chatBox');
-            const board = localStorage.getItem('tb_board') || 'CBSE Board';
-            const cls = localStorage.getItem('tb_class') || 'Class 12';
-            const stream = localStorage.getItem('tb_stream') || 'Science (PCM/PCB)';
-            const lang = localStorage.getItem('tb_lang') || 'Hinglish';
+            const lang = document.getElementById('chatLangSelect').value || 'Hinglish';
             const sendBtn = document.getElementById('sendBtn');
 
             if(!input.value.trim() && selectedFilesArray.length === 0) return;
@@ -1568,9 +1597,7 @@
                     token: localStorage.getItem('ticbull_token'), 
                     prompt: questionText,
                     images: filesToSend, 
-                    board: board,
-                    class: cls,
-                    stream: stream,
+                    active_batch: currentActiveBatch,
                     lang: lang,
                     student_name: currentStudentData.name,
                     purchased_plan: purchasedPlanName,
@@ -1600,12 +1627,12 @@
                     }
                     if (questionText.toLowerCase().includes('video')) {
                         let topicSafe = encodeURIComponent(questionText.replace('Generate AI Video Visual Explanation', '').trim() || 'Study Concept');
-                        formattedReply += `<br><br><b>🎥 Video Concept Reference:</b><br><iframe style="width:100%; height:200px; border-radius:12px; margin-top:8px; border:none;" src="https://www.youtube.com/embed?listType=search&list=${topicSafe}+${board}+${cls}" allowfullscreen></iframe>`;
+                        formattedReply += `<br><br><b>🎥 Video Concept Reference:</b><br><iframe style="width:100%; height:200px; border-radius:12px; margin-top:8px; border:none;" src="https://www.youtube.com/embed?listType=search&list=${topicSafe}+${currentActiveBatch}" allowfullscreen></iframe>`;
                     }
 
                     loadElem.innerHTML = `<div style="display:flex; align-items:center; gap:10px; margin-bottom:10px; border-bottom: 1px solid var(--border-color); padding-bottom: 8px;">
                         <img src="${tImg}" onerror="this.src='${tFall}'" style="width:36px; height:36px; border-radius:50%; object-fit:cover; border:2px solid var(--gold-color);">
-                        <b style="color:var(--gold-color);">TicBull ${currentTeacher === 'female' ? 'Ma\'am' : 'Sir'}</b>
+                        <b style="color:var(--gold-color);">TicBull ${currentTeacher === 'female' ? 'Ma\'am' : 'Sir'} (${currentActiveBatch.split(' - ')[0]})</b>
                     </div>
                     <div style="width:100%; line-height: 1.6; overflow-x: auto; word-break: break-word; overflow-wrap: break-word;">${formattedReply}</div>`;
                     
@@ -1628,4 +1655,4 @@
         }
     </script>
 </body>
-                                                                                                                                                                   </html>
+    </html>
