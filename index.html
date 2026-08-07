@@ -3,260 +3,335 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>TicBull Academy - Professional Engine</title>
+    <title>TicBull Academy - India's #1 AI Education Engine</title>
+    
+    <!-- PWA APP INSTALL LINKS -->
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#2563eb">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     
     <style>
         :root {
-            --bg-color: #050b14;
-            --card-bg: #111827;
+            --bg-color: #030712;
+            --card-bg: rgba(15, 23, 42, 0.95);
             --accent-color: #2563eb;
-            --accent-glow: rgba(37, 99, 235, 0.4);
+            --accent-glow: rgba(37, 99, 235, 0.45);
             --text-main: #f8fafc;
             --text-muted: #94a3b8;
-            --border-color: rgba(255, 255, 255, 0.08);
+            --border-color: rgba(255, 255, 255, 0.12);
             --success-color: #10b981;
             --gold-color: #f59e0b;
-            --chat-bg: #030712;
-            --input-bg: #1f2937;
+            --chat-bg: #020617;
+            --input-bg: #0f172a;
+        }
+
+        body.light-theme {
+            --bg-color: #f1f5f9;
+            --card-bg: #ffffff;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --border-color: #cbd5e1;
+            --chat-bg: #f8fafc;
+            --input-bg: #ffffff;
         }
 
         * { margin:0; padding:0; box-sizing:border-box; font-family:-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; -webkit-tap-highlight-color: transparent; }
-        html, body { height: 100%; width: 100%; overflow: hidden; background: var(--bg-color); color: var(--text-main); }
+        html, body { height: 100%; width: 100%; overflow: hidden; background: var(--bg-color); color: var(--text-main); transition: background 0.3s, color 0.3s; }
         body { display:flex; flex-direction:column; }
 
-        /* CUSTOM TOAST */
+        /* CUSTOM TOAST NOTIFICATION */
         #custom-toast { position: fixed; top: -100px; left: 50%; transform: translateX(-50%); background: var(--card-bg); color: var(--text-main); border: 1px solid var(--accent-color); padding: 12px 24px; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); z-index: 10000; display: flex; align-items: center; gap: 12px; font-size: 13.5px; font-weight: 600; transition: top 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55); }
         #custom-toast.show { top: 30px; }
+        .toast-icon { font-size: 18px; }
+        .toast-icon.success { color: var(--success-color); }
+        .toast-icon.error { color: #ef4444; }
 
-        /* SIDEBAR / DRAWER (Matching Image 1) */
-        .drawer-overlay { position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.75); z-index:1000; display:none; }
-        .drawer { position:fixed; top:0; left:-320px; width:320px; height:100%; background:#0a1122; border-right:1px solid var(--border-color); z-index:1001; transition:0.3s; display:flex; flex-direction:column; }
-        .drawer.open { left:0; }
-        .drawer-header { display:flex; justify-content:space-between; align-items:center; padding:18px; border-bottom:1px solid var(--border-color); }
-        .drawer-content { padding: 18px; overflow-y: auto; flex: 1; }
-        
-        .profile-card { background:linear-gradient(135deg, rgba(37, 99, 235, 0.15), rgba(15, 23, 42, 0.8)); border:1px solid rgba(37,99,235,0.3); border-radius:16px; padding:16px; margin-bottom:20px; display:flex; align-items:center; gap:14px; position:relative; }
-        .profile-img-box { width:50px; height:50px; border-radius:50%; background:var(--accent-color); display:flex; justify-content:center; align-items:center; font-size:20px; font-weight:bold; border:2px solid #fff; position: relative;}
-        .profile-img-box i.cam { position:absolute; bottom:-4px; right:-4px; background:#f59e0b; color:#000; font-size:10px; padding:4px; border-radius:50%; cursor:pointer; }
-        .edit-icon { position: absolute; top: 12px; right: 12px; color: var(--text-muted); font-size: 14px; cursor: pointer; }
+        /* CINEMATIC SPLASH ANIMATION */
+        #splash-screen { position: fixed; top:0; left:0; width:100%; height:100%; background: radial-gradient(circle at center, #0b1329 0%, #020617 100%); display:flex; flex-direction:column; justify-content:center; align-items:center; z-index:9999; transition: opacity 0.8s ease, visibility 0.8s ease; padding: 20px; }
+        .splash-logo-container { position: relative; width: 130px; height: 110px; display:flex; justify-content:center; align-items:center; }
+        .splash-logo-glow { position: absolute; width: 100%; height: 100%; border-radius: 50%; background: radial-gradient(circle, rgba(37, 99, 235, 0.9) 0%, rgba(0,0,0,0) 70%); filter: blur(20px); animation: pulseGlow 2.5s infinite alternate ease-in-out; }
+        .splash-logo { position: relative; width: 105px; height: 105px; border-radius: 50%; background: #000; border: 2px solid rgba(37, 99, 235, 0.5); display:flex; justify-content:center; align-items:center; overflow:hidden; box-shadow: 0 0 35px var(--accent-glow); }
+        .splash-logo img { width:90%; height:90%; object-fit:contain; }
+        .splash-title { margin-top:20px; font-size:26px; font-weight:800; letter-spacing:1px; color:#fff; text-shadow:0 0 15px rgba(255,255,255,0.3); }
+        .developer-tag { margin-top:6px; font-size:13px; color: var(--accent-color); font-weight:700; letter-spacing:0.5px; }
+        .progress-bar-container { width: 180px; height: 4px; background: rgba(255,255,255,0.1); border-radius: 10px; margin-top: 25px; overflow: hidden; }
+        .progress-bar { width: 0%; height: 100%; background: linear-gradient(90deg, var(--accent-color), #f59e0b); animation: loadProgress 2.5s linear forwards; }
+        @keyframes pulseGlow { 0% { transform: scale(0.85); opacity: 0.5; } 100% { transform: scale(1.2); opacity: 0.95; } }
+        @keyframes loadProgress { 0% { width: 0%; } 100% { width: 100%; } }
 
-        .drawer-item { padding:12px 14px; border-radius:12px; color:var(--text-main); font-size:13.5px; font-weight:500; display:flex; align-items:center; gap:14px; cursor:pointer; transition:0.2s; margin-bottom:4px; }
-        .drawer-item:hover { background:rgba(255,255,255,0.05); }
-        .drawer-item i { width: 20px; text-align: center; font-size: 16px; }
+        /* AUTH CARD */
+        .auth-container { display:flex; flex-direction:column; align-items:center; justify-content:center; flex:1; padding:20px; width:100%; overflow-y:auto; }
+        .auth-card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius:24px; padding:28px 22px; width:100%; max-width:420px; box-shadow:0 20px 50px rgba(0,0,0,0.5); text-align:center; position: relative; }
+        .brand-icon-box { width:80px; height:80px; border-radius:50%; background:#000; border:2px solid rgba(37, 99, 235, 0.4); display:flex; justify-content:center; align-items:center; margin:0 auto 12px; box-shadow: 0 8px 25px rgba(0,0,0,0.6); overflow:hidden; }
+        .brand-icon-box img { width:90%; height:90%; object-fit:contain; }
+        .input-group { position:relative; margin-bottom:12px; text-align:left; }
+        .input-group i.left-icon { position:absolute; left:14px; top:50%; transform:translateY(-50%); color:var(--text-muted); font-size:14px; }
+        .input-group input { width:100%; background:var(--input-bg); border:1px solid var(--border-color); color:var(--text-main); padding:12px 40px; border-radius:12px; font-size:14px; outline:none; transition:0.3s; }
+        .btn-primary { width:100%; background: var(--accent-color); color:#fff; font-weight:700; padding:13px; border:none; border-radius:12px; cursor:pointer; font-size:14px; letter-spacing:0.5px; box-shadow:0 8px 20px var(--accent-glow); transition:0.2s; margin-top:8px; display:flex; justify-content:center; align-items:center; gap:8px;}
+        .btn-primary:active { transform:scale(0.98); }
 
-        .drawer-footer { padding: 18px; border-top: 1px solid var(--border-color); font-size: 11.5px; color: var(--text-muted); }
-        .drawer-footer a { color: var(--accent-color); text-decoration: none; display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
-
-        /* HEADER */
-        .app-header { display:flex; justify-content:space-between; align-items:center; padding:14px 20px; background:var(--card-bg); border-bottom:1px solid var(--border-color); z-index:100; }
-        .header-brand { display:flex; align-items:center; gap:12px; font-size:16px; font-weight:700; color:#fff; }
-        .header-brand img { width:32px; height:32px; border-radius:50%; background:#000; }
-        .menu-btn { background:none; border:none; color:#fff; font-size:22px; cursor:pointer; }
-
-        /* SCREEN CONTAINERS */
-        .screen { display:none; flex-direction:column; height:calc(100% - 60px); max-width:900px; margin:0 auto; width:100%; padding:20px; overflow-y:auto; }
+        /* SCREENS */
+        .screen { display:none; flex-direction:column; height:100%; max-width:900px; margin:0 auto; width:100%; padding:14px; overflow-y:auto; }
         .screen.active { display:flex; }
 
-        /* BATCH SEARCH & CATEGORIES (Matching Image 2) */
-        .search-box { background:var(--card-bg); border:1px solid var(--border-color); border-radius:14px; display:flex; align-items:center; padding:12px 16px; margin-bottom:16px; }
-        .search-box i { color:var(--text-muted); margin-right:12px; font-size: 16px; }
-        .search-box input { background:transparent; border:none; color:#fff; font-size:14px; width:100%; outline:none; }
+        /* BATCHES EXPLORER SCREEN */
+        .header { display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; background:var(--card-bg); padding:12px 16px; border-radius:16px; border:1px solid var(--border-color); }
+        .category-scroll-bar { display:flex; gap:8px; overflow-x:auto; padding-bottom:10px; margin-bottom:12px; scrollbar-width:none; }
+        .category-scroll-bar::-webkit-scrollbar { display:none; }
+        .cat-chip { background:var(--input-bg); border:1px solid var(--border-color); color:var(--text-muted); padding:7px 14px; border-radius:20px; font-size:11.5px; font-weight:700; white-space:nowrap; cursor:pointer; transition:0.2s; }
+        .cat-chip.active { background:var(--accent-color); color:#fff; border-color:var(--accent-color); box-shadow:0 4px 15px var(--accent-glow); }
+        .search-box { position:relative; margin-bottom:14px; }
+        .search-box input { width:100%; background:var(--card-bg); border:1px solid var(--border-color); color:var(--text-main); padding:12px 16px 12px 42px; border-radius:14px; font-size:13.5px; outline:none; }
+        .search-box i { position:absolute; left:16px; top:50%; transform:translateY(-50%); color:var(--text-muted); }
 
-        /* BATCH CARDS (Matching Image 2 exactly) */
-        .batch-card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 16px; padding: 20px; margin-bottom: 16px; transition: 0.3s; }
-        .batch-card:hover { border-color: rgba(37,99,235,0.5); transform:translateY(-2px); box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
-        .green-tag { background: rgba(16, 185, 129, 0.15); color: var(--success-color); font-size: 11px; font-weight: 700; padding: 4px 10px; border-radius: 20px; display: inline-block; margin-bottom: 10px; }
-        .batch-title { font-size: 18px; font-weight: 800; color: #fff; margin-bottom: 8px; }
-        .faculty-tag { background: rgba(245, 158, 11, 0.1); color: var(--gold-color); font-size: 12px; font-weight: 600; padding: 6px 12px; border-radius: 8px; display: inline-flex; align-items:center; gap:8px; margin-bottom: 12px; width: 100%; border: 1px solid rgba(245, 158, 11, 0.2); }
-        .batch-desc { font-size: 13px; color: var(--text-muted); margin-bottom: 16px; }
-        .batch-footer { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border-color); padding-top: 16px; }
+        .batch-card { background: linear-gradient(135deg, rgba(15, 23, 42, 0.95), rgba(30, 41, 59, 0.95)); border: 1px solid rgba(37, 99, 235, 0.3); border-radius: 18px; padding: 18px; margin-bottom: 14px; box-shadow: 0 10px 30px rgba(0,0,0,0.4); transition: 0.3s; }
+        .batch-tag { background: rgba(16, 185, 129, 0.15); color: var(--success-color); font-size: 10.5px; font-weight: 700; padding: 4px 10px; border-radius: 20px; display: inline-block; margin-bottom: 8px; border: 1px solid rgba(16, 185, 129, 0.3); }
+        .batch-title { font-size: 16.5px; font-weight: 800; color: #fff; margin-bottom: 4px; }
+        .batch-desc { font-size: 12px; color: var(--text-muted); margin-bottom: 12px; line-height:1.4; }
+        .batch-teachers-strip { font-size: 11px; color: var(--gold-color); font-weight: 600; margin-bottom: 12px; background: rgba(245, 158, 11, 0.1); padding: 6px 10px; border-radius: 8px; border: 1px solid rgba(245, 158, 11, 0.2); }
         
-        .btn-group { display: flex; gap: 10px; }
-        .btn-outline { background: rgba(37, 99, 235, 0.1); color: var(--accent-color); border: 1px solid var(--accent-color); padding: 8px 16px; border-radius: 10px; font-size: 13px; font-weight: 700; cursor: pointer; display:flex; align-items:center; gap:6px; transition:0.2s; }
-        .btn-solid { background: var(--accent-color); color: #fff; border: none; padding: 8px 24px; border-radius: 10px; font-size: 13px; font-weight: 700; cursor: pointer; transition:0.2s; }
-        .btn-solid:hover { box-shadow: 0 4px 15px var(--accent-glow); }
+        .btn-buy { background: var(--accent-color); color: #fff; border: none; padding: 8px 16px; border-radius: 10px; font-size: 11.5px; font-weight: 700; cursor: pointer; box-shadow: 0 4px 15px var(--accent-glow); width:100%; margin-top:10px; }
 
-        /* SUBJECTS GRID (DASHBOARD) */
-        .dash-header { background: linear-gradient(to right, rgba(37,99,235,0.2), transparent); border: 1px solid var(--accent-color); padding: 16px; border-radius: 16px; margin-bottom: 20px; display:flex; justify-content:space-between; align-items:center; }
-        .subject-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 14px; }
-        .subject-card { background: var(--input-bg); border: 1px solid var(--border-color); border-radius: 16px; padding: 20px 14px; text-align: center; cursor: pointer; transition: 0.2s; }
-        .subject-card:hover { border-color: var(--accent-color); background: rgba(37, 99, 235, 0.05); transform:translateY(-3px); }
-        .subject-icon { font-size: 34px; margin-bottom: 12px; }
-        .subject-name { font-size: 14px; font-weight: 700; color: #fff; }
-        .subject-teacher { font-size: 11px; color: var(--text-muted); margin-top: 6px; }
+        /* MY DASHBOARD (SUBJECTS GRID) */
+        .active-course-chip { background:rgba(16, 185, 129, 0.1); border:1px solid rgba(16, 185, 129, 0.4); padding:10px 14px; border-radius:12px; font-size:13px; font-weight:700; color:var(--text-main); margin-bottom:16px; display:flex; justify-content:space-between; align-items:center; }
+        .subject-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 12px; }
+        .subject-card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 16px; padding: 16px 10px; text-align: center; cursor: pointer; transition: 0.2s; box-shadow: 0 5px 15px rgba(0,0,0,0.3); }
+        .subject-card:hover { border-color: var(--gold-color); transform: translateY(-3px); background: rgba(245, 158, 11, 0.05); }
+        .subject-icon { font-size: 32px; margin-bottom: 10px; }
+        .subject-name { font-size: 13px; font-weight: 700; color: var(--text-main); }
+        .subject-teacher { font-size: 10px; color: var(--text-muted); margin-top: 4px; }
 
-        /* CHAT SCREEN */
-        .chat-header { background: var(--card-bg); border-bottom: 1px solid var(--border-color); padding: 12px 20px; display:flex; align-items:center; justify-content:space-between; z-index:10; }
-        .chat-teacher-info { display:flex; align-items:center; gap:12px; }
-        .teacher-avatar { width:40px; height:40px; border-radius:50%; border:2px solid var(--accent-color); object-fit:cover; }
+        /* CHAT SYSTEM */
+        .chat-header-bar { display:flex; align-items:center; justify-content:space-between; background:var(--card-bg); padding:10px 14px; border-radius:18px; border:1px solid var(--border-color); margin-bottom:8px; }
+        .chat-container { background:var(--chat-bg); border:1px solid var(--border-color); border-radius:18px; padding:14px; flex:1; overflow-y:auto; display:flex; flex-direction:column; gap:10px; margin-bottom:8px; }
+        .msg { padding:12px 15px; border-radius:16px; font-size:13.5px; line-height:1.5; max-width:88%; word-break: break-word; }
+        .msg.user { background:var(--accent-color); color:#fff; align-self:flex-end; border-bottom-right-radius:4px; box-shadow: 0 4px 15px var(--accent-glow); }
+        .msg.ai { background:var(--card-bg); color:var(--text-main); border:1px solid var(--border-color); align-self:flex-start; border-bottom-left-radius:4px; }
+        .msg.system { background:rgba(239, 68, 68, 0.15); border:1px solid #ef4444; color:#fca5a5; align-self:center; text-align:center; font-size:12px; }
         
-        .chat-box { flex:1; overflow-y:auto; padding:20px; display:flex; flex-direction:column; gap:16px; background:var(--chat-bg); }
-        .msg { padding:14px 18px; border-radius:16px; font-size:14px; line-height:1.5; max-width:85%; word-wrap:break-word; }
-        .msg.user { background:var(--accent-color); color:#fff; align-self:flex-end; border-bottom-right-radius:4px; }
-        .msg.ai { background:var(--card-bg); color:var(--text-main); border:1px solid var(--border-color); align-self:flex-start; border-bottom-left-radius:4px; display:flex; flex-direction:column; gap:8px;}
-        .ai-header { font-size:11px; font-weight:700; color:var(--gold-color); display:flex; align-items:center; gap:6px; border-bottom:1px solid rgba(255,255,255,0.05); padding-bottom:6px; }
-        .msg.system { align-self:center; background:rgba(239, 68, 68, 0.1); border:1px solid #ef4444; color:#fca5a5; font-size:12px; text-align:center; max-width:90%; padding:10px 16px; }
+        .chat-input-bar { display:flex; align-items:center; background:var(--card-bg); border:1px solid var(--border-color); border-radius:16px; padding:5px 6px 5px 10px; gap:6px; }
+        .chat-input-bar input { flex:1; background:transparent; border:none; color:var(--text-main); outline:none; font-size:13.5px; }
+        .send-btn { background:var(--accent-color); color:#fff; border:none; width:36px; height:36px; border-radius:10px; display:flex; justify-content:center; align-items:center; cursor:pointer; }
 
-        .chat-input { background:var(--card-bg); border-top:1px solid var(--border-color); padding:12px 20px; display:flex; gap:10px; align-items:center; }
-        .chat-input input { flex:1; background:var(--input-bg); border:1px solid var(--border-color); color:#fff; padding:14px 16px; border-radius:12px; font-size:14.5px; outline:none; }
-        .chat-input button { background:var(--accent-color); color:#fff; border:none; width:46px; height:46px; border-radius:12px; font-size:18px; cursor:pointer; display:flex; justify-content:center; align-items:center; }
-        .chat-input button:active { transform:scale(0.95); }
+        /* SIDE DRAWER MENU */
+        .drawer-overlay { position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.75); z-index:1000; display:none; }
+        .drawer { position:fixed; top:0; left:-310px; width:310px; height:100%; background:var(--card-bg); border-right:1px solid var(--border-color); z-index:1001; transition:0.3s; padding:18px; display:flex; flex-direction:column; overflow-y:auto; }
+        .drawer.open { left:0; }
+        .drawer-header { display:flex; justify-content:space-between; align-items:center; padding-bottom:12px; border-bottom:1px solid var(--border-color); margin-bottom:12px; }
+        .profile-card { background:linear-gradient(135deg, rgba(37, 99, 235, 0.2), rgba(245, 158, 11, 0.15)); border:1px solid var(--border-color); border-radius:16px; padding:14px; margin-bottom:14px; }
+        .drawer-item { padding:11px 12px; border-radius:10px; color:var(--text-main); font-size:12.5px; display:flex; align-items:center; gap:12px; cursor:pointer; transition:0.2s; margin-bottom:6px; }
+        .drawer-item:hover { background:rgba(255,255,255,0.06); }
 
-        /* PRICING MODAL */
+        /* MODALS */
         .modal-overlay { position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); z-index:2000; display:none; justify-content:center; align-items:center; padding:16px; }
-        .modal-card { background:var(--card-bg); border:1px solid var(--border-color); border-radius:24px; padding:24px; width:100%; max-width:400px; position:relative; }
-        .plan-card { border:1px solid var(--border-color); background:var(--input-bg); border-radius:12px; padding:16px; margin-bottom:12px; cursor:pointer; transition:0.2s; display:flex; justify-content:space-between; align-items:center; }
-        .plan-card:hover, .plan-card.active { border-color:var(--accent-color); background:rgba(37, 99, 235, 0.1); }
+        .modal-card { background:var(--card-bg); border:1px solid var(--border-color); border-radius:20px; padding:22px; max-width:480px; width:100%; text-align:left; position:relative; }
+        
+        .tier-card-option { background: var(--chat-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 12px; margin-bottom: 10px; cursor: pointer; transition: 0.2s; }
+        .tier-card-option:hover, .tier-card-option.selected { border-color: var(--accent-color); background: rgba(37, 99, 235, 0.15); }
+        .tier-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; }
+        .tier-name { font-size: 13.5px; font-weight: 800; color: #fff; }
+        .tier-price { font-size: 14px; font-weight: 800; color: var(--success-color); }
+        .tier-desc { font-size: 11px; color: var(--text-muted); line-height: 1.3; }
+        
+        .setting-item { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; font-size: 13.5px; color: var(--text-main); text-align:left; }
     </style>
 </head>
 <body>
 
-    <div id="custom-toast"><i class="fa-solid fa-circle-check toast-icon success"></i> <span id="toast-message">Notification</span></div>
+    <!-- CUSTOM NOTIFICATION -->
+    <div id="custom-toast">
+        <i class="fa-solid fa-circle-check toast-icon success"></i>
+        <span id="toast-message">Notification</span>
+    </div>
 
-    <!-- MAIN APP HEADER -->
-    <header class="app-header" id="mainHeader">
-        <div class="header-brand">
-            <img src="https://raw.githubusercontent.com/yuviyadav16/ticbull-academy/main/logo.png" onerror="this.style.display='none'">
-            TicBull Batches & Goals
+    <!-- CINEMATIC SPLASH ANIMATION -->
+    <div id="splash-screen">
+        <div class="splash-logo-container">
+            <div class="splash-logo-glow"></div>
+            <div class="splash-logo"><img src="logo.png" alt="Logo" onerror="this.src='https://raw.githubusercontent.com/yuviyadav16/ticbull-academy/main/logo.png'"></div>
         </div>
-        <button class="menu-btn" onclick="toggleDrawer()"><i class="fa-solid fa-bars"></i></button>
-    </header>
+        <div class="splash-title">TicBull Academy</div>
+        <div class="developer-tag"><i class="fa-solid fa-code"></i> Developed by MrYuviYadav</div>
+        <div class="progress-bar-container"><div class="progress-bar"></div></div>
+    </div>
 
-    <!-- SIDEBAR DRAWER (Mirrors Image 1) -->
+    <!-- AUTH SCREEN -->
+    <div class="auth-container screen" id="auth-screen">
+        <div class="auth-card">
+            <div class="brand-icon-box">
+                <img src="logo.png" alt="Logo" onerror="this.src='https://raw.githubusercontent.com/yuviyadav16/ticbull-academy/main/logo.png'">
+            </div>
+            <h2 style="font-size:20px; font-weight:800; color:#fff;">TicBull Academy</h2>
+            <p style="font-size:12px; color:var(--text-muted); margin-top:3px; margin-bottom:20px;">AI Student Portal & Exam Engine</p>
+
+            <div class="input-group">
+                <i class="fa-regular fa-user left-icon"></i>
+                <input type="text" id="studentName" placeholder="Full Student Name">
+            </div>
+            <div class="input-group">
+                <i class="fa-solid fa-phone left-icon"></i>
+                <input type="tel" id="studentPhone" placeholder="Mobile Number">
+            </div>
+
+            <button class="btn-primary" onclick="login()"><i class="fa-solid fa-right-to-bracket"></i> ENTER ACADEMY</button>
+        </div>
+    </div>
+
+    <!-- 🚀 1. EXPLORE 300+ BATCHES SCREEN -->
+    <div class="screen" id="explore-screen">
+        <div class="header">
+            <div style="display:flex; align-items:center; gap:10px;">
+                <div style="width:34px; height:34px; border-radius:50%; background:#000; overflow:hidden;"><img src="https://raw.githubusercontent.com/yuviyadav16/ticbull-academy/main/logo.png" style="width:100%; height:100%;"></div>
+                <div>
+                    <strong style="font-size:15px; color:#fff;">TicBull Batches</strong>
+                    <p style="font-size:10px; color:var(--text-muted);">Explore 300+ Indian Boards & Exams</p>
+                </div>
+            </div>
+            <button style="background:none; border:none; color:#fff; font-size:18px; cursor:pointer;" onclick="toggleDrawer()"><i class="fa-solid fa-bars"></i></button>
+        </div>
+
+        <div class="category-scroll-bar" id="catBar">
+            <div class="cat-chip active" onclick="filterCategory('ALL', this)">All Batches</div>
+            <div class="cat-chip" onclick="filterCategory('CBSE', this)">CBSE Board (9-12)</div>
+            <div class="cat-chip" onclick="filterCategory('BIHAR', this)">Bihar Board (BSEB)</div>
+            <div class="cat-chip" onclick="filterCategory('UP', this)">UP Board (UPMSP)</div>
+            <div class="cat-chip" onclick="filterCategory('NEET', this)">NEET Medical</div>
+            <div class="cat-chip" onclick="filterCategory('JEE', this)">IIT-JEE Engineering</div>
+            <div class="cat-chip" onclick="filterCategory('UPSC', this)">UPSC Civil Services</div>
+        </div>
+
+        <div class="search-box">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input type="text" id="batchSearchInput" placeholder="Search for Class 9-12, Bihar, CBSE, NEET..." onkeyup="searchBatches()">
+        </div>
+
+        <div id="batchesContainer">
+            <!-- Dynamic Batches Load Here -->
+        </div>
+    </div>
+
+    <!-- 🚀 2. MY DASHBOARD (Saved Batch & Subjects) -->
+    <div class="screen" id="dashboard-screen">
+        <div class="header">
+            <div style="display:flex; align-items:center; gap:10px;">
+                <div style="width:34px; height:34px; border-radius:50%; background:#000; overflow:hidden;"><img src="https://raw.githubusercontent.com/yuviyadav16/ticbull-academy/main/logo.png" style="width:100%; height:100%;"></div>
+                <div>
+                    <strong style="font-size:15px; color:#fff;" id="dashStudentName">Welcome Student</strong>
+                    <p style="font-size:10px; color:var(--text-muted);">My Dashboard</p>
+                </div>
+            </div>
+            <button style="background:none; border:none; color:#fff; font-size:18px; cursor:pointer;" onclick="toggleDrawer()"><i class="fa-solid fa-bars"></i></button>
+        </div>
+
+        <div class="active-course-chip">
+            <div>
+                <span style="font-size:10px; color:var(--text-muted); display:block;">Active Enrolled Batch</span>
+                <span id="activeBatchName" style="color:var(--success-color); font-size:14px; font-weight:800;">CBSE Class 10 Batch</span>
+                <p style="font-size:10px; color:var(--gold-color); margin-top:2px;" id="activePlanText">Pass: Free Trial (9 Doubts)</p>
+            </div>
+            <button style="background:rgba(37,99,235,0.15); border:1px solid var(--accent-color); color:#fff; padding:6px 12px; border-radius:8px; font-size:11px; cursor:pointer;" onclick="switchScreen('explore-screen')"><i class="fa-solid fa-rotate"></i> Change</button>
+        </div>
+
+        <h3 style="font-size:14px; color:#fff; margin-bottom:12px;"><i class="fa-solid fa-book-open"></i> Subjects Library</h3>
+        <div class="subject-grid" id="subjectsGrid">
+            <!-- Subjects Injected Here based on batch stream -->
+        </div>
+    </div>
+
+    <!-- 🚀 3. SUBJECT SPECIFIC CHAT SCREEN -->
+    <div class="screen" id="chat-screen" style="padding:0; display:none; flex-direction:column; height:100vh;">
+        <div class="chat-header-bar" style="margin:10px; flex-shrink:0;">
+            <div style="display:flex; align-items:center; gap:12px;">
+                <i class="fa-solid fa-arrow-left" style="color:#fff; font-size:18px; cursor:pointer;" onclick="switchScreen('dashboard-screen')"></i>
+                <img id="chatTeacherImg" src="" style="width:38px; height:38px; border-radius:50%; border:2px solid var(--accent-color); object-fit:cover;">
+                <div>
+                    <strong style="color:#fff; font-size:14px;" id="chatSubjectTitle">Physics</strong>
+                    <p style="font-size:10px; color:var(--text-muted);" id="chatTeacherName">By Mr. Verma Sir</p>
+                </div>
+            </div>
+            <span style="background:rgba(245, 158, 11, 0.15); border:1px solid var(--gold-color); color:var(--gold-color); padding:4px 10px; border-radius:12px; font-size:10px; font-weight:700;" id="chatDoubtsLeft">9 Doubts</span>
+        </div>
+
+        <div class="chat-container" id="chatBox">
+            <!-- Chat history per subject -->
+        </div>
+
+        <div class="chat-input-bar" style="margin:10px; flex-shrink:0;">
+            <input type="text" id="chatInput" placeholder="Ask your syllabus doubt here..." onkeydown="if(event.key==='Enter') sendSubjectDoubt()">
+            <button class="send-btn" onclick="sendSubjectDoubt()"><i class="fa-solid fa-paper-plane"></i></button>
+        </div>
+    </div>
+
+    <!-- SIDE DRAWER MENU -->
     <div class="drawer-overlay" id="drawerOverlay" onclick="toggleDrawer()"></div>
     <div class="drawer" id="drawer">
         <div class="drawer-header">
-            <span style="font-size:16px; font-weight:700; color:#fff;">Menu & Profile</span>
-            <i class="fa-solid fa-xmark" style="color:var(--text-muted); cursor:pointer; font-size:18px;" onclick="toggleDrawer()"></i>
+            <strong style="color:var(--text-main); font-size:15px;">Menu & Profile</strong>
+            <i class="fa-solid fa-xmark" style="color:var(--text-muted); cursor:pointer;" onclick="toggleDrawer()"></i>
+        </div>
+        <div class="profile-card">
+            <strong style="color:#fff; font-size:14px;" id="drawerStudentName">Student Name</strong>
+            <div style="font-size:11px; color:var(--text-muted);" id="drawerStudentPhone">Phone Number</div>
+            <div style="font-size:11px; color:var(--success-color); font-weight:600; margin-top:4px;" id="drawerActivePlan">Plan: Free Trial</div>
         </div>
         
-        <div class="drawer-content">
-            <div class="profile-card">
-                <i class="fa-solid fa-pen-to-square edit-icon"></i>
-                <div class="profile-img-box">Y <i class="fa-solid fa-camera cam"></i></div>
-                <div>
-                    <h3 style="color:#fff; font-size:15px; margin-bottom:2px;" id="userNameSidebar">Yuvraj Yadav</h3>
-                    <p style="color:var(--text-muted); font-size:11px;">student@ticbull.com</p>
-                    <p style="color:var(--accent-color); font-size:11px; font-weight:600; margin-top:4px;">Free Trial Active</p>
-                </div>
-            </div>
-
-            <div class="drawer-item" onclick="showScreen('exploreScreen'); toggleDrawer();"><i class="fa-solid fa-layer-group" style="color:#3b82f6;"></i> All Batches & Goals</div>
-            <div class="drawer-item" onclick="showScreen('dashboardScreen'); toggleDrawer();"><i class="fa-solid fa-book-open" style="color:#10b981;"></i> My Saved Batch</div>
-            <div class="drawer-item"><i class="fa-solid fa-list-check" style="color:#0ea5e9;"></i> Syllabus Tracker Board</div>
-            <div class="drawer-item"><i class="fa-solid fa-gear" style="color:#94a3b8;"></i> App Settings</div>
-            <div class="drawer-item"><i class="fa-solid fa-circle-half-stroke" style="color:#f59e0b;"></i> Switch to Light Mode</div>
-            <div class="drawer-item" onclick="openSubscriptionModal()"><i class="fa-solid fa-crown" style="color:#f59e0b;"></i> Upgrade Course Pass</div>
-            <div class="drawer-item" style="color:#ef4444;" onclick="logout()"><i class="fa-solid fa-right-from-bracket"></i> Log Out Account</div>
-
-            <h4 style="font-size:11px; color:var(--text-muted); text-transform:uppercase; margin:24px 0 10px 4px;"><i class="fa-solid fa-clock-rotate-left"></i> Recent Chat Sessions:</h4>
-            <div id="recentChatsList" style="display:flex; flex-direction:column; gap:8px;">
-                <!-- Auto populated -->
-            </div>
-        </div>
-
-        <div class="drawer-footer">
-            <p style="margin-bottom:12px;">TICBULL OFFICIAL SUPPORT:</p>
-            <a href="#"><i class="fa-solid fa-envelope" style="color:#2563eb;"></i> ticbull.support@gmail.com</a>
-            <a href="#"><i class="fa-brands fa-instagram" style="color:#e1306c;"></i> @ticbull Official Support</a>
-            <a href="#"><i class="fa-brands fa-telegram" style="color:#0ea5e9;"></i> @ticbullteam Telegram Support</a>
-        </div>
+        <div class="drawer-item" onclick="switchScreen('explore-screen'); toggleDrawer();"><i class="fa-solid fa-layer-group" style="color:var(--accent-color);"></i> Explore All Batches</div>
+        <div class="drawer-item" onclick="switchScreen('dashboard-screen'); toggleDrawer();"><i class="fa-solid fa-book-open" style="color:#10b981;"></i> My Subject Dashboard</div>
+        <div class="drawer-item" onclick="openSyllabusModal()"><i class="fa-solid fa-list-check" style="color:#0ea5e9;"></i> Syllabus Tracker Board</div>
+        <div class="drawer-item" onclick="openSettingsModal()"><i class="fa-solid fa-gear" style="color:#94a3b8;"></i> App Settings</div>
+        <div class="drawer-item" onclick="openPricingModal()"><i class="fa-solid fa-crown" style="color:#f59e0b;"></i> Upgrade Subscription Pass</div>
+        <div class="drawer-item" onclick="logoutUser()" style="color:#ef4444; margin-top:20px;"><i class="fa-solid fa-right-from-bracket"></i> Log Out Account</div>
     </div>
 
-    <!-- SCREEN 1: ALL BATCHES EXPLORER (Mirrors Image 2) -->
-    <div class="screen active" id="exploreScreen">
-        <div class="search-box">
-            <i class="fa-solid fa-magnifying-glass"></i>
-            <input type="text" id="searchInput" placeholder="Search for Class 9-12, Bihar, CBSE, NEET, JEE..." onkeyup="filterBatches()">
-        </div>
-        <div id="batchesContainer">
-            <!-- 300+ Batches Injected Here -->
-        </div>
-    </div>
-
-    <!-- SCREEN 2: STUDENT DASHBOARD (My Saved Batch & Subjects) -->
-    <div class="screen" id="dashboardScreen">
-        <div class="dash-header">
-            <div>
-                <span class="green-tag" style="margin-bottom:6px;"><i class="fa-solid fa-circle-check"></i> Enrolled Successfully</span>
-                <h2 style="font-size:18px; color:#fff;" id="myBatchName">CBSE Board - Class 10 Batch</h2>
-                <p style="font-size:12px; color:var(--text-muted); margin-top:4px;">Select a subject below to start your dedicated study chat.</p>
-            </div>
-            <button class="btn-outline" style="border:none;" onclick="showScreen('exploreScreen')"><i class="fa-solid fa-rotate"></i> Change</button>
-        </div>
-
-        <h3 style="font-size:15px; color:#fff; margin-bottom:14px;"><i class="fa-solid fa-book"></i> Your Subjects</h3>
-        <div class="subject-grid" id="mySubjectsGrid">
-            <!-- Subjects Injected Here based on Batch -->
-        </div>
-    </div>
-
-    <!-- SCREEN 3: DEDICATED SUBJECT CHAT -->
-    <div id="chatScreen" style="display:none; flex-direction:column; height:100vh; width:100%; position:fixed; top:0; left:0; background:var(--bg-color); z-index:500;">
-        <div class="chat-header">
-            <div class="chat-teacher-info">
-                <i class="fa-solid fa-arrow-left" style="color:#fff; font-size:18px; cursor:pointer; margin-right:10px;" onclick="closeChat()"></i>
-                <img id="chatTeacherImg" src="" class="teacher-avatar">
-                <div>
-                    <h3 style="color:#fff; font-size:16px;" id="chatSubjectName">Physics</h3>
-                    <p style="color:var(--text-muted); font-size:11px;" id="chatTeacherName">By Mr. Verma Sir</p>
-                </div>
-            </div>
-            <div style="text-align:right;">
-                <span style="background:rgba(239, 68, 68, 0.15); color:#ef4444; padding:4px 10px; border-radius:12px; font-size:10px; font-weight:700; border:1px solid rgba(239, 68, 68, 0.3);" id="doubtCounterUI">9 Doubts Left</span>
-            </div>
-        </div>
-
-        <div class="chat-box" id="chatBox">
-            <!-- Chat history injected here -->
-        </div>
-
-        <div class="chat-input">
-            <input type="text" id="chatInput" placeholder="Type your subject doubt here..." onkeydown="if(event.key==='Enter') sendChatMessage()">
-            <button onclick="sendChatMessage()"><i class="fa-solid fa-paper-plane"></i></button>
-        </div>
-    </div>
-
-    <!-- PRICING / SUBSCRIPTION MODAL -->
+    <!-- 🚀 4. PAYMENT / SUBSCRIPTION MODAL (199, 499, 999) -->
     <div class="modal-overlay" id="pricingModal">
         <div class="modal-card">
-            <i class="fa-solid fa-xmark" style="position:absolute; right:16px; top:16px; color:var(--text-muted); cursor:pointer;" onclick="document.getElementById('pricingModal').style.display='none'"></i>
-            <h2 style="color:#fff; font-size:18px; margin-bottom:4px;">Upgrade Your Plan</h2>
-            <p style="color:var(--text-muted); font-size:12px; margin-bottom:20px;">Increase your daily AI doubt limits.</p>
+            <i class="fa-solid fa-xmark" style="position:absolute; right:16px; top:16px; color:var(--text-muted); cursor:pointer;" onclick="closeModals()"></i>
+            <h3 style="color:var(--text-main); font-size:18px; margin-bottom:4px;">Upgrade Batch Access</h3>
+            <p style="font-size:11.5px; color:var(--text-muted); margin-bottom:16px;">Select daily doubt limit plan according to your requirement.</p>
 
-            <div class="plan-card" onclick="selectPlan('BASIC')">
-                <div>
-                    <h4 style="color:#fff; font-size:15px;">Basic Plan</h4>
-                    <p style="color:var(--text-muted); font-size:11px;">15 Doubts / Day</p>
+            <div class="tier-card-option" onclick="selectPlan('BASIC', 199, 15)" id="planBASIC">
+                <div class="tier-header">
+                    <span class="tier-name"><i class="fa-solid fa-leaf" style="color:#10b981;"></i> Basic Pass</span>
+                    <span class="tier-price">₹199/yr</span>
                 </div>
-                <strong style="color:var(--success-color);">₹199/yr</strong>
-            </div>
-            
-            <div class="plan-card active" onclick="selectPlan('PRO')">
-                <div>
-                    <h4 style="color:#fff; font-size:15px;"><i class="fa-solid fa-star" style="color:#f59e0b;"></i> Pro Plan</h4>
-                    <p style="color:var(--text-muted); font-size:11px;">40 Doubts / Day</p>
-                </div>
-                <strong style="color:var(--success-color);">₹499/yr</strong>
+                <div class="tier-desc">15 Doubts per day • Homework Help • Ads Included</div>
             </div>
 
-            <div class="plan-card" onclick="selectPlan('MAX')">
-                <div>
-                    <h4 style="color:#fff; font-size:15px;"><i class="fa-solid fa-crown" style="color:#8b5cf6;"></i> Max Pro</h4>
-                    <p style="color:var(--text-muted); font-size:11px;">75 Doubts / Day</p>
+            <div class="tier-card-option selected" onclick="selectPlan('PRO', 499, 40)" id="planPRO">
+                <div class="tier-header">
+                    <span class="tier-name"><i class="fa-solid fa-star" style="color:#f59e0b;"></i> Pro Pass (Recommended)</span>
+                    <span class="tier-price">₹499/yr</span>
                 </div>
-                <strong style="color:var(--success-color);">₹999/yr</strong>
+                <div class="tier-desc">40 Doubts per day • Gemini High Speed • No Ads</div>
             </div>
 
-            <button class="btn-solid" style="width:100%; margin-top:10px;" onclick="document.getElementById('pricingModal').style.display='none'; showToast('Plan Selected Successfully!');">PROCEED TO PAY</button>
+            <div class="tier-card-option" onclick="selectPlan('MAX_PRO', 999, 75)" id="planMAX_PRO">
+                <div class="tier-header">
+                    <span class="tier-name"><i class="fa-solid fa-crown" style="color:#8b5cf6;"></i> Max Pro Pass</span>
+                    <span class="tier-price">₹999/yr</span>
+                </div>
+                <div class="tier-desc">75 Doubts per day • Priority Server • Complete Goal Mastery</div>
+            </div>
+
+            <button class="btn-primary" onclick="confirmPayment()">PROCEED TO PAY</button>
+        </div>
+    </div>
+
+    <!-- SETTINGS MODAL -->
+    <div class="modal-overlay" id="settingsModal">
+        <div class="modal-card">
+            <i class="fa-solid fa-xmark" style="position:absolute; right:16px; top:16px; color:var(--text-muted); cursor:pointer;" onclick="closeModals()"></i>
+            <h3 style="color:var(--text-main); font-size:17px; margin-bottom:16px;"><i class="fa-solid fa-gear"></i> App Settings</h3>
+            <div class="setting-item"><span><i class="fa-solid fa-circle-half-stroke"></i> Dark Mode</span> <span>On</span></div>
+            <div class="setting-item"><span><i class="fa-solid fa-music"></i> App Sounds</span> <span>On</span></div>
         </div>
     </div>
 
     <script>
-        // --- 1. MASSIVE BATCH GENERATOR (300+ BATCHES) ---
-        const indianBoards = ['CBSE', 'Bihar (BSEB)', 'UP (UPMSP)', 'ICSE/ISC', 'Maharashtra (MSBSHSE)', 'Rajasthan (RBSE)', 'MP (MPBSE)', 'West Bengal (WBBSE)'];
-        const schoolClasses = [
+        // --- DATA ENGINE (Boards, Classes, Subjects) ---
+        const boardsList = [{ code: 'CBSE', name: 'CBSE Board' }, { code: 'BIHAR', name: 'Bihar Board (BSEB)' }, { code: 'UP', name: 'UP Board (UPMSP)' }, { code: 'ICSE', name: 'ICSE / ISC Board' }, { code: 'MH', name: 'Maharashtra Board' }];
+        const classData = [
             { level: '9', name: 'Class 9', stream: 'general' }, { level: '10', name: 'Class 10', stream: 'general' },
             { level: '11', name: 'Class 11 Science (PCM)', stream: 'pcm' }, { level: '11', name: 'Class 11 Science (PCB)', stream: 'pcb' },
             { level: '11', name: 'Class 11 Commerce', stream: 'commerce' }, { level: '11', name: 'Class 11 Arts', stream: 'arts' },
@@ -264,153 +339,181 @@
             { level: '12', name: 'Class 12 Commerce', stream: 'commerce' }, { level: '12', name: 'Class 12 Arts', stream: 'arts' }
         ];
         const compExams = [
-            { name: 'NEET UG Medical', stream: 'neet' }, { name: 'IIT-JEE Main & Adv', stream: 'jee' },
-            { name: 'UPSC Civil Services', stream: 'upsc' }, { name: 'CUET (UG)', stream: 'cuet' },
-            { name: 'NDA & NA Defense', stream: 'nda' }, { name: 'CA Foundation', stream: 'commerce' },
-            { name: 'BPSC State PCS', stream: 'upsc' }
+            { cat: 'NEET', name: 'NEET 2027 Medical Target', stream: 'neet' }, { cat: 'JEE', name: 'IIT-JEE Momentum Batch', stream: 'jee' },
+            { cat: 'UPSC', name: 'UPSC IAS Civil Services', stream: 'upsc' }
         ];
 
-        let allBatches = [];
-        
-        // Generate School Board Batches
-        indianBoards.forEach(board => {
-            schoolClasses.forEach(cls => {
-                allBatches.push({
-                    id: `${board.substring(0,3)}_${cls.level}_${cls.stream}`.replace(/\s/g,''),
-                    title: `${board} Board - ${cls.name} Batch`,
-                    type: 'school', stream: cls.stream,
-                    desc: `Complete Syllabus (NCERT, State Books) for ${cls.name}.`,
-                    price: 199
-                });
-            });
-        });
-
-        // Generate Competitive Batches
-        compExams.forEach(exam => {
-            allBatches.push({
-                id: `COMP_${exam.stream}`,
-                title: `${exam.name} Target Batch`,
-                type: 'comp', stream: exam.stream,
-                desc: `Top tier faculty, complete modules and PYQs for ${exam.name}.`,
-                price: 499
-            });
-        });
-
-        // --- 2. SUBJECTS & TEACHER ASSIGNMENT ENGINE ---
-        // Format: { name: "Subject", icon: "emoji", teacher: "Name", gender: "male/female" }
+        // DEDICATED TEACHERS PER SUBJECT
         const subjectLibrary = {
-            general: [
-                { n: 'Physics', i: '⚡', t: 'Mr. Verma Sir', g: 'male' }, { n: 'Chemistry', i: '🧪', t: 'Ms. Anjali Ma\'am', g: 'female' },
-                { n: 'Biology', i: '🧬', t: 'Ms. Priya Ma\'am', g: 'female' }, { n: 'Mathematics', i: '📐', t: 'Mr. Sharma Sir', g: 'male' },
-                { n: 'History', i: '🏛️', t: 'Mr. Singh Sir', g: 'male' }, { n: 'Geography', i: '🗺️', t: 'Ms. Neha Ma\'am', g: 'female' },
-                { n: 'English', i: '📝', t: 'Ms. Riya Ma\'am', g: 'female' }, { n: 'Hindi', i: 'अ', t: 'Mr. Tiwari Sir', g: 'male' }
-            ],
-            pcm: [
-                { n: 'Physics', i: '⚡', t: 'Mr. Verma Sir', g: 'male' }, { n: 'Inorganic Chem', i: '🧪', t: 'Ms. Anjali Ma\'am', g: 'female' },
-                { n: 'Organic Chem', i: '⚗️', t: 'Mr. Das Sir', g: 'male' }, { n: 'Advanced Math', i: '📐', t: 'Mr. Sharma Sir', g: 'male' },
-                { n: 'Computer Sci', i: '💻', t: 'Mr. Gupta Sir', g: 'male' }, { n: 'English', i: '📝', t: 'Ms. Riya Ma\'am', g: 'female' }
-            ],
-            pcb: [
-                { n: 'Physics', i: '⚡', t: 'Mr. Verma Sir', g: 'male' }, { n: 'Inorganic Chem', i: '🧪', t: 'Ms. Anjali Ma\'am', g: 'female' },
-                { n: 'Organic Chem', i: '⚗️', t: 'Mr. Das Sir', g: 'male' }, { n: 'Zoology', i: '🐒', t: 'Ms. Priya Ma\'am', g: 'female' },
-                { n: 'Botany', i: '🌿', t: 'Ms. Kavita Ma\'am', g: 'female' }, { n: 'English', i: '📝', t: 'Ms. Riya Ma\'am', g: 'female' }
-            ],
-            commerce: [
-                { n: 'Accountancy', i: '📊', t: 'Mr. Bansal Sir', g: 'male' }, { n: 'Business Studies', i: '💼', t: 'Ms. Pooja Ma\'am', g: 'female' },
-                { n: 'Economics', i: '📉', t: 'Mr. Jain Sir', g: 'male' }, { n: 'Mathematics', i: '📐', t: 'Mr. Sharma Sir', g: 'male' },
-                { n: 'English', i: '📝', t: 'Ms. Riya Ma\'am', g: 'female' }
-            ],
-            neet: [
-                { n: 'Physics (NEET)', i: '⚡', t: 'Mr. HC Verma Sir', g: 'male' }, { n: 'Physical Chem', i: '🧪', t: 'Mr. Das Sir', g: 'male' },
-                { n: 'Organic Chem', i: '⚗️', t: 'Ms. Anjali Ma\'am', g: 'female' }, { n: 'Inorganic Chem', i: '🔬', t: 'Mr. Kumar Sir', g: 'male' },
-                { n: 'Zoology', i: '🐒', t: 'Ms. Priya Ma\'am', g: 'female' }, { n: 'Botany', i: '🌿', t: 'Ms. Kavita Ma\'am', g: 'female' }
-            ],
-            upsc: [
-                { n: 'Indian Polity', i: '⚖️', t: 'Mr. Laxmikanth Sir', g: 'male' }, { n: 'Modern History', i: '🏛️', t: 'Mr. Bipin Sir', g: 'male' },
-                { n: 'Geography', i: '🌍', t: 'Ms. Majid Ma\'am', g: 'female' }, { n: 'Economy', i: '📈', t: 'Mr. Ramesh Sir', g: 'male' },
-                { n: 'Current Affairs', i: '📰', t: 'Ms. Riya Ma\'am', g: 'female' }
-            ]
+            general: [{ n: 'Mathematics', i: '📐', t: 'Mr. Sharma Sir', g: 'male' }, { n: 'Science', i: '🔬', t: 'Ms. Anjali Ma\'am', g: 'female' }, { n: 'Social Science', i: '🌍', t: 'Mr. Singh Sir', g: 'male' }, { n: 'English', i: '📝', t: 'Ms. Riya Ma\'am', g: 'female' }, { n: 'Hindi', i: 'अ', t: 'Mr. Tiwari Sir', g: 'male' }, { n: 'Computer', i: '💻', t: 'Mr. Gupta Sir', g: 'male' }],
+            pcm: [{ n: 'Physics', i: '⚡', t: 'Mr. Verma Sir', g: 'male' }, { n: 'Chemistry', i: '🧪', t: 'Ms. Pooja Ma\'am', g: 'female' }, { n: 'Mathematics', i: '📐', t: 'Mr. Sharma Sir', g: 'male' }, { n: 'English', i: '📝', t: 'Ms. Riya Ma\'am', g: 'female' }],
+            pcb: [{ n: 'Physics', i: '⚡', t: 'Mr. Verma Sir', g: 'male' }, { n: 'Organic Chem', i: '⚗️', t: 'Ms. Pooja Ma\'am', g: 'female' }, { n: 'Inorganic Chem', i: '🧪', t: 'Mr. Das Sir', g: 'male' }, { n: 'Botany', i: '🌿', t: 'Ms. Kavita Ma\'am', g: 'female' }, { n: 'Zoology', i: '🐒', t: 'Ms. Priya Ma\'am', g: 'female' }, { n: 'English', i: '📝', t: 'Ms. Riya Ma\'am', g: 'female' }],
+            commerce: [{ n: 'Accountancy', i: '📊', t: 'Mr. Bansal Sir', g: 'male' }, { n: 'Business Studies', i: '💼', t: 'Ms. Neha Ma\'am', g: 'female' }, { n: 'Economics', i: '📉', t: 'Mr. Jain Sir', g: 'male' }, { n: 'English', i: '📝', t: 'Ms. Riya Ma\'am', g: 'female' }],
+            arts: [{ n: 'History', i: '🏛️', t: 'Mr. Bipin Sir', g: 'male' }, { n: 'Geography', i: '🗺️', t: 'Ms. Majid Ma\'am', g: 'female' }, { n: 'Political Science', i: '⚖️', t: 'Mr. Laxmikanth Sir', g: 'male' }, { n: 'Economics', i: '📉', t: 'Mr. Jain Sir', g: 'male' }],
+            neet: [{ n: 'Physics', i: '⚡', t: 'Mr. HC Verma Sir', g: 'male' }, { n: 'Physical Chem', i: '🧪', t: 'Mr. Das Sir', g: 'male' }, { n: 'Organic Chem', i: '⚗️', t: 'Ms. Anjali Ma\'am', g: 'female' }, { n: 'Inorganic Chem', i: '🔬', t: 'Mr. Kumar Sir', g: 'male' }, { n: 'Botany', i: '🌿', t: 'Ms. Kavita Ma\'am', g: 'female' }, { n: 'Zoology', i: '🐒', t: 'Ms. Priya Ma\'am', g: 'female' }],
+            jee: [{ n: 'Physics', i: '⚡', t: 'Mr. HC Verma Sir', g: 'male' }, { n: 'Physical Chem', i: '🧪', t: 'Mr. Das Sir', g: 'male' }, { n: 'Organic & Inorganic', i: '⚗️', t: 'Ms. Anjali Ma\'am', g: 'female' }, { n: 'Advanced Math', i: '📐', t: 'Mr. Sharma Sir', g: 'male' }],
+            upsc: [{ n: 'Indian Polity', i: '⚖️', t: 'Mr. Laxmikanth Sir', g: 'male' }, { n: 'Modern History', i: '🏛️', t: 'Mr. Bipin Sir', g: 'male' }, { n: 'Geography', i: '🌍', t: 'Ms. Majid Ma\'am', g: 'female' }, { n: 'Economy', i: '📈', t: 'Mr. Ramesh Sir', g: 'male' }, { n: 'Current Affairs', i: '📰', t: 'Ms. Riya Ma\'am', g: 'female' }]
         };
 
-        // --- 3. STATE MANAGEMENT (MOCK DATABASE) ---
-        let userProfile = { name: "Student", plan: "FREE", limitsLeft: 9 };
-        let activeBatch = JSON.parse(localStorage.getItem('tb_saved_batch')) || null;
-        let currentChatSubject = null;
+        let all300Batches = [];
+        let userData = { name: '', phone: '', plan: 'Free Trial', limits: 9, isPro: false };
+        let activeSavedBatch = null;
+        let currentSubjectState = null;
+        let selectedPricingPlan = { name: 'PRO', limits: 40 };
 
-        // --- 4. UI INITIALIZATION ---
-        window.onload = () => {
-            renderExplorerBatches(allBatches);
-            if(activeBatch) {
-                showScreen('dashboardScreen');
-                renderDashboard();
-                updateSidebarHistory();
-            } else {
-                showScreen('exploreScreen');
-            }
-        };
+        // INITIALIZE APP
+        window.addEventListener('load', () => {
+            generate300Batches();
+            
+            setTimeout(() => {
+                document.getElementById('splash-screen').style.opacity = '0';
+                setTimeout(() => document.getElementById('splash-screen').style.display = 'none', 500);
+                
+                // Check Login state
+                const savedUser = localStorage.getItem('tb_user');
+                if(savedUser) {
+                    userData = JSON.parse(savedUser);
+                    activeSavedBatch = JSON.parse(localStorage.getItem('tb_batch'));
+                    updateProfileUI();
+                    if(activeSavedBatch) {
+                        switchScreen('dashboard-screen');
+                        renderSubjectsGrid();
+                    } else {
+                        switchScreen('explore-screen');
+                        renderBatchesList('ALL');
+                    }
+                } else {
+                    document.getElementById('auth-screen').classList.add('active');
+                }
+            }, 2500);
+        });
 
-        function showToast(msg) {
+        function showToast(msg, type = 'success') {
             const t = document.getElementById('custom-toast');
-            t.innerHTML = `<i class="fa-solid fa-circle-check toast-icon success"></i> <span>${msg}</span>`;
+            t.innerHTML = `<i class="fa-solid ${type==='success'?'fa-circle-check':'fa-circle-exclamation'} toast-icon ${type}"></i> <span>${msg}</span>`;
             t.classList.add('show');
             setTimeout(() => t.classList.remove('show'), 3000);
         }
 
-        function toggleDrawer() { document.getElementById('drawer').classList.toggle('open'); document.getElementById('drawerOverlay').style.display = document.getElementById('drawer').classList.contains('open') ? 'block' : 'none'; }
-        
-        function showScreen(id) {
-            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-            document.getElementById(id).classList.add('active');
-            if(id === 'exploreScreen') document.getElementById('mainHeader').querySelector('.header-brand').innerHTML = `<img src="https://raw.githubusercontent.com/yuviyadav16/ticbull-academy/main/logo.png" onerror="this.style.display='none'"> TicBull Batches & Goals`;
-            if(id === 'dashboardScreen') document.getElementById('mainHeader').querySelector('.header-brand').innerHTML = `<img src="https://raw.githubusercontent.com/yuviyadav16/ticbull-academy/main/logo.png" onerror="this.style.display='none'"> My Dashboard`;
+        function login() {
+            const name = document.getElementById('studentName').value.trim();
+            const phone = document.getElementById('studentPhone').value.trim();
+            if(!name || !phone) { showToast("Enter Name and Phone!", "error"); return; }
+            
+            userData.name = name; userData.phone = phone;
+            localStorage.setItem('tb_user', JSON.stringify(userData));
+            
+            document.getElementById('auth-screen').classList.remove('active');
+            updateProfileUI();
+            switchScreen('explore-screen');
+            renderBatchesList('ALL');
+            showToast("Login Successful!");
         }
 
-        // --- 5. RENDER BATCHES (Matching Image 2) ---
-        function renderExplorerBatches(list) {
+        function updateProfileUI() {
+            document.getElementById('dashStudentName').innerText = `Welcome, ${userData.name.split(' ')[0]}`;
+            document.getElementById('drawerStudentName').innerText = userData.name;
+            document.getElementById('drawerStudentPhone').innerText = userData.phone;
+            document.getElementById('drawerActivePlan').innerText = `Plan: ${userData.plan}`;
+            if(activeSavedBatch) {
+                document.getElementById('activeBatchName').innerText = activeSavedBatch.name;
+                document.getElementById('activePlanText').innerText = `Pass: ${userData.plan} (${userData.limits} Doubts)`;
+            }
+        }
+
+        // BATCH GENERATOR
+        function generate300Batches() {
+            let id = 1;
+            boardsList.forEach(b => {
+                classData.forEach(c => {
+                    all300Batches.push({ id: `b_${id++}`, cat: b.code, stream: c.stream, name: `${b.name} - ${c.name} Topper Batch`, desc: `Complete NCERT & State Syllabus for ${c.name}.`, teachers: 'Dedicated Subject Experts' });
+                });
+            });
+            compExams.forEach(e => {
+                all300Batches.push({ id: `b_${id++}`, cat: e.cat, stream: e.stream, name: e.name, desc: `All India Ranker Batch with Advanced Faculty.`, teachers: 'Top Tier Educators' });
+            });
+        }
+
+        function switchScreen(screenId) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById(screenId).classList.add('active');
+        }
+
+        function filterCategory(cat, el) {
+            document.querySelectorAll('.cat-chip').forEach(c => c.classList.remove('active'));
+            el.classList.add('active');
+            renderBatchesList(cat);
+        }
+
+        function renderBatchesList(cat) {
             const container = document.getElementById('batchesContainer');
+            let list = cat === 'ALL' ? all300Batches : all300Batches.filter(b => b.cat === cat);
+            
+            const q = document.getElementById('batchSearchInput')?.value.toLowerCase();
+            if(q) list = list.filter(b => b.name.toLowerCase().includes(q));
+
             container.innerHTML = list.map(b => `
                 <div class="batch-card">
-                    <span class="green-tag">All Subjects Included</span>
-                    <h3 class="batch-title">${b.title}</h3>
-                    <div class="faculty-tag"><i class="fa-solid fa-chalkboard-user"></i> Faculty: Dedicated Subject Experts</div>
-                    <p class="batch-desc">${b.desc}</p>
-                    <div class="batch-footer">
-                        <div>
-                            <span style="font-size:10px; color:var(--text-muted); display:block;">Starting from</span>
-                            <span style="font-size:16px; font-weight:800; color:var(--success-color);">₹${b.price}/yr</span>
-                        </div>
-                        <div class="btn-group">
-                            <button class="btn-outline" onclick="enrollBatch('${b.id}')"><i class="fa-solid fa-book-open"></i> Subjects</button>
-                            <button class="btn-solid" onclick="enrollBatch('${b.id}')">Enroll</button>
-                        </div>
-                    </div>
+                    <span class="batch-tag">All Subjects Included</span>
+                    <div class="batch-title">${b.name}</div>
+                    <div class="batch-teachers-strip"><i class="fa-solid fa-chalkboard-user"></i> Faculty: ${b.teachers}</div>
+                    <div class="batch-desc">${b.desc}</div>
+                    <button class="btn-buy" onclick="enrollBatch('${b.id}')">Enroll for ₹199/yr</button>
                 </div>
             `).join('');
         }
 
-        function filterBatches() {
-            const q = document.getElementById('searchInput').value.toLowerCase();
-            const filtered = allBatches.filter(b => b.title.toLowerCase().includes(q));
-            renderExplorerBatches(filtered);
-        }
+        function searchBatches() { renderBatchesList('ALL'); }
 
         function enrollBatch(id) {
-            activeBatch = allBatches.find(b => b.id === id);
-            localStorage.setItem('tb_saved_batch', JSON.stringify(activeBatch));
-            showToast("Successfully Enrolled!");
-            showScreen('dashboardScreen');
-            renderDashboard();
+            activeSavedBatch = all300Batches.find(b => b.id === id);
+            localStorage.setItem('tb_batch', JSON.stringify(activeSavedBatch));
+            
+            // Show Pricing Modal on first enroll
+            if(!userData.isPro) openPricingModal();
+            else {
+                updateProfileUI();
+                switchScreen('dashboard-screen');
+                renderSubjectsGrid();
+                showToast("Batch Enrolled!");
+            }
         }
 
-        // --- 6. RENDER DASHBOARD SUBJECTS ---
-        function renderDashboard() {
-            if(!activeBatch) return;
-            document.getElementById('myBatchName').innerText = activeBatch.title;
+        // PRICING SYSTEM
+        function openPricingModal() {
+            document.getElementById('pricingModal').style.display = 'flex';
+            if(document.getElementById('drawer').classList.contains('open')) toggleDrawer();
+        }
+        function closeModals() { document.querySelectorAll('.modal-overlay').forEach(m => m.style.display='none'); }
+        
+        function selectPlan(planId, price, limits) {
+            document.querySelectorAll('.tier-card-option').forEach(el => el.classList.remove('selected'));
+            document.getElementById(`plan${planId}`).classList.add('selected');
+            selectedPricingPlan = { name: planId, limits: limits };
+        }
+
+        function confirmPayment() {
+            userData.plan = selectedPricingPlan.name;
+            userData.limits = selectedPricingPlan.limits;
+            userData.isPro = true;
+            localStorage.setItem('tb_user', JSON.stringify(userData));
             
-            // Map stream to subject library (fallback to general)
-            let subjects = subjectLibrary[activeBatch.stream] || subjectLibrary['general'];
+            closeModals();
+            showToast(`🎉 Upgraded to ${userData.plan} Pass!`);
+            updateProfileUI();
             
-            document.getElementById('mySubjectsGrid').innerHTML = subjects.map(s => `
+            if(activeSavedBatch) {
+                switchScreen('dashboard-screen');
+                renderSubjectsGrid();
+            }
+        }
+
+        // SUBJECT GRID & CHAT ROUTING
+        function renderSubjectsGrid() {
+            if(!activeSavedBatch) return;
+            const subjects = subjectLibrary[activeSavedBatch.stream] || subjectLibrary['general'];
+            
+            document.getElementById('subjectsGrid').innerHTML = subjects.map(s => `
                 <div class="subject-card" onclick="openSubjectChat('${s.n}', '${s.i}', '${s.t}', '${s.g}')">
                     <div class="subject-icon">${s.i}</div>
                     <div class="subject-name">${s.n}</div>
@@ -419,64 +522,49 @@
             `).join('');
         }
 
-        // --- 7. DEDICATED SUBJECT CHAT SYSTEM ---
         function openSubjectChat(subName, icon, teacherName, gender) {
-            currentChatSubject = { name: subName, teacher: teacherName, gender: gender };
+            currentSubjectState = { sub: subName, teacher: teacherName, gender: gender, key: `chat_${activeSavedBatch.id}_${subName}` };
             
-            document.getElementById('chatSubjectName').innerText = subName;
+            document.getElementById('chatSubjectTitle').innerText = subName;
             document.getElementById('chatTeacherName').innerText = `By ${teacherName}`;
-            // Set Avatar based on gender
             document.getElementById('chatTeacherImg').src = gender === 'female' ? 'https://raw.githubusercontent.com/yuviyadav16/ticbull-academy/main/11723.png' : 'https://raw.githubusercontent.com/yuviyadav16/ticbull-academy/main/11708.png';
+            document.getElementById('chatDoubtsLeft').innerText = `${userData.limits} Doubts`;
             
-            document.getElementById('chatScreen').style.display = 'flex';
-            document.getElementById('doubtCounterUI').innerText = `${userProfile.limitsLeft} Doubts Left`;
-            
+            switchScreen('chat-screen');
             loadChatHistory();
-        }
-
-        function closeChat() {
-            document.getElementById('chatScreen').style.display = 'none';
-            updateSidebarHistory();
         }
 
         function loadChatHistory() {
             const box = document.getElementById('chatBox');
-            const historyKey = `chat_${activeBatch.id}_${currentChatSubject.name}`;
-            const history = JSON.parse(localStorage.getItem(historyKey)) || [];
+            const history = JSON.parse(localStorage.getItem(currentSubjectState.key)) || [];
             
             box.innerHTML = '';
             if(history.length === 0) {
-                // Default Welcome Message in persona
-                const welcomeText = currentChatSubject.gender === 'female' 
-                    ? `Hello bacchon! Main aapki ${currentChatSubject.name} teacher hoon. ${activeBatch.title} ka poora syllabus hum cover karenge. Bataiye aaj kya padhna hai?` 
-                    : `Welcome students! Main aapka ${currentChatSubject.name} teacher. Hum ${activeBatch.title} strictly syllabus ke according padhenge. Koi doubt hai toh pucho!`;
-                
-                box.innerHTML = `<div class="msg ai"><div class="ai-header"><i class="fa-solid fa-chalkboard-user"></i> ${currentChatSubject.teacher}</div>${welcomeText}</div>`;
+                const wel = currentSubjectState.gender === 'female' ? `Hello bacchon! Main aapki ${currentSubjectState.sub} teacher. Batao kis topic me doubt hai?` : `Welcome! Main aapka ${currentSubjectState.sub} teacher, ${currentSubjectState.teacher}. Syllabus ke according doubt puchiye.`;
+                box.innerHTML = `<div class="msg ai"><b>${currentSubjectState.teacher}:</b><br>${wel}</div>`;
             } else {
-                history.forEach(msg => {
-                    if(msg.type === 'user') box.innerHTML += `<div class="msg user">${msg.text}</div>`;
-                    else box.innerHTML += `<div class="msg ai"><div class="ai-header"><i class="fa-solid fa-chalkboard-user"></i> ${msg.teacher}</div>${msg.text}</div>`;
+                history.forEach(m => {
+                    if(m.type === 'user') box.innerHTML += `<div class="msg user">${m.text}</div>`;
+                    else box.innerHTML += `<div class="msg ai"><b>${m.t}:</b><br>${m.text}</div>`;
                 });
             }
-            box.scrollTop = box.scrollHeight;
+            scrollToBottom();
         }
 
-        function saveChatHistory(type, text, teacher) {
-            const historyKey = `chat_${activeBatch.id}_${currentChatSubject.name}`;
-            const history = JSON.parse(localStorage.getItem(historyKey)) || [];
-            history.push({ type, text, teacher });
-            localStorage.setItem(historyKey, JSON.stringify(history));
+        function saveChat(type, text) {
+            const history = JSON.parse(localStorage.getItem(currentSubjectState.key)) || [];
+            history.push({ type: type, text: text, t: currentSubjectState.teacher });
+            localStorage.setItem(currentSubjectState.key, JSON.stringify(history));
         }
 
-        // --- 8. SMART AI ROUTING (Gemini vs Meta) ---
-        function sendChatMessage() {
+        function sendSubjectDoubt() {
             const input = document.getElementById('chatInput');
             const text = input.value.trim();
             if(!text) return;
 
-            if(userProfile.limitsLeft <= 0) {
-                document.getElementById('chatBox').innerHTML += `<div class="msg system"><b>Free Limit Exhausted!</b><br>Aapke daily doubts khatam ho gaye hain. Please upgrade your pass to continue chat.</div>`;
-                openSubscriptionModal();
+            if(userData.limits <= 0) {
+                document.getElementById('chatBox').innerHTML += `<div class="msg system"><b>Limit Exhausted!</b><br>Please upgrade pass to continue.</div>`;
+                openPricingModal();
                 scrollToBottom();
                 return;
             }
@@ -484,94 +572,44 @@
             // User Message
             const box = document.getElementById('chatBox');
             box.innerHTML += `<div class="msg user">${text}</div>`;
-            saveChatHistory('user', text, '');
+            saveChat('user', text);
             input.value = '';
+            
+            userData.limits--;
+            localStorage.setItem('tb_user', JSON.stringify(userData));
+            document.getElementById('chatDoubtsLeft').innerText = `${userData.limits} Doubts`;
+            updateProfileUI();
+
+            const loadId = 'l_' + Date.now();
+            box.innerHTML += `<div class="msg ai" id="${loadId}"><i>${currentSubjectState.teacher} is thinking...</i></div>`;
             scrollToBottom();
 
-            userProfile.limitsLeft--;
-            document.getElementById('doubtCounterUI').innerText = `${userProfile.limitsLeft} Doubts Left`;
-
-            // Loading state
-            const loadId = 'load_' + Date.now();
-            box.innerHTML += `<div class="msg ai" id="${loadId}"><i>${currentChatSubject.teacher} is typing...</i></div>`;
-            scrollToBottom();
-
-            // MOCK BACKEND ROUTING LOGIC (Simulating API)
+            // AI Routing Simulation (Gemini vs Meta)
             setTimeout(() => {
-                let aiResponse = "";
-                const tName = currentChatSubject.teacher;
-                const isFemale = currentChatSubject.gender === 'female';
-                const lowerText = text.toLowerCase();
-
-                // 1. NON-ACADEMIC / CASUAL (Routed to DeepSeek/Meta Logic)
-                if(lowerText.includes('hi') || lowerText.includes('hello') || lowerText.includes('kaise ho') || lowerText.includes('who are you') || lowerText.includes('maker') || lowerText.includes('man nahi lag raha') || lowerText.includes('bored')) {
-                    
-                    if(lowerText.includes('maker') || lowerText.includes('developer') || lowerText.includes('banaya')) {
-                        aiResponse = `Mujhe TicBull Academy aur MrYuviYadav ne develop kiya hai taaki main aapko ${currentChatSubject.name} padha saku!`;
-                    } else if(lowerText.includes('man nahi lag raha') || lowerText.includes('bored')) {
-                        aiResponse = isFemale 
-                            ? `Dekho beta, padhai me man lagana padta hai! Agar abhi mehnat kar loge toh ${activeBatch.title} me top karoge. Chalo batao kis topic me problem aa rahi hai, main easy way me samjhati hu.`
-                            : `Aise kaise chalega? Competition dekha hai bahar? Thoda focus karo, ${activeBatch.title} clear karna hai ya nahi? Chalo koi easy topic se start karte hain.`;
-                    } else if(lowerText.includes('plan') || lowerText.includes('subscribe') || lowerText.includes('price')) {
-                        aiResponse = `Aap apne doubts limit badhane ke liye Menu se 'Upgrade Course Pass' le sakte hain. Basic ₹199 (15 doubts/day), Pro ₹499 (40 doubts) aur Max Pro ₹999 me available hai.`;
-                    } else {
-                        aiResponse = isFemale ? `Hello! Main aapki ${currentChatSubject.name} teacher, ${tName}. Kaisi chal rahi hai padhai?` : `Hello dear student. Main ${tName}. Focus on your study. Koi doubt hai?`;
-                    }
-                } 
-                // 2. ACADEMIC / EDUCATIONAL (Routed to Gemini Logic - Strictly Syllabus)
-                else {
-                    aiResponse = isFemale 
-                        ? `Bilkul sahi sawal hai. ${currentChatSubject.name} ke ${activeBatch.title} syllabus ke according iska answer ye hoga ki... [Conceptual explanation based on NCERT]. Samajh aaya aapko?`
-                        : `Good question. ${activeBatch.title} ke syllabus me ye bahut important topic hai. Iska answer hai... [Point wise explanation]. Isko note karlo.`;
+                let reply = "";
+                const q = text.toLowerCase();
+                const isFem = currentSubjectState.gender === 'female';
+                
+                if(q.includes('hi') || q.includes('hello') || q.includes('man nahi lag') || q.includes('maker') || q.includes('developer')) {
+                    // Meta AI Logic (Non-Academic)
+                    if(q.includes('maker') || q.includes('developer')) reply = `Mujhe TicBull Academy aur MrYuviYadav ne banaya hai taaki aap ${currentSubjectState.sub} perfectly padh sakein!`;
+                    else if(q.includes('man nahi lag')) reply = isFem ? `Padhai me man lagana padta hai beta! Chalo ${activeSavedBatch.name} ka koi easy chapter padhate hain.` : `Focus karo, exams pass hain! Pucho apna doubt.`;
+                    else reply = `Hello! Kaisi chal rahi hai preparation? Apna syllabus doubt puchiye.`;
+                } else {
+                    // Gemini Logic (Academic strictly inside subject)
+                    reply = isFem ? `Bilkul, ${currentSubjectState.sub} ke syllabus ke anusar iska answer ye hai: [Detailed Explanation of ${text}]. Samajh aaya?` : `Good doubt. ${activeSavedBatch.name} me ye topic zaroori hai. Iska answer hai... [Concept Note]. Isko note karlo.`;
                 }
 
-                document.getElementById(loadId).innerHTML = `<div class="ai-header"><i class="fa-solid fa-chalkboard-user"></i> ${tName}</div>${aiResponse}`;
-                saveChatHistory('ai', aiResponse, tName);
+                document.getElementById(loadId).innerHTML = `<b>${currentSubjectState.teacher}:</b><br>${reply}`;
+                saveChat('ai', reply);
                 scrollToBottom();
-
             }, 1200);
         }
 
-        function scrollToBottom() {
-            const box = document.getElementById('chatBox');
-            box.scrollTop = box.scrollHeight;
-        }
-
-        function updateSidebarHistory() {
-            const list = document.getElementById('recentChatsList');
-            if(!activeBatch) return;
-            const subjects = subjectLibrary[activeBatch.stream] || subjectLibrary['general'];
-            
-            let html = '';
-            subjects.forEach(s => {
-                const hasChat = localStorage.getItem(`chat_${activeBatch.id}_${s.n}`);
-                if(hasChat) {
-                    html += `<div class="drawer-item" style="font-size:12px; background:rgba(255,255,255,0.05);" onclick="openSubjectChat('${s.n}', '${s.i}', '${s.t}', '${s.g}'); toggleDrawer();"><i class="fa-solid fa-comments"></i> ${s.n} Chat</div>`;
-                }
-            });
-            list.innerHTML = html || `<span style="font-size:11px; color:var(--text-muted); padding-left:14px;">No active chats yet.</span>`;
-        }
-
-        function openSubscriptionModal() {
-            document.getElementById('pricingModal').style.display = 'flex';
-            if(document.getElementById('drawer').classList.contains('open')) toggleDrawer();
-        }
-
-        function selectPlan(type) {
-            document.querySelectorAll('.plan-card').forEach(el => el.classList.remove('active'));
-            event.currentTarget.classList.add('active');
-            
-            if(type === 'BASIC') userProfile.limitsLeft = 15;
-            if(type === 'PRO') userProfile.limitsLeft = 40;
-            if(type === 'MAX') userProfile.limitsLeft = 75;
-            
-            document.getElementById('doubtCounterUI').innerText = `${userProfile.limitsLeft} Doubts Left`;
-        }
-        
-        function logout() {
-            localStorage.clear();
-            location.reload();
-        }
+        function scrollToBottom() { const b = document.getElementById('chatBox'); b.scrollTop = b.scrollHeight; }
+        function toggleDrawer() { const d = document.getElementById('drawer'); d.classList.toggle('open'); document.getElementById('drawerOverlay').style.display = d.classList.contains('open') ? 'block' : 'none'; }
+        function openSettingsModal() { document.getElementById('settingsModal').style.display = 'flex'; toggleDrawer(); }
+        function logoutUser() { localStorage.clear(); location.reload(); }
     </script>
 </body>
 </html>
