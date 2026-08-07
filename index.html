@@ -5,20 +5,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>TicBull Academy - India's #1 AI Education Engine</title>
     
-    <!-- PWA APP INSTALL LINKS & SECURITY HEADERS -->
+    <!-- PWA APP INSTALL LINKS -->
     <link rel="manifest" href="/manifest.json">
     <meta name="theme-color" content="#2563eb">
-    <meta http-equiv="X-Content-Type-Options" content="nosniff">
     <link rel="apple-touch-icon" href="logo.png">
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     
-    <!-- SERVICE WORKER REGISTRATION (Z+ Security Core) -->
+    <!-- SERVICE WORKER REGISTRATION -->
     <script>
       if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
           navigator.serviceWorker.register('/sw.js')
-            .then(() => console.log('TicBull PWA Service Worker Registered with Z+ Secure Mode!'))
+            .then(() => console.log('TicBull PWA Service Worker Registered!'))
             .catch((err) => console.log('SW registration failed: ', err));
         });
       }
@@ -54,7 +53,7 @@
         html, body { height: 100%; width: 100%; overflow: hidden; background: var(--bg-color); color: var(--text-main); transition: background 0.3s, color 0.3s; }
         body { display:flex; flex-direction:column; }
 
-        /* ORIGINAL CUSTOM TOAST NOTIFICATION */
+        /* CUSTOM TOAST NOTIFICATION */
         #custom-toast {
             position: fixed; top: -100px; left: 50%; transform: translateX(-50%);
             background: var(--card-bg); color: var(--text-main);
@@ -69,7 +68,7 @@
         .toast-icon.success { color: var(--success-color); }
         .toast-icon.error { color: #ef4444; }
 
-        /* ORIGINAL CINEMATIC SPLASH ANIMATION */
+        /* CINEMATIC SPLASH ANIMATION */
         #splash-screen {
             position: fixed; top:0; left:0; width:100%; height:100%;
             background: radial-gradient(circle at center, #0b1329 0%, #020617 100%);
@@ -105,14 +104,12 @@
         @keyframes loadProgress { 0% { width: 0%; } 100% { width: 100%; } }
         @keyframes floatIcon { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); color: var(--accent-color); } }
 
-        /* ROBUST AUTH & SECURITY CARD */
+        /* AUTH CARD */
         .auth-container { display:flex; flex-direction:column; align-items:center; justify-content:center; flex:1; padding:20px; width:100%; overflow-y:auto; }
         .auth-card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius:24px; padding:28px 22px; width:100%; max-width:420px; box-shadow:0 20px 50px rgba(0,0,0,0.5); text-align:center; position: relative; }
         .brand-header { display:flex; flex-direction:column; align-items:center; margin-bottom:18px; }
         .brand-icon-box { width:80px; height:80px; border-radius:50%; background:#000; border:2px solid rgba(37, 99, 235, 0.4); display:flex; justify-content:center; align-items:center; margin-bottom:12px; box-shadow: 0 8px 25px rgba(0,0,0,0.6); overflow:hidden; }
         .brand-icon-box img { width:90%; height:90%; object-fit:contain; }
-        
-        .security-badge { background: rgba(16, 185, 129, 0.1); border: 1px solid var(--success-color); color: var(--success-color); font-size: 10px; padding: 4px 10px; border-radius: 20px; margin-bottom: 12px; display: inline-flex; align-items: center; gap: 4px; font-weight: bold; }
 
         .auth-tabs { display:flex; background:var(--input-bg); padding:4px; border-radius:12px; border:1px solid var(--border-color); margin-bottom:16px; }
         .auth-tab { flex:1; padding:10px; font-size:13px; font-weight:600; color:var(--text-muted); border-radius:8px; cursor:pointer; transition:0.3s; }
@@ -138,12 +135,10 @@
         .auth-footer-socials a { color: var(--text-muted); font-size: 16px; transition: 0.2s; }
         .auth-footer-socials a:hover { color: var(--accent-color); transform: scale(1.1); }
 
-        /* SCREENS */
-        .screen { display:none; flex-direction:column; height:100%; max-width:850px; margin:0 auto; width:100%; padding:14px; overflow-y:auto; position:relative; }
-        .screen.active { display:flex; }
-
-        /* ALL BATCHES SCREEN */
+        /* 🚀 PW BATCHES DASHBOARD SCREEN (DYNAMIC 300+ BATCHES UI) */
+        #batches-screen { display:none; flex-direction:column; height:100%; max-width:850px; margin:0 auto; width:100%; padding:14px; overflow-y:auto; }
         .batches-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; background:var(--card-bg); padding:12px 16px; border-radius:16px; border:1px solid var(--border-color); }
+        
         .category-scroll-bar { display:flex; gap:8px; overflow-x:auto; padding-bottom:10px; margin-bottom:12px; scrollbar-width:none; }
         .category-scroll-bar::-webkit-scrollbar { display:none; }
         .cat-chip { background:var(--input-bg); border:1px solid var(--border-color); color:var(--text-muted); padding:7px 14px; border-radius:20px; font-size:11.5px; font-weight:700; white-space:nowrap; cursor:pointer; transition:0.2s; }
@@ -165,26 +160,28 @@
         .btn-trial { background: rgba(245, 158, 11, 0.2); color: var(--gold-color); border: 1px solid rgba(245, 158, 11, 0.5); padding: 8px 12px; border-radius: 10px; font-size: 11.5px; font-weight: 700; cursor: pointer; }
         .btn-buy { background: var(--accent-color); color: #fff; border: none; padding: 8px 16px; border-radius: 10px; font-size: 11.5px; font-weight: 700; cursor: pointer; box-shadow: 0 4px 15px var(--accent-glow); }
 
-        /* SUBJECTS DASHBOARD (NEW ADDITION) */
-        .subject-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 14px; margin-top: 16px; }
-        .subject-card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 16px; padding: 18px 10px; text-align: center; cursor: pointer; transition: 0.2s; box-shadow: 0 5px 15px rgba(0,0,0,0.3); }
-        .subject-card:hover { border-color: var(--accent-color); transform: translateY(-3px); background: rgba(37, 99, 235, 0.05); }
-        .subject-icon { font-size: 34px; margin-bottom: 10px; }
-        .subject-name { font-size: 13.5px; font-weight: 700; color: var(--text-main); margin-bottom:4px; }
-        .subject-teacher { font-size: 10.5px; color: var(--text-muted); }
-        .active-course-chip { background:rgba(37, 99, 235, 0.1); border:1px solid rgba(37, 99, 235, 0.4); padding:10px 14px; border-radius:14px; display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; }
-
-        /* CHAT SCREEN */
+        /* MAIN CHAT DASHBOARD */
+        #main-dashboard { display:none; flex-direction:column; height:100%; max-width:850px; margin:0 auto; width:100%; position:relative; padding:10px; }
         .header { display:flex; justify-content:space-between; align-items:center; padding:10px 14px; background:var(--card-bg); border-radius:18px; border:1px solid var(--border-color); margin-bottom:8px; flex-shrink:0; }
         .header-brand { display:flex; align-items:center; gap:10px; }
         .menu-btn { background:none; border:none; color:var(--text-main); font-size:18px; cursor:pointer; padding:6px; }
         .header-logo { width:38px; height:38px; border-radius:50%; background:#000; border:1px solid rgba(255,255,255,0.2); display:flex; justify-content:center; align-items:center; overflow:hidden; }
         .header-logo img { width:90%; height:90%; object-fit:contain; }
-        
+        .user-badge { background:rgba(245, 158, 11, 0.15); border:1px solid rgba(245, 158, 11, 0.4); color:var(--gold-color); padding:5px 10px; border-radius:20px; font-size:11px; font-weight:700; cursor:pointer; }
+
+        .course-bar-toggle { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 14px; padding: 10px 14px; font-size: 12px; color: var(--text-main); font-weight: 600; margin-bottom: 8px; display: flex; align-items: center; justify-content: space-between; cursor: pointer; flex-shrink: 0; box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
+
+        /* CHAT CONTAINER */
         .chat-container { background:var(--chat-bg); border:1px solid var(--border-color); border-radius:18px; padding:14px; flex:1; overflow-y:auto; display:flex; flex-direction:column; gap:10px; margin-bottom:8px; min-height: 150px; }
         .msg { padding:12px 15px; border-radius:16px; font-size:13.5px; line-height:1.5; max-width:88%; word-break: break-word; overflow-wrap: break-word; animation: popIn 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards; transform-origin: bottom left; }
         .msg.user { background:var(--accent-color); color:#fff; align-self:flex-end; border-bottom-right-radius:4px; transform-origin: bottom right; box-shadow: 0 4px 15px var(--accent-glow); }
         .msg.ai { background:var(--card-bg); color:var(--text-main); border:1px solid var(--border-color); align-self:flex-start; border-bottom-left-radius:4px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); width: 100%; max-width: 92%; }
+        
+        .msg table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 12.5px; }
+        .msg th, .msg td { border: 1px solid var(--border-color); padding: 8px; text-align: left; }
+        .msg th { background: rgba(37, 99, 235, 0.1); color: var(--accent-color); font-weight: 700; }
+
+        .msg.guide-ai { background:rgba(245, 158, 11, 0.12); border:1px solid rgba(245, 158, 11, 0.5); color:var(--gold-color); align-self:flex-start; width: 100%; max-width: 92%; }
         .msg.error { background:rgba(239, 68, 68, 0.15); border:1px solid #ef4444; color:#fca5a5; align-self:center; width:100%; text-align:center; }
         .msg-image { max-width:100%; border-radius:12px; margin-top:8px; border:1px solid var(--border-color); }
 
@@ -203,9 +200,13 @@
         .send-btn:active { transform: scale(0.9); }
 
         .voice-active { background: rgba(239, 68, 68, 0.2); color: #ef4444; border-color: #ef4444; }
+        
+        .delete-chat-icon { color: #ef4444; opacity: 0.7; font-size: 13px; padding: 4px; cursor:pointer; }
+        .delete-chat-icon:hover { opacity: 1; }
+
         #imagePreview { display:none; padding:6px 12px; background:var(--card-bg); border-radius:10px; font-size:12px; color:var(--accent-color); margin-bottom:8px; align-items:center; justify-content:space-between; flex-shrink:0; }
 
-        /* ORIGINAL SIDE DRAWER MENU (With all Social Links & Settings) */
+        /* SIDE DRAWER MENU */
         .drawer-overlay { position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.75); z-index:1000; display:none; }
         .drawer { position:fixed; top:0; left:-310px; width:310px; height:100%; background:var(--card-bg); border-right:1px solid var(--border-color); z-index:1001; transition:0.3s; padding:18px; display:flex; flex-direction:column; overflow-y:auto; }
         .drawer.open { left:0; }
@@ -213,6 +214,7 @@
         
         .profile-card { background:linear-gradient(135deg, rgba(37, 99, 235, 0.2), rgba(245, 158, 11, 0.15)); border:1px solid var(--border-color); border-radius:16px; padding:14px; margin-bottom:14px; text-align:left; position:relative; }
         .profile-header { display:flex; align-items:center; gap:12px; }
+        
         .profile-avatar-box { position:relative; width:46px; height:46px; }
         .profile-avatar-img { width:100%; height:100%; border-radius:50%; object-fit:cover; border:2px solid var(--accent-color); }
         .profile-avatar-initial { width:100%; height:100%; border-radius:50%; background:var(--accent-color); color:#fff; display:flex; justify-content:center; align-items:center; font-weight:800; font-size:18px; border:2px solid rgba(255,255,255,0.2); }
@@ -227,7 +229,7 @@
         .history-item { font-size:12px; color:var(--text-muted); padding:8px 10px; border-radius:8px; background:var(--chat-bg); border:1px solid var(--border-color); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; cursor:pointer; display: flex; justify-content: space-between; align-items: center; transition:0.2s; }
         .history-item:hover, .history-item.active-session { background:rgba(37, 99, 235, 0.15); color:var(--text-main); border-color:var(--accent-color); }
 
-        /* ORIGINAL DETAILED MODALS */
+        /* MODALS */
         .modal-overlay { position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); z-index:2000; display:none; justify-content:center; align-items:center; padding:16px; }
         .modal-card { background:var(--card-bg); border:1px solid var(--border-color); border-radius:20px; padding:22px; max-width:480px; width:100%; text-align:center; position:relative; max-height:92vh; display:flex; flex-direction:column; animation: popIn 0.3s ease; }
         
@@ -277,7 +279,6 @@
         <div class="splash-title">TicBull Academy</div>
         <div class="developer-tag"><i class="fa-solid fa-code"></i> Developed by MrYuviYadav</div>
         
-        <!-- ORIGINAL SOCIAL LINKS -->
         <div class="splash-socials">
             <a href="https://youtube.com/@mryuviyadav" target="_blank" style="color:#ff0000;" title="YouTube"><i class="fa-brands fa-youtube"></i></a>
             <a href="https://www.instagram.com/mryuvi_yadav" target="_blank" style="color:#e1306c;" title="Instagram"><i class="fa-brands fa-instagram"></i></a>
@@ -295,8 +296,8 @@
         </div>
     </div>
 
-    <!-- 🚀 ORIGINAL HEAVY AUTH SCREEN (With OTP Logic) -->
-    <div class="screen auth-container" id="auth-screen">
+    <!-- AUTH SCREEN -->
+    <div class="auth-container" id="auth-screen">
         <div class="auth-card">
             <div class="brand-header">
                 <div class="brand-icon-box">
@@ -304,11 +305,6 @@
                 </div>
                 <h2 style="font-size:20px; font-weight:800;">TicBull Academy</h2>
                 <p style="font-size:12px; color:var(--text-muted); margin-top:3px;">AI Student Portal & Exam Engine</p>
-            </div>
-
-            <!-- Z+ Security Badge -->
-            <div class="security-badge">
-                <i class="fa-solid fa-shield-halved"></i> Z+ End-to-End Encrypted
             </div>
 
             <div class="auth-tabs">
@@ -345,9 +341,9 @@
             <div class="auth-footer-support">
                 <p>Need Help? Contact TicBull Support</p>
                 <div class="auth-footer-socials">
-                    <a href="mailto:ticbull.support@gmail.com"><i class="fa-solid fa-envelope"></i></a>
-                    <a href="https://t.me/ticbullteam"><i class="fa-brands fa-telegram"></i></a>
-                    <a href="https://www.instagram.com/ticbull"><i class="fa-brands fa-instagram"></i></a>
+                    <a href="mailto:ticbull.support@gmail.com" title="Email Support"><i class="fa-solid fa-envelope"></i></a>
+                    <a href="https://t.me/ticbullteam" title="Telegram Support"><i class="fa-brands fa-telegram"></i></a>
+                    <a href="https://www.instagram.com/ticbull" title="Instagram Support"><i class="fa-brands fa-instagram"></i></a>
                 </div>
             </div>
         </div>
@@ -358,9 +354,43 @@
         <div class="modal-card">
             <i class="fa-solid fa-xmark" style="position:absolute; right:16px; top:16px; color:var(--text-muted); cursor:pointer;" onclick="document.getElementById('forgotModal').style.display='none'; playClickSound();"></i>
             <h3 style="color:var(--text-main); font-size:18px;">🔑 Reset Password</h3>
-            <div class="input-group" style="margin-top:16px;"><i class="fa-regular fa-envelope left-icon"></i><input type="email" id="forgotEmail" placeholder="Registered Email ID"></div>
-            <div class="input-group"><i class="fa-solid fa-lock left-icon"></i><input type="password" id="forgotNewPassword" placeholder="Enter New Password"></div>
+            <p style="font-size:11.5px; color:var(--text-muted); margin-top:4px;">Enter email and a new password to reset.</p>
+            
+            <div class="input-group" style="margin-top:16px;">
+                <i class="fa-regular fa-envelope left-icon"></i>
+                <input type="email" id="forgotEmail" placeholder="Registered Email ID">
+            </div>
+            <div class="input-group">
+                <i class="fa-solid fa-lock left-icon"></i>
+                <input type="password" id="forgotNewPassword" placeholder="Enter New Password">
+                <i class="fa-solid fa-eye pwd-toggle" onclick="togglePassword('forgotNewPassword')"></i>
+            </div>
+
             <button class="btn-primary" id="forgotBtn" onclick="initiateForgotOTP()">SEND RESET OTP</button>
+        </div>
+    </div>
+
+    <!-- DELETE ACCOUNT MODAL -->
+    <div class="modal-overlay" id="deleteAccountModal">
+        <div class="modal-card">
+            <i class="fa-solid fa-xmark" style="position:absolute; right:16px; top:16px; color:var(--text-muted); cursor:pointer;" onclick="document.getElementById('deleteAccountModal').style.display='none'; playClickSound();"></i>
+            <h3 style="color:#ef4444; font-size:18px;"><i class="fa-solid fa-triangle-exclamation"></i> Delete Account</h3>
+            <p style="font-size:11.5px; color:var(--text-muted); margin-top:4px;">WARNING: Deleting your account will permanently erase your subscription, chats, and all data. This cannot be undone.</p>
+            
+            <div class="input-group" style="margin-top:16px;">
+                <i class="fa-regular fa-envelope left-icon"></i>
+                <input type="email" id="delAccEmail" disabled style="opacity:0.7;">
+            </div>
+            
+            <div id="delAccOtpSection" style="display:none;">
+                <div class="input-group">
+                    <i class="fa-solid fa-shield-halved left-icon"></i>
+                    <input type="text" id="delAccOtp" placeholder="Enter 6-Digit Deletion OTP" maxlength="6" style="text-align:center; font-weight:800; letter-spacing:3px;">
+                </div>
+                <button class="btn-primary btn-danger" id="confirmDeleteAccBtn" onclick="verifyAndDeleteAccount()">PERMANENTLY DELETE ACCOUNT</button>
+            </div>
+
+            <button class="btn-primary" id="sendDelOtpBtn" onclick="initiateAccountDeletion()">SEND DELETION OTP</button>
         </div>
     </div>
 
@@ -370,179 +400,188 @@
             <i class="fa-solid fa-xmark" style="position:absolute; right:16px; top:16px; color:var(--text-muted); cursor:pointer;" onclick="closeOtpModal()"></i>
             <h3 style="color:var(--text-main); font-size:18px;">📧 Verify Email OTP</h3>
             <p style="font-size:11.5px; color:var(--text-muted); margin-top:4px;">Enter the 6-digit OTP sent to your Email ID</p>
-            <div class="input-group" style="margin-top:16px;"><i class="fa-solid fa-shield-halved left-icon"></i><input type="text" id="otpInput" placeholder="Enter 6-Digit OTP" maxlength="6" style="text-align:center; font-weight:800; letter-spacing:3px;"></div>
+
+            <div class="input-group" style="margin-top:16px;">
+                <i class="fa-solid fa-shield-halved left-icon"></i>
+                <input type="text" id="otpInput" placeholder="Enter 6-Digit OTP" maxlength="6" style="text-align:center; font-weight:800; letter-spacing:3px;">
+            </div>
+
             <button class="btn-primary" id="verifyBtn" onclick="verifyOTPAndLogin()">VERIFY & CONTINUE</button>
         </div>
     </div>
-
-    <!-- DELETE ACCOUNT MODAL -->
-    <div class="modal-overlay" id="deleteAccountModal">
-        <div class="modal-card">
-            <i class="fa-solid fa-xmark" style="position:absolute; right:16px; top:16px; color:var(--text-muted); cursor:pointer;" onclick="document.getElementById('deleteAccountModal').style.display='none'; playClickSound();"></i>
-            <h3 style="color:#ef4444; font-size:18px;"><i class="fa-solid fa-triangle-exclamation"></i> Delete Account</h3>
-            <p style="font-size:11.5px; color:var(--text-muted); margin-top:4px;">WARNING: Deleting your account will permanently erase your subscription, chats, and all data.</p>
-            <div class="input-group" style="margin-top:16px;"><i class="fa-regular fa-envelope left-icon"></i><input type="email" id="delAccEmail" disabled style="opacity:0.7;"></div>
-            <div id="delAccOtpSection" style="display:none;">
-                <div class="input-group"><i class="fa-solid fa-shield-halved left-icon"></i><input type="text" id="delAccOtp" placeholder="Enter 6-Digit Deletion OTP" maxlength="6" style="text-align:center; font-weight:800; letter-spacing:3px;"></div>
-                <button class="btn-primary btn-danger" id="confirmDeleteAccBtn" onclick="verifyAndDeleteAccount()">PERMANENTLY DELETE ACCOUNT</button>
+    
+    <!-- DELETE WARNING MODAL FOR CHAT -->
+    <div class="modal-overlay" id="deleteWarningModal">
+        <div class="modal-card" style="max-width:320px;">
+            <i class="fa-solid fa-triangle-exclamation" style="font-size:40px; color:#ef4444; margin-bottom:12px;"></i>
+            <h3 style="color:var(--text-main); font-size:18px;">Delete Chat Session?</h3>
+            <p style="font-size:12px; color:var(--text-muted); margin:8px 0 16px;">Are you sure you want to permanently delete this chat from your history? ⚠️</p>
+            <div style="display:flex; gap:10px;">
+                <button class="btn-primary" style="background:transparent; border:1px solid var(--border-color); color:var(--text-main);" onclick="document.getElementById('deleteWarningModal').style.display='none'; playClickSound();">CANCEL</button>
+                <button class="btn-primary" style="background:#ef4444;" id="confirmDeleteBtn">DELETE</button>
             </div>
-            <button class="btn-primary" id="sendDelOtpBtn" onclick="initiateAccountDeletion()">SEND DELETION OTP</button>
         </div>
     </div>
 
-    <!-- 🚀 1. ALL BATCHES EXPLORER SCREEN (300+ ENGINE) -->
-    <div id="batches-screen" class="screen">
+    <!-- 🚀 1. PW STYLE 300+ BATCHES DASHBOARD SCREEN -->
+    <div id="batches-screen">
         <div class="batches-header">
             <div style="display:flex; align-items:center; gap:10px;">
-                <div class="header-logo"><img src="./logo.png" onerror="this.src='https://raw.githubusercontent.com/yuviyadav16/ticbull-academy/main/logo.png'"></div>
+                <div class="header-logo" style="width:34px; height:34px;">
+                    <img src="./logo.png" alt="Logo" onerror="this.src='https://raw.githubusercontent.com/yuviyadav16/ticbull-academy/main/logo.png'">
+                </div>
                 <div>
                     <strong style="font-size:15px; color:#fff;">TicBull Batches & Goals</strong>
-                    <p style="font-size:10px; color:var(--text-muted);">Explore 300+ Indian Boards & Exams</p>
+                    <p style="font-size:10px; color:var(--text-muted);">Explore 300+ Indian Boards & Competitive Batches</p>
                 </div>
             </div>
             <button class="menu-btn" onclick="toggleDrawer()"><i class="fa-solid fa-bars"></i></button>
         </div>
 
+        <!-- CATEGORY SCROLL FILTER BAR -->
         <div class="category-scroll-bar" id="catBar">
             <div class="cat-chip active" onclick="filterCategory('ALL', this)">All Batches</div>
             <div class="cat-chip" onclick="filterCategory('CBSE', this)">CBSE Board (9-12)</div>
-            <div class="cat-chip" onclick="filterCategory('BIHAR', this)">Bihar Board</div>
-            <div class="cat-chip" onclick="filterCategory('UP', this)">UP Board</div>
+            <div class="cat-chip" onclick="filterCategory('BIHAR', this)">Bihar Board (BSEB)</div>
+            <div class="cat-chip" onclick="filterCategory('UP', this)">UP Board (UPMSP)</div>
+            <div class="cat-chip" onclick="filterCategory('ICSE', this)">ICSE / ISC Board</div>
             <div class="cat-chip" onclick="filterCategory('NEET', this)">NEET Medical</div>
             <div class="cat-chip" onclick="filterCategory('JEE', this)">IIT-JEE Engineering</div>
             <div class="cat-chip" onclick="filterCategory('UPSC', this)">UPSC Civil Services</div>
+            <div class="cat-chip" onclick="filterCategory('BPSC', this)">BPSC State PCS</div>
+            <div class="cat-chip" onclick="filterCategory('DEFENSE', this)">NDA / Defense</div>
+            <div class="cat-chip" onclick="filterCategory('COMMERCE', this)">CA / CS / Commerce</div>
         </div>
 
         <div class="search-batches-box">
             <i class="fa-solid fa-magnifying-glass"></i>
-            <input type="text" id="batchSearchInput" placeholder="Search Class 9-12, Bihar, CBSE, NEET..." onkeyup="searchBatches()">
+            <input type="text" id="batchSearchInput" placeholder="Search for Class 9-12, Bihar, CBSE, NEET, JEE, UPSC..." onkeyup="searchBatches()">
         </div>
 
         <div id="batchesContainer">
-            <!-- Dynamic Batches Here -->
+            <!-- Dynamic Batches Load Here -->
         </div>
     </div>
 
-    <!-- 🚀 3-TIER BATCH PRICING MODAL -->
+    <!-- 🚀 3-TIER BATCH PLAN SELECTION MODAL (BASIC / PRO / MAX PRO) -->
     <div class="modal-overlay" id="tierModal">
         <div class="modal-card">
             <i class="fa-solid fa-xmark" style="position:absolute; right:16px; top:16px; color:var(--text-muted); cursor:pointer;" onclick="closeTierModal()"></i>
-            <h3 style="color:var(--text-main); font-size:17px; margin-bottom:2px;" id="tierModalBatchTitle">Select Batch Plan</h3>
-            <p style="font-size:11.5px; color:var(--text-muted); margin-bottom:14px;">Choose daily doubt limit as per your need.</p>
+            <h3 style="color:var(--text-main); font-size:17px; margin-bottom:2px;" id="tierModalBatchTitle">Select Batch Access Plan</h3>
+            <p style="font-size:11.5px; color:var(--text-muted); margin-bottom:14px;">Choose daily doubt limit according to your requirement</p>
 
-            <div class="tier-card-option" onclick="selectTier('BASIC', 199, 15)" id="tierBasicCard">
+            <div class="tier-card-option" onclick="selectTier('BASIC', 199)" id="tierBasicCard">
                 <div class="tier-header">
                     <span class="tier-name"><i class="fa-solid fa-leaf" style="color:#10b981;"></i> Basic Pass</span>
-                    <span class="tier-price">₹199/yr</span>
+                    <span class="tier-price" id="tierPriceBasic">₹199/yr</span>
                 </div>
-                <div class="tier-desc">• <b>15 Doubts/day</b> (Gemini/Meta Engine)<br>• Chapter Notes & Homework Help</div>
+                <div class="tier-desc">• <b>5 Doubts/day</b> (Gemini/Meta Engine)<br>• Chapter Notes & Homework Help<br>• Affordable Budget Plan</div>
             </div>
 
-            <div class="tier-card-option selected" onclick="selectTier('PRO', 499, 40)" id="tierProCard">
+            <div class="tier-card-option selected" onclick="selectTier('PRO', 499)" id="tierProCard">
                 <div class="tier-header">
                     <span class="tier-name"><i class="fa-solid fa-star" style="color:#f59e0b;"></i> Pro Pass (Recommended)</span>
-                    <span class="tier-price">₹499/yr</span>
+                    <span class="tier-price" id="tierPricePro">₹499/yr</span>
                 </div>
-                <div class="tier-desc">• <b>40 Doubts/day</b> (High Speed Gemini 1.5)<br>• PDF & Image Notes Support</div>
+                <div class="tier-desc">• <b>20 Doubts/day</b> (High Speed Gemini 1.5)<br>• PDF & Image Notes Support<br>• Dedicated 13 Subject Experts</div>
             </div>
 
-            <div class="tier-card-option" onclick="selectTier('MAX_PRO', 999, 75)" id="tierMaxProCard">
+            <div class="tier-card-option" onclick="selectTier('MAX_PRO', 999)" id="tierMaxProCard">
                 <div class="tier-header">
                     <span class="tier-name"><i class="fa-solid fa-crown" style="color:#8b5cf6;"></i> Max Pro Pass</span>
-                    <span class="tier-price">₹999/yr</span>
+                    <span class="tier-price" id="tierPriceMaxPro">₹999/yr</span>
                 </div>
-                <div class="tier-desc">• <b>75 Doubts/day</b> (Priority Output)<br>• AI Diagram & Video Explanations</div>
+                <div class="tier-desc">• <b>70+ Doubts/day</b> (Priority High Performance)<br>• AI Diagram & Video Visual Reference<br>• Complete Exam Goal Mastery</div>
             </div>
 
-            <button class="btn-primary" id="confirmTierBtn" onclick="confirmTierSelection()">ENROLL BATCH</button>
+            <button class="btn-primary" id="confirmTierBtn" onclick="confirmTierSelection()">ENROLL NOW</button>
         </div>
     </div>
 
-    <!-- 🚀 2. SUBJECTS DASHBOARD SCREEN -->
-    <div id="subjects-screen" class="screen">
+    <!-- 🚀 2. MAIN CHAT DASHBOARD -->
+    <div id="main-dashboard">
         <div class="header">
             <div class="header-brand">
                 <button class="menu-btn" onclick="toggleDrawer()"><i class="fa-solid fa-bars"></i></button>
-                <div class="header-logo"><img src="./logo.png" onerror="this.src='https://raw.githubusercontent.com/yuviyadav16/ticbull-academy/main/logo.png'"></div>
+                <div class="header-logo">
+                    <img src="./logo.png" alt="Logo" onerror="this.src='https://raw.githubusercontent.com/yuviyadav16/ticbull-academy/main/logo.png'">
+                </div>
                 <div>
-                    <strong style="color:var(--text-main); font-size:13.5px;">My Subject Dashboard</strong>
-                    <p style="font-size:9.5px; color:var(--text-muted);">TicBull Academy</p>
+                    <strong style="color:var(--text-main); font-size:13.5px;" id="portalHeaderName">TicBull Academy</strong>
+                    <p style="font-size:9.5px; color:var(--text-muted);">AI Tutor Engine v8.5</p>
                 </div>
             </div>
-            <div>
-                <span class="user-badge" onclick="openSubscriptionModal()"><i class="fa-solid fa-crown"></i> <span id="badgePlanTextUI">Pass</span></span>
-            </div>
-        </div>
-
-        <div class="active-course-chip">
-            <div>
-                <span style="font-size:10px; color:var(--text-muted); display:block;">Active Enrolled Batch</span>
-                <span id="activeBatchLabel" style="color:var(--accent-color); font-size:14px; font-weight:800;">Class 10 - CBSE Board</span>
-            </div>
-            <button style="background:transparent; border:1px solid var(--accent-color); color:var(--accent-color); padding:6px 12px; border-radius:8px; font-size:11px; cursor:pointer;" onclick="switchScreen('batches-screen')"><i class="fa-solid fa-rotate"></i> Change</button>
-        </div>
-        
-        <div style="background:rgba(16, 185, 129, 0.1); border:1px solid rgba(16, 185, 129, 0.4); padding:8px 12px; border-radius:10px; font-size:11.5px; font-weight:700; color:var(--success-color); margin-bottom:8px; display:flex; justify-content:space-between;">
-            <span><i class="fa-solid fa-shield-halved"></i> Daily Limits Left:</span>
-            <span id="doubtLimitChipUI">20 Doubts/Day</span>
-        </div>
-
-        <h3 style="font-size:14px; color:#fff; margin-bottom:4px; margin-top:8px;"><i class="fa-solid fa-book-open"></i> Select Subject to Study</h3>
-        <p style="font-size:11px; color:var(--text-muted); margin-bottom:12px;">Har subject ki apni alag chat history aur dedicated teacher hai.</p>
-
-        <div class="subject-grid" id="subjectsGridContainer">
-            <!-- Dynamic Subjects Load Here -->
-        </div>
-    </div>
-
-    <!-- 🚀 3. MAIN SUBJECT CHAT SCREEN -->
-    <div id="chat-screen" class="screen" style="padding:10px;">
-        <div class="header" style="margin-bottom:10px;">
-            <div class="header-brand">
-                <i class="fa-solid fa-arrow-left" style="color:#fff; font-size:18px; cursor:pointer;" onclick="switchScreen('subjects-screen')"></i>
-                <img id="chatHeaderTeacherImg" src="" style="width:36px; height:36px; border-radius:50%; border:2px solid var(--gold-color); object-fit:cover;">
-                <div>
-                    <strong style="color:var(--text-main); font-size:14px;" id="chatHeaderSubjectName">Subject</strong>
-                    <p style="font-size:10px; color:var(--text-muted);" id="chatHeaderTeacherName">Teacher Name</p>
+            
+            <div style="display:flex; align-items:center; gap:6px;">
+                <div onclick="quickToggleTeacher()" style="background:var(--input-bg); border:1px solid var(--border-color); padding:5px 10px; border-radius:20px; font-size:11px; font-weight:700; color:var(--gold-color); cursor:pointer; display:flex; align-items:center; gap:5px;" title="Switch Teacher">
+                    <i class="fa-solid fa-chalkboard-user"></i> <span id="headerTeacherText">Sir</span>
                 </div>
+
+                <span class="user-badge" style="background:rgba(239, 68, 68, 0.15); border-color:rgba(239, 68, 68, 0.4); color:#ef4444; cursor:default;" title="Daily Study Streak">
+                    <i class="fa-solid fa-fire"></i> <span id="streakCountText">0 Day</span>
+                </span>
+                
+                <span class="user-badge" onclick="openSubscriptionModal()"><i class="fa-solid fa-crown"></i> <span id="badgePlanText">Free Trial</span></span>
             </div>
-            <span style="background:rgba(239, 68, 68, 0.15); border:1px solid rgba(239, 68, 68, 0.4); color:#ef4444; padding:5px 10px; border-radius:20px; font-size:10px; font-weight:700;" id="chatDoubtsCountUI">Doubts</span>
         </div>
 
-        <div style="display:flex; align-items:center; justify-content:space-between; background:var(--card-bg); border:1px solid var(--border-color); padding:6px 12px; border-radius:12px; margin-bottom:8px; flex-shrink:0;">
+        <div class="course-bar-toggle" onclick="switchToBatchesScreen()">
+            <span id="activeBatchLabel"><i class="fa-solid fa-graduation-cap" style="color:var(--accent-color);"></i> Active Batch: Class 10 - CBSE Board</span>
+            <span style="font-size:11px; color:var(--accent-color); font-weight:700;"><i class="fa-solid fa-exchange-alt"></i> Change Batch</span>
+        </div>
+
+        <div style="display:flex; align-items:center; justify-content:space-between; background:var(--card-bg); border:1px solid var(--border-color); padding:6px 12px; border-radius:12px; margin-bottom:8px;">
             <span style="font-size:11.5px; color:var(--text-muted);"><i class="fa-solid fa-language"></i> AI Language:</span>
-            <select id="chatLangSelect" style="background:var(--input-bg); color:var(--text-main); border:1px solid var(--border-color); padding:4px 10px; border-radius:8px; font-size:11.5px; outline:none; width:150px;">
-                <option value="Hinglish">Hinglish</option><option value="Hindi">Hindi (हिंदी)</option><option value="English">English</option>
+            <select id="chatLangSelect" style="background:var(--input-bg); color:var(--text-main); border:1px solid var(--border-color); padding:4px 10px; border-radius:8px; font-size:11.5px; outline:none; width:150px;" onchange="saveChatLang(this.value)">
+                <option value="Hinglish">Hinglish</option>
+                <option value="Hindi">Hindi (हिंदी)</option>
+                <option value="English">English</option>
             </select>
         </div>
 
+        <div class="active-course-chip" id="activeCourseChip" style="background:rgba(16, 185, 129, 0.1); border:1px solid rgba(16, 185, 129, 0.4); padding:6px 10px; border-radius:12px; font-size:11px; font-weight:700; color:var(--text-main); margin-bottom:8px; display:flex; justify-content:space-between; flex-shrink:0;">
+            <span><i class="fa-solid fa-shield-halved"></i> Pass Status: Active</span>
+            <span style="font-size:10px; color:var(--success-color);" id="doubtLimitChip">20 Doubts/Day</span>
+        </div>
+
         <div class="chat-container" id="chatBox">
-            <!-- Dedicated Chat -->
+            <div class="msg ai" id="welcomeAiMessage">
+                <b>Welcome to TicBull Academy! 🚀</b><br>
+                Aapka Batch unlocked hai. Apne subjects ke questions poochiye!
+            </div>
         </div>
 
         <div id="imagePreview">
-            <span id="imagePreviewText"><i class="fa-regular fa-image"></i> Files Selected</span>
+            <span id="imagePreviewText"><i class="fa-regular fa-image"></i> Files/Photos Selected</span>
             <i class="fa-solid fa-xmark" style="cursor:pointer;" onclick="removeImage()"></i>
         </div>
 
         <div class="ai-tools-menu" id="aiToolsMenu">
-            <button class="tool-btn" onclick="triggerTool('Generate Detailed Chapter Notes')"><i class="fa-solid fa-book" style="color:#10b981;"></i> Detailed Notes</button>
-            <button class="tool-btn" onclick="triggerTool('Generate Diagram Image')"><i class="fa-solid fa-image" style="color:#3b82f6;"></i> AI Diagram / Image</button>
-            <button class="tool-btn" onclick="triggerTool('Generate Objective Questions (MCQs)')"><i class="fa-solid fa-list-check" style="color:#06b6d4;"></i> Objective MCQs</button>
+            <button class="tool-btn" onclick="triggerTool('Generate Comprehensive Detailed Chapter Notes')"><i class="fa-solid fa-book" style="color:#10b981;"></i> Detailed Notes</button>
+            <button class="tool-btn" onclick="triggerTool('Generate Quick Revision Short Notes (Bullet Pointers)')"><i class="fa-solid fa-bolt" style="color:#f59e0b;"></i> Quick Short Notes</button>
+            <button class="tool-btn" onclick="triggerTool('Generate Detailed Diagram Image')"><i class="fa-solid fa-image" style="color:#3b82f6;"></i> AI Diagram / Image Generator</button>
+            <button class="tool-btn" onclick="triggerTool('Generate AI Video Visual Explanation')"><i class="fa-solid fa-circle-play" style="color:#ef4444;"></i> AI Video Explanation</button>
+            <button class="tool-btn" onclick="triggerTool('Generate Social Media & YouTube Growth Strategy')"><i class="fa-brands fa-youtube" style="color:#ff0000;"></i> Social Media Growth Guide</button>
+            <button class="tool-btn" onclick="triggerTool('Generate 10 Objective Questions (MCQs) with Answer Key')"><i class="fa-solid fa-list-check" style="color:#06b6d4;"></i> Objective MCQs</button>
         </div>
 
         <div class="chat-input-bar">
-            <button class="action-icon-btn" onclick="toggleToolsMenu()"><i class="fa-solid fa-plus"></i></button>
-            <label class="action-icon-btn" for="photoInput"><i class="fa-solid fa-paperclip"></i></label>
-            <input type="file" id="photoInput" accept="image/*,.pdf" multiple style="display:none;" onchange="handleMultipleFilesSelect(event)">
-            <button class="action-icon-btn" id="voiceBtn" onclick="toggleVoiceInput()"><i class="fa-solid fa-microphone"></i></button>
+            <button class="action-icon-btn" onclick="toggleToolsMenu()" title="Quick AI Tools (+)"><i class="fa-solid fa-plus"></i></button>
             
-            <textarea id="userInput" placeholder="Ask subject doubt..." rows="1" oninput="autoResizeInput(this)" onkeydown="handleInputKeydown(event)"></textarea>
+            <label class="action-icon-btn" for="photoInput" title="Upload Photos or PDFs (Multiple)">
+                <i class="fa-solid fa-paperclip"></i>
+            </label>
+            <input type="file" id="photoInput" accept="image/*,.pdf" multiple style="display:none;" onchange="handleMultipleFilesSelect(event)">
+            
+            <button class="action-icon-btn" id="voiceBtn" onclick="toggleVoiceInput()" title="Voice Typing"><i class="fa-solid fa-microphone"></i></button>
+            
+            <textarea id="userInput" placeholder="Type chapter/topic or click (+) for tools..." rows="1" oninput="autoResizeInput(this)" onkeydown="handleInputKeydown(event)"></textarea>
+            
             <button class="send-btn" id="sendBtn" onclick="askAI()"><i class="fa-solid fa-paper-plane"></i></button>
         </div>
     </div>
 
-    <!-- ORIGINAL FULL SIDE DRAWER MENU -->
+    <!-- SIDE DRAWER MENU -->
     <div class="drawer-overlay" id="drawerOverlay" onclick="toggleDrawer()"></div>
     <div class="drawer" id="drawer">
         <div class="drawer-header">
@@ -556,26 +595,31 @@
                 <div class="profile-avatar-box">
                     <img src="" id="drawerAvatarImg" class="profile-avatar-img" style="display:none;" alt="Avatar">
                     <div class="profile-avatar-initial" id="drawerAvatarInitial">S</div>
-                    <label class="avatar-upload-icon" for="avatarUploadInput"><i class="fa-solid fa-camera"></i></label>
+                    <label class="avatar-upload-icon" for="avatarUploadInput" title="Upload Photo"><i class="fa-solid fa-camera"></i></label>
                     <input type="file" id="avatarUploadInput" accept="image/*" style="display:none;" onchange="handleAvatarUpload(event)">
                 </div>
                 <div>
                     <strong style="color:#fff; font-size:13.5px;" id="drawerStudentName">Registered Student</strong>
                     <div style="font-size:10px; color:var(--text-muted);" id="drawerStudentEmail">student@ticbull.com</div>
-                    <div style="font-size:10px; color:var(--success-color); font-weight:600; margin-top:2px;" id="drawerActivePlan">Plan: Free Trial</div>
+                    <div style="font-size:10px; color:var(--accent-color); font-weight:600; margin-top:2px;" id="drawerStudentAge">Age: Active Learner</div>
                 </div>
             </div>
         </div>
         
-        <div class="drawer-item" onclick="switchScreen('batches-screen'); toggleDrawer();"><i class="fa-solid fa-layer-group" style="color:var(--accent-color);"></i> Explore All Batches</div>
-        <div class="drawer-item" onclick="switchScreen('subjects-screen'); toggleDrawer();"><i class="fa-solid fa-book-open" style="color:#10b981;"></i> My Subject Dashboard</div>
+        <div class="drawer-item" onclick="switchToBatchesScreen(); toggleDrawer();"><i class="fa-solid fa-graduation-cap" style="color:var(--accent-color);"></i> All Batches & Goals</div>
         <div class="drawer-item" onclick="openSyllabusBoard()"><i class="fa-solid fa-list-check" style="color:#0ea5e9;"></i> Syllabus Tracker Board</div>
-        <div class="drawer-item" onclick="openSettingsModal()"><i class="fa-solid fa-gear" style="color:#94a3b8;"></i> App Settings (Z+)</div>
+        <div class="drawer-item" onclick="openSettingsModal()"><i class="fa-solid fa-gear" style="color:#94a3b8;"></i> App Settings</div>
         <div class="drawer-item" onclick="toggleTheme()"><i class="fa-solid fa-circle-half-stroke" style="color:var(--gold-color);"></i> <span id="themeToggleText">Switch to Light Mode</span></div>
+        <div class="drawer-item" onclick="triggerAppGuideBot()"><i class="fa-solid fa-robot" style="color:#f59e0b;"></i> 🤖 TicBull Guide Bot</div>
         <div class="drawer-item" onclick="openSubscriptionModal()"><i class="fa-solid fa-crown" style="color:#f59e0b;"></i> Upgrade Course Pass</div>
-        <div class="drawer-item" onclick="logoutUser()" style="color:#ef4444; margin-top:10px;"><i class="fa-solid fa-right-from-bracket"></i> Log Out Account</div>
+        <div class="drawer-item" onclick="startNewChat()"><i class="fa-solid fa-plus-circle" style="color:#10b981;"></i> Start New Chat</div>
+        <div class="drawer-item" onclick="logoutUser()" style="color:#ef4444;"><i class="fa-solid fa-right-from-bracket"></i> Log Out Account</div>
 
-        <!-- FULL ORIGINAL SOCIAL LINKS FOOTER -->
+        <div class="history-title" style="display:flex; justify-content:space-between; align-items:center;">
+            <span><i class="fa-solid fa-clock-rotate-left"></i> Recent Chat Sessions:</span>
+        </div>
+        <div class="history-list" id="historyList"></div>
+        
         <div style="margin-top:auto; border-top:1px solid var(--border-color); padding-top:12px;">
             <div style="font-size:11px; color:var(--text-muted); margin-bottom:8px;">TICBULL OFFICIAL SUPPORT:</div>
             <a href="mailto:ticbull.support@gmail.com" target="_blank" style="color:var(--text-main); text-decoration:none; display:block; margin-bottom:6px; font-size:12px;"><i class="fa-solid fa-envelope" style="color:#2563eb;"></i> ticbull.support@gmail.com</a>
@@ -583,33 +627,42 @@
             <a href="https://t.me/ticbullteam" target="_blank" style="color:#0088cc; text-decoration:none; display:block; font-size:12px;"><i class="fa-brands fa-telegram"></i> @ticbullteam Telegram Support</a>
             
             <div style="font-size:10px; color:var(--text-muted); margin:10px 0 4px 0;">DEVELOPER SOCIALS:</div>
-            <div style="display:flex; gap:14px; margin-top:8px;">
-                <a href="https://youtube.com/@mryuviyadav" target="_blank" style="color:#ff0000; font-size:16px;"><i class="fa-brands fa-youtube"></i></a>
-                <a href="https://www.instagram.com/mryuvi_yadav" target="_blank" style="color:#e1306c; font-size:16px;"><i class="fa-brands fa-instagram"></i></a>
-                <a href="https://x.com/mryuviyadav" target="_blank" style="color:#fff; font-size:16px;"><i class="fa-brands fa-x-twitter"></i></a>
-                <a href="https://t.me/mryuviyadav" target="_blank" style="color:#0088cc; font-size:16px;"><i class="fa-brands fa-telegram"></i></a>
-                <a href="https://facebook.com/mryuviyadav" target="_blank" style="color:#1877f2; font-size:16px;"><i class="fa-brands fa-facebook"></i></a>
+            <div class="dev-socials" style="justify-content:flex-start;">
+                <a href="https://youtube.com/@mryuviyadav" target="_blank" style="color:#ff0000;"><i class="fa-brands fa-youtube"></i></a>
+                <a href="https://www.instagram.com/mryuvi_yadav" target="_blank" style="color:#e1306c;"><i class="fa-brands fa-instagram"></i></a>
+                <a href="https://x.com/mryuviyadav" target="_blank"><i class="fa-brands fa-x-twitter"></i></a>
+                <a href="https://t.me/mryuviyadav" target="_blank" style="color:#0088cc;"><i class="fa-brands fa-telegram"></i></a>
+                <a href="https://facebook.com/mryuviyadav" target="_blank" style="color:#1877f2;"><i class="fa-brands fa-facebook"></i></a>
             </div>
         </div>
     </div>
 
-    <!-- FULL ORIGINAL APP SETTINGS MODAL -->
+    <!-- APP SETTINGS MODAL -->
     <div class="modal-overlay" id="settingsModal">
         <div class="modal-card">
             <i class="fa-solid fa-xmark" style="position:absolute; right:16px; top:16px; color:var(--text-muted); cursor:pointer;" onclick="document.getElementById('settingsModal').style.display='none'; playClickSound();"></i>
-            <h3 style="color:var(--text-main); font-size:17px; margin-bottom:16px;"><i class="fa-solid fa-gear"></i> App Settings & Security</h3>
+            <h3 style="color:var(--text-main); font-size:17px; margin-bottom:16px;"><i class="fa-solid fa-gear"></i> App Settings</h3>
             
             <div class="setting-item">
-                <span><i class="fa-solid fa-shield-halved" style="color:var(--success-color);"></i> Z+ Encrypted Data</span>
-                <label class="switch"><input type="checkbox" checked disabled><span class="slider"></span></label>
+                <span><i class="fa-solid fa-music"></i> App Click Sounds</span>
+                <label class="switch">
+                    <input type="checkbox" id="soundToggle" checked onchange="toggleSoundSetting(this)">
+                    <span class="slider"></span>
+                </label>
             </div>
             <div class="setting-item">
-                <span><i class="fa-solid fa-music"></i> App Click Sounds</span>
-                <label class="switch"><input type="checkbox" id="soundToggle" checked onchange="toggleSoundSetting(this)"><span class="slider"></span></label>
+                <span><i class="fa-solid fa-microphone"></i> Microphone Permission</span>
+                <label class="switch">
+                    <input type="checkbox" checked>
+                    <span class="slider"></span>
+                </label>
             </div>
             <div class="setting-item">
                 <span><i class="fa-solid fa-camera"></i> Camera & Media</span>
-                <label class="switch"><input type="checkbox" checked><span class="slider"></span></label>
+                <label class="switch">
+                    <input type="checkbox" checked>
+                    <span class="slider"></span>
+                </label>
             </div>
             
             <div style="margin-top:12px; padding-top:12px; border-top:1px solid var(--border-color); text-align:left;">
@@ -629,7 +682,7 @@
         </div>
     </div>
 
-    <!-- ORIGINAL SYLLABUS BOARD MODAL -->
+    <!-- SYLLABUS BOARD MODAL -->
     <div class="modal-overlay" id="syllabusModal">
         <div class="modal-card" style="max-height:80vh;">
             <i class="fa-solid fa-xmark" style="position:absolute; right:16px; top:16px; color:var(--text-muted); cursor:pointer;" onclick="document.getElementById('syllabusModal').style.display='none'; playClickSound();"></i>
@@ -645,113 +698,496 @@
         </div>
     </div>
 
-    <!-- ORIGINAL EDIT PROFILE MODAL -->
+    <!-- EDIT PROFILE MODAL -->
     <div class="modal-overlay" id="editProfileModal">
         <div class="modal-card">
-            <i class="fa-solid fa-xmark" style="position:absolute; right:16px; top:16px; color:var(--text-muted); cursor:pointer;" onclick="document.getElementById('editProfileModal').style.display='none';"></i>
-            <h3 style="color:var(--text-main); font-size:17px; margin-bottom:12px;"><i class="fa-solid fa-user-pen"></i> Edit Profile</h3>
-            <div class="input-group"><i class="fa-regular fa-user left-icon"></i><input type="text" id="editStudentName" placeholder="Full Student Name"></div>
-            <div class="input-group"><i class="fa-regular fa-envelope left-icon"></i><input type="email" id="editStudentEmail" placeholder="Email Address" disabled></div>
+            <i class="fa-solid fa-xmark" style="position:absolute; right:16px; top:16px; color:var(--text-muted); cursor:pointer;" onclick="closeEditProfileModal()"></i>
+            <h3 style="color:var(--text-main); font-size:17px; margin-bottom:12px;"><i class="fa-solid fa-user-pen"></i> Edit Profile Details</h3>
+            
+            <div class="input-group">
+                <i class="fa-regular fa-user left-icon"></i>
+                <input type="text" id="editStudentName" placeholder="Full Student Name">
+            </div>
+            <div class="input-group">
+                <i class="fa-regular fa-envelope left-icon"></i>
+                <input type="email" id="editStudentEmail" placeholder="Email Address" disabled>
+            </div>
+            <div class="input-group">
+                <i class="fa-regular fa-calendar left-icon"></i>
+                <input type="date" id="editStudentDob" placeholder="Date of Birth">
+            </div>
+
             <button class="btn-primary" onclick="saveProfileChanges()">SAVE CHANGES</button>
         </div>
     </div>
 
+    <!-- PRICING MODAL -->
+    <div class="modal-overlay" id="subModal">
+        <div class="modal-card">
+            <i class="fa-solid fa-xmark" style="position:absolute; right:16px; top:16px; color:var(--text-muted); cursor:pointer;" onclick="closeSubscriptionModal()"></i>
+            <h3 style="color:var(--text-main); font-size:18px;">🎓 TicBull Batch Access</h3>
+            <p style="font-size:11.5px; color:var(--text-muted); margin-top:2px;">Select or change your batch plan from All Batches screen</p>
+            <button class="btn-primary" onclick="closeSubscriptionModal(); switchToBatchesScreen();" style="margin-top:15px;">EXPLORE ALL BATCHES</button>
+        </div>
+    </div>
+
     <script>
-        // ------------------ GLOBAL STATE & ORIGINAL AUDIO ------------------
-        let userData = { email: '', name: '', dob: '', photo: '', plan: 'Free Trial', tierType: 'FREE_TRIAL', limits: 9 };
-        let activeBatch = null;
-        let currentChatSubject = null;
-        let all300Batches = [];
-        let selectedFilesArray = [];
+        let currentTeacher = localStorage.getItem('ticbull_teacher') || 'male';
+        let currentActiveBatch = localStorage.getItem('tb_active_batch') || 'Class 10 CBSE Udaan Batch';
+        let selectedBatchForModal = null;
+        let selectedTierType = 'PRO';
+        let selectedTierPrice = 499;
+
+        // 🚀 DYNAMIC 300+ BATCHES GENERATOR ENGINE (COVERING ALL BOARDS & EXAMS IN INDIA)
+        function generate300Batches() {
+            const list = [];
+            
+            // 1. SCHOOL BOARDS (CBSE, Bihar, UP, ICSE, Rajasthan, MP, Maharashtra, Bengal, etc.)
+            const boards = [
+                { code: 'CBSE', name: 'CBSE Board' },
+                { code: 'BIHAR', name: 'Bihar Board (BSEB)' },
+                { code: 'UP', name: 'UP Board (UPMSP)' },
+                { code: 'ICSE', name: 'ICSE / ISC Board' },
+                { code: 'MP', name: 'MP Board (MPBSE)' },
+                { code: 'RAJ', name: 'Rajasthan Board (RBSE)' },
+                { code: 'MH', name: 'Maharashtra Board (MSBSHSE)' }
+            ];
+
+            const classes = ['Class 9th', 'Class 10th', 'Class 11th Science (PCM)', 'Class 11th Science (PCB)', 'Class 11th Commerce', 'Class 11th Arts', 'Class 12th Science (PCM)', 'Class 12th Science (PCB)', 'Class 12th Commerce', 'Class 12th Arts'];
+
+            boards.forEach(b => {
+                classes.forEach(c => {
+                    list.push({
+                        id: `${b.code}_${c.replace(/[^a-zA-Z0-9]/g, '')}`,
+                        category: b.code,
+                        name: `${b.name} - ${c} Topper Batch`,
+                        tag: '13 Dedicated Subject Experts',
+                        teachers: 'Math, Physics, Chem, Bio, History, SST, English, Hindi + 6 More',
+                        desc: `Complete syllabus coverage according to strict ${b.name} examination guidelines.`,
+                        basicPrice: 199,
+                        proPrice: 499,
+                        maxProPrice: 999
+                    });
+                });
+            });
+
+            // 2. COMPETITIVE EXAMS
+            const compExams = [
+                { cat: 'NEET', name: 'NEET 2027 Medical Dropper / Class 12 Batch', tag: 'Medical Entrance Specialist', teachers: 'Dr. Physics, Chem Specialist, Botany & Zoology Experts', price1: 299, price2: 749, price3: 1499 },
+                { cat: 'JEE', name: 'IIT-JEE 2027 Momentum Engineering Batch', tag: 'IIT Rankers Faculty', teachers: 'Advanced Mechanics, Calculus & Physical Chem Specialists', price1: 299, price2: 799, price3: 1599 },
+                { cat: 'UPSC', name: 'UPSC IAS Civil Services Complete Foundation', tag: 'IAS / IPS Goal', teachers: 'Polity, Geography, Modern History & CSAT Faculty', price1: 399, price2: 899, price3: 1999 },
+                { cat: 'BPSC', name: 'BPSC Combined Civil Services Bihar Special', tag: 'Bihar PSC Specialist', teachers: 'Bihar GK, Current Affairs & Mains Writing Faculty', price1: 249, price2: 499, price3: 1199 },
+                { cat: 'DEFENSE', name: 'NDA / Defense Academy Shaurya Batch', tag: 'Defense Goal', teachers: 'Mathematics & General Ability Test Specialist', price1: 199, price2: 499, price3: 999 },
+                { cat: 'COMMERCE', name: 'CA / CS / CMA Foundation Mastery', tag: 'Commerce Leader', teachers: 'Accounting, Law, Business Math & Economics Specialists', price1: 299, price2: 699, price3: 1399 }
+            ];
+
+            compExams.forEach((e, idx) => {
+                list.push({
+                    id: `comp_${idx}`,
+                    category: e.cat,
+                    name: e.name,
+                    tag: e.tag,
+                    teachers: e.teachers,
+                    desc: `Strict competitive exam syllabus boundary with dual Board + Entrance preparation.`,
+                    basicPrice: e.price1,
+                    proPrice: e.price2,
+                    maxProPrice: e.price3
+                });
+            });
+
+            return list;
+        }
+
+        const all300Batches = generate300Batches();
+        let currentSelectedCategory = 'ALL';
+
+        function renderBatchesList(batchesArray) {
+            const container = document.getElementById('batchesContainer');
+            if(!container) return;
+            container.innerHTML = '';
+
+            if(batchesArray.length === 0) {
+                container.innerHTML = '<p style="color:var(--text-muted); text-align:center; padding:30px;">No batches found matching your search.</p>';
+                return;
+            }
+
+            batchesArray.forEach(batch => {
+                container.innerHTML += `
+                    <div class="batch-card">
+                        <span class="batch-tag">${batch.tag}</span>
+                        <div class="batch-title">${batch.name}</div>
+                        <div class="batch-teachers-strip"><i class="fa-solid fa-chalkboard-user"></i> Faculty: ${batch.teachers}</div>
+                        <div class="batch-desc">${batch.desc}</div>
+                        <div class="batch-footer">
+                            <div>
+                                <span style="font-size:10px; color:var(--text-muted); display:block;">Starting from</span>
+                                <span class="batch-price">₹${batch.basicPrice}/yr</span>
+                            </div>
+                            <div class="batch-actions">
+                                <button class="btn-trial" onclick="startFreeTrialDirect('${batch.name}')"><i class="fa-solid fa-gift"></i> 2 Days Free</button>
+                                <button class="btn-buy" onclick="openTierModal('${batch.id}')">View Plans</button>
+                            </div>
+                        </div>
+                    </div>`;
+            });
+        }
+
+        function filterCategory(cat, el) {
+            currentSelectedCategory = cat;
+            document.querySelectorAll('.cat-chip').forEach(c => c.classList.remove('active'));
+            if(el) el.classList.add('active');
+
+            if(cat === 'ALL') {
+                renderBatchesList(all300Batches);
+            } else {
+                const filtered = all300Batches.filter(b => b.category === cat);
+                renderBatchesList(filtered);
+            }
+        }
+
+        function searchBatches() {
+            const query = document.getElementById('batchSearchInput').value.toLowerCase();
+            const filtered = all300Batches.filter(b => 
+                b.name.toLowerCase().includes(query) || 
+                b.category.toLowerCase().includes(query) ||
+                b.teachers.toLowerCase().includes(query)
+            );
+            renderBatchesList(filtered);
+        }
+
+        function openTierModal(batchId) {
+            const batch = all300Batches.find(b => b.id === batchId);
+            if(!batch) return;
+            selectedBatchForModal = batch;
+
+            document.getElementById('tierModalBatchTitle').innerText = batch.name;
+            document.getElementById('tierPriceBasic').innerText = `₹${batch.basicPrice}/yr`;
+            document.getElementById('tierPricePro').innerText = `₹${batch.proPrice}/yr`;
+            document.getElementById('tierPriceMaxPro').innerText = `₹${batch.maxProPrice}/yr`;
+
+            document.getElementById('tierModal').style.display = 'flex';
+        }
+
+        function closeTierModal() {
+            document.getElementById('tierModal').style.display = 'none';
+        }
+
+        function selectTier(type, price) {
+            selectedTierType = type;
+            selectedTierPrice = price;
+
+            document.getElementById('tierBasicCard').classList.toggle('selected', type === 'BASIC');
+            document.getElementById('tierProCard').classList.toggle('selected', type === 'PRO');
+            document.getElementById('tierMaxProCard').classList.toggle('selected', type === 'MAX_PRO');
+        }
+
+        function confirmTierSelection() {
+            if(!selectedBatchForModal) return;
+
+            currentActiveBatch = selectedBatchForModal.name;
+            localStorage.setItem('tb_active_batch', currentActiveBatch);
+            localStorage.setItem('tb_tier_type', selectedTierType);
+
+            document.getElementById('activeBatchLabel').innerHTML = `<i class="fa-solid fa-graduation-cap" style="color:var(--accent-color);"></i> Active Batch: ${currentActiveBatch}`;
+            document.getElementById('badgePlanText').innerText = `${selectedTierType} Pass`;
+            
+            let limitText = "20 Doubts/Day";
+            if(selectedTierType === 'BASIC') limitText = "5 Doubts/Day";
+            if(selectedTierType === 'MAX_PRO') limitText = "70+ Doubts/Day";
+            document.getElementById('doubtLimitChip').innerText = limitText;
+
+            closeTierModal();
+            switchToMainChat();
+            showToast(`🎉 Enrolled in ${selectedBatchForModal.name} (${selectedTierType} Pass)!`, "success");
+        }
+
+        function startFreeTrialDirect(batchName) {
+            currentActiveBatch = batchName;
+            localStorage.setItem('tb_active_batch', batchName);
+            localStorage.setItem('tb_tier_type', 'FREE_TRIAL');
+
+            document.getElementById('activeBatchLabel').innerHTML = `<i class="fa-solid fa-graduation-cap" style="color:var(--accent-color);"></i> Active Batch: ${batchName}`;
+            document.getElementById('badgePlanText').innerText = `Free Trial`;
+            document.getElementById('doubtLimitChip').innerText = `Trial Active`;
+
+            switchToMainChat();
+            showToast(`🎁 2 Days Free Trial Activated for ${batchName}!`, "success");
+        }
+
+        function switchToMainChat() {
+            document.getElementById('batches-screen').style.display = 'none';
+            document.getElementById('main-dashboard').style.display = 'flex';
+            scrollToBottom();
+        }
+
+        function switchToBatchesScreen() {
+            document.getElementById('main-dashboard').style.display = 'none';
+            document.getElementById('batches-screen').style.display = 'flex';
+            filterCategory(currentSelectedCategory, null);
+        }
+
+        function quickToggleTeacher() {
+            currentTeacher = currentTeacher === 'male' ? 'female' : 'male';
+            localStorage.setItem('ticbull_teacher', currentTeacher);
+            updateHeaderTeacherUI();
+            showToast(`Switched to ${currentTeacher === 'male' ? 'TicBull Sir' : 'TicBull Ma\'am'}`, "success");
+        }
+
+        function updateHeaderTeacherUI() {
+            const el = document.getElementById('headerTeacherText');
+            if(el) {
+                el.innerText = currentTeacher === 'male' ? 'Sir' : "Ma'am";
+            }
+        }
+
+        function getTeacherImage() {
+            return currentTeacher === 'female' ? './11723.png' : './11708.png';
+        }
+
+        function getTeacherFallback() {
+            return currentTeacher === 'female' 
+                ? 'https://raw.githubusercontent.com/yuviyadav16/ticbull-academy/main/11723.png' 
+                : 'https://raw.githubusercontent.com/yuviyadav16/ticbull-academy/main/11708.png';
+        }
+
         let currentAuthMode = 'login';
+        let purchasedPlanName = 'Free Demo Plan';
+        let isProUser = false;
+        let selectedPlanName = 'Class 12 Science';
+        let selectedPlanPrice = 499;
+        let selectedFilesArray = [];
+        let currentStudentData = { name: '', email: '', dob: '', photo: '' };
         
+        let currentSessionId = Date.now().toString();
+        let currentSessionTitle = "New Chat";
+        let isInitialLoad = true;
         let appSoundEnabled = true;
-        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        const audioCtx = new AudioContext();
 
         function playClickSound() {
             if(!appSoundEnabled) return;
             if(audioCtx.state === 'suspended') audioCtx.resume();
             const osc = audioCtx.createOscillator();
             const gain = audioCtx.createGain();
-            osc.type = 'sine'; osc.frequency.setValueAtTime(800, audioCtx.currentTime);
-            gain.gain.setValueAtTime(0.05, audioCtx.currentTime); gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.1);
-            osc.connect(gain); gain.connect(audioCtx.destination); osc.start(); osc.stop(audioCtx.currentTime + 0.1);
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(800, audioCtx.currentTime);
+            gain.gain.setValueAtTime(0.05, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.1);
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.start();
+            osc.stop(audioCtx.currentTime + 0.1);
         }
-        document.addEventListener('click', e => { if(e.target.closest('button') || e.target.closest('.cat-chip') || e.target.closest('.subject-card')) playClickSound(); });
 
-        function toggleSoundSetting(checkbox) { appSoundEnabled = checkbox.checked; showToast(appSoundEnabled ? "Sound Enabled" : "Sound Muted"); }
-        function changeAppTheme(color, el) { document.documentElement.style.setProperty('--accent-color', color); document.querySelectorAll('.theme-circle').forEach(c => c.classList.remove('active')); el.classList.add('active'); showToast("Theme updated!"); }
+        document.addEventListener('click', function(e) {
+            if(e.target.closest('button') || e.target.closest('.action-icon-btn') || e.target.closest('.drawer-item') || e.target.closest('.auth-tab') || e.target.closest('.price-item') || e.target.closest('.theme-circle') || e.target.closest('.batch-card') || e.target.closest('.cat-chip')) {
+                playClickSound();
+            }
+        });
+
+        function toggleSoundSetting(checkbox) {
+            appSoundEnabled = checkbox.checked;
+            showToast(appSoundEnabled ? "Sound Enabled" : "Sound Muted", "success");
+        }
+
+        function changeAppTheme(color, el) {
+            document.documentElement.style.setProperty('--accent-color', color);
+            document.querySelectorAll('.theme-circle').forEach(c => c.classList.remove('active'));
+            el.classList.add('active');
+            showToast("Theme updated!", "success");
+        }
 
         function showToast(msg, type = 'success') {
             const toast = document.getElementById('custom-toast');
-            toast.innerHTML = `<i class="fa-solid ${type==='success'?'fa-circle-check':'fa-circle-exclamation'} toast-icon ${type}"></i> <span>${msg}</span>`;
+            toast.innerHTML = `<i class="fa-solid ${type === 'success' ? 'fa-circle-check toast-icon success' : 'fa-circle-exclamation toast-icon error'}"></i> <span>${msg}</span>`;
             toast.classList.add('show');
             setTimeout(() => toast.classList.remove('show'), 3500);
         }
 
-        function switchScreen(screenId) {
-            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-            document.getElementById(screenId).classList.add('active');
-        }
+        function checkAndUpdateStreak() {
+            if(!currentStudentData.email) return;
+            const today = new Date().toLocaleDateString('en-CA'); 
+            let lastLogin = localStorage.getItem('ticbull_last_login_' + currentStudentData.email);
+            let currentStreak = parseInt(localStorage.getItem('ticbull_streak_' + currentStudentData.email)) || 0;
 
-        // ------------------ DATA ENGINE (All Boards & Subjects 9-12) ------------------
-        const indianBoards = [{ code: 'CBSE', name: 'CBSE Board' }, { code: 'BIHAR', name: 'Bihar Board' }, { code: 'UP', name: 'UP Board' }, { code: 'ICSE', name: 'ICSE Board' }, { code: 'MH', name: 'Maharashtra Board' }];
-        const classData = [
-            { level: '9', name: 'Class 9', stream: 'secondary' }, { level: '10', name: 'Class 10', stream: 'secondary' },
-            { level: '11', name: 'Class 11 Science (PCM)', stream: 'pcm' }, { level: '11', name: 'Class 11 Science (PCB/NEET)', stream: 'pcb' },
-            { level: '11', name: 'Class 11 Commerce', stream: 'commerce' }, { level: '11', name: 'Class 11 Arts', stream: 'arts' },
-            { level: '12', name: 'Class 12 Science (PCM)', stream: 'pcm' }, { level: '12', name: 'Class 12 Science (PCB/NEET)', stream: 'pcb' },
-            { level: '12', name: 'Class 12 Commerce', stream: 'commerce' }, { level: '12', name: 'Class 12 Arts', stream: 'arts' }
-        ];
-        const compExams = [ { cat: 'NEET', name: 'NEET 2027 Medical Target', stream: 'pcb' }, { cat: 'JEE', name: 'IIT-JEE Momentum', stream: 'pcm' }, { cat: 'UPSC', name: 'UPSC IAS Foundation', stream: 'arts' } ];
-
-        function generate300Batches() {
-            let id = 1;
-            indianBoards.forEach(b => { classData.forEach(c => { all300Batches.push({ id: `b_${id++}`, cat: b.code, stream: c.stream, name: `${b.name} - ${c.name}`, tag: '15+ Subjects Included', desc: 'Complete Board Syllabus coverage with NCERT strictly.', price: 199 }); }); });
-            compExams.forEach(e => { all300Batches.push({ id: `b_${id++}`, cat: e.cat, stream: e.stream, name: e.name, tag: 'India Ranker Batch', desc: 'Strict Exam Pattern with Top Faculty and PYQs.', price: 499 }); });
-        }
-
-        const subjectLibrary = {
-            secondary: [ { n: 'Physics', i: '⚡', t: 'Mr. Verma Sir', g: 'male' }, { n: 'Chemistry', i: '🧪', t: 'Ms. Anjali Ma\'am', g: 'female' }, { n: 'Biology', i: '🧬', t: 'Ms. Priya Ma\'am', g: 'female' }, { n: 'Mathematics', i: '📐', t: 'Mr. Sharma Sir', g: 'male' }, { n: 'History', i: '🏛️', t: 'Mr. Singh Sir', g: 'male' }, { n: 'Geography', i: '🗺️', t: 'Ms. Neha Ma\'am', g: 'female' }, { n: 'Political Science', i: '⚖️', t: 'Mr. Kumar Sir', g: 'male' }, { n: 'Economics', i: '📉', t: 'Mr. Jain Sir', g: 'male' }, { n: 'Hindi', i: 'अ', t: 'Mr. Tiwari Sir', g: 'male' }, { n: 'English', i: '📝', t: 'Ms. Riya Ma\'am', g: 'female' }, { n: 'Sanskrit', i: '🕉️', t: 'Mr. Shastri Sir', g: 'male' }, { n: 'Urdu', i: '🌙', t: 'Mr. Khan Sir', g: 'male' }, { n: 'Computer Science', i: '💻', t: 'Mr. Gupta Sir', g: 'male' } ],
-            pcm: [ { n: 'Physics', i: '⚡', t: 'Mr. HC Verma Sir', g: 'male' }, { n: 'Physical Chemistry', i: '🧪', t: 'Mr. Das Sir', g: 'male' }, { n: 'Organic Chemistry', i: '⚗️', t: 'Ms. Anjali Ma\'am', g: 'female' }, { n: 'Inorganic Chemistry', i: '🔬', t: 'Mr. Kumar Sir', g: 'male' }, { n: 'Mathematics', i: '📐', t: 'Mr. Sharma Sir', g: 'male' }, { n: 'English', i: '📝', t: 'Ms. Riya Ma\'am', g: 'female' }, { n: 'Computer Science', i: '💻', t: 'Mr. Gupta Sir', g: 'male' } ],
-            pcb: [ { n: 'Physics', i: '⚡', t: 'Mr. HC Verma Sir', g: 'male' }, { n: 'Physical Chemistry', i: '🧪', t: 'Mr. Das Sir', g: 'male' }, { n: 'Organic Chemistry', i: '⚗️', t: 'Ms. Anjali Ma\'am', g: 'female' }, { n: 'Inorganic Chemistry', i: '🔬', t: 'Mr. Kumar Sir', g: 'male' }, { n: 'Zoology', i: '🐒', t: 'Ms. Priya Ma\'am', g: 'female' }, { n: 'Botany', i: '🌿', t: 'Ms. Kavita Ma\'am', g: 'female' }, { n: 'English', i: '📝', t: 'Ms. Riya Ma\'am', g: 'female' } ],
-            commerce: [ { n: 'Accountancy', i: '📊', t: 'Mr. Bansal', g: 'm' }, { n: 'Business Studies', i: '💼', t: 'Ms. Pooja', g: 'f' }, { n: 'Economics', i: '📉', t: 'Mr. Jain', g: 'm' }, { n: 'Math', i: '📐', t: 'Mr. Sharma', g: 'm' }, { n: 'English', i: '📝', t: 'Ms. Riya', g: 'f' } ],
-            arts: [ { n: 'History', i: '🏛️', t: 'Mr. Bipin', g: 'm' }, { n: 'Geography', i: '🗺️', t: 'Ms. Majid', g: 'f' }, { n: 'Polity', i: '⚖️', t: 'Mr. Laxmikanth', g: 'm' }, { n: 'Sociology', i: '🧑‍🤝‍🧑', t: 'Ms. Neha', g: 'f' }, { n: 'English', i: '📝', t: 'Ms. Riya', g: 'f' } ]
-        };
-
-        // ------------------ INITIALIZATION & ORIGINAL AUTH LOGIC ------------------
-        window.addEventListener('load', () => {
-            generate300Batches();
-            setTimeout(() => {
-                document.getElementById('splash-screen').style.opacity = '0';
-                setTimeout(() => document.getElementById('splash-screen').style.display = 'none', 500);
-                
-                const savedUser = localStorage.getItem('ticbull_email');
-                if(savedUser) {
-                    userData.email = savedUser;
-                    userData.name = localStorage.getItem('ticbull_name') || 'Student';
-                    userData.tierType = localStorage.getItem('tb_tier_type') || 'FREE_TRIAL';
-                    userData.plan = localStorage.getItem('tb_plan_name') || 'Free Trial';
-                    userData.limits = parseInt(localStorage.getItem('tb_doubts_left')) || 9;
-                    
-                    const savedBatchStr = localStorage.getItem('tb_saved_batch');
-                    if(savedBatchStr) {
-                        activeBatch = JSON.parse(savedBatchStr);
-                        updateProfileUI();
-                        renderSubjectsDashboard();
-                        switchScreen('subjects-screen');
+            if (lastLogin !== today) {
+                if (lastLogin) {
+                    const lastDate = new Date(lastLogin);
+                    const currDate = new Date(today);
+                    const diffTime = Math.abs(currDate - lastDate);
+                    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); 
+                    if (diffDays === 1) {
+                        currentStreak += 1; 
+                        setTimeout(() => showToast(`🔥 Daily Streak continued! Day ${currentStreak}`, "success"), 2000);
                     } else {
-                        updateProfileUI();
-                        renderExplorerBatches('ALL');
-                        switchScreen('batches-screen');
+                        currentStreak = 1; 
+                        if(diffDays > 1) setTimeout(() => showToast(`Oh no! Streak broken. Starting fresh at Day 1 🔥`, "error"), 2000);
                     }
                 } else {
-                    switchScreen('auth-screen');
+                    currentStreak = 1; 
                 }
+                localStorage.setItem('ticbull_last_login_' + currentStudentData.email, today);
+                localStorage.setItem('ticbull_streak_' + currentStudentData.email, currentStreak);
+            }
+            document.getElementById('streakCountText').innerText = currentStreak + " Day";
+        }
+
+        let syllabusItems = [];
+        function openSyllabusBoard() {
+            document.getElementById('syllabusModal').style.display = 'flex';
+            if(document.getElementById('drawer').classList.contains('open')) toggleDrawer();
+            const saved = localStorage.getItem('ticbull_syllabus_' + currentStudentData.email);
+            if(saved) syllabusItems = JSON.parse(saved);
+            renderSyllabus();
+        }
+        function addSyllabusItem() {
+            const input = document.getElementById('newSyllabusItem');
+            if(!input.value.trim()) return;
+            syllabusItems.unshift({ text: input.value.trim(), done: false });
+            input.value = '';
+            saveSyllabus();
+        }
+        function toggleSyllabusItem(index) {
+            syllabusItems[index].done = !syllabusItems[index].done;
+            saveSyllabus();
+        }
+        function deleteSyllabusItem(index) {
+            syllabusItems.splice(index, 1);
+            saveSyllabus();
+        }
+        function saveSyllabus() {
+            localStorage.setItem('ticbull_syllabus_' + currentStudentData.email, JSON.stringify(syllabusItems));
+            renderSyllabus();
+        }
+        function renderSyllabus() {
+            const list = document.getElementById('syllabusList');
+            list.innerHTML = '';
+            if(syllabusItems.length === 0) { list.innerHTML = '<p style="color:var(--text-muted); font-size:12px; text-align:center; padding:20px;">No topics added yet.</p>'; return; }
+            syllabusItems.forEach((item, i) => {
+                list.innerHTML += `
+                    <div class="syllabus-task ${item.done ? 'completed' : ''}">
+                        <input type="checkbox" ${item.done ? 'checked' : ''} onchange="toggleSyllabusItem(${i})">
+                        <span>${item.text}</span>
+                        <i class="fa-solid fa-trash" style="color:#ef4444; font-size:12px; cursor:pointer;" onclick="deleteSyllabusItem(${i})"></i>
+                    </div>`;
+            });
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            updateHeaderTeacherUI();
+            renderBatchesList(all300Batches);
+
+            const savedEmail = localStorage.getItem('ticbull_email');
+            const savedToken = localStorage.getItem('ticbull_token');
+            if(savedEmail && savedToken) {
+                fetch('/api/check-session', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ email: savedEmail, token: savedToken })
+                })
+                .then(res => res.json())
+                .then(data => {
+                    if(data.success && data.active) {
+                        currentStudentData.email = savedEmail;
+                        currentStudentData.name = data.user.name || localStorage.getItem('ticbull_name') || '';
+                        currentStudentData.dob = data.user.dob || localStorage.getItem('ticbull_dob') || '';
+                        currentStudentData.photo = data.user.photo || localStorage.getItem('ticbull_photo') || '';
+                        localStorage.setItem('ticbull_name', currentStudentData.name);
+                        if(currentStudentData.photo) localStorage.setItem('ticbull_photo', currentStudentData.photo);
+
+                        document.getElementById('auth-screen').style.display = 'none';
+                        document.getElementById('batches-screen').style.display = 'flex';
+                        updateProfileUI();
+                        loadSidebarHistory();
+                        checkAndUpdateStreak(); 
+                    } else {
+                        localStorage.clear();
+                        showToast("Session Expired! Logged in from another device.", "error");
+                    }
+                }).catch(() => {
+                    currentStudentData.email = savedEmail;
+                    currentStudentData.name = localStorage.getItem('ticbull_name') || '';
+                    document.getElementById('auth-screen').style.display = 'none';
+                    document.getElementById('batches-screen').style.display = 'flex';
+                    updateProfileUI();
+                    loadSidebarHistory();
+                    checkAndUpdateStreak(); 
+                });
+            }
+        });
+
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                const splash = document.getElementById('splash-screen');
+                splash.style.opacity = '0';
+                setTimeout(() => splash.style.visibility = 'hidden', 500);
             }, 3500);
         });
 
-        // FULL ORIGINAL AUTH METHODS
+        window.addEventListener('resize', () => scrollToBottom());
+
+        function scrollToBottom() {
+            setTimeout(() => {
+                const chatBox = document.getElementById('chatBox');
+                if(chatBox) chatBox.scrollTop = chatBox.scrollHeight;
+            }, 200);
+        }
+
+        function autoResizeInput(el) {
+            el.style.height = 'auto';
+            el.style.height = (el.scrollHeight) + 'px';
+        }
+
+        function handleInputKeydown(e) {
+            if(e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                askAI();
+            }
+        }
+
+        function togglePassword(inputId) {
+            const pwdInput = document.getElementById(inputId);
+            pwdInput.type = pwdInput.type === 'password' ? 'text' : 'password';
+        }
+
+        function openForgotModal() { document.getElementById('forgotModal').style.display = 'flex'; }
+
+        function initiateForgotOTP() {
+            const email = document.getElementById('forgotEmail').value.trim();
+            const newPass = document.getElementById('forgotNewPassword').value.trim();
+            if(!email || !newPass) { showToast("Email and New Password are required!", "error"); return; }
+
+            currentStudentData.email = email;
+            currentAuthMode = 'forgot';
+            document.getElementById('password').value = newPass; 
+
+            const btn = document.getElementById('forgotBtn');
+            btn.disabled = true;
+            btn.innerText = "SENDING OTP...";
+
+            fetch(`/api/send-otp`, {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ email: email, auth_mode: 'forgot' })
+            }).then(res => res.json()).then(data => {
+                btn.disabled = false;
+                btn.innerText = "SEND RESET OTP";
+                if(data.success) {
+                    document.getElementById('forgotModal').style.display = 'none';
+                    document.getElementById('otpModal').style.display = 'flex';
+                    showToast(data.message, "success");
+                } else {
+                    showToast(data.message, "error");
+                }
+            }).catch(() => {
+                btn.disabled = false;
+                btn.innerText = "SEND RESET OTP";
+                showToast("Server error!", "error");
+            });
+        }
+
         function switchAuth(mode) {
             currentAuthMode = mode;
             document.getElementById('tab-login').classList.toggle('active', mode === 'login');
@@ -760,14 +1196,26 @@
             document.getElementById('authSubmitBtn').innerText = mode === 'login' ? 'SEND VERIFICATION OTP' : 'CREATE ACCOUNT WITH OTP';
         }
 
-        function togglePassword(inputId) {
-            const pwdInput = document.getElementById(inputId);
-            pwdInput.type = pwdInput.type === 'password' ? 'text' : 'password';
+        function toggleTheme() {
+            document.body.classList.toggle('light-theme');
+            const isLight = document.body.classList.contains('light-theme');
+            document.getElementById('themeToggleText').innerText = isLight ? 'Switch to Dark Mode' : 'Switch to Light Mode';
+        }
+
+        function calculateAge(dobString) {
+            if(!dobString) return null;
+            const birthDate = new Date(dobString);
+            const today = new Date();
+            let age = today.getFullYear() - birthDate.getFullYear();
+            const monthDiff = today.getMonth() - birthDate.getMonth();
+            if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) age--;
+            return age;
         }
 
         function initiateAuthWithOTP() {
             const email = document.getElementById('email').value.trim();
             const name = document.getElementById('studentName').value.trim();
+            const dob = document.getElementById('studentDob').value;
             const password = document.getElementById('password').value.trim();
             const btn = document.getElementById('authSubmitBtn');
 
@@ -775,270 +1223,408 @@
             if(!password) { showToast("Password is required!", "error"); return; }
             if(currentAuthMode === 'signup' && !name) { showToast("Full Name is required!", "error"); return; }
 
-            userData.email = email;
-            userData.name = name || 'Student';
+            currentStudentData.email = email;
+            if(name) currentStudentData.name = name;
+            if(dob) currentStudentData.dob = dob;
 
             btn.disabled = true;
-            btn.innerText = "SENDING SECURE OTP...";
+            btn.innerText = "SENDING OTP...";
 
-            // Simulating the original API Call delay
-            setTimeout(() => {
+            fetch(`/api/send-otp`, {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ email: email, password: password, auth_mode: currentAuthMode })
+            })
+            .then(res => res.json())
+            .then(data => {
                 btn.disabled = false;
                 btn.innerText = currentAuthMode === 'login' ? 'SEND VERIFICATION OTP' : 'CREATE ACCOUNT WITH OTP';
-                showToast("Z+ Secure OTP Sent!", "success");
-                document.getElementById('otpModal').style.display = 'flex';
-            }, 1500);
+                if (data.success) {
+                    showToast(data.message, "success");
+                    document.getElementById('otpModal').style.display = 'flex';
+                } else {
+                    showToast(data.message, "error");
+                }
+            })
+            .catch(() => {
+                btn.disabled = false;
+                btn.innerText = currentAuthMode === 'login' ? 'SEND VERIFICATION OTP' : 'CREATE ACCOUNT WITH OTP';
+                showToast("Server error! Backend might be down.", "error");
+            });
         }
 
         function verifyOTPAndLogin() {
             const otp = document.getElementById('otpInput').value.trim();
+            const password = document.getElementById('password').value.trim();
             const btn = document.getElementById('verifyBtn');
 
             if(!otp) { showToast("Enter 6-digit OTP!", "error"); return; }
             btn.disabled = true;
-            btn.innerText = "VERIFYING Z+ ENCRYPTION...";
+            btn.innerText = "VERIFYING...";
 
-            setTimeout(() => {
+            let deviceId = localStorage.getItem('ticbull_device_id') || ('dev_' + Math.random().toString(36).substring(2) + Date.now());
+            localStorage.setItem('ticbull_device_id', deviceId);
+
+            fetch(`/api/verify-otp`, {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ email: currentStudentData.email, otp: otp, password: password, auth_mode: currentAuthMode, device_id: deviceId })
+            })
+            .then(res => res.json())
+            .then(data => {
                 btn.disabled = false;
                 btn.innerText = "VERIFY & CONTINUE";
-                
-                localStorage.setItem('ticbull_email', userData.email);
-                localStorage.setItem('ticbull_name', userData.name);
-                localStorage.setItem('tb_doubts_left', userData.limits);
-                
-                document.getElementById('otpModal').style.display = 'none';
-                updateProfileUI();
-                renderExplorerBatches('ALL');
-                switchScreen('batches-screen');
-                showToast("Login Successful!", "success");
-            }, 1500);
+                if (data.success) {
+                    localStorage.setItem('ticbull_email', currentStudentData.email);
+                    localStorage.setItem('ticbull_token', data.token);
+                    if(data.user) {
+                        if(data.user.name) currentStudentData.name = data.user.name;
+                        if(data.user.dob) currentStudentData.dob = data.user.dob;
+                        if(data.user.photo) currentStudentData.photo = data.user.photo;
+                    }
+                    localStorage.setItem('ticbull_name', currentStudentData.name);
+                    if(currentStudentData.dob) localStorage.setItem('ticbull_dob', currentStudentData.dob);
+                    if(currentStudentData.photo) localStorage.setItem('ticbull_photo', currentStudentData.photo);
+
+                    updateProfileUI();
+                    document.getElementById('otpModal').style.display = 'none';
+                    document.getElementById('auth-screen').style.display = 'none';
+                    document.getElementById('batches-screen').style.display = 'flex';
+                    loadSidebarHistory();
+                    checkAndUpdateStreak();
+                    showToast("Login Successful!", "success");
+                } else {
+                    showToast(data.message || "Invalid OTP!", "error");
+                }
+            })
+            .catch(() => {
+                btn.disabled = false;
+                btn.innerText = "VERIFY & CONTINUE";
+                showToast("Server Error! Try again.", "error");
+            });
         }
 
         function closeOtpModal() { document.getElementById('otpModal').style.display = 'none'; }
-        function openForgotModal() { document.getElementById('forgotModal').style.display = 'flex'; }
-        function initiateForgotOTP() { showToast("Reset Link Sent!", "success"); document.getElementById('forgotModal').style.display = 'none'; }
-        function openDeleteAccountModal() { document.getElementById('settingsModal').style.display = 'none'; document.getElementById('deleteAccountModal').style.display = 'flex'; document.getElementById('delAccEmail').value = userData.email; }
-        function initiateAccountDeletion() { document.getElementById('sendDelOtpBtn').style.display = 'none'; document.getElementById('delAccOtpSection').style.display = 'block'; showToast("Warning OTP Sent!", "error"); }
-        function verifyAndDeleteAccount() { localStorage.clear(); location.reload(); }
 
-        // ------------------ BATCH EXPLORER ------------------
-        function filterCategory(cat, el) {
-            document.querySelectorAll('.cat-chip').forEach(c => c.classList.remove('active'));
-            el.classList.add('active');
-            renderExplorerBatches(cat);
-        }
-        function renderExplorerBatches(cat) {
-            const container = document.getElementById('batchesContainer');
-            let list = cat === 'ALL' ? all300Batches : all300Batches.filter(b => b.cat === cat);
-            const q = document.getElementById('batchSearchInput')?.value.toLowerCase();
-            if(q) list = list.filter(b => b.name.toLowerCase().includes(q));
-
-            container.innerHTML = list.map(b => `
-                <div class="batch-card">
-                    <span class="batch-tag">${b.tag}</span>
-                    <div class="batch-title">${b.name}</div>
-                    <div class="batch-teachers-strip"><i class="fa-solid fa-chalkboard-user"></i> Faculty: Top Experts</div>
-                    <div class="batch-desc">${b.desc}</div>
-                    <div class="batch-footer">
-                        <div>
-                            <span style="font-size:10px; color:var(--text-muted); display:block;">Starting from</span>
-                            <span class="batch-price">₹${b.price}/yr</span>
-                        </div>
-                        <div class="batch-actions">
-                            <button class="btn-trial" onclick="startFreeTrial('${b.id}')">2 Days Free</button>
-                            <button class="btn-buy" onclick="openTierModal('${b.id}')">View Plans</button>
-                        </div>
-                    </div>
-                </div>
-            `).join('');
-        }
-        function searchBatches() { renderExplorerBatches('ALL'); }
-
-        // ------------------ PRICING & TIER LOGIC ------------------
-        let tempBatchSelect = null;
-        let selectedTierType = 'PRO';
-        let selectedTierLimits = 40;
-
-        function startFreeTrial(batchId) {
-            tempBatchSelect = all300Batches.find(b => b.id === batchId);
-            confirmEnrollment('FREE_TRIAL', 'Free Trial', 9);
-            showToast("2 Days Free Trial Activated!");
-        }
-        function openTierModal(batchId) {
-            tempBatchSelect = all300Batches.find(b => b.id === batchId);
-            document.getElementById('tierModalBatchTitle').innerText = tempBatchSelect.name;
-            document.getElementById('tierModal').style.display = 'flex';
-        }
-        function closeTierModal() { document.getElementById('tierModal').style.display = 'none'; }
-        
-        function selectTier(type, price, limits) {
-            selectedTierType = type; selectedTierLimits = limits;
-            document.querySelectorAll('.tier-card-option').forEach(e => e.classList.remove('selected'));
-            document.getElementById(`tier${type==='BASIC'?'Basic':type==='PRO'?'Pro':'MaxPro'}Card`).classList.add('selected');
-        }
-        function confirmTierSelection() {
-            confirmEnrollment(selectedTierType, selectedTierType + ' Pass', selectedTierLimits);
-            closeTierModal();
-            showToast(`🎉 Upgraded to ${selectedTierType} Pass!`);
-        }
-        function openSubscriptionModal() { document.getElementById('tierModal').style.display = 'flex'; toggleDrawer(); }
-
-        function confirmEnrollment(tierType, planName, limits) {
-            activeBatch = tempBatchSelect || activeBatch;
-            userData.tierType = tierType;
-            userData.plan = planName;
-            userData.limits = limits;
-            
-            localStorage.setItem('tb_saved_batch', JSON.stringify(activeBatch));
-            localStorage.setItem('tb_tier_type', tierType);
-            localStorage.setItem('tb_plan_name', planName);
-            localStorage.setItem('tb_doubts_left', limits);
-            
-            updateProfileUI();
-            renderSubjectsDashboard();
-            switchScreen('subjects-screen');
+        function logoutUser() {
+            localStorage.clear();
+            location.reload();
         }
 
-        // ------------------ SUBJECTS DASHBOARD ------------------
-        function renderSubjectsDashboard() {
-            document.getElementById('activeBatchLabel').innerText = activeBatch.name;
-            document.getElementById('badgePlanTextUI').innerText = userData.plan;
-            document.getElementById('doubtLimitChipUI').innerText = `${userData.limits} Doubts/Day`;
-            
-            const subjects = subjectLibrary[activeBatch.stream] || subjectLibrary['secondary'];
-            
-            document.getElementById('subjectsGridContainer').innerHTML = subjects.map(s => `
-                <div class="subject-card" onclick="openSubjectChat('${s.n}', '${s.t}', '${s.g}')">
-                    <div class="subject-icon">${s.i}</div>
-                    <div class="subject-name">${s.n}</div>
-                    <div class="subject-teacher"><i class="fa-solid fa-chalkboard-user"></i> ${s.t}</div>
-                </div>
-            `).join('');
+        function openSettingsModal() {
+            document.getElementById('settingsModal').style.display = 'flex';
+            if(document.getElementById('drawer').classList.contains('open')) toggleDrawer();
+        }
+
+        function openDeleteAccountModal() {
+            document.getElementById('settingsModal').style.display = 'none';
+            document.getElementById('deleteAccountModal').style.display = 'flex';
+            document.getElementById('delAccEmail').value = currentStudentData.email;
+            document.getElementById('delAccOtpSection').style.display = 'none';
+            document.getElementById('sendDelOtpBtn').style.display = 'block';
+        }
+
+        function initiateAccountDeletion() {
+            const btn = document.getElementById('sendDelOtpBtn');
+            btn.disabled = true;
+            btn.innerText = "SENDING WARNING OTP...";
+
+            fetch(`/api/send-delete-otp`, {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ email: currentStudentData.email })
+            }).then(res => res.json()).then(data => {
+                if(data.success) {
+                    showToast(data.message, "success");
+                    btn.style.display = 'none';
+                    document.getElementById('delAccOtpSection').style.display = 'block';
+                } else {
+                    btn.disabled = false;
+                    btn.innerText = "SEND DELETION OTP";
+                    showToast(data.message, "error");
+                }
+            });
+        }
+
+        function verifyAndDeleteAccount() {
+            const otp = document.getElementById('delAccOtp').value.trim();
+            if(!otp) { showToast("OTP is required!", "error"); return; }
+            const btn = document.getElementById('confirmDeleteAccBtn');
+            btn.disabled = true;
+            btn.innerText = "DELETING PERMANENTLY...";
+
+            fetch(`/api/delete-account`, {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ email: currentStudentData.email, otp: otp })
+            }).then(res => res.json()).then(data => {
+                if(data.success) {
+                    showToast("Account deleted successfully.", "success");
+                    localStorage.clear();
+                    setTimeout(() => location.reload(), 1500);
+                } else {
+                    btn.disabled = false;
+                    btn.innerText = "PERMANENTLY DELETE ACCOUNT";
+                    showToast(data.message, "error");
+                }
+            });
         }
 
         function updateProfileUI() {
-            if(userData.name) {
-                document.getElementById('drawerStudentName').innerText = userData.name;
-                document.getElementById('drawerAvatarInitial').innerText = userData.name.charAt(0).toUpperCase();
-                document.getElementById('editStudentName').value = userData.name;
+            const name = currentStudentData.name;
+            const email = currentStudentData.email;
+            const dob = currentStudentData.dob;
+
+            if(name) {
+                document.getElementById('portalHeaderName').innerText = `Welcome, ${name.split(' ')[0]}`;
+                document.getElementById('drawerStudentName').innerText = name;
+                document.getElementById('drawerAvatarInitial').innerText = name.charAt(0).toUpperCase();
+            } else if(email) {
+                const emailPrefix = email.split('@')[0];
+                document.getElementById('drawerStudentName').innerText = emailPrefix;
+                document.getElementById('drawerAvatarInitial').innerText = emailPrefix.charAt(0).toUpperCase();
             }
-            document.getElementById('drawerStudentEmail').innerText = userData.email;
-            document.getElementById('editStudentEmail').value = userData.email;
-            document.getElementById('drawerActivePlan').innerText = `Plan: ${userData.plan}`;
-        }
-
-        // ------------------ DEDICATED SUBJECT CHAT ------------------
-        function openSubjectChat(subName, teacher, gender) {
-            currentChatSubject = { name: subName, teacher: teacher, gender: gender, key: `tb_chat_${activeBatch.id}_${subName}` };
-            
-            document.getElementById('chatHeaderSubjectName').innerText = subName;
-            document.getElementById('chatHeaderTeacherName').innerText = `Teacher: ${teacher}`;
-            const imgPath = (gender === 'female' || gender === 'f') ? 'https://raw.githubusercontent.com/yuviyadav16/ticbull-academy/main/11723.png' : 'https://raw.githubusercontent.com/yuviyadav16/ticbull-academy/main/11708.png';
-            document.getElementById('chatHeaderTeacherImg').src = imgPath;
-            document.getElementById('chatDoubtsCountUI').innerText = `${userData.limits} Doubts`;
-            
-            switchScreen('chat-screen');
-            loadChatHistory();
-        }
-
-        function loadChatHistory() {
-            const box = document.getElementById('chatBox');
-            const history = JSON.parse(localStorage.getItem(currentChatSubject.key)) || [];
-            
-            box.innerHTML = '';
-            if(history.length === 0) {
-                const isFem = currentChatSubject.gender === 'female' || currentChatSubject.gender === 'f';
-                const welcome = isFem ? `Hello Bacchon! Main aapki ${currentChatSubject.name} teacher, ${currentChatSubject.teacher}. Hum ${activeBatch.name} ka poora syllabus perfectly cover karenge. Apna pehla doubt pucho!` 
-                                      : `Welcome students! Main aapka ${currentChatSubject.name} teacher, ${currentChatSubject.teacher}. Strictly Board/Exam pattern ke according padhai hogi. Ask your doubt.`;
-                box.innerHTML = `<div class="msg ai"><b><i class="fa-solid fa-chalkboard-user"></i> ${currentChatSubject.teacher}:</b><br>${welcome}</div>`;
+            if(email) {
+                document.getElementById('drawerStudentEmail').innerText = email;
+                document.getElementById('editStudentEmail').value = email;
+            }
+            const userAge = calculateAge(dob);
+            if(userAge !== null) {
+                document.getElementById('drawerStudentAge').innerText = `Age: ${userAge} Years Old`;
             } else {
-                history.forEach(m => {
-                    if(m.type === 'user') {
-                        let html = `<div class="msg user">`;
-                        if(m.files) m.files.forEach(f => html += `<img src="${f}" class="msg-image"><br>`);
-                        html += `${m.text}</div>`;
-                        box.innerHTML += html;
-                    } else {
-                        box.innerHTML += `<div class="msg ai"><b><i class="fa-solid fa-chalkboard-user"></i> ${m.teacher}:</b><br>${m.text}</div>`;
+                document.getElementById('drawerStudentAge').innerText = `Active Student`;
+            }
+            if(currentStudentData.photo) {
+                const img = document.getElementById('drawerAvatarImg');
+                img.src = currentStudentData.photo;
+                img.style.display = 'block';
+                document.getElementById('drawerAvatarInitial').style.display = 'none';
+            }
+        }
+
+        function openEditProfileModal() {
+            document.getElementById('editStudentName').value = currentStudentData.name || '';
+            document.getElementById('editStudentDob').value = currentStudentData.dob || '';
+            document.getElementById('editProfileModal').style.display = 'flex';
+        }
+
+        function closeEditProfileModal() { document.getElementById('editProfileModal').style.display = 'none'; }
+
+        function saveProfileChanges() {
+            currentStudentData.name = document.getElementById('editStudentName').value;
+            currentStudentData.dob = document.getElementById('editStudentDob').value;
+            localStorage.setItem('ticbull_name', currentStudentData.name);
+            localStorage.setItem('ticbull_dob', currentStudentData.dob);
+
+            fetch(`/api/update-profile`, {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ email: currentStudentData.email, name: currentStudentData.name, dob: currentStudentData.dob, photo: currentStudentData.photo })
+            }).then(() => {
+                updateProfileUI();
+                closeEditProfileModal();
+                showToast("Profile details updated successfully!", "success");
+            });
+        }
+
+        function handleAvatarUpload(event) {
+            const file = event.target.files[0];
+            if(file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    currentStudentData.photo = e.target.result;
+                    localStorage.setItem('ticbull_photo', e.target.result);
+                    updateProfileUI();
+                    fetch(`/api/update-profile`, {
+                        method: 'POST',
+                        headers: {'Content-Type': 'application/json'},
+                        body: JSON.stringify({ email: currentStudentData.email, name: currentStudentData.name, dob: currentStudentData.dob, photo: currentStudentData.photo })
+                    });
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function toggleDrawer() {
+            const drawer = document.getElementById('drawer');
+            const overlay = document.getElementById('drawerOverlay');
+            drawer.classList.toggle('open');
+            overlay.style.display = drawer.classList.contains('open') ? 'block' : 'none';
+        }
+
+        function openSubscriptionModal() {
+            document.getElementById('subModal').style.display = 'flex';
+            if(document.getElementById('drawer').classList.contains('open')) toggleDrawer();
+        }
+
+        function closeSubscriptionModal() { document.getElementById('subModal').style.display = 'none'; }
+
+        function toggleToolsMenu() {
+            const menu = document.getElementById('aiToolsMenu');
+            menu.style.display = (menu.style.display === 'flex') ? 'none' : 'flex';
+        }
+
+        function triggerTool(promptAction) {
+            document.getElementById('aiToolsMenu').style.display = 'none';
+            document.getElementById('userInput').value = promptAction;
+            askAI();
+        }
+
+        function triggerAppGuideBot() {
+            if(document.getElementById('drawer').classList.contains('open')) toggleDrawer();
+            const chatBox = document.getElementById('chatBox');
+            chatBox.innerHTML += `
+                <div class="msg guide-ai">
+                    <div style="display:flex; align-items:center; gap:10px; margin-bottom:8px;">
+                        <img src="${getTeacherImage()}" onerror="this.src='${getTeacherFallback()}'" style="width:36px; height:36px; border-radius:50%; object-fit:cover; border:2px solid var(--gold-color);">
+                        <b style="color:var(--gold-color);">TicBull ${currentTeacher === 'female' ? 'Ma\'am' : 'Sir'}:</b>
+                    </div>
+                    • <b>App Founder:</b> Created by MrYuviYadav.<br>
+                    • <b>App Purpose:</b> AI Powered Learning, Exam Engine.<br>
+                    • <b>Key Features:</b> Detailed Notes, MCQs, AI Diagram & Video Explanations.<br>
+                    • <b>How to Use:</b> Select your Batch from Dashboard and ask your subject doubts!
+                </div>`;
+            scrollToBottom();
+            saveChatUI();
+        }
+
+        function startNewChat() {
+            currentSessionId = Date.now().toString();
+            currentSessionTitle = "New Chat";
+            document.getElementById('chatBox').innerHTML = `<div class="msg ai" id="defaultWelcomeMsg"><b>Welcome to TicBull Academy! 🚀</b><br>New Chat started. Ask your question!</div>`;
+            if(document.getElementById('drawer').classList.contains('open')) toggleDrawer();
+            showToast("New Chat Started!", "success");
+            const items = document.querySelectorAll('.history-item');
+            items.forEach(el => el.classList.remove('active-session'));
+        }
+
+        function loadSidebarHistory() {
+            fetch('/api/get-sessions', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ email: currentStudentData.email })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if(data.success && data.sessions) {
+                    renderHistoryList(data.sessions);
+                    if (isInitialLoad && data.sessions.length > 0) {
+                        loadSession(data.sessions[0].id, data.sessions[0].title);
+                        isInitialLoad = false;
                     }
+                }
+            }).catch(() => {});
+        }
+
+        function renderHistoryList(historyArray) {
+            const list = document.getElementById('historyList');
+            if(!list) return;
+            list.innerHTML = '';
+            historyArray.forEach((item) => {
+                const isActive = (item.id === currentSessionId) ? 'active-session' : '';
+                list.innerHTML += `
+                    <div class="history-item ${isActive}" onclick="loadSession('${item.id}', '${item.title.replace(/'/g, "\\'")}')">
+                        <span style="white-space:nowrap; overflow:hidden; text-overflow:ellipsis; width:85%;">${item.title}</span>
+                        <i class="fa-solid fa-trash delete-chat-icon" title="Delete Chat" onclick="promptDeleteHistory('${item.id}', event)"></i>
+                    </div>`;
+            });
+        }
+
+        function loadSession(id, title) {
+            currentSessionId = id;
+            currentSessionTitle = title;
+            fetch('/api/get-session-html', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ email: currentStudentData.email, session_id: id })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if(data.success && data.html) {
+                    document.getElementById('chatBox').innerHTML = data.html;
+                    scrollToBottom();
+                    if(document.getElementById('drawer').classList.contains('open')) toggleDrawer();
+                    const items = document.querySelectorAll('.history-item');
+                    items.forEach(el => el.classList.remove('active-session'));
+                    if(window.event && window.event.currentTarget) {
+                        window.event.currentTarget.classList.add('active-session');
+                    }
+                }
+            });
+        }
+
+        let pendingDeleteId = null;
+        function promptDeleteHistory(id, event) {
+            event.stopPropagation();
+            pendingDeleteId = id;
+            document.getElementById('deleteWarningModal').style.display = 'flex';
+        }
+
+        document.getElementById('confirmDeleteBtn').onclick = function() {
+            if(pendingDeleteId) {
+                fetch(`/api/delete-session`, {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ email: currentStudentData.email, session_id: pendingDeleteId })
+                }).then(() => {
+                    showToast("Chat permanently deleted.", "success");
+                    document.getElementById('deleteWarningModal').style.display = 'none';
+                    if(currentSessionId === pendingDeleteId) { startNewChat(); }
+                    loadSidebarHistory();
                 });
             }
-            scrollToBottom();
+        };
+
+        function saveChatUI() {
+            const chatHtml = document.getElementById('chatBox').innerHTML;
+            fetch('/api/sync-session', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ 
+                    email: currentStudentData.email, 
+                    session_id: currentSessionId, 
+                    title: currentSessionTitle, 
+                    html: chatHtml 
+                })
+            }).then(() => loadSidebarHistory());
         }
 
-        function saveChat(type, text, files = []) {
-            const history = JSON.parse(localStorage.getItem(currentChatSubject.key)) || [];
-            history.push({ type: type, text: text, files: files, teacher: currentChatSubject.teacher });
-            localStorage.setItem(currentChatSubject.key, JSON.stringify(history));
+        let recognition;
+        if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            recognition = new SpeechRecognition();
+            recognition.continuous = false;
+            recognition.interimResults = false;
+            recognition.onresult = function(event) {
+                const text = event.results[0][0].transcript;
+                const inputEl = document.getElementById('userInput');
+                inputEl.value += " " + text;
+                autoResizeInput(inputEl);
+                document.getElementById('voiceBtn').classList.remove('voice-active');
+            };
+            recognition.onerror = function() { document.getElementById('voiceBtn').classList.remove('voice-active'); };
+            recognition.onend = function() { document.getElementById('voiceBtn').classList.remove('voice-active'); };
         }
 
-        // ------------------ SMART AI ROUTING (Meta & Gemini Hook) ------------------
-        function askAI() {
-            const input = document.getElementById('userInput');
-            const text = input.value.trim();
-            if(!text && selectedFilesArray.length === 0) return;
-
-            if(userData.limits <= 0) {
-                document.getElementById('chatBox').innerHTML += `<div class="msg error"><b>Limit Exhausted!</b><br>Aapke daily doubts khatam ho chuke hain. Please upgrade your pass to continue learning.</div>`;
-                openSubscriptionModal();
-                scrollToBottom();
-                return;
-            }
-
-            // User Message
-            const box = document.getElementById('chatBox');
-            let userHtml = `<div class="msg user">`;
-            selectedFilesArray.forEach(f => userHtml += `<img src="${f}" class="msg-image"><br>`);
-            userHtml += `${text}</div>`;
-            box.innerHTML += userHtml;
-            
-            saveChat('user', text, [...selectedFilesArray]);
-            input.value = ''; input.style.height = 'auto'; removeImage(); document.getElementById('aiToolsMenu').style.display = 'none';
-            
-            // Deduct Limit
-            userData.limits--;
-            localStorage.setItem('tb_doubts_left', userData.limits);
-            document.getElementById('chatDoubtsCountUI').innerText = `${userData.limits} Doubts`;
-            document.getElementById('doubtLimitChipUI').innerText = `${userData.limits} Doubts/Day`;
-
-            const loadId = 'l_' + Date.now();
-            box.innerHTML += `<div class="msg ai" id="${loadId}"><i>${currentChatSubject.teacher} is analyzing your doubt...</i></div>`;
-            scrollToBottom();
-
-            // AI Routing Simulation
-            setTimeout(() => {
-                let reply = "";
-                const q = text.toLowerCase();
-                const isFem = currentChatSubject.gender === 'female' || currentChatSubject.gender === 'f';
-                
-                // META AI HOOK (Non-academic)
-                if(q.includes('hi') || q.includes('hello') || q.includes('man nahi') || q.includes('bored') || q.includes('maker') || q.includes('developer')) {
-                    if(q.includes('maker') || q.includes('developer')) {
-                        reply = `Mujhe TicBull Academy aur MrYuviYadav ne exclusively design kiya hai taaki main aapko ${currentChatSubject.name} me topper bana saku!`;
-                    } else if(q.includes('man nahi') || q.includes('bored')) {
-                        reply = isFem ? `Padhai me man toh lagana padega beta! Exam bahut paas hain aur ${activeBatch.name} clear karna zaroori hai. Chalo syllabus ka koi easy sa topic uthate hain.` : `Aise focus lose mat karo! Competition bahut high hai. Syllabus par dhyan do. Pucho apna doubt!`;
-                    } else {
-                        reply = `Hello! Kaisi chal rahi hai preparation? Apna ${currentChatSubject.name} ka concept doubt puchiye.`;
-                    }
-                } 
-                // GEMINI ENGINE (Academic)
-                else {
-                    reply = isFem 
-                        ? `Bilkul, ${currentChatSubject.name} ke strictly NCERT/Board syllabus ke anusar iska answer ye hoga:<br><br><b>Explanation:</b><br>${text} ka concept bahut direct hai. Isme aapko main focus in points par rakhna hai... [Detailed Output].<br><br>Kya ye clear hua aapko?`
-                        : `Good question. Ye topic exam perspective se kaafi weightage rakhta hai.<br><br><b>Core Notes:</b><br>${text} ke baare me main points ye hain... [Bullet Points]. Ise properly copy me note karlena.`;
+        function toggleVoiceInput() {
+            const voiceBtn = document.getElementById('voiceBtn');
+            if(voiceBtn.classList.contains('voice-active')) {
+                if(recognition) recognition.stop();
+                voiceBtn.classList.remove('voice-active');
+            } else {
+                if(recognition) {
+                    recognition.start();
+                    voiceBtn.classList.add('voice-active');
+                } else {
+                    showToast("Voice typing not supported in this browser.", "error");
                 }
-
-                document.getElementById(loadId).innerHTML = `<b><i class="fa-solid fa-chalkboard-user"></i> ${currentChatSubject.teacher}:</b><br>${reply}`;
-                saveChat('ai', reply);
-                scrollToBottom();
-            }, 1500);
+            }
         }
 
-        // ------------------ UTILS (Syllabus, Profile, Files) ------------------
-        function scrollToBottom() { setTimeout(() => { const b = document.getElementById('chatBox'); if(b) b.scrollTop = b.scrollHeight; }, 100); }
         function handleMultipleFilesSelect(event) {
             const files = event.target.files;
             if(files && files.length > 0) {
+                selectedFilesArray = [];
                 for(let i=0; i<files.length; i++) {
                     const reader = new FileReader();
                     reader.onload = function(e) { selectedFilesArray.push(e.target.result); };
@@ -1048,48 +1634,130 @@
                 document.getElementById('imagePreview').style.display = 'flex';
             }
         }
-        function removeImage() { selectedFilesArray = []; document.getElementById('photoInput').value = ''; document.getElementById('imagePreview').style.display = 'none'; }
-        function toggleToolsMenu() { const m = document.getElementById('aiToolsMenu'); m.style.display = m.style.display === 'flex' ? 'none' : 'flex'; }
-        function triggerTool(prompt) { document.getElementById('userInput').value = prompt; document.getElementById('aiToolsMenu').style.display = 'none'; askAI(); }
-        function autoResizeInput(el) { el.style.height = 'auto'; el.style.height = el.scrollHeight + 'px'; }
-        function handleInputKeydown(e) { if(e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); askAI(); } }
-        function toggleTheme() { document.body.classList.toggle('light-theme'); document.getElementById('themeToggleText').innerText = document.body.classList.contains('light-theme') ? 'Dark Mode' : 'Light Mode'; }
-        function logoutUser() { localStorage.clear(); location.reload(); }
-        
-        let syllabusItems = [];
-        function openSyllabusBoard() {
-            document.getElementById('syllabusModal').style.display = 'flex';
-            if(document.getElementById('drawer').classList.contains('open')) toggleDrawer();
-            const saved = localStorage.getItem('ticbull_syllabus_' + userData.email);
-            if(saved) syllabusItems = JSON.parse(saved);
-            renderSyllabus();
+
+        function removeImage() {
+            selectedFilesArray = [];
+            document.getElementById('photoInput').value = '';
+            document.getElementById('imagePreview').style.display = 'none';
         }
-        function addSyllabusItem() {
-            const input = document.getElementById('newSyllabusItem');
-            if(!input.value.trim()) return;
-            syllabusItems.unshift({ text: input.value.trim(), done: false });
-            input.value = ''; saveSyllabus();
+
+        function saveChatLang(val) {
+            localStorage.setItem('tb_lang', val);
+            showToast(`AI Language set to ${val}`, "success");
         }
-        function toggleSyllabusItem(index) { syllabusItems[index].done = !syllabusItems[index].done; saveSyllabus(); }
-        function deleteSyllabusItem(index) { syllabusItems.splice(index, 1); saveSyllabus(); }
-        function saveSyllabus() { localStorage.setItem('ticbull_syllabus_' + userData.email, JSON.stringify(syllabusItems)); renderSyllabus(); }
-        function renderSyllabus() {
-            const list = document.getElementById('syllabusList');
-            list.innerHTML = '';
-            if(syllabusItems.length === 0) { list.innerHTML = '<p style="color:var(--text-muted); font-size:12px; text-align:center; padding:20px;">No topics added yet.</p>'; return; }
-            syllabusItems.forEach((item, i) => {
-                list.innerHTML += `<div class="syllabus-task ${item.done ? 'completed' : ''}"><input type="checkbox" ${item.done ? 'checked' : ''} onchange="toggleSyllabusItem(${i})"><span>${item.text}</span><i class="fa-solid fa-trash" style="color:#ef4444; font-size:12px; cursor:pointer;" onclick="deleteSyllabusItem(${i})"></i></div>`;
+
+        function askAI() {
+            const input = document.getElementById('userInput');
+            const chatBox = document.getElementById('chatBox');
+            const lang = document.getElementById('chatLangSelect').value || 'Hinglish';
+            const sendBtn = document.getElementById('sendBtn');
+
+            if(!input.value.trim() && selectedFilesArray.length === 0) return;
+
+            let userMsgContent = '';
+            selectedFilesArray.forEach(file => {
+                if(file.includes('pdf')) {
+                    userMsgContent += `<i class="fa-solid fa-file-pdf" style="font-size:24px; color:red;"></i> <b>[PDF Attached]</b><br>`;
+                } else {
+                    userMsgContent += `<img src="${file}" class="msg-image"><br>`;
+                }
             });
-        }
-        
-        function openEditProfileModal() { document.getElementById('editProfileModal').style.display = 'flex'; if(document.getElementById('drawer').classList.contains('open')) toggleDrawer(); }
-        function saveProfileChanges() {
-            userData.name = document.getElementById('editStudentName').value;
-            localStorage.setItem('ticbull_name', userData.name);
-            updateProfileUI();
-            document.getElementById('editProfileModal').style.display = 'none';
-            showToast("Profile Updated!", "success");
+            if(input.value.trim()) userMsgContent += input.value.trim();
+            const questionText = input.value.trim() || "Analyze attached files";
+
+            if(currentSessionTitle === "New Chat") {
+                currentSessionTitle = questionText.substring(0, 30) + (questionText.length > 30 ? "..." : "");
+            }
+
+            chatBox.innerHTML += `<div class="msg user">${userMsgContent}</div>`;
+           
+            const filesToSend = [...selectedFilesArray]; 
+            input.value = '';
+            input.style.height = 'auto'; 
+            removeImage(); 
+            document.getElementById('aiToolsMenu').style.display = 'none';
+            scrollToBottom();
+
+            const tImg = getTeacherImage();
+            const tFall = getTeacherFallback();
+            const loadingId = 'loading-' + Date.now();
+            
+            chatBox.innerHTML += `<div class="msg ai" id="${loadingId}">
+                <div style="display:flex; align-items:center; gap:10px; margin-bottom:8px;">
+                    <img src="${tImg}" onerror="this.src='${tFall}'" style="width:36px; height:36px; border-radius:50%; object-fit:cover; border:2px solid var(--accent-color);">
+                    <i>TicBull ${currentTeacher === 'female' ? 'Ma\'am' : 'Sir'} is thinking...</i>
+                </div>
+            </div>`;
+            
+            scrollToBottom();
+            sendBtn.disabled = true;
+
+            fetch(`/api/chat`, {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({
+                    email: currentStudentData.email,
+                    token: localStorage.getItem('ticbull_token'), 
+                    prompt: questionText,
+                    images: filesToSend, 
+                    active_batch: currentActiveBatch,
+                    tier_type: localStorage.getItem('tb_tier_type') || 'PRO',
+                    lang: lang,
+                    student_name: currentStudentData.name,
+                    purchased_plan: purchasedPlanName,
+                    teacher_gender: currentTeacher
+                })
+            })
+            .then(res => res.json())
+            .then(data => {
+                sendBtn.disabled = false;
+                const loadElem = document.getElementById(loadingId);
+                
+                if(data.session_expired) {
+                    loadElem.classList.replace('ai', 'error');
+                    loadElem.innerHTML = `<b>❌ Security Alert:</b> ${data.message}`;
+                    showToast(data.message, "error");
+                    setTimeout(() => logoutUser(), 3000); 
+                    return;
+                }
+
+                if (data.success) {
+                    let formattedReply = data.reply.replace(/\*\*(.*?)\*\*/g, '<b>$1</b>');
+                    formattedReply = formattedReply.replace(/\n/g, '<br>');
+
+                    if (questionText.toLowerCase().includes('image') || questionText.toLowerCase().includes('diagram')) {
+                        let topicSafe = encodeURIComponent(questionText.replace('Generate Detailed Diagram Image', '').trim() || 'Education');
+                        formattedReply += `<br><br><b>🖼️ Visual Reference:</b><br><img src="https://image.pollinations.ai/prompt/${topicSafe}%20educational%20diagram?width=600&height=350&nologo=true" class="msg-image" alt="AI Generated Image" style="border-radius:12px; margin-top:8px; border:1px solid #333;">`;
+                    }
+                    if (questionText.toLowerCase().includes('video')) {
+                        let topicSafe = encodeURIComponent(questionText.replace('Generate AI Video Visual Explanation', '').trim() || 'Study Concept');
+                        formattedReply += `<br><br><b>🎥 Video Concept Reference:</b><br><iframe style="width:100%; height:200px; border-radius:12px; margin-top:8px; border:none;" src="https://www.youtube.com/embed?listType=search&list=${topicSafe}+${currentActiveBatch}" allowfullscreen></iframe>`;
+                    }
+
+                    loadElem.innerHTML = `<div style="display:flex; align-items:center; gap:10px; margin-bottom:10px; border-bottom: 1px solid var(--border-color); padding-bottom: 8px;">
+                        <img src="${tImg}" onerror="this.src='${tFall}'" style="width:36px; height:36px; border-radius:50%; object-fit:cover; border:2px solid var(--gold-color);">
+                        <b style="color:var(--gold-color);">TicBull ${currentTeacher === 'female' ? 'Ma\'am' : 'Sir'} (${currentActiveBatch.split(' - ')[0]})</b>
+                    </div>
+                    <div style="width:100%; line-height: 1.6; overflow-x: auto; word-break: break-word; overflow-wrap: break-word;">${formattedReply}</div>`;
+                    
+                    saveChatUI(); 
+                } else {
+                    loadElem.classList.replace('ai', 'error');
+                    loadElem.innerHTML = `<b>❌ AI Limit / Lock:</b> ${data.message}`;
+                    showToast(data.message, "error");
+                }
+                scrollToBottom();
+            })
+            .catch(() => {
+                sendBtn.disabled = false;
+                const loadElem = document.getElementById(loadingId);
+                loadElem.classList.replace('ai', 'error');
+                loadElem.innerHTML = `<b>❌ Server Connection Failed.</b>`;
+                showToast("Server Connection Failed", "error");
+                scrollToBottom();
+            });
         }
     </script>
 </body>
-</html>
+        </html>
+        
