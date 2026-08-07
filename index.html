@@ -3,3026 +3,574 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>TicBull Academy - India's #1 AI Education Engine</title>
-    
-    <!-- PWA APP INSTALL LINKS -->
-    <link rel="manifest" href="/manifest.json">
-    <meta name="theme-color" content="#2563eb">
-    <link rel="apple-touch-icon" href="logo.png">
-
+    <title>TicBull Academy - Professional Engine</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     
-    <!-- SERVICE WORKER REGISTRATION -->
-    <script>
-      if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => {
-          navigator.serviceWorker.register('/sw.js')
-            .then(() => console.log('TicBull PWA Service Worker Registered!'))
-            .catch((err) => console.log('SW registration failed: ', err));
-        });
-      }
-    </script>
-
     <style>
         :root {
-            --bg-color: #030712;
-            --card-bg: rgba(15, 23, 42, 0.95);
+            --bg-color: #050b14;
+            --card-bg: #111827;
             --accent-color: #2563eb;
-            --accent-glow: rgba(37, 99, 235, 0.45);
+            --accent-glow: rgba(37, 99, 235, 0.4);
             --text-main: #f8fafc;
             --text-muted: #94a3b8;
-            --border-color: rgba(255, 255, 255, 0.12);
+            --border-color: rgba(255, 255, 255, 0.08);
             --success-color: #10b981;
             --gold-color: #f59e0b;
-            --chat-bg: #020617;
-            --input-bg: #0f172a;
+            --chat-bg: #030712;
+            --input-bg: #1f2937;
         }
 
-        body.light-theme {
-            --bg-color: #f1f5f9;
-            --card-bg: #ffffff;
-            --text-main: #0f172a;
-            --text-muted: #64748b;
-            --border-color: #cbd5e1;
-            --chat-bg: #f8fafc;
-            --input-bg: #ffffff;
-        }
+        * { margin:0; padding:0; box-sizing:border-box; font-family:-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; -webkit-tap-highlight-color: transparent; }
+        html, body { height: 100%; width: 100%; overflow: hidden; background: var(--bg-color); color: var(--text-main); }
+        body { display:flex; flex-direction:column; }
 
-        * { 
-            margin: 0; 
-            padding: 0; 
-            box-sizing: border-box; 
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
-            -webkit-tap-highlight-color: transparent; 
-        }
-        
-        html, body { 
-            height: 100%; 
-            width: 100%; 
-            overflow: hidden; 
-            background: var(--bg-color); 
-            color: var(--text-main); 
-            transition: background 0.3s, color 0.3s; 
-        }
-        
-        body { 
-            display: flex; 
-            flex-direction: column; 
-        }
+        /* CUSTOM TOAST */
+        #custom-toast { position: fixed; top: -100px; left: 50%; transform: translateX(-50%); background: var(--card-bg); color: var(--text-main); border: 1px solid var(--accent-color); padding: 12px 24px; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); z-index: 10000; display: flex; align-items: center; gap: 12px; font-size: 13.5px; font-weight: 600; transition: top 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55); }
+        #custom-toast.show { top: 30px; }
 
-        /* CUSTOM TOAST NOTIFICATION */
-        #custom-toast {
-            position: fixed; 
-            top: -100px; 
-            left: 50%; 
-            transform: translateX(-50%);
-            background: var(--card-bg); 
-            color: var(--text-main);
-            border: 1px solid var(--accent-color); 
-            padding: 12px 24px;
-            border-radius: 12px; 
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-            z-index: 10000; 
-            display: flex; 
-            align-items: center; 
-            gap: 12px;
-            font-size: 13.5px; 
-            font-weight: 600;
-            transition: top 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-        }
+        /* SIDEBAR / DRAWER (Matching Image 1) */
+        .drawer-overlay { position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.75); z-index:1000; display:none; }
+        .drawer { position:fixed; top:0; left:-320px; width:320px; height:100%; background:#0a1122; border-right:1px solid var(--border-color); z-index:1001; transition:0.3s; display:flex; flex-direction:column; }
+        .drawer.open { left:0; }
+        .drawer-header { display:flex; justify-content:space-between; align-items:center; padding:18px; border-bottom:1px solid var(--border-color); }
+        .drawer-content { padding: 18px; overflow-y: auto; flex: 1; }
         
-        #custom-toast.show { 
-            top: 30px; 
-        }
-        
-        .toast-icon { 
-            font-size: 18px; 
-        }
-        
-        .toast-icon.success { 
-            color: var(--success-color); 
-        }
-        
-        .toast-icon.error { 
-            color: #ef4444; 
-        }
+        .profile-card { background:linear-gradient(135deg, rgba(37, 99, 235, 0.15), rgba(15, 23, 42, 0.8)); border:1px solid rgba(37,99,235,0.3); border-radius:16px; padding:16px; margin-bottom:20px; display:flex; align-items:center; gap:14px; position:relative; }
+        .profile-img-box { width:50px; height:50px; border-radius:50%; background:var(--accent-color); display:flex; justify-content:center; align-items:center; font-size:20px; font-weight:bold; border:2px solid #fff; position: relative;}
+        .profile-img-box i.cam { position:absolute; bottom:-4px; right:-4px; background:#f59e0b; color:#000; font-size:10px; padding:4px; border-radius:50%; cursor:pointer; }
+        .edit-icon { position: absolute; top: 12px; right: 12px; color: var(--text-muted); font-size: 14px; cursor: pointer; }
 
-        /* CINEMATIC SPLASH ANIMATION */
-        #splash-screen {
-            position: fixed; 
-            top: 0; 
-            left: 0; 
-            width: 100%; 
-            height: 100%;
-            background: radial-gradient(circle at center, #0b1329 0%, #020617 100%);
-            display: flex; 
-            flex-direction: column; 
-            justify-content: center; 
-            align-items: center; 
-            z-index: 9999;
-            transition: opacity 0.8s ease, visibility 0.8s ease; 
-            padding: 20px;
-        }
-        
-        .splash-logo-container { 
-            position: relative; 
-            width: 130px; 
-            height: 110px; 
-            display: flex; 
-            justify-content: center; 
-            align-items: center; 
-        }
-        
-        .splash-logo-glow {
-            position: absolute; 
-            width: 100%; 
-            height: 100%; 
-            border-radius: 50%;
-            background: radial-gradient(circle, rgba(37, 99, 235, 0.9) 0%, rgba(0,0,0,0) 70%);
-            filter: blur(20px); 
-            animation: pulseGlow 2.5s infinite alternate ease-in-out;
-        }
-        
-        .splash-logo {
-            position: relative; 
-            width: 105px; 
-            height: 105px; 
-            border-radius: 50%;
-            background: #000; 
-            border: 2px solid rgba(37, 99, 235, 0.5);
-            display: flex; 
-            justify-content: center; 
-            align-items: center; 
-            overflow: hidden;
-            box-shadow: 0 0 35px var(--accent-glow);
-        }
-        
-        .splash-logo img { 
-            width: 90%; 
-            height: 90%; 
-            object-fit: contain; 
-        }
-        
-        .splash-title { 
-            margin-top: 20px; 
-            font-size: 26px; 
-            font-weight: 800; 
-            letter-spacing: 1px; 
-            color: #fff; 
-            text-shadow: 0 0 15px rgba(255,255,255,0.3); 
-        }
-        
-        .developer-tag { 
-            margin-top: 6px; 
-            font-size: 13px; 
-            color: var(--accent-color); 
-            font-weight: 700; 
-            letter-spacing: 0.5px; 
-        }
+        .drawer-item { padding:12px 14px; border-radius:12px; color:var(--text-main); font-size:13.5px; font-weight:500; display:flex; align-items:center; gap:14px; cursor:pointer; transition:0.2s; margin-bottom:4px; }
+        .drawer-item:hover { background:rgba(255,255,255,0.05); }
+        .drawer-item i { width: 20px; text-align: center; font-size: 16px; }
 
-        .splash-socials { 
-            display: flex; 
-            gap: 18px; 
-            margin-top: 20px; 
-        }
-        
-        .splash-socials a { 
-            color: var(--text-muted); 
-            font-size: 22px; 
-            transition: 0.3s; 
-            animation: floatIcon 3s ease-in-out infinite; 
-        }
-        
-        .splash-socials a:hover { 
-            color: #fff; 
-            transform: scale(1.2); 
-        }
-        
-        .support-info-splash { 
-            margin-top: 25px; 
-            font-size: 11px; 
-            color: var(--text-muted); 
-            font-weight: 600; 
-            display: flex; 
-            align-items: center; 
-            gap: 6px; 
-            background: rgba(255,255,255,0.05); 
-            padding: 8px 16px; 
-            border-radius: 20px; 
-            border: 1px solid rgba(255,255,255,0.1); 
-        }
+        .drawer-footer { padding: 18px; border-top: 1px solid var(--border-color); font-size: 11.5px; color: var(--text-muted); }
+        .drawer-footer a { color: var(--accent-color); text-decoration: none; display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
 
-        .progress-bar-container { 
-            width: 180px; 
-            height: 4px; 
-            background: rgba(255,255,255,0.1); 
-            border-radius: 10px; 
-            margin-top: 25px; 
-            overflow: hidden; 
-        }
-        
-        .progress-bar { 
-            width: 0%; 
-            height: 100%; 
-            background: linear-gradient(90deg, var(--accent-color), #f59e0b); 
-            animation: loadProgress 3.5s linear forwards; 
-        }
+        /* HEADER */
+        .app-header { display:flex; justify-content:space-between; align-items:center; padding:14px 20px; background:var(--card-bg); border-bottom:1px solid var(--border-color); z-index:100; }
+        .header-brand { display:flex; align-items:center; gap:12px; font-size:16px; font-weight:700; color:#fff; }
+        .header-brand img { width:32px; height:32px; border-radius:50%; background:#000; }
+        .menu-btn { background:none; border:none; color:#fff; font-size:22px; cursor:pointer; }
 
-        @keyframes pulseGlow { 
-            0% { transform: scale(0.85); opacity: 0.5; } 
-            100% { transform: scale(1.2); opacity: 0.95; } 
-        }
-        
-        @keyframes loadProgress { 
-            0% { width: 0%; } 
-            100% { width: 100%; } 
-        }
-        
-        @keyframes floatIcon { 
-            0%, 100% { transform: translateY(0); } 
-            50% { transform: translateY(-5px); color: var(--accent-color); } 
-        }
+        /* SCREEN CONTAINERS */
+        .screen { display:none; flex-direction:column; height:calc(100% - 60px); max-width:900px; margin:0 auto; width:100%; padding:20px; overflow-y:auto; }
+        .screen.active { display:flex; }
 
-        /* AUTH CARD */
-        .auth-container { 
-            display: flex; 
-            flex-direction: column; 
-            align-items: center; 
-            justify-content: center; 
-            flex: 1; 
-            padding: 20px; 
-            width: 100%; 
-            overflow-y: auto; 
-        }
-        
-        .auth-card { 
-            background: var(--card-bg); 
-            border: 1px solid var(--border-color); 
-            border-radius: 24px; 
-            padding: 28px 22px; 
-            width: 100%; 
-            max-width: 420px; 
-            box-shadow: 0 20px 50px rgba(0,0,0,0.5); 
-            text-align: center; 
-            position: relative; 
-        }
-        
-        .brand-header { 
-            display: flex; 
-            flex-direction: column; 
-            align-items: center; 
-            margin-bottom: 18px; 
-        }
-        
-        .brand-icon-box { 
-            width: 80px; 
-            height: 80px; 
-            border-radius: 50%; 
-            background: #000; 
-            border: 2px solid rgba(37, 99, 235, 0.4); 
-            display: flex; 
-            justify-content: center; 
-            align-items: center; 
-            margin-bottom: 12px; 
-            box-shadow: 0 8px 25px rgba(0,0,0,0.6); 
-            overflow: hidden; 
-        }
-        
-        .brand-icon-box img { 
-            width: 90%; 
-            height: 90%; 
-            object-fit: contain; 
-        }
+        /* BATCH SEARCH & CATEGORIES (Matching Image 2) */
+        .search-box { background:var(--card-bg); border:1px solid var(--border-color); border-radius:14px; display:flex; align-items:center; padding:12px 16px; margin-bottom:16px; }
+        .search-box i { color:var(--text-muted); margin-right:12px; font-size: 16px; }
+        .search-box input { background:transparent; border:none; color:#fff; font-size:14px; width:100%; outline:none; }
 
-        .auth-tabs { 
-            display: flex; 
-            background: var(--input-bg); 
-            padding: 4px; 
-            border-radius: 12px; 
-            border: 1px solid var(--border-color); 
-            margin-bottom: 16px; 
-        }
+        /* BATCH CARDS (Matching Image 2 exactly) */
+        .batch-card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 16px; padding: 20px; margin-bottom: 16px; transition: 0.3s; }
+        .batch-card:hover { border-color: rgba(37,99,235,0.5); transform:translateY(-2px); box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
+        .green-tag { background: rgba(16, 185, 129, 0.15); color: var(--success-color); font-size: 11px; font-weight: 700; padding: 4px 10px; border-radius: 20px; display: inline-block; margin-bottom: 10px; }
+        .batch-title { font-size: 18px; font-weight: 800; color: #fff; margin-bottom: 8px; }
+        .faculty-tag { background: rgba(245, 158, 11, 0.1); color: var(--gold-color); font-size: 12px; font-weight: 600; padding: 6px 12px; border-radius: 8px; display: inline-flex; align-items:center; gap:8px; margin-bottom: 12px; width: 100%; border: 1px solid rgba(245, 158, 11, 0.2); }
+        .batch-desc { font-size: 13px; color: var(--text-muted); margin-bottom: 16px; }
+        .batch-footer { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border-color); padding-top: 16px; }
         
-        .auth-tab { 
-            flex: 1; 
-            padding: 10px; 
-            font-size: 13px; 
-            font-weight: 600; 
-            color: var(--text-muted); 
-            border-radius: 8px; 
-            cursor: pointer; 
-            transition: 0.3s; 
-        }
-        
-        .auth-tab.active { 
-            background: var(--accent-color); 
-            color: #fff; 
-        }
+        .btn-group { display: flex; gap: 10px; }
+        .btn-outline { background: rgba(37, 99, 235, 0.1); color: var(--accent-color); border: 1px solid var(--accent-color); padding: 8px 16px; border-radius: 10px; font-size: 13px; font-weight: 700; cursor: pointer; display:flex; align-items:center; gap:6px; transition:0.2s; }
+        .btn-solid { background: var(--accent-color); color: #fff; border: none; padding: 8px 24px; border-radius: 10px; font-size: 13px; font-weight: 700; cursor: pointer; transition:0.2s; }
+        .btn-solid:hover { box-shadow: 0 4px 15px var(--accent-glow); }
 
-        .input-group { 
-            position: relative; 
-            margin-bottom: 12px; 
-            text-align: left; 
-        }
-        
-        .input-group i.left-icon { 
-            position: absolute; 
-            left: 14px; 
-            top: 50%; 
-            transform: translateY(-50%); 
-            color: var(--text-muted); 
-            font-size: 14px; 
-        }
-        
-        .input-group input { 
-            width: 100%; 
-            background: var(--input-bg); 
-            border: 1px solid var(--border-color); 
-            color: var(--text-main); 
-            padding: 12px 40px; 
-            border-radius: 12px; 
-            font-size: 14px; 
-            outline: none; 
-            transition: 0.3s; 
-        }
-        
-        .input-group input:focus { 
-            border-color: var(--accent-color); 
-            box-shadow: 0 0 12px var(--accent-glow); 
-        }
-        
-        .pwd-toggle { 
-            position: absolute; 
-            right: 14px; 
-            top: 50%; 
-            transform: translateY(-50%); 
-            color: var(--text-muted); 
-            cursor: pointer; 
-            font-size: 14px; 
-        }
+        /* SUBJECTS GRID (DASHBOARD) */
+        .dash-header { background: linear-gradient(to right, rgba(37,99,235,0.2), transparent); border: 1px solid var(--accent-color); padding: 16px; border-radius: 16px; margin-bottom: 20px; display:flex; justify-content:space-between; align-items:center; }
+        .subject-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 14px; }
+        .subject-card { background: var(--input-bg); border: 1px solid var(--border-color); border-radius: 16px; padding: 20px 14px; text-align: center; cursor: pointer; transition: 0.2s; }
+        .subject-card:hover { border-color: var(--accent-color); background: rgba(37, 99, 235, 0.05); transform:translateY(-3px); }
+        .subject-icon { font-size: 34px; margin-bottom: 12px; }
+        .subject-name { font-size: 14px; font-weight: 700; color: #fff; }
+        .subject-teacher { font-size: 11px; color: var(--text-muted); margin-top: 6px; }
 
-        .signup-extra-fields { 
-            display: none; 
-            flex-direction: column; 
-            gap: 0px; 
-        }
+        /* CHAT SCREEN */
+        .chat-header { background: var(--card-bg); border-bottom: 1px solid var(--border-color); padding: 12px 20px; display:flex; align-items:center; justify-content:space-between; z-index:10; }
+        .chat-teacher-info { display:flex; align-items:center; gap:12px; }
+        .teacher-avatar { width:40px; height:40px; border-radius:50%; border:2px solid var(--accent-color); object-fit:cover; }
         
-        .forgot-link { 
-            font-size: 11.5px; 
-            color: var(--accent-color); 
-            text-decoration: none; 
-            display: block; 
-            text-align: right; 
-            margin: -6px 0 12px 0; 
-            cursor: pointer; 
-        }
+        .chat-box { flex:1; overflow-y:auto; padding:20px; display:flex; flex-direction:column; gap:16px; background:var(--chat-bg); }
+        .msg { padding:14px 18px; border-radius:16px; font-size:14px; line-height:1.5; max-width:85%; word-wrap:break-word; }
+        .msg.user { background:var(--accent-color); color:#fff; align-self:flex-end; border-bottom-right-radius:4px; }
+        .msg.ai { background:var(--card-bg); color:var(--text-main); border:1px solid var(--border-color); align-self:flex-start; border-bottom-left-radius:4px; display:flex; flex-direction:column; gap:8px;}
+        .ai-header { font-size:11px; font-weight:700; color:var(--gold-color); display:flex; align-items:center; gap:6px; border-bottom:1px solid rgba(255,255,255,0.05); padding-bottom:6px; }
+        .msg.system { align-self:center; background:rgba(239, 68, 68, 0.1); border:1px solid #ef4444; color:#fca5a5; font-size:12px; text-align:center; max-width:90%; padding:10px 16px; }
 
-        .btn-primary { 
-            width: 100%; 
-            background: var(--accent-color); 
-            color: #fff; 
-            font-weight: 700; 
-            padding: 13px; 
-            border: none; 
-            border-radius: 12px; 
-            cursor: pointer; 
-            font-size: 14px; 
-            letter-spacing: 0.5px; 
-            box-shadow: 0 8px 20px var(--accent-glow); 
-            transition: 0.2s; 
-            margin-top: 8px; 
-        }
-        
-        .btn-primary:active { 
-            transform: scale(0.98); 
-        }
-        
-        .btn-primary:disabled { 
-            opacity: 0.6; 
-            cursor: not-allowed; 
-        }
-        
-        .btn-danger { 
-            background: #ef4444; 
-            box-shadow: 0 8px 20px rgba(239, 68, 68, 0.4); 
-        }
+        .chat-input { background:var(--card-bg); border-top:1px solid var(--border-color); padding:12px 20px; display:flex; gap:10px; align-items:center; }
+        .chat-input input { flex:1; background:var(--input-bg); border:1px solid var(--border-color); color:#fff; padding:14px 16px; border-radius:12px; font-size:14.5px; outline:none; }
+        .chat-input button { background:var(--accent-color); color:#fff; border:none; width:46px; height:46px; border-radius:12px; font-size:18px; cursor:pointer; display:flex; justify-content:center; align-items:center; }
+        .chat-input button:active { transform:scale(0.95); }
 
-        .auth-footer-support { 
-            margin-top: 24px; 
-            border-top: 1px solid var(--border-color); 
-            padding-top: 16px; 
-            display: flex; 
-            flex-direction: column; 
-            align-items: center; 
-            gap: 8px; 
-        }
-        
-        .auth-footer-support p { 
-            font-size: 11px; 
-            color: var(--text-muted); 
-            font-weight: 600; 
-            margin: 0; 
-        }
-        
-        .auth-footer-socials { 
-            display: flex; 
-            gap: 14px; 
-        }
-        
-        .auth-footer-socials a { 
-            color: var(--text-muted); 
-            font-size: 16px; 
-            transition: 0.2s; 
-        }
-        
-        .auth-footer-socials a:hover { 
-            color: var(--accent-color); 
-            transform: scale(1.1); 
-        }
-
-        /* 🚀 BATCHES DASHBOARD SCREEN */
-        #batches-screen { 
-            display: none; 
-            flex-direction: column; 
-            height: 100%; 
-            max-width: 850px; 
-            margin: 0 auto; 
-            width: 100%; 
-            padding: 14px; 
-            overflow-y: auto; 
-        }
-        
-        .batches-header { 
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center; 
-            margin-bottom: 12px; 
-            background: var(--card-bg); 
-            padding: 12px 16px; 
-            border-radius: 16px; 
-            border: 1px solid var(--border-color); 
-        }
-        
-        .category-scroll-bar { 
-            display: flex; 
-            gap: 8px; 
-            overflow-x: auto; 
-            padding-bottom: 10px; 
-            margin-bottom: 12px; 
-            scrollbar-width: none; 
-        }
-        
-        .category-scroll-bar::-webkit-scrollbar { 
-            display: none; 
-        }
-        
-        .cat-chip { 
-            background: var(--input-bg); 
-            border: 1px solid var(--border-color); 
-            color: var(--text-muted); 
-            padding: 7px 14px; 
-            border-radius: 20px; 
-            font-size: 11.5px; 
-            font-weight: 700; 
-            white-space: nowrap; 
-            cursor: pointer; 
-            transition: 0.2s; 
-        }
-        
-        .cat-chip.active { 
-            background: var(--accent-color); 
-            color: #fff; 
-            border-color: var(--accent-color); 
-            box-shadow: 0 4px 15px var(--accent-glow); 
-        }
-
-        .search-batches-box { 
-            position: relative; 
-            margin-bottom: 14px; 
-        }
-        
-        .search-batches-box input { 
-            width: 100%; 
-            background: var(--card-bg); 
-            border: 1px solid var(--border-color); 
-            color: var(--text-main); 
-            padding: 12px 16px 12px 42px; 
-            border-radius: 14px; 
-            font-size: 13.5px; 
-            outline: none; 
-        }
-        
-        .search-batches-box i { 
-            position: absolute; 
-            left: 16px; 
-            top: 50%; 
-            transform: translateY(-50%); 
-            color: var(--text-muted); 
-        }
-
-        .batch-card { 
-            background: linear-gradient(135deg, rgba(15, 23, 42, 0.95), rgba(30, 41, 59, 0.95)); 
-            border: 1px solid rgba(37, 99, 235, 0.3); 
-            border-radius: 18px; 
-            padding: 18px; 
-            margin-bottom: 14px; 
-            box-shadow: 0 10px 30px rgba(0,0,0,0.4); 
-            position: relative; 
-            overflow: hidden; 
-            transition: 0.3s; 
-        }
-        
-        .batch-card:hover { 
-            border-color: var(--accent-color); 
-            transform: translateY(-2px); 
-        }
-        
-        .batch-tag { 
-            background: rgba(16, 185, 129, 0.15); 
-            color: var(--success-color); 
-            font-size: 10.5px; 
-            font-weight: 700; 
-            padding: 4px 10px; 
-            border-radius: 20px; 
-            display: inline-block; 
-            margin-bottom: 8px; 
-            border: 1px solid rgba(16, 185, 129, 0.3); 
-        }
-        
-        .batch-title { 
-            font-size: 16.5px; 
-            font-weight: 800; 
-            color: #fff; 
-            margin-bottom: 4px; 
-        }
-        
-        .batch-desc { 
-            font-size: 12px; 
-            color: var(--text-muted); 
-            margin-bottom: 12px; 
-            line-height: 1.4; 
-        }
-        
-        .batch-teachers-strip { 
-            font-size: 11px; 
-            color: var(--gold-color); 
-            font-weight: 600; 
-            margin-bottom: 12px; 
-            background: rgba(245, 158, 11, 0.1); 
-            padding: 6px 10px; 
-            border-radius: 8px; 
-            border: 1px solid rgba(245, 158, 11, 0.2); 
-        }
-        
-        .batch-footer { 
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center; 
-            border-top: 1px solid var(--border-color); 
-            padding-top: 12px; 
-            flex-wrap: wrap; 
-            gap: 10px; 
-        }
-        
-        .batch-price { 
-            font-size: 14.5px; 
-            font-weight: 800; 
-            color: var(--success-color); 
-        }
-        
-        .batch-actions { 
-            display: flex; 
-            gap: 8px; 
-            flex-wrap: wrap; 
-        }
-        
-        .btn-outline { 
-            background: transparent; 
-            color: #38bdf8; 
-            border: 1px solid rgba(56, 189, 248, 0.5); 
-            padding: 8px 12px; 
-            border-radius: 10px; 
-            font-size: 11.5px; 
-            font-weight: 700; 
-            cursor: pointer; 
-            transition: 0.2s; 
-        }
-        
-        .btn-outline:hover { 
-            background: rgba(56, 189, 248, 0.1); 
-        }
-        
-        .btn-buy { 
-            background: var(--accent-color); 
-            color: #fff; 
-            border: none; 
-            padding: 8px 16px; 
-            border-radius: 10px; 
-            font-size: 11.5px; 
-            font-weight: 700; 
-            cursor: pointer; 
-            box-shadow: 0 4px 15px var(--accent-glow); 
-        }
-
-        /* SUBJECT EXPLORER UI */
-        .subject-card { 
-            background: var(--input-bg); 
-            border: 1px solid var(--border-color); 
-            border-radius: 12px; 
-            padding: 14px; 
-            margin-bottom: 12px; 
-            display: flex; 
-            align-items: center; 
-            justify-content: space-between; 
-            cursor: pointer; 
-            transition: 0.2s; 
-            text-align: left; 
-        }
-        
-        .subject-card:hover { 
-            border-color: var(--accent-color); 
-            transform: translateX(5px); 
-            background: rgba(37, 99, 235, 0.05); 
-        }
-        
-        .subject-icon { 
-            font-size: 24px; 
-            color: var(--accent-color); 
-            margin-right: 14px; 
-            width: 30px; 
-            text-align: center; 
-        }
-        
-        .teacher-tag { 
-            display: inline-block; 
-            font-size: 11px; 
-            color: var(--gold-color); 
-            background: rgba(245, 158, 11, 0.1); 
-            padding: 4px 8px; 
-            border-radius: 6px; 
-            margin-top: 4px; 
-            border: 1px solid rgba(245, 158, 11, 0.3); 
-            font-weight: 600;
-        }
-
-        /* MAIN CHAT DASHBOARD */
-        #main-dashboard { 
-            display: none; 
-            flex-direction: column; 
-            height: 100%; 
-            max-width: 850px; 
-            margin: 0 auto; 
-            width: 100%; 
-            position: relative; 
-            padding: 10px; 
-        }
-        
-        .header { 
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center; 
-            padding: 10px 14px; 
-            background: var(--card-bg); 
-            border-radius: 18px; 
-            border: 1px solid var(--border-color); 
-            margin-bottom: 8px; 
-            flex-shrink: 0; 
-        }
-        
-        .header-brand { 
-            display: flex; 
-            align-items: center; 
-            gap: 10px; 
-        }
-        
-        .menu-btn { 
-            background: none; 
-            border: none; 
-            color: var(--text-main); 
-            font-size: 18px; 
-            cursor: pointer; 
-            padding: 6px; 
-        }
-        
-        .header-logo { 
-            width: 38px; 
-            height: 38px; 
-            border-radius: 50%; 
-            background: #000; 
-            border: 1px solid rgba(255,255,255,0.2); 
-            display: flex; 
-            justify-content: center; 
-            align-items: center; 
-            overflow: hidden; 
-        }
-        
-        .header-logo img { 
-            width: 90%; 
-            height: 90%; 
-            object-fit: contain; 
-        }
-        
-        .user-badge { 
-            background: rgba(245, 158, 11, 0.15); 
-            border: 1px solid rgba(245, 158, 11, 0.4); 
-            color: var(--gold-color); 
-            padding: 5px 10px; 
-            border-radius: 20px; 
-            font-size: 11px; 
-            font-weight: 700; 
-            cursor: pointer; 
-        }
-
-        .course-bar-toggle { 
-            background: var(--card-bg); 
-            border: 1px solid var(--border-color); 
-            border-radius: 14px; 
-            padding: 10px 14px; 
-            font-size: 12px; 
-            color: var(--text-main); 
-            font-weight: 600; 
-            margin-bottom: 8px; 
-            display: flex; 
-            align-items: center; 
-            justify-content: space-between; 
-            cursor: pointer; 
-            flex-shrink: 0; 
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3); 
-        }
-
-        /* CHAT CONTAINER */
-        .chat-container { 
-            background: var(--chat-bg); 
-            border: 1px solid var(--border-color); 
-            border-radius: 18px; 
-            padding: 14px; 
-            flex: 1; 
-            overflow-y: auto; 
-            display: flex; 
-            flex-direction: column; 
-            gap: 10px; 
-            margin-bottom: 8px; 
-            min-height: 150px; 
-        }
-        
-        .msg { 
-            padding: 12px 15px; 
-            border-radius: 16px; 
-            font-size: 13.5px; 
-            line-height: 1.5; 
-            max-width: 88%; 
-            word-break: break-word; 
-            overflow-wrap: break-word; 
-            animation: popIn 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards; 
-            transform-origin: bottom left; 
-        }
-        
-        .msg.user { 
-            background: var(--accent-color); 
-            color: #fff; 
-            align-self: flex-end; 
-            border-bottom-right-radius: 4px; 
-            transform-origin: bottom right; 
-            box-shadow: 0 4px 15px var(--accent-glow); 
-        }
-        
-        .msg.ai { 
-            background: var(--card-bg); 
-            color: var(--text-main); 
-            border: 1px solid var(--border-color); 
-            align-self: flex-start; 
-            border-bottom-left-radius: 4px; 
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2); 
-            width: 100%; 
-            max-width: 92%; 
-        }
-        
-        .msg table { 
-            width: 100%; 
-            border-collapse: collapse; 
-            margin-top: 10px; 
-            font-size: 12.5px; 
-        }
-        
-        .msg th, .msg td { 
-            border: 1px solid var(--border-color); 
-            padding: 8px; 
-            text-align: left; 
-        }
-        
-        .msg th { 
-            background: rgba(37, 99, 235, 0.1); 
-            color: var(--accent-color); 
-            font-weight: 700; 
-        }
-
-        .msg.guide-ai { 
-            background: rgba(245, 158, 11, 0.12); 
-            border: 1px solid rgba(245, 158, 11, 0.5); 
-            color: var(--gold-color); 
-            align-self: flex-start; 
-            width: 100%; 
-            max-width: 92%; 
-        }
-        
-        .msg.error { 
-            background: rgba(239, 68, 68, 0.15); 
-            border: 1px solid #ef4444; 
-            color: #fca5a5; 
-            align-self: center; 
-            width: 100%; 
-            text-align: center; 
-        }
-        
-        .msg-image { 
-            max-width: 100%; 
-            border-radius: 12px; 
-            margin-top: 8px; 
-            border: 1px solid var(--border-color); 
-        }
-
-        @keyframes popIn { 
-            0% { opacity: 0; transform: scale(0.8) translateY(10px); } 
-            100% { opacity: 1; transform: scale(1) translateY(0); } 
-        }
-
-        .ai-tools-menu { 
-            display: none; 
-            position: absolute; 
-            bottom: 60px; 
-            left: 10px; 
-            background: var(--card-bg); 
-            border: 1px solid var(--border-color); 
-            border-radius: 16px; 
-            padding: 8px; 
-            box-shadow: 0 15px 35px rgba(0,0,0,0.5); 
-            z-index: 500; 
-            width: 260px; 
-            flex-direction: column; 
-            gap: 4px; 
-        }
-        
-        .tool-btn { 
-            display: flex; 
-            align-items: center; 
-            gap: 10px; 
-            padding: 9px 12px; 
-            border-radius: 10px; 
-            background: transparent; 
-            border: none; 
-            color: var(--text-main); 
-            font-size: 12px; 
-            cursor: pointer; 
-            text-align: left; 
-            transition: 0.2s; 
-        }
-        
-        .tool-btn:hover { 
-            background: rgba(37, 99, 235, 0.2); 
-            color: var(--accent-color); 
-        }
-
-        .chat-input-bar { 
-            display: flex; 
-            align-items: center; 
-            background: var(--card-bg); 
-            border: 1px solid var(--border-color); 
-            border-radius: 16px; 
-            padding: 5px 6px 5px 10px; 
-            gap: 6px; 
-            position: relative; 
-            flex-shrink: 0; 
-        }
-        
-        .chat-input-bar textarea { 
-            flex: 1; 
-            background: transparent; 
-            border: none; 
-            color: var(--text-main); 
-            outline: none; 
-            font-size: 13.5px; 
-            min-width: 0; 
-            word-break: break-word; 
-            resize: none; 
-            max-height: 100px; 
-            overflow-y: auto; 
-            padding-top: 6px; 
-        }
-        
-        .action-icon-btn { 
-            background: rgba(255,255,255,0.06); 
-            color: var(--text-muted); 
-            border: 1px solid var(--border-color); 
-            width: 36px; 
-            height: 36px; 
-            border-radius: 10px; 
-            display: flex; 
-            justify-content: center; 
-            align-items: center; 
-            cursor: pointer; 
-            transition: 0.2s; 
-            flex-shrink: 0; 
-        }
-        
-        .action-icon-btn:hover { 
-            color: var(--text-main); 
-            background: rgba(255,255,255,0.12); 
-        }
-        
-        .send-btn { 
-            background: var(--accent-color); 
-            color: #fff; 
-            border: none; 
-            width: 36px; 
-            height: 36px; 
-            border-radius: 10px; 
-            display: flex; 
-            justify-content: center; 
-            align-items: center; 
-            cursor: pointer; 
-            transition: 0.2s; 
-            flex-shrink: 0; 
-        }
-        
-        .send-btn:active { 
-            transform: scale(0.9); 
-        }
-
-        .voice-active { 
-            background: rgba(239, 68, 68, 0.2); 
-            color: #ef4444; 
-            border-color: #ef4444; 
-        }
-        
-        .delete-chat-icon { 
-            color: #ef4444; 
-            opacity: 0.7; 
-            font-size: 13px; 
-            padding: 4px; 
-            cursor: pointer; 
-        }
-        
-        .delete-chat-icon:hover { 
-            opacity: 1; 
-        }
-
-        #imagePreview { 
-            display: none; 
-            padding: 6px 12px; 
-            background: var(--card-bg); 
-            border-radius: 10px; 
-            font-size: 12px; 
-            color: var(--accent-color); 
-            margin-bottom: 8px; 
-            align-items: center; 
-            justify-content: space-between; 
-            flex-shrink: 0; 
-        }
-
-        /* SIDE DRAWER MENU */
-        .drawer-overlay { 
-            position: fixed; 
-            top: 0; 
-            left: 0; 
-            width: 100%; 
-            height: 100%; 
-            background: rgba(0,0,0,0.75); 
-            z-index: 1000; 
-            display: none; 
-        }
-        
-        .drawer { 
-            position: fixed; 
-            top: 0; 
-            left: -310px; 
-            width: 310px; 
-            height: 100%; 
-            background: var(--card-bg); 
-            border-right: 1px solid var(--border-color); 
-            z-index: 1001; 
-            transition: 0.3s; 
-            padding: 18px; 
-            display: flex; 
-            flex-direction: column; 
-            overflow-y: auto; 
-        }
-        
-        .drawer.open { 
-            left: 0; 
-        }
-        
-        .drawer-header { 
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center; 
-            padding-bottom: 12px; 
-            border-bottom: 1px solid var(--border-color); 
-            margin-bottom: 12px; 
-        }
-        
-        .profile-card { 
-            background: linear-gradient(135deg, rgba(37, 99, 235, 0.2), rgba(245, 158, 11, 0.15)); 
-            border: 1px solid var(--border-color); 
-            border-radius: 16px; 
-            padding: 14px; 
-            margin-bottom: 14px; 
-            text-align: left; 
-            position: relative; 
-        }
-        
-        .profile-header { 
-            display: flex; 
-            align-items: center; 
-            gap: 12px; 
-        }
-        
-        .profile-avatar-box { 
-            position: relative; 
-            width: 46px; 
-            height: 46px; 
-        }
-        
-        .profile-avatar-img { 
-            width: 100%; 
-            height: 100%; 
-            border-radius: 50%; 
-            object-fit: cover; 
-            border: 2px solid var(--accent-color); 
-        }
-        
-        .profile-avatar-initial { 
-            width: 100%; 
-            height: 100%; 
-            border-radius: 50%; 
-            background: var(--accent-color); 
-            color: #fff; 
-            display: flex; 
-            justify-content: center; 
-            align-items: center; 
-            font-weight: 800; 
-            font-size: 18px; 
-            border: 2px solid rgba(255,255,255,0.2); 
-        }
-        
-        .avatar-upload-icon { 
-            position: absolute; 
-            bottom: -2px; 
-            right: -2px; 
-            background: var(--gold-color); 
-            color: #000; 
-            width: 18px; 
-            height: 18px; 
-            border-radius: 50%; 
-            font-size: 10px; 
-            display: flex; 
-            justify-content: center; 
-            align-items: center; 
-            cursor: pointer; 
-        }
-        
-        .edit-profile-btn { 
-            position: absolute; 
-            top: 12px; 
-            right: 12px; 
-            color: var(--text-muted); 
-            font-size: 13px; 
-            cursor: pointer; 
-        }
-
-        .drawer-item { 
-            padding: 11px 12px; 
-            border-radius: 10px; 
-            color: var(--text-main); 
-            font-size: 12.5px; 
-            display: flex; 
-            align-items: center; 
-            gap: 12px; 
-            cursor: pointer; 
-            transition: 0.2s; 
-            margin-bottom: 6px; 
-        }
-        
-        .drawer-item:hover { 
-            background: rgba(255,255,255,0.06); 
-        }
-
-        .history-title { 
-            font-size: 11px; 
-            font-weight: 700; 
-            color: var(--text-muted); 
-            text-transform: uppercase; 
-            margin: 12px 0 6px 4px; 
-        }
-        
-        .history-list { 
-            display: flex; 
-            flex-direction: column; 
-            gap: 6px; 
-            overflow-y: auto; 
-            max-height: 160px; 
-        }
-        
-        .history-item { 
-            font-size: 12px; 
-            color: var(--text-muted); 
-            padding: 8px 10px; 
-            border-radius: 8px; 
-            background: var(--chat-bg); 
-            border: 1px solid var(--border-color); 
-            white-space: nowrap; 
-            overflow: hidden; 
-            text-overflow: ellipsis; 
-            cursor: pointer; 
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center; 
-            transition: 0.2s; 
-        }
-        
-        .history-item:hover, .history-item.active-session { 
-            background: rgba(37, 99, 235, 0.15); 
-            color: var(--text-main); 
-            border-color: var(--accent-color); 
-        }
-
-        /* MODALS */
-        .modal-overlay { 
-            position: fixed; 
-            top: 0; 
-            left: 0; 
-            width: 100%; 
-            height: 100%; 
-            background: rgba(0,0,0,0.85); 
-            z-index: 2000; 
-            display: none; 
-            justify-content: center; 
-            align-items: center; 
-            padding: 16px; 
-        }
-        
-        .modal-card { 
-            background: var(--card-bg); 
-            border: 1px solid var(--border-color); 
-            border-radius: 20px; 
-            padding: 22px; 
-            max-width: 480px; 
-            width: 100%; 
-            text-align: center; 
-            position: relative; 
-            max-height: 92vh; 
-            display: flex; 
-            flex-direction: column; 
-            animation: popIn 0.3s ease; 
-        }
-        
-        .tier-card-option { 
-            background: var(--chat-bg); 
-            border: 1px solid var(--border-color); 
-            border-radius: 12px; 
-            padding: 12px; 
-            margin-bottom: 10px; 
-            text-align: left; 
-            cursor: pointer; 
-            transition: 0.2s; 
-        }
-        
-        .tier-card-option:hover, .tier-card-option.selected { 
-            border-color: var(--accent-color); 
-            background: rgba(37, 99, 235, 0.15); 
-        }
-        
-        .tier-header { 
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center; 
-            margin-bottom: 4px; 
-        }
-        
-        .tier-name { 
-            font-size: 13.5px; 
-            font-weight: 800; 
-            color: #fff; 
-        }
-        
-        .tier-price { 
-            font-size: 14px; 
-            font-weight: 800; 
-            color: var(--success-color); 
-        }
-        
-        .tier-desc { 
-            font-size: 11px; 
-            color: var(--text-muted); 
-            line-height: 1.3; 
-        }
-
-        .setting-item { 
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center; 
-            margin-bottom: 12px; 
-            font-size: 13.5px; 
-            color: var(--text-main); 
-            text-align: left; 
-        }
-        
-        .switch { 
-            position: relative; 
-            display: inline-block; 
-            width: 38px; 
-            height: 22px; 
-            flex-shrink: 0; 
-        }
-        
-        .switch input { 
-            opacity: 0; 
-            width: 0; 
-            height: 0; 
-        }
-        
-        .slider { 
-            position: absolute; 
-            cursor: pointer; 
-            top: 0; 
-            left: 0; 
-            right: 0; 
-            bottom: 0; 
-            background-color: var(--border-color); 
-            transition: .4s; 
-            border-radius: 34px; 
-        }
-        
-        .slider:before { 
-            position: absolute; 
-            content: ""; 
-            height: 16px; 
-            width: 16px; 
-            left: 3px; 
-            bottom: 3px; 
-            background-color: white; 
-            transition: .4s; 
-            border-radius: 50%; 
-        }
-        
-        input:checked + .slider { 
-            background-color: var(--success-color); 
-        }
-        
-        input:checked + .slider:before { 
-            transform: translateX(16px); 
-        }
-
-        .theme-circle { 
-            width: 24px; 
-            height: 24px; 
-            border-radius: 50%; 
-            display: inline-block; 
-            cursor: pointer; 
-            border: 2px solid transparent; 
-            margin-left: 6px; 
-        }
-        
-        .theme-circle.active { 
-            border-color: #fff; 
-            transform: scale(1.1); 
-        }
-
-        .syllabus-task { 
-            display: flex; 
-            align-items: center; 
-            gap: 10px; 
-            background: var(--chat-bg); 
-            padding: 10px; 
-            border: 1px solid var(--border-color); 
-            border-radius: 10px; 
-            margin-bottom: 6px; 
-            text-align: left; 
-        }
-        
-        .syllabus-task input[type="checkbox"] { 
-            width: 16px; 
-            height: 16px; 
-            accent-color: var(--success-color); 
-        }
-        
-        .syllabus-task span { 
-            font-size: 12.5px; 
-            color: var(--text-main); 
-            flex: 1; 
-        }
-        
-        .syllabus-task.completed span { 
-            text-decoration: line-through; 
-            color: var(--text-muted); 
-        }
-
-        #editProfileModal .modal-card, #settingsModal .modal-card, #syllabusModal .modal-card { 
-            text-align: left; 
-        }
-        
-        footer { 
-            display: none; 
-        }
+        /* PRICING MODAL */
+        .modal-overlay { position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); z-index:2000; display:none; justify-content:center; align-items:center; padding:16px; }
+        .modal-card { background:var(--card-bg); border:1px solid var(--border-color); border-radius:24px; padding:24px; width:100%; max-width:400px; position:relative; }
+        .plan-card { border:1px solid var(--border-color); background:var(--input-bg); border-radius:12px; padding:16px; margin-bottom:12px; cursor:pointer; transition:0.2s; display:flex; justify-content:space-between; align-items:center; }
+        .plan-card:hover, .plan-card.active { border-color:var(--accent-color); background:rgba(37, 99, 235, 0.1); }
     </style>
 </head>
 <body>
 
-    <!-- CUSTOM BRANDED NOTIFICATION -->
-    <div id="custom-toast">
-        <i class="fa-solid fa-circle-check toast-icon success"></i>
-        <span id="toast-message">Notification</span>
-    </div>
+    <div id="custom-toast"><i class="fa-solid fa-circle-check toast-icon success"></i> <span id="toast-message">Notification</span></div>
 
-    <!-- CINEMATIC SPLASH ANIMATION -->
-    <div id="splash-screen">
-        <div class="splash-logo-container">
-            <div class="splash-logo-glow"></div>
-            <div class="splash-logo">
-                <img src="./logo.png" alt="TicBull Logo" onerror="this.src='https://raw.githubusercontent.com/yuviyadav16/ticbull-academy/main/logo.png'">
-            </div>
+    <!-- MAIN APP HEADER -->
+    <header class="app-header" id="mainHeader">
+        <div class="header-brand">
+            <img src="https://raw.githubusercontent.com/yuviyadav16/ticbull-academy/main/logo.png" onerror="this.style.display='none'">
+            TicBull Batches & Goals
         </div>
-        <div class="splash-title">TicBull Academy</div>
-        <div class="developer-tag"><i class="fa-solid fa-code"></i> Developed by MrYuviYadav</div>
-        
-        <div class="splash-socials">
-            <a href="https://youtube.com/@mryuviyadav" target="_blank" style="color:#ff0000;" title="YouTube"><i class="fa-brands fa-youtube"></i></a>
-            <a href="https://www.instagram.com/mryuvi_yadav" target="_blank" style="color:#e1306c;" title="Instagram"><i class="fa-brands fa-instagram"></i></a>
-            <a href="https://t.me/mryuviyadav" target="_blank" style="color:#0088cc;" title="Telegram"><i class="fa-brands fa-telegram"></i></a>
-            <a href="https://x.com/mryuviyadav" target="_blank" title="X"><i class="fa-brands fa-x-twitter"></i></a>
-            <a href="https://facebook.com/mryuviyadav" target="_blank" style="color:#1877f2;" title="Facebook"><i class="fa-brands fa-facebook"></i></a>
-        </div>
-        
-        <div class="support-info-splash">
-            <i class="fa-solid fa-headset"></i> Support: ticbull.support@gmail.com
-        </div>
+        <button class="menu-btn" onclick="toggleDrawer()"><i class="fa-solid fa-bars"></i></button>
+    </header>
 
-        <div class="progress-bar-container">
-            <div class="progress-bar"></div>
-        </div>
-    </div>
-
-    <!-- AUTH SCREEN -->
-    <div class="auth-container" id="auth-screen">
-        <div class="auth-card">
-            <div class="brand-header">
-                <div class="brand-icon-box">
-                    <img src="./logo.png" alt="Logo" onerror="this.src='https://raw.githubusercontent.com/yuviyadav16/ticbull-academy/main/logo.png'">
-                </div>
-                <h2 style="font-size:20px; font-weight:800;">TicBull Academy</h2>
-                <p style="font-size:12px; color:var(--text-muted); margin-top:3px;">AI Student Portal & Exam Engine</p>
-            </div>
-
-            <div class="auth-tabs">
-                <div class="auth-tab active" id="tab-login" onclick="switchAuth('login')">Sign In</div>
-                <div class="auth-tab" id="tab-signup" onclick="switchAuth('signup')">Sign Up</div>
-            </div>
-
-            <div class="signup-extra-fields" id="signupFields">
-                <div class="input-group">
-                    <i class="fa-regular fa-user left-icon"></i>
-                    <input type="text" id="studentName" placeholder="Full Student Name">
-                </div>
-                <div class="input-group">
-                    <i class="fa-regular fa-calendar left-icon"></i>
-                    <input type="date" id="studentDob" placeholder="Date of Birth">
-                </div>
-            </div>
-
-            <div class="input-group">
-                <i class="fa-regular fa-envelope left-icon"></i>
-                <input type="email" id="email" placeholder="Student Email ID">
-            </div>
-            
-            <div class="input-group">
-                <i class="fa-solid fa-lock left-icon"></i>
-                <input type="password" id="password" placeholder="Password">
-                <i class="fa-solid fa-eye pwd-toggle" id="pwdToggle" onclick="togglePassword('password')"></i>
-            </div>
-
-            <span class="forgot-link" onclick="openForgotModal()"><i class="fa-solid fa-key"></i> Forgot Password?</span>
-
-            <button class="btn-primary" id="authSubmitBtn" onclick="initiateAuthWithOTP()">SEND VERIFICATION OTP</button>
-            
-            <div class="auth-footer-support">
-                <p>Need Help? Contact TicBull Support</p>
-                <div class="auth-footer-socials">
-                    <a href="mailto:ticbull.support@gmail.com" title="Email Support"><i class="fa-solid fa-envelope"></i></a>
-                    <a href="https://t.me/ticbullteam" title="Telegram Support"><i class="fa-brands fa-telegram"></i></a>
-                    <a href="https://www.instagram.com/ticbull" title="Instagram Support"><i class="fa-brands fa-instagram"></i></a>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- FORGOT PASSWORD MODAL -->
-    <div class="modal-overlay" id="forgotModal">
-        <div class="modal-card">
-            <i class="fa-solid fa-xmark" style="position:absolute; right:16px; top:16px; color:var(--text-muted); cursor:pointer;" onclick="document.getElementById('forgotModal').style.display='none'; playClickSound();"></i>
-            <h3 style="color:var(--text-main); font-size:18px;">🔑 Reset Password</h3>
-            <p style="font-size:11.5px; color:var(--text-muted); margin-top:4px;">Enter email and a new password to reset.</p>
-            
-            <div class="input-group" style="margin-top:16px;">
-                <i class="fa-regular fa-envelope left-icon"></i>
-                <input type="email" id="forgotEmail" placeholder="Registered Email ID">
-            </div>
-            <div class="input-group">
-                <i class="fa-solid fa-lock left-icon"></i>
-                <input type="password" id="forgotNewPassword" placeholder="Enter New Password">
-                <i class="fa-solid fa-eye pwd-toggle" onclick="togglePassword('forgotNewPassword')"></i>
-            </div>
-
-            <button class="btn-primary" id="forgotBtn" onclick="initiateForgotOTP()">SEND RESET OTP</button>
-        </div>
-    </div>
-
-    <!-- DELETE ACCOUNT MODAL -->
-    <div class="modal-overlay" id="deleteAccountModal">
-        <div class="modal-card">
-            <i class="fa-solid fa-xmark" style="position:absolute; right:16px; top:16px; color:var(--text-muted); cursor:pointer;" onclick="document.getElementById('deleteAccountModal').style.display='none'; playClickSound();"></i>
-            <h3 style="color:#ef4444; font-size:18px;"><i class="fa-solid fa-triangle-exclamation"></i> Delete Account</h3>
-            <p style="font-size:11.5px; color:var(--text-muted); margin-top:4px;">WARNING: Deleting your account will permanently erase your subscription, chats, and all data. This cannot be undone.</p>
-            
-            <div class="input-group" style="margin-top:16px;">
-                <i class="fa-regular fa-envelope left-icon"></i>
-                <input type="email" id="delAccEmail" disabled style="opacity:0.7;">
-            </div>
-            
-            <div id="delAccOtpSection" style="display:none;">
-                <div class="input-group">
-                    <i class="fa-solid fa-shield-halved left-icon"></i>
-                    <input type="text" id="delAccOtp" placeholder="Enter 6-Digit Deletion OTP" maxlength="6" style="text-align:center; font-weight:800; letter-spacing:3px;">
-                </div>
-                <button class="btn-primary btn-danger" id="confirmDeleteAccBtn" onclick="verifyAndDeleteAccount()">PERMANENTLY DELETE ACCOUNT</button>
-            </div>
-
-            <button class="btn-primary" id="sendDelOtpBtn" onclick="initiateAccountDeletion()">SEND DELETION OTP</button>
-        </div>
-    </div>
-
-    <!-- OTP VERIFICATION MODAL -->
-    <div class="modal-overlay" id="otpModal">
-        <div class="modal-card">
-            <i class="fa-solid fa-xmark" style="position:absolute; right:16px; top:16px; color:var(--text-muted); cursor:pointer;" onclick="closeOtpModal()"></i>
-            <h3 style="color:var(--text-main); font-size:18px;">📧 Verify Email OTP</h3>
-            <p style="font-size:11.5px; color:var(--text-muted); margin-top:4px;">Enter the 6-digit OTP sent to your Email ID</p>
-
-            <div class="input-group" style="margin-top:16px;">
-                <i class="fa-solid fa-shield-halved left-icon"></i>
-                <input type="text" id="otpInput" placeholder="Enter 6-Digit OTP" maxlength="6" style="text-align:center; font-weight:800; letter-spacing:3px;">
-            </div>
-
-            <button class="btn-primary" id="verifyBtn" onclick="verifyOTPAndLogin()">VERIFY & CONTINUE</button>
-        </div>
-    </div>
-    
-    <!-- DELETE WARNING MODAL FOR CHAT -->
-    <div class="modal-overlay" id="deleteWarningModal">
-        <div class="modal-card" style="max-width:320px;">
-            <i class="fa-solid fa-triangle-exclamation" style="font-size:40px; color:#ef4444; margin-bottom:12px;"></i>
-            <h3 style="color:var(--text-main); font-size:18px;">Delete Chat Session?</h3>
-            <p style="font-size:12px; color:var(--text-muted); margin:8px 0 16px;">Are you sure you want to permanently delete this chat from your history? ⚠️</p>
-            <div style="display:flex; gap:10px;">
-                <button class="btn-primary" style="background:transparent; border:1px solid var(--border-color); color:var(--text-main);" onclick="document.getElementById('deleteWarningModal').style.display='none'; playClickSound();">CANCEL</button>
-                <button class="btn-primary" style="background:#ef4444;" id="confirmDeleteBtn">DELETE</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- 🚀 1. PW STYLE 300+ BATCHES DASHBOARD SCREEN -->
-    <div id="batches-screen">
-        <div class="batches-header">
-            <div style="display:flex; align-items:center; gap:10px;">
-                <div class="header-logo" style="width:34px; height:34px;">
-                    <img src="./logo.png" alt="Logo" onerror="this.src='https://raw.githubusercontent.com/yuviyadav16/ticbull-academy/main/logo.png'">
-                </div>
-                <div>
-                    <strong style="font-size:15px; color:#fff;">TicBull Batches & Goals</strong>
-                    <p style="font-size:10px; color:var(--text-muted);">Explore 300+ Indian Boards & Competitive Batches</p>
-                </div>
-            </div>
-            <button class="menu-btn" onclick="toggleDrawer()"><i class="fa-solid fa-bars"></i></button>
-        </div>
-
-        <!-- CATEGORY SCROLL FILTER BAR -->
-        <div class="category-scroll-bar" id="catBar">
-            <div class="cat-chip active" onclick="filterCategory('ALL', this)">All Batches</div>
-            <div class="cat-chip" onclick="filterCategory('CBSE', this)">CBSE Board (9-12)</div>
-            <div class="cat-chip" onclick="filterCategory('BIHAR', this)">Bihar Board (BSEB)</div>
-            <div class="cat-chip" onclick="filterCategory('UP', this)">UP Board (UPMSP)</div>
-            <div class="cat-chip" onclick="filterCategory('ICSE', this)">ICSE / ISC Board</div>
-            <div class="cat-chip" onclick="filterCategory('NEET', this)">NEET Medical</div>
-            <div class="cat-chip" onclick="filterCategory('JEE', this)">IIT-JEE Engineering</div>
-            <div class="cat-chip" onclick="filterCategory('UPSC', this)">UPSC Civil Services</div>
-            <div class="cat-chip" onclick="filterCategory('BPSC', this)">BPSC State PCS</div>
-            <div class="cat-chip" onclick="filterCategory('DEFENSE', this)">NDA / Defense</div>
-            <div class="cat-chip" onclick="filterCategory('COMMERCE', this)">CA / CS / Commerce</div>
-        </div>
-
-        <div class="search-batches-box">
-            <i class="fa-solid fa-magnifying-glass"></i>
-            <input type="text" id="batchSearchInput" placeholder="Search for Class 9-12, Bihar, CBSE, NEET, JEE, UPSC..." onkeyup="searchBatches()">
-        </div>
-
-        <div id="batchesContainer">
-            <!-- Dynamic Batches Load Here -->
-        </div>
-    </div>
-
-    <!-- 🚀 BATCH EXPLORER MODAL (SUBJECTS & CHAPTERS) -->
-    <div class="modal-overlay" id="batchExplorerModal" style="z-index: 3000;">
-        <div class="modal-card" style="padding:0; display:flex; flex-direction:column; overflow:hidden; max-width:550px; height:85vh; background:var(--bg-color);">
-            <!-- HEADER -->
-            <div style="padding:16px; border-bottom:1px solid var(--border-color); display:flex; align-items:center; gap:12px; background:var(--card-bg);">
-                <i class="fa-solid fa-arrow-left" style="cursor:pointer; color:var(--text-main); font-size:18px;" onclick="document.getElementById('batchExplorerModal').style.display='none'; playClickSound();"></i>
-                <div style="text-align: left;">
-                    <h3 id="explorerHeaderTitle" style="font-size:16px; margin:0; color:#fff;">Explore Batch</h3>
-                    <p id="explorerHeaderSub" style="font-size:11px; color:var(--text-muted); margin:0;">Select a subject to start studying</p>
-                </div>
-            </div>
-            <!-- DYNAMIC CONTENT AREA -->
-            <div id="explorerContentArea" style="flex:1; overflow-y:auto; padding:16px;">
-                <!-- Content injected via JS -->
-            </div>
-        </div>
-    </div>
-
-    <!-- 🚀 3-TIER BATCH PLAN SELECTION MODAL (BASIC / PRO / MAX PRO) -->
-    <div class="modal-overlay" id="tierModal">
-        <div class="modal-card">
-            <i class="fa-solid fa-xmark" style="position:absolute; right:16px; top:16px; color:var(--text-muted); cursor:pointer;" onclick="closeTierModal()"></i>
-            <h3 style="color:var(--text-main); font-size:17px; margin-bottom:2px;" id="tierModalBatchTitle">Select Batch Access Plan</h3>
-            <p style="font-size:11.5px; color:var(--text-muted); margin-bottom:14px;">Choose daily doubt limit according to your requirement</p>
-
-            <div class="tier-card-option" onclick="selectTier('BASIC', 199)" id="tierBasicCard">
-                <div class="tier-header">
-                    <span class="tier-name"><i class="fa-solid fa-leaf" style="color:#10b981;"></i> Basic Pass</span>
-                    <span class="tier-price" id="tierPriceBasic">₹199/yr</span>
-                </div>
-                <div class="tier-desc">• <b>15 Doubts/day</b><br>• Chapter Notes & Homework Help<br>• Affordable Budget Plan</div>
-            </div>
-
-            <div class="tier-card-option selected" onclick="selectTier('PRO', 499)" id="tierProCard">
-                <div class="tier-header">
-                    <span class="tier-name"><i class="fa-solid fa-star" style="color:#f59e0b;"></i> Pro Pass (Recommended)</span>
-                    <span class="tier-price" id="tierPricePro">₹499/yr</span>
-                </div>
-                <div class="tier-desc">• <b>40 Doubts/day</b><br>• PDF & Image Notes Support<br>• Dedicated 13 Subject Experts</div>
-            </div>
-
-            <div class="tier-card-option" onclick="selectTier('MAX_PRO', 999)" id="tierMaxProCard">
-                <div class="tier-header">
-                    <span class="tier-name"><i class="fa-solid fa-crown" style="color:#8b5cf6;"></i> Max Pro Pass</span>
-                    <span class="tier-price" id="tierPriceMaxPro">₹999/yr</span>
-                </div>
-                <div class="tier-desc">• <b>85 Doubts/day</b><br>• Priority High Performance AI<br>• Complete Exam Goal Mastery</div>
-            </div>
-
-            <button class="btn-primary" id="confirmTierBtn" onclick="confirmTierSelection()">ENROLL NOW</button>
-        </div>
-    </div>
-
-    <!-- 🚀 2. MAIN CHAT DASHBOARD -->
-    <div id="main-dashboard">
-        <div class="header">
-            <div class="header-brand">
-                <button class="menu-btn" onclick="toggleDrawer()"><i class="fa-solid fa-bars"></i></button>
-                <div class="header-logo">
-                    <img src="./logo.png" alt="Logo" onerror="this.src='https://raw.githubusercontent.com/yuviyadav16/ticbull-academy/main/logo.png'">
-                </div>
-                <div>
-                    <strong style="color:var(--text-main); font-size:13.5px;" id="portalHeaderName">TicBull Academy</strong>
-                    <p style="font-size:9.5px; color:var(--text-muted);">AI Tutor Engine v8.5</p>
-                </div>
-            </div>
-            
-            <div style="display:flex; align-items:center; gap:6px;">
-                <span class="user-badge" style="background:rgba(239, 68, 68, 0.15); border-color:rgba(239, 68, 68, 0.4); color:#ef4444; cursor:default;" title="Daily Study Streak">
-                    <i class="fa-solid fa-fire"></i> <span id="streakCountText">0 Day</span>
-                </span>
-                
-                <span class="user-badge" onclick="openSubscriptionModal()"><i class="fa-solid fa-crown"></i> <span id="badgePlanText">Free Trial</span></span>
-            </div>
-        </div>
-
-        <div class="course-bar-toggle" onclick="switchToBatchesScreen()">
-            <span id="activeBatchLabel"><i class="fa-solid fa-graduation-cap" style="color:var(--accent-color);"></i> Active Batch: Class 10 - CBSE Board</span>
-            <span style="font-size:11px; color:var(--accent-color); font-weight:700;"><i class="fa-solid fa-exchange-alt"></i> Change Batch</span>
-        </div>
-
-        <div style="display:flex; align-items:center; justify-content:space-between; background:var(--card-bg); border:1px solid var(--border-color); padding:6px 12px; border-radius:12px; margin-bottom:8px;">
-            <div style="display:flex; align-items:center; gap:6px;">
-                <div style="background:var(--input-bg); border:1px solid var(--border-color); padding:5px 10px; border-radius:20px; font-size:11px; font-weight:700; color:var(--gold-color); display:flex; align-items:center; gap:5px;">
-                    <i class="fa-solid fa-chalkboard-user"></i> <span id="headerTeacherText">Teacher</span>
-                </div>
-            </div>
-            <div>
-                <select id="chatLangSelect" style="background:var(--input-bg); color:var(--text-main); border:1px solid var(--border-color); padding:4px 10px; border-radius:8px; font-size:11.5px; outline:none; width:120px;" onchange="saveChatLang(this.value)">
-                    <option value="Hinglish">Hinglish</option>
-                    <option value="Hindi">Hindi (हिंदी)</option>
-                    <option value="English">English</option>
-                </select>
-            </div>
-        </div>
-
-        <div class="active-course-chip" id="activeCourseChip" style="background:rgba(16, 185, 129, 0.1); border:1px solid rgba(16, 185, 129, 0.4); padding:6px 10px; border-radius:12px; font-size:11px; font-weight:700; color:var(--text-main); margin-bottom:8px; display:flex; justify-content:space-between; flex-shrink:0;">
-            <span><i class="fa-solid fa-shield-halved"></i> Pass Status: Active</span>
-            <span style="font-size:10px; color:var(--success-color);" id="doubtLimitChip">20 Doubts/Day</span>
-        </div>
-
-        <div class="chat-container" id="chatBox">
-            <div class="msg ai" id="welcomeAiMessage">
-                <b>Welcome to TicBull Academy! 🚀</b><br>
-                Aapka Batch unlocked hai. Apne subjects ke questions poochiye!
-            </div>
-        </div>
-
-        <div id="imagePreview">
-            <span id="imagePreviewText"><i class="fa-regular fa-image"></i> Files/Photos Selected</span>
-            <i class="fa-solid fa-xmark" style="cursor:pointer;" onclick="removeImage()"></i>
-        </div>
-
-        <div class="ai-tools-menu" id="aiToolsMenu">
-            <button class="tool-btn" onclick="triggerTool('Generate Comprehensive Detailed Chapter Notes')"><i class="fa-solid fa-book" style="color:#10b981;"></i> Detailed Notes</button>
-            <button class="tool-btn" onclick="triggerTool('Generate Quick Revision Short Notes (Bullet Pointers)')"><i class="fa-solid fa-bolt" style="color:#f59e0b;"></i> Quick Short Notes</button>
-            <button class="tool-btn" onclick="triggerTool('Generate Detailed Diagram Image')"><i class="fa-solid fa-image" style="color:#3b82f6;"></i> AI Diagram / Image Generator</button>
-            <button class="tool-btn" onclick="triggerTool('Generate AI Video Visual Explanation')"><i class="fa-solid fa-circle-play" style="color:#ef4444;"></i> AI Video Explanation</button>
-            <button class="tool-btn" onclick="triggerTool('Generate Social Media & YouTube Growth Strategy')"><i class="fa-brands fa-youtube" style="color:#ff0000;"></i> Social Media Growth Guide</button>
-            <button class="tool-btn" onclick="triggerTool('Generate 10 Objective Questions (MCQs) with Answer Key')"><i class="fa-solid fa-list-check" style="color:#06b6d4;"></i> Objective MCQs</button>
-        </div>
-
-        <div class="chat-input-bar">
-            <button class="action-icon-btn" onclick="toggleToolsMenu()" title="Quick AI Tools (+)"><i class="fa-solid fa-plus"></i></button>
-            
-            <label class="action-icon-btn" for="photoInput" title="Upload Photos or PDFs (Multiple)">
-                <i class="fa-solid fa-paperclip"></i>
-            </label>
-            <input type="file" id="photoInput" accept="image/*,.pdf" multiple style="display:none;" onchange="handleMultipleFilesSelect(event)">
-            
-            <button class="action-icon-btn" id="voiceBtn" onclick="toggleVoiceInput()" title="Voice Typing"><i class="fa-solid fa-microphone"></i></button>
-            
-            <textarea id="userInput" placeholder="Type chapter/topic or click (+) for tools..." rows="1" oninput="autoResizeInput(this)" onkeydown="handleInputKeydown(event)"></textarea>
-            
-            <button class="send-btn" id="sendBtn" onclick="askAI()"><i class="fa-solid fa-paper-plane"></i></button>
-        </div>
-    </div>
-
-    <!-- SIDE DRAWER MENU -->
+    <!-- SIDEBAR DRAWER (Mirrors Image 1) -->
     <div class="drawer-overlay" id="drawerOverlay" onclick="toggleDrawer()"></div>
     <div class="drawer" id="drawer">
         <div class="drawer-header">
-            <strong style="color:var(--text-main); font-size:15px;">Menu & Profile</strong>
-            <i class="fa-solid fa-xmark" style="color:var(--text-muted); cursor:pointer;" onclick="toggleDrawer()"></i>
-        </div>
-
-        <div class="profile-card">
-            <i class="fa-solid fa-pen-to-square edit-profile-btn" onclick="openEditProfileModal()" title="Edit Profile"></i>
-            <div class="profile-header">
-                <div class="profile-avatar-box">
-                    <img src="" id="drawerAvatarImg" class="profile-avatar-img" style="display:none;" alt="Avatar">
-                    <div class="profile-avatar-initial" id="drawerAvatarInitial">S</div>
-                    <label class="avatar-upload-icon" for="avatarUploadInput" title="Upload Photo"><i class="fa-solid fa-camera"></i></label>
-                    <input type="file" id="avatarUploadInput" accept="image/*" style="display:none;" onchange="handleAvatarUpload(event)">
-                </div>
-                <div>
-                    <strong style="color:#fff; font-size:13.5px;" id="drawerStudentName">Registered Student</strong>
-                    <div style="font-size:10px; color:var(--text-muted);" id="drawerStudentEmail">student@ticbull.com</div>
-                    <div style="font-size:10px; color:var(--accent-color); font-weight:600; margin-top:2px;" id="drawerStudentAge">Age: Active Learner</div>
-                </div>
-            </div>
+            <span style="font-size:16px; font-weight:700; color:#fff;">Menu & Profile</span>
+            <i class="fa-solid fa-xmark" style="color:var(--text-muted); cursor:pointer; font-size:18px;" onclick="toggleDrawer()"></i>
         </div>
         
-        <div class="drawer-item" onclick="switchToBatchesScreen(); toggleDrawer();"><i class="fa-solid fa-graduation-cap" style="color:var(--accent-color);"></i> All Batches & Goals</div>
-        <div class="drawer-item" onclick="openSyllabusBoard()"><i class="fa-solid fa-list-check" style="color:#0ea5e9;"></i> Syllabus Tracker Board</div>
-        <div class="drawer-item" onclick="openSettingsModal()"><i class="fa-solid fa-gear" style="color:#94a3b8;"></i> App Settings</div>
-        <div class="drawer-item" onclick="toggleTheme()"><i class="fa-solid fa-circle-half-stroke" style="color:var(--gold-color);"></i> <span id="themeToggleText">Switch to Light Mode</span></div>
-        <div class="drawer-item" onclick="triggerAppGuideBot()"><i class="fa-solid fa-robot" style="color:#f59e0b;"></i> 🤖 TicBull Guide Bot</div>
-        <div class="drawer-item" onclick="openSubscriptionModal()"><i class="fa-solid fa-crown" style="color:#f59e0b;"></i> Upgrade Course Pass</div>
-        <div class="drawer-item" onclick="startNewChat()"><i class="fa-solid fa-plus-circle" style="color:#10b981;"></i> Start New Chat</div>
-        <div class="drawer-item" onclick="logoutUser()" style="color:#ef4444;"><i class="fa-solid fa-right-from-bracket"></i> Log Out Account</div>
-
-        <div class="history-title" style="display:flex; justify-content:space-between; align-items:center;">
-            <span><i class="fa-solid fa-clock-rotate-left"></i> Recent Chat Sessions:</span>
-        </div>
-        <div class="history-list" id="historyList"></div>
-        
-        <div style="margin-top:auto; border-top:1px solid var(--border-color); padding-top:12px;">
-            <div style="font-size:11px; color:var(--text-muted); margin-bottom:8px;">TICBULL OFFICIAL SUPPORT:</div>
-            <a href="mailto:ticbull.support@gmail.com" target="_blank" style="color:var(--text-main); text-decoration:none; display:block; margin-bottom:6px; font-size:12px;"><i class="fa-solid fa-envelope" style="color:#2563eb;"></i> ticbull.support@gmail.com</a>
-            <a href="https://www.instagram.com/ticbull" target="_blank" style="color:#e1306c; text-decoration:none; display:block; margin-bottom:6px; font-size:12px;"><i class="fa-brands fa-instagram"></i> @ticbull Official Support</a>
-            <a href="https://t.me/ticbullteam" target="_blank" style="color:#0088cc; text-decoration:none; display:block; font-size:12px;"><i class="fa-brands fa-telegram"></i> @ticbullteam Telegram Support</a>
-            
-            <div style="font-size:10px; color:var(--text-muted); margin:10px 0 4px 0;">DEVELOPER SOCIALS:</div>
-            <div class="dev-socials" style="justify-content:flex-start;">
-                <a href="https://youtube.com/@mryuviyadav" target="_blank" style="color:#ff0000;"><i class="fa-brands fa-youtube"></i></a>
-                <a href="https://www.instagram.com/mryuvi_yadav" target="_blank" style="color:#e1306c;"><i class="fa-brands fa-instagram"></i></a>
-                <a href="https://x.com/mryuviyadav" target="_blank"><i class="fa-brands fa-x-twitter"></i></a>
-                <a href="https://t.me/mryuviyadav" target="_blank" style="color:#0088cc;"><i class="fa-brands fa-telegram"></i></a>
-                <a href="https://facebook.com/mryuviyadav" target="_blank" style="color:#1877f2;"><i class="fa-brands fa-facebook"></i></a>
-            </div>
-        </div>
-    </div>
-
-    <!-- APP SETTINGS MODAL -->
-    <div class="modal-overlay" id="settingsModal">
-        <div class="modal-card">
-            <i class="fa-solid fa-xmark" style="position:absolute; right:16px; top:16px; color:var(--text-muted); cursor:pointer;" onclick="document.getElementById('settingsModal').style.display='none'; playClickSound();"></i>
-            <h3 style="color:var(--text-main); font-size:17px; margin-bottom:16px;"><i class="fa-solid fa-gear"></i> App Settings</h3>
-            
-            <div class="setting-item">
-                <span><i class="fa-solid fa-music"></i> App Click Sounds</span>
-                <label class="switch">
-                    <input type="checkbox" id="soundToggle" checked onchange="toggleSoundSetting(this)">
-                    <span class="slider"></span>
-                </label>
-            </div>
-            <div class="setting-item">
-                <span><i class="fa-solid fa-microphone"></i> Microphone Permission</span>
-                <label class="switch">
-                    <input type="checkbox" checked>
-                    <span class="slider"></span>
-                </label>
-            </div>
-            <div class="setting-item">
-                <span><i class="fa-solid fa-camera"></i> Camera & Media</span>
-                <label class="switch">
-                    <input type="checkbox" checked>
-                    <span class="slider"></span>
-                </label>
-            </div>
-            
-            <div style="margin-top:12px; padding-top:12px; border-top:1px solid var(--border-color); text-align:left;">
-                <span style="font-size:12px; color:var(--text-muted); display:block; margin-bottom:8px;">Chat Theme Color:</span>
+        <div class="drawer-content">
+            <div class="profile-card">
+                <i class="fa-solid fa-pen-to-square edit-icon"></i>
+                <div class="profile-img-box">Y <i class="fa-solid fa-camera cam"></i></div>
                 <div>
-                    <span class="theme-circle active" style="background:#2563eb;" onclick="changeAppTheme('#2563eb', this)"></span>
-                    <span class="theme-circle" style="background:#10b981;" onclick="changeAppTheme('#10b981', this)"></span>
-                    <span class="theme-circle" style="background:#8b5cf6;" onclick="changeAppTheme('#8b5cf6', this)"></span>
-                    <span class="theme-circle" style="background:#f43f5e;" onclick="changeAppTheme('#f43f5e', this)"></span>
-                    <span class="theme-circle" style="background:#f59e0b;" onclick="changeAppTheme('#f59e0b', this)"></span>
+                    <h3 style="color:#fff; font-size:15px; margin-bottom:2px;" id="userNameSidebar">Yuvraj Yadav</h3>
+                    <p style="color:var(--text-muted); font-size:11px;">student@ticbull.com</p>
+                    <p style="color:var(--accent-color); font-size:11px; font-weight:600; margin-top:4px;">Free Trial Active</p>
                 </div>
             </div>
 
-            <div style="margin-top:20px; padding-top:16px; border-top:1px solid var(--border-color);">
-                <button class="btn-primary btn-danger" onclick="openDeleteAccountModal()"><i class="fa-solid fa-trash"></i> DELETE ACCOUNT PERMANENTLY</button>
+            <div class="drawer-item" onclick="showScreen('exploreScreen'); toggleDrawer();"><i class="fa-solid fa-layer-group" style="color:#3b82f6;"></i> All Batches & Goals</div>
+            <div class="drawer-item" onclick="showScreen('dashboardScreen'); toggleDrawer();"><i class="fa-solid fa-book-open" style="color:#10b981;"></i> My Saved Batch</div>
+            <div class="drawer-item"><i class="fa-solid fa-list-check" style="color:#0ea5e9;"></i> Syllabus Tracker Board</div>
+            <div class="drawer-item"><i class="fa-solid fa-gear" style="color:#94a3b8;"></i> App Settings</div>
+            <div class="drawer-item"><i class="fa-solid fa-circle-half-stroke" style="color:#f59e0b;"></i> Switch to Light Mode</div>
+            <div class="drawer-item" onclick="openSubscriptionModal()"><i class="fa-solid fa-crown" style="color:#f59e0b;"></i> Upgrade Course Pass</div>
+            <div class="drawer-item" style="color:#ef4444;" onclick="logout()"><i class="fa-solid fa-right-from-bracket"></i> Log Out Account</div>
+
+            <h4 style="font-size:11px; color:var(--text-muted); text-transform:uppercase; margin:24px 0 10px 4px;"><i class="fa-solid fa-clock-rotate-left"></i> Recent Chat Sessions:</h4>
+            <div id="recentChatsList" style="display:flex; flex-direction:column; gap:8px;">
+                <!-- Auto populated -->
             </div>
+        </div>
+
+        <div class="drawer-footer">
+            <p style="margin-bottom:12px;">TICBULL OFFICIAL SUPPORT:</p>
+            <a href="#"><i class="fa-solid fa-envelope" style="color:#2563eb;"></i> ticbull.support@gmail.com</a>
+            <a href="#"><i class="fa-brands fa-instagram" style="color:#e1306c;"></i> @ticbull Official Support</a>
+            <a href="#"><i class="fa-brands fa-telegram" style="color:#0ea5e9;"></i> @ticbullteam Telegram Support</a>
         </div>
     </div>
 
-    <!-- SYLLABUS BOARD MODAL -->
-    <div class="modal-overlay" id="syllabusModal">
-        <div class="modal-card" style="max-height:80vh;">
-            <i class="fa-solid fa-xmark" style="position:absolute; right:16px; top:16px; color:var(--text-muted); cursor:pointer;" onclick="document.getElementById('syllabusModal').style.display='none'; playClickSound();"></i>
-            <h3 style="color:var(--text-main); font-size:17px; margin-bottom:6px;"><i class="fa-solid fa-list-check"></i> Syllabus Tracker</h3>
-            <p style="font-size:11px; color:var(--text-muted); margin-bottom:12px;">Track your chapters & study progress.</p>
-            
-            <div class="input-group">
-                <input type="text" id="newSyllabusItem" placeholder="Add chapter/topic..." style="padding-left:14px; border-radius:8px;">
-                <button class="btn-primary" style="margin-top:4px; padding:10px; border-radius:8px;" onclick="addSyllabusItem()">ADD TOPIC</button>
-            </div>
-
-            <div id="syllabusList" style="margin-top:12px; overflow-y:auto; flex:1;"></div>
+    <!-- SCREEN 1: ALL BATCHES EXPLORER (Mirrors Image 2) -->
+    <div class="screen active" id="exploreScreen">
+        <div class="search-box">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input type="text" id="searchInput" placeholder="Search for Class 9-12, Bihar, CBSE, NEET, JEE..." onkeyup="filterBatches()">
+        </div>
+        <div id="batchesContainer">
+            <!-- 300+ Batches Injected Here -->
         </div>
     </div>
 
-    <!-- EDIT PROFILE MODAL -->
-    <div class="modal-overlay" id="editProfileModal">
+    <!-- SCREEN 2: STUDENT DASHBOARD (My Saved Batch & Subjects) -->
+    <div class="screen" id="dashboardScreen">
+        <div class="dash-header">
+            <div>
+                <span class="green-tag" style="margin-bottom:6px;"><i class="fa-solid fa-circle-check"></i> Enrolled Successfully</span>
+                <h2 style="font-size:18px; color:#fff;" id="myBatchName">CBSE Board - Class 10 Batch</h2>
+                <p style="font-size:12px; color:var(--text-muted); margin-top:4px;">Select a subject below to start your dedicated study chat.</p>
+            </div>
+            <button class="btn-outline" style="border:none;" onclick="showScreen('exploreScreen')"><i class="fa-solid fa-rotate"></i> Change</button>
+        </div>
+
+        <h3 style="font-size:15px; color:#fff; margin-bottom:14px;"><i class="fa-solid fa-book"></i> Your Subjects</h3>
+        <div class="subject-grid" id="mySubjectsGrid">
+            <!-- Subjects Injected Here based on Batch -->
+        </div>
+    </div>
+
+    <!-- SCREEN 3: DEDICATED SUBJECT CHAT -->
+    <div id="chatScreen" style="display:none; flex-direction:column; height:100vh; width:100%; position:fixed; top:0; left:0; background:var(--bg-color); z-index:500;">
+        <div class="chat-header">
+            <div class="chat-teacher-info">
+                <i class="fa-solid fa-arrow-left" style="color:#fff; font-size:18px; cursor:pointer; margin-right:10px;" onclick="closeChat()"></i>
+                <img id="chatTeacherImg" src="" class="teacher-avatar">
+                <div>
+                    <h3 style="color:#fff; font-size:16px;" id="chatSubjectName">Physics</h3>
+                    <p style="color:var(--text-muted); font-size:11px;" id="chatTeacherName">By Mr. Verma Sir</p>
+                </div>
+            </div>
+            <div style="text-align:right;">
+                <span style="background:rgba(239, 68, 68, 0.15); color:#ef4444; padding:4px 10px; border-radius:12px; font-size:10px; font-weight:700; border:1px solid rgba(239, 68, 68, 0.3);" id="doubtCounterUI">9 Doubts Left</span>
+            </div>
+        </div>
+
+        <div class="chat-box" id="chatBox">
+            <!-- Chat history injected here -->
+        </div>
+
+        <div class="chat-input">
+            <input type="text" id="chatInput" placeholder="Type your subject doubt here..." onkeydown="if(event.key==='Enter') sendChatMessage()">
+            <button onclick="sendChatMessage()"><i class="fa-solid fa-paper-plane"></i></button>
+        </div>
+    </div>
+
+    <!-- PRICING / SUBSCRIPTION MODAL -->
+    <div class="modal-overlay" id="pricingModal">
         <div class="modal-card">
-            <i class="fa-solid fa-xmark" style="position:absolute; right:16px; top:16px; color:var(--text-muted); cursor:pointer;" onclick="closeEditProfileModal()"></i>
-            <h3 style="color:var(--text-main); font-size:17px; margin-bottom:12px;"><i class="fa-solid fa-user-pen"></i> Edit Profile Details</h3>
+            <i class="fa-solid fa-xmark" style="position:absolute; right:16px; top:16px; color:var(--text-muted); cursor:pointer;" onclick="document.getElementById('pricingModal').style.display='none'"></i>
+            <h2 style="color:#fff; font-size:18px; margin-bottom:4px;">Upgrade Your Plan</h2>
+            <p style="color:var(--text-muted); font-size:12px; margin-bottom:20px;">Increase your daily AI doubt limits.</p>
+
+            <div class="plan-card" onclick="selectPlan('BASIC')">
+                <div>
+                    <h4 style="color:#fff; font-size:15px;">Basic Plan</h4>
+                    <p style="color:var(--text-muted); font-size:11px;">15 Doubts / Day</p>
+                </div>
+                <strong style="color:var(--success-color);">₹199/yr</strong>
+            </div>
             
-            <div class="input-group">
-                <i class="fa-regular fa-user left-icon"></i>
-                <input type="text" id="editStudentName" placeholder="Full Student Name">
-            </div>
-            <div class="input-group">
-                <i class="fa-regular fa-envelope left-icon"></i>
-                <input type="email" id="editStudentEmail" placeholder="Email Address" disabled>
-            </div>
-            <div class="input-group">
-                <i class="fa-regular fa-calendar left-icon"></i>
-                <input type="date" id="editStudentDob" placeholder="Date of Birth">
+            <div class="plan-card active" onclick="selectPlan('PRO')">
+                <div>
+                    <h4 style="color:#fff; font-size:15px;"><i class="fa-solid fa-star" style="color:#f59e0b;"></i> Pro Plan</h4>
+                    <p style="color:var(--text-muted); font-size:11px;">40 Doubts / Day</p>
+                </div>
+                <strong style="color:var(--success-color);">₹499/yr</strong>
             </div>
 
-            <button class="btn-primary" onclick="saveProfileChanges()">SAVE CHANGES</button>
-        </div>
-    </div>
+            <div class="plan-card" onclick="selectPlan('MAX')">
+                <div>
+                    <h4 style="color:#fff; font-size:15px;"><i class="fa-solid fa-crown" style="color:#8b5cf6;"></i> Max Pro</h4>
+                    <p style="color:var(--text-muted); font-size:11px;">75 Doubts / Day</p>
+                </div>
+                <strong style="color:var(--success-color);">₹999/yr</strong>
+            </div>
 
-    <!-- PRICING MODAL -->
-    <div class="modal-overlay" id="subModal">
-        <div class="modal-card">
-            <i class="fa-solid fa-xmark" style="position:absolute; right:16px; top:16px; color:var(--text-muted); cursor:pointer;" onclick="closeSubscriptionModal()"></i>
-            <h3 style="color:var(--text-main); font-size:18px;">🎓 TicBull Batch Access</h3>
-            <p style="font-size:11.5px; color:var(--text-muted); margin-top:2px;">Select or change your batch plan from All Batches screen</p>
-            <button class="btn-primary" onclick="closeSubscriptionModal(); switchToBatchesScreen();" style="margin-top:15px;">EXPLORE ALL BATCHES</button>
+            <button class="btn-solid" style="width:100%; margin-top:10px;" onclick="document.getElementById('pricingModal').style.display='none'; showToast('Plan Selected Successfully!');">PROCEED TO PAY</button>
         </div>
     </div>
 
     <script>
-        let currentTeacher = localStorage.getItem('ticbull_teacher') || 'male';
-        let currentActiveBatch = localStorage.getItem('tb_active_batch') || 'Class 10 CBSE Udaan Batch';
-        let selectedBatchForModal = null;
-        let selectedTierType = 'PRO';
-        let selectedTierPrice = 499;
-
-        // ==========================================
-        // 📚 DYNAMIC TEACHER & SUBJECT ENGINE
-        // ==========================================
-        
-        // Strict Deterministic Teacher Assignment
-        const sirNames = ["Shivam", "Afroz", "Vikram", "Rahul", "Amit", "Suresh", "Raj", "Manoj", "Anil", "Sanjay", "Ajay", "Karan", "Ravi", "Nitin", "Deepak", "Vikas", "Prakash", "Gaurav"];
-        const maamNames = ["Rachna", "Priya", "Neha", "Pooja", "Anjali", "Sneha", "Kavita", "Ritu", "Suman", "Aarti", "Kiran", "Nidhi", "Swati", "Priyanka", "Divya"];
-        
-        function getUniqueTeacher(board, grade, subject) {
-            let hash = 0; 
-            const str = board + grade + subject;
-            for (let i = 0; i < str.length; i++) hash = str.charCodeAt(i) + ((hash << 5) - hash);
-            const isMale = Math.abs(hash) % 2 === 0;
-            const arr = isMale ? sirNames : maamNames;
-            const name = arr[Math.abs(hash) % arr.length];
-            const title = isMale ? "Sir" : "Ma'am";
-            return { 
-                name: `${name} ${title}`, 
-                gender: isMale ? 'Male' : 'Female', 
-                icon: isMale ? 'fa-user-tie' : 'fa-user-graduate', 
-                image: isMale ? 'https://raw.githubusercontent.com/yuviyadav16/ticbull-academy/main/11708.png' : 'https://raw.githubusercontent.com/yuviyadav16/ticbull-academy/main/11723.png' 
-            };
-        }
-
-        // Master Subject List
-        const allUniversalSubjects = [
-            { id: "phy", name: "Physics", icon: "fa-atom" },
-            { id: "chem", name: "Chemistry", icon: "fa-vial" },
-            { id: "bio", name: "Biology", icon: "fa-dna" },
-            { id: "math", name: "Mathematics", icon: "fa-calculator" },
-            { id: "hist", name: "History", icon: "fa-monument" },
-            { id: "pol", name: "Political Science", icon: "fa-landmark" },
-            { id: "eco", name: "Economics", icon: "fa-chart-line" },
-            { id: "geo", name: "Geography", icon: "fa-map" },
-            { id: "hin", name: "Hindi", icon: "fa-om" },
-            { id: "eng", name: "English", icon: "fa-language" },
-            { id: "san", name: "Sanskrit", icon: "fa-gopuram" },
-            { id: "urd", name: "Urdu", icon: "fa-book" },
-            { id: "comp", name: "Computer/IT", icon: "fa-computer" }
+        // --- 1. MASSIVE BATCH GENERATOR (300+ BATCHES) ---
+        const indianBoards = ['CBSE', 'Bihar (BSEB)', 'UP (UPMSP)', 'ICSE/ISC', 'Maharashtra (MSBSHSE)', 'Rajasthan (RBSE)', 'MP (MPBSE)', 'West Bengal (WBBSE)'];
+        const schoolClasses = [
+            { level: '9', name: 'Class 9', stream: 'general' }, { level: '10', name: 'Class 10', stream: 'general' },
+            { level: '11', name: 'Class 11 Science (PCM)', stream: 'pcm' }, { level: '11', name: 'Class 11 Science (PCB)', stream: 'pcb' },
+            { level: '11', name: 'Class 11 Commerce', stream: 'commerce' }, { level: '11', name: 'Class 11 Arts', stream: 'arts' },
+            { level: '12', name: 'Class 12 Science (PCM)', stream: 'pcm' }, { level: '12', name: 'Class 12 Science (PCB)', stream: 'pcb' },
+            { level: '12', name: 'Class 12 Commerce', stream: 'commerce' }, { level: '12', name: 'Class 12 Arts', stream: 'arts' }
+        ];
+        const compExams = [
+            { name: 'NEET UG Medical', stream: 'neet' }, { name: 'IIT-JEE Main & Adv', stream: 'jee' },
+            { name: 'UPSC Civil Services', stream: 'upsc' }, { name: 'CUET (UG)', stream: 'cuet' },
+            { name: 'NDA & NA Defense', stream: 'nda' }, { name: 'CA Foundation', stream: 'commerce' },
+            { name: 'BPSC State PCS', stream: 'upsc' }
         ];
 
-        // 🚀 BATCH GENERATOR (Class 9-12 & Competitive)
-        function generate300Batches() {
-            const list = [];
-            
-            const boards = [
-                { code: 'CBSE', name: 'CBSE Board' },
-                { code: 'BIHAR', name: 'Bihar Board (BSEB)' },
-                { code: 'UP', name: 'UP Board (UPMSP)' },
-                { code: 'ICSE', name: 'ICSE / ISC Board' },
-                { code: 'MP', name: 'MP Board' },
-                { code: 'RAJ', name: 'Rajasthan Board' },
-                { code: 'MH', name: 'Maharashtra Board' }
-            ];
-            
-            const classesData = ['Class 9', 'Class 10', 'Class 11', 'Class 12'];
-
-            boards.forEach(b => {
-                classesData.forEach(c => {
-                    list.push({
-                        id: `${b.code}_${c.replace(/ /g, '')}`, 
-                        category: b.code, 
-                        name: `${b.name} - ${c} Batch`, 
-                        boardName: b.name, 
-                        gradeLevel: c, 
-                        tag: 'All Subjects Included', 
-                        teachers: 'Dedicated Subject Experts', 
-                        desc: `Complete Syllabus (NCERT, State Books) for ${c}.`, 
-                        basicPrice: 199
-                    });
+        let allBatches = [];
+        
+        // Generate School Board Batches
+        indianBoards.forEach(board => {
+            schoolClasses.forEach(cls => {
+                allBatches.push({
+                    id: `${board.substring(0,3)}_${cls.level}_${cls.stream}`.replace(/\s/g,''),
+                    title: `${board} Board - ${cls.name} Batch`,
+                    type: 'school', stream: cls.stream,
+                    desc: `Complete Syllabus (NCERT, State Books) for ${cls.name}.`,
+                    price: 199
                 });
             });
+        });
 
-            const compExams = [
-                { cat: 'NEET', name: 'NEET Foundation (Class 11)', gradeLevel: 'Competitive', boardName: 'NEET', tag: 'Medical Entrance', price: 299 },
-                { cat: 'NEET', name: 'NEET Target (Class 12)', gradeLevel: 'Competitive', boardName: 'NEET', tag: 'Medical Entrance', price: 299 },
-                { cat: 'NEET', name: 'NEET Dropper Batch', gradeLevel: 'Competitive', boardName: 'NEET', tag: 'Medical Entrance', price: 399 },
-                { cat: 'JEE', name: 'IIT-JEE Target Batch', gradeLevel: 'Competitive', boardName: 'JEE', tag: 'IIT Engineering', price: 299 },
-                { cat: 'UPSC', name: 'UPSC Civil Services Foundation', gradeLevel: 'Competitive', boardName: 'UPSC', tag: 'IAS Goal', price: 399 }
-            ];
-
-            compExams.forEach((e, idx) => {
-                list.push({ 
-                    id: `comp_${idx}`, 
-                    category: e.cat, 
-                    name: e.name, 
-                    boardName: e.boardName, 
-                    gradeLevel: e.gradeLevel, 
-                    tag: e.tag, 
-                    teachers: 'Top Tier Entrance Faculties', 
-                    desc: `Strict competitive exam syllabus with modules.`, 
-                    basicPrice: e.price 
-                });
+        // Generate Competitive Batches
+        compExams.forEach(exam => {
+            allBatches.push({
+                id: `COMP_${exam.stream}`,
+                title: `${exam.name} Target Batch`,
+                type: 'comp', stream: exam.stream,
+                desc: `Top tier faculty, complete modules and PYQs for ${exam.name}.`,
+                price: 499
             });
+        });
 
-            return list;
-        }
-
-        const all300Batches = generate300Batches();
-        let currentSelectedCategory = 'ALL';
-
-        function renderBatchesList(batchesArray) {
-            const container = document.getElementById('batchesContainer');
-            if(!container) return; 
-            
-            container.innerHTML = '';
-            
-            if(batchesArray.length === 0) { 
-                container.innerHTML = '<p style="color:var(--text-muted); text-align:center; padding:30px;">No batches found.</p>'; 
-                return; 
-            }
-
-            batchesArray.forEach(batch => {
-                container.innerHTML += `
-                    <div class="batch-card">
-                        <span class="batch-tag">${batch.tag}</span>
-                        <div class="batch-title">${batch.name}</div>
-                        <div class="batch-teachers-strip"><i class="fa-solid fa-chalkboard-user"></i> Faculty: ${batch.teachers}</div>
-                        <div class="batch-desc">${batch.desc}</div>
-                        <div class="batch-footer">
-                            <div>
-                                <span style="font-size:10px; color:var(--text-muted); display:block;">Starting from</span>
-                                <span class="batch-price">₹${batch.basicPrice}/yr</span>
-                            </div>
-                            <div class="batch-actions">
-                                <button class="btn-outline" onclick="exploreBatch('${batch.id}')"><i class="fa-solid fa-book-open"></i> Subjects</button>
-                                <button class="btn-buy" onclick="openTierModal('${batch.id}')">Enroll</button>
-                            </div>
-                        </div>
-                    </div>`;
-            });
-        }
-
-        function filterCategory(cat, el) {
-            currentSelectedCategory = cat; 
-            document.querySelectorAll('.cat-chip').forEach(c => c.classList.remove('active')); 
-            
-            if(el) el.classList.add('active');
-            
-            if(cat === 'ALL') {
-                renderBatchesList(all300Batches);
-            } else {
-                renderBatchesList(all300Batches.filter(b => b.category === cat));
-            }
-        }
-
-        function searchBatches() {
-            const query = document.getElementById('batchSearchInput').value.toLowerCase();
-            renderBatchesList(all300Batches.filter(b => b.name.toLowerCase().includes(query) || b.category.toLowerCase().includes(query)));
-        }
-
-        // ==========================================
-        // 🚀 SUBJECT EXPLORER -> CHAT ISOLATION
-        // ==========================================
-        let currentBatchInExplorer = null;
-        let activeContext = { 
-            batchId: '', 
-            batchName: '', 
-            subjectName: '', 
-            boardName: '', 
-            gradeLevel: '', 
-            teacherName: '', 
-            teacherGender: '', 
-            teacherImage: '' 
+        // --- 2. SUBJECTS & TEACHER ASSIGNMENT ENGINE ---
+        // Format: { name: "Subject", icon: "emoji", teacher: "Name", gender: "male/female" }
+        const subjectLibrary = {
+            general: [
+                { n: 'Physics', i: '⚡', t: 'Mr. Verma Sir', g: 'male' }, { n: 'Chemistry', i: '🧪', t: 'Ms. Anjali Ma\'am', g: 'female' },
+                { n: 'Biology', i: '🧬', t: 'Ms. Priya Ma\'am', g: 'female' }, { n: 'Mathematics', i: '📐', t: 'Mr. Sharma Sir', g: 'male' },
+                { n: 'History', i: '🏛️', t: 'Mr. Singh Sir', g: 'male' }, { n: 'Geography', i: '🗺️', t: 'Ms. Neha Ma\'am', g: 'female' },
+                { n: 'English', i: '📝', t: 'Ms. Riya Ma\'am', g: 'female' }, { n: 'Hindi', i: 'अ', t: 'Mr. Tiwari Sir', g: 'male' }
+            ],
+            pcm: [
+                { n: 'Physics', i: '⚡', t: 'Mr. Verma Sir', g: 'male' }, { n: 'Inorganic Chem', i: '🧪', t: 'Ms. Anjali Ma\'am', g: 'female' },
+                { n: 'Organic Chem', i: '⚗️', t: 'Mr. Das Sir', g: 'male' }, { n: 'Advanced Math', i: '📐', t: 'Mr. Sharma Sir', g: 'male' },
+                { n: 'Computer Sci', i: '💻', t: 'Mr. Gupta Sir', g: 'male' }, { n: 'English', i: '📝', t: 'Ms. Riya Ma\'am', g: 'female' }
+            ],
+            pcb: [
+                { n: 'Physics', i: '⚡', t: 'Mr. Verma Sir', g: 'male' }, { n: 'Inorganic Chem', i: '🧪', t: 'Ms. Anjali Ma\'am', g: 'female' },
+                { n: 'Organic Chem', i: '⚗️', t: 'Mr. Das Sir', g: 'male' }, { n: 'Zoology', i: '🐒', t: 'Ms. Priya Ma\'am', g: 'female' },
+                { n: 'Botany', i: '🌿', t: 'Ms. Kavita Ma\'am', g: 'female' }, { n: 'English', i: '📝', t: 'Ms. Riya Ma\'am', g: 'female' }
+            ],
+            commerce: [
+                { n: 'Accountancy', i: '📊', t: 'Mr. Bansal Sir', g: 'male' }, { n: 'Business Studies', i: '💼', t: 'Ms. Pooja Ma\'am', g: 'female' },
+                { n: 'Economics', i: '📉', t: 'Mr. Jain Sir', g: 'male' }, { n: 'Mathematics', i: '📐', t: 'Mr. Sharma Sir', g: 'male' },
+                { n: 'English', i: '📝', t: 'Ms. Riya Ma\'am', g: 'female' }
+            ],
+            neet: [
+                { n: 'Physics (NEET)', i: '⚡', t: 'Mr. HC Verma Sir', g: 'male' }, { n: 'Physical Chem', i: '🧪', t: 'Mr. Das Sir', g: 'male' },
+                { n: 'Organic Chem', i: '⚗️', t: 'Ms. Anjali Ma\'am', g: 'female' }, { n: 'Inorganic Chem', i: '🔬', t: 'Mr. Kumar Sir', g: 'male' },
+                { n: 'Zoology', i: '🐒', t: 'Ms. Priya Ma\'am', g: 'female' }, { n: 'Botany', i: '🌿', t: 'Ms. Kavita Ma\'am', g: 'female' }
+            ],
+            upsc: [
+                { n: 'Indian Polity', i: '⚖️', t: 'Mr. Laxmikanth Sir', g: 'male' }, { n: 'Modern History', i: '🏛️', t: 'Mr. Bipin Sir', g: 'male' },
+                { n: 'Geography', i: '🌍', t: 'Ms. Majid Ma\'am', g: 'female' }, { n: 'Economy', i: '📈', t: 'Mr. Ramesh Sir', g: 'male' },
+                { n: 'Current Affairs', i: '📰', t: 'Ms. Riya Ma\'am', g: 'female' }
+            ]
         };
-        let currentSessionId = Date.now().toString();
 
-        function exploreBatch(batchId) {
-            const batch = all300Batches.find(b => b.id === batchId); 
-            if(!batch) return;
-            
-            currentBatchInExplorer = batch; 
-            
-            document.getElementById('explorerHeaderTitle').innerText = batch.name;
-            document.getElementById('batchExplorerModal').style.display = 'flex';
-            
-            const contentArea = document.getElementById('explorerContentArea');
-            contentArea.innerHTML = `<div style="font-size:12px; color:var(--text-muted); margin-bottom:12px; font-weight:600; text-transform:uppercase; text-align:left;">📚 ALL SUBJECTS IN THIS BATCH</div>`;
-            
-            allUniversalSubjects.forEach((subj) => {
-                const teacher = getUniqueTeacher(batch.boardName, batch.gradeLevel, subj.name);
-                const subjData = encodeURIComponent(JSON.stringify({
-                    batchId: batch.id, 
-                    batchName: batch.name, 
-                    boardName: batch.boardName, 
-                    gradeLevel: batch.gradeLevel,
-                    subjectName: subj.name, 
-                    teacherName: teacher.name, 
-                    teacherGender: teacher.gender, 
-                    teacherImage: teacher.image
-                }));
+        // --- 3. STATE MANAGEMENT (MOCK DATABASE) ---
+        let userProfile = { name: "Student", plan: "FREE", limitsLeft: 9 };
+        let activeBatch = JSON.parse(localStorage.getItem('tb_saved_batch')) || null;
+        let currentChatSubject = null;
 
-                contentArea.innerHTML += `
-                    <div class="subject-card" onclick="openSubjectChat('${subjData}')">
-                        <div style="display:flex; align-items:center;">
-                            <i class="fa-solid ${subj.icon} subject-icon"></i>
-                            <div style="text-align:left;">
-                                <strong style="color:var(--text-main); font-size:15px; display:block;">${subj.name}</strong>
-                                <span class="teacher-tag">
-                                    <i class="fa-solid ${teacher.icon}"></i> by ${teacher.name}
-                                </span>
-                            </div>
+        // --- 4. UI INITIALIZATION ---
+        window.onload = () => {
+            renderExplorerBatches(allBatches);
+            if(activeBatch) {
+                showScreen('dashboardScreen');
+                renderDashboard();
+                updateSidebarHistory();
+            } else {
+                showScreen('exploreScreen');
+            }
+        };
+
+        function showToast(msg) {
+            const t = document.getElementById('custom-toast');
+            t.innerHTML = `<i class="fa-solid fa-circle-check toast-icon success"></i> <span>${msg}</span>`;
+            t.classList.add('show');
+            setTimeout(() => t.classList.remove('show'), 3000);
+        }
+
+        function toggleDrawer() { document.getElementById('drawer').classList.toggle('open'); document.getElementById('drawerOverlay').style.display = document.getElementById('drawer').classList.contains('open') ? 'block' : 'none'; }
+        
+        function showScreen(id) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+            if(id === 'exploreScreen') document.getElementById('mainHeader').querySelector('.header-brand').innerHTML = `<img src="https://raw.githubusercontent.com/yuviyadav16/ticbull-academy/main/logo.png" onerror="this.style.display='none'"> TicBull Batches & Goals`;
+            if(id === 'dashboardScreen') document.getElementById('mainHeader').querySelector('.header-brand').innerHTML = `<img src="https://raw.githubusercontent.com/yuviyadav16/ticbull-academy/main/logo.png" onerror="this.style.display='none'"> My Dashboard`;
+        }
+
+        // --- 5. RENDER BATCHES (Matching Image 2) ---
+        function renderExplorerBatches(list) {
+            const container = document.getElementById('batchesContainer');
+            container.innerHTML = list.map(b => `
+                <div class="batch-card">
+                    <span class="green-tag">All Subjects Included</span>
+                    <h3 class="batch-title">${b.title}</h3>
+                    <div class="faculty-tag"><i class="fa-solid fa-chalkboard-user"></i> Faculty: Dedicated Subject Experts</div>
+                    <p class="batch-desc">${b.desc}</p>
+                    <div class="batch-footer">
+                        <div>
+                            <span style="font-size:10px; color:var(--text-muted); display:block;">Starting from</span>
+                            <span style="font-size:16px; font-weight:800; color:var(--success-color);">₹${b.price}/yr</span>
                         </div>
-                        <i class="fa-solid fa-chevron-right" style="color:var(--text-muted); font-size:14px;"></i>
-                    </div>`;
-            });
-        }
-
-        // DIRECTLY OPENS ISOLATED CHAT FOR SUBJECT
-        function openSubjectChat(encodedData) {
-            const data = JSON.parse(decodeURIComponent(encodedData));
-            activeContext = data;
-
-            // Strict Isolation Key: Board_Class_Subject
-            currentSessionId = `${data.batchId}_${data.subjectName}`.replace(/[^a-zA-Z0-9_]/g, '_'); 
-
-            // Update Dashboard UI
-            document.getElementById('activeBatchLabel').innerHTML = `<i class="fa-solid fa-graduation-cap" style="color:var(--accent-color);"></i> ${data.batchName} - ${data.subjectName}`;
-            document.getElementById('headerTeacherText').innerText = data.teacherName;
-            
-            currentTeacher = data.teacherGender.toLowerCase(); 
-            
-            document.getElementById('batchExplorerModal').style.display = 'none';
-            document.getElementById('batches-screen').style.display = 'none';
-            document.getElementById('main-dashboard').style.display = 'flex';
-
-            loadIsolatedChatHistory(currentSessionId, data);
-        }
-
-        function loadIsolatedChatHistory(sessionId, data) {
-            document.getElementById('chatBox').innerHTML = `
-                <div class="msg ai">
-                    <div style="display:flex; align-items:center; gap:10px; margin-bottom:8px;">
-                        <img src="${data.teacherImage}" style="width:36px; height:36px; border-radius:50%; border:2px solid var(--gold-color);">
-                        <b style="color:var(--gold-color);">${data.teacherName}:</b>
+                        <div class="btn-group">
+                            <button class="btn-outline" onclick="enrollBatch('${b.id}')"><i class="fa-solid fa-book-open"></i> Subjects</button>
+                            <button class="btn-solid" onclick="enrollBatch('${b.id}')">Enroll</button>
+                        </div>
                     </div>
-                    Welcome! Main aapki <b>${data.subjectName}</b> teacher hoon (${data.batchName}). Apna doubt puchiye. Main sirf issi subject par focus karungi.
-                </div>`;
+                </div>
+            `).join('');
+        }
+
+        function filterBatches() {
+            const q = document.getElementById('searchInput').value.toLowerCase();
+            const filtered = allBatches.filter(b => b.title.toLowerCase().includes(q));
+            renderExplorerBatches(filtered);
+        }
+
+        function enrollBatch(id) {
+            activeBatch = allBatches.find(b => b.id === id);
+            localStorage.setItem('tb_saved_batch', JSON.stringify(activeBatch));
+            showToast("Successfully Enrolled!");
+            showScreen('dashboardScreen');
+            renderDashboard();
+        }
+
+        // --- 6. RENDER DASHBOARD SUBJECTS ---
+        function renderDashboard() {
+            if(!activeBatch) return;
+            document.getElementById('myBatchName').innerText = activeBatch.title;
             
-            scrollToBottom(); 
-            loadSidebarHistory(); 
-        }
-
-        function openTierModal(batchId) {
-            const batch = all300Batches.find(b => b.id === batchId); 
-            if(!batch) return; 
+            // Map stream to subject library (fallback to general)
+            let subjects = subjectLibrary[activeBatch.stream] || subjectLibrary['general'];
             
-            selectedBatchForModal = batch;
+            document.getElementById('mySubjectsGrid').innerHTML = subjects.map(s => `
+                <div class="subject-card" onclick="openSubjectChat('${s.n}', '${s.i}', '${s.t}', '${s.g}')">
+                    <div class="subject-icon">${s.i}</div>
+                    <div class="subject-name">${s.n}</div>
+                    <div class="subject-teacher">${s.t}</div>
+                </div>
+            `).join('');
+        }
+
+        // --- 7. DEDICATED SUBJECT CHAT SYSTEM ---
+        function openSubjectChat(subName, icon, teacherName, gender) {
+            currentChatSubject = { name: subName, teacher: teacherName, gender: gender };
             
-            document.getElementById('tierModalBatchTitle').innerText = batch.name;
-            document.getElementById('tierPriceBasic').innerText = `₹${batch.basicPrice}/yr`;
-            document.getElementById('tierPriceMax').innerText = `₹${batch.basicPrice + 300}/yr`;
-            document.getElementById('tierPricePro').innerText = `₹${batch.basicPrice + 700}/yr`;
+            document.getElementById('chatSubjectName').innerText = subName;
+            document.getElementById('chatTeacherName').innerText = `By ${teacherName}`;
+            // Set Avatar based on gender
+            document.getElementById('chatTeacherImg').src = gender === 'female' ? 'https://raw.githubusercontent.com/yuviyadav16/ticbull-academy/main/11723.png' : 'https://raw.githubusercontent.com/yuviyadav16/ticbull-academy/main/11708.png';
             
-            document.getElementById('tierModal').style.display = 'flex';
-        }
-
-        function closeTierModal() { 
-            document.getElementById('tierModal').style.display = 'none'; 
-        }
-
-        function selectTier(type, price) {
-            selectedTierType = type; 
-            selectedTierPrice = price;
+            document.getElementById('chatScreen').style.display = 'flex';
+            document.getElementById('doubtCounterUI').innerText = `${userProfile.limitsLeft} Doubts Left`;
             
-            document.querySelectorAll('.tier-card-option').forEach(c => c.classList.remove('selected'));
-            document.getElementById(`tier${type.charAt(0).toUpperCase() + type.slice(1).toLowerCase()}Card`).classList.add('selected');
+            loadChatHistory();
         }
 
-        function confirmTierSelection() {
-            if(!selectedBatchForModal) return;
+        function closeChat() {
+            document.getElementById('chatScreen').style.display = 'none';
+            updateSidebarHistory();
+        }
+
+        function loadChatHistory() {
+            const box = document.getElementById('chatBox');
+            const historyKey = `chat_${activeBatch.id}_${currentChatSubject.name}`;
+            const history = JSON.parse(localStorage.getItem(historyKey)) || [];
             
-            currentActiveBatch = selectedBatchForModal.name;
-            localStorage.setItem('tb_active_batch', currentActiveBatch);
-            localStorage.setItem('tb_tier_type', selectedTierType);
-            
-            document.getElementById('activeBatchLabel').innerHTML = `<i class="fa-solid fa-graduation-cap" style="color:var(--accent-color);"></i> Active Batch: ${currentActiveBatch}`;
-            document.getElementById('badgePlanText').innerText = `${selectedTierType} Pass`;
-            
-            let limitText = "40 Doubts/Day";
-            if(selectedTierType === 'BASIC') limitText = "15 Doubts/Day";
-            if(selectedTierType === 'PRO') limitText = "85 Doubts/Day";
-            document.getElementById('doubtLimitChip').innerText = limitText;
-
-            closeTierModal(); 
-            switchToMainChat(); 
-            showToast(`🎉 Enrolled in ${selectedBatchForModal.name} (${selectedTierType} Pass)!`, "success");
-        }
-
-        function startFreeTrialDirect(batchName) {
-            currentActiveBatch = batchName; 
-            localStorage.setItem('tb_active_batch', batchName); 
-            localStorage.setItem('tb_tier_type', 'FREE_TRIAL');
-            
-            document.getElementById('activeBatchLabel').innerHTML = `<i class="fa-solid fa-graduation-cap" style="color:var(--accent-color);"></i> Active Batch: ${batchName}`;
-            document.getElementById('badgePlanText').innerText = `Free Trial`; 
-            document.getElementById('doubtLimitChip').innerText = `Trial Active`;
-            
-            switchToMainChat(); 
-            showToast(`🎁 2 Days Free Trial Activated for ${batchName}!`, "success");
-        }
-
-        function switchToMainChat() { 
-            document.getElementById('batches-screen').style.display = 'none'; 
-            document.getElementById('main-dashboard').style.display = 'flex'; 
-            scrollToBottom(); 
-        }
-        
-        function switchToBatchesScreen() { 
-            document.getElementById('main-dashboard').style.display = 'none'; 
-            document.getElementById('batches-screen').style.display = 'flex'; 
-            filterCategory(currentSelectedCategory, null); 
-        }
-
-        function quickToggleTeacher() {
-            // Placeholder: Teacher is mapped by Subject now
-        }
-
-        function updateHeaderTeacherUI() {
-            // Placeholder
-        }
-
-        function getTeacherImage() {
-            return currentTeacher === 'female' ? './11723.png' : './11708.png';
-        }
-
-        function getTeacherFallback() {
-            return currentTeacher === 'female' 
-                ? 'https://raw.githubusercontent.com/yuviyadav16/ticbull-academy/main/11723.png' 
-                : 'https://raw.githubusercontent.com/yuviyadav16/ticbull-academy/main/11708.png';
-        }
-
-        let currentAuthMode = 'login';
-        let purchasedPlanName = 'Free Demo Plan';
-        let isProUser = false;
-        let selectedPlanName = 'Class 12 Science';
-        let selectedPlanPrice = 499;
-        let selectedFilesArray = [];
-        let currentStudentData = { name: '', email: '', dob: '', photo: '' };
-        
-        let isInitialLoad = true;
-        let appSoundEnabled = true;
-
-        const AudioContext = window.AudioContext || window.webkitAudioContext;
-        const audioCtx = new AudioContext();
-
-        function playClickSound() {
-            if(!appSoundEnabled) return;
-            if(audioCtx.state === 'suspended') audioCtx.resume();
-            const osc = audioCtx.createOscillator();
-            const gain = audioCtx.createGain();
-            osc.type = 'sine';
-            osc.frequency.setValueAtTime(800, audioCtx.currentTime);
-            gain.gain.setValueAtTime(0.05, audioCtx.currentTime);
-            gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.1);
-            osc.connect(gain);
-            gain.connect(audioCtx.destination);
-            osc.start();
-            osc.stop(audioCtx.currentTime + 0.1);
-        }
-
-        document.addEventListener('click', function(e) {
-            if(e.target.closest('button') || e.target.closest('.action-icon-btn') || e.target.closest('.drawer-item') || e.target.closest('.auth-tab') || e.target.closest('.price-item') || e.target.closest('.theme-circle') || e.target.closest('.batch-card') || e.target.closest('.cat-chip') || e.target.closest('.subject-card')) {
-                playClickSound();
-            }
-        });
-
-        function toggleSoundSetting(checkbox) {
-            appSoundEnabled = checkbox.checked;
-            showToast(appSoundEnabled ? "Sound Enabled" : "Sound Muted", "success");
-        }
-
-        function changeAppTheme(color, el) {
-            document.documentElement.style.setProperty('--accent-color', color);
-            document.querySelectorAll('.theme-circle').forEach(c => c.classList.remove('active'));
-            el.classList.add('active');
-            showToast("Theme updated!", "success");
-        }
-
-        function showToast(msg, type = 'success') {
-            const toast = document.getElementById('custom-toast');
-            toast.innerHTML = `<i class="fa-solid ${type === 'success' ? 'fa-circle-check toast-icon success' : 'fa-circle-exclamation toast-icon error'}"></i> <span>${msg}</span>`;
-            toast.classList.add('show');
-            setTimeout(() => toast.classList.remove('show'), 3500);
-        }
-
-        function checkAndUpdateStreak() {
-            if(!currentStudentData.email) return;
-            const today = new Date().toLocaleDateString('en-CA'); 
-            let lastLogin = localStorage.getItem('ticbull_last_login_' + currentStudentData.email);
-            let currentStreak = parseInt(localStorage.getItem('ticbull_streak_' + currentStudentData.email)) || 0;
-
-            if (lastLogin !== today) {
-                if (lastLogin) {
-                    const lastDate = new Date(lastLogin);
-                    const currDate = new Date(today);
-                    const diffTime = Math.abs(currDate - lastDate);
-                    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); 
-                    
-                    if (diffDays === 1) {
-                        currentStreak += 1; 
-                        setTimeout(() => showToast(`🔥 Daily Streak continued! Day ${currentStreak}`, "success"), 2000);
-                    } else {
-                        currentStreak = 1; 
-                        if(diffDays > 1) setTimeout(() => showToast(`Oh no! Streak broken. Starting fresh at Day 1 🔥`, "error"), 2000);
-                    }
-                } else {
-                    currentStreak = 1; 
-                }
+            box.innerHTML = '';
+            if(history.length === 0) {
+                // Default Welcome Message in persona
+                const welcomeText = currentChatSubject.gender === 'female' 
+                    ? `Hello bacchon! Main aapki ${currentChatSubject.name} teacher hoon. ${activeBatch.title} ka poora syllabus hum cover karenge. Bataiye aaj kya padhna hai?` 
+                    : `Welcome students! Main aapka ${currentChatSubject.name} teacher. Hum ${activeBatch.title} strictly syllabus ke according padhenge. Koi doubt hai toh pucho!`;
                 
-                localStorage.setItem('ticbull_last_login_' + currentStudentData.email, today);
-                localStorage.setItem('ticbull_streak_' + currentStudentData.email, currentStreak);
-            }
-            document.getElementById('streakCountText').innerText = currentStreak + " Day";
-        }
-
-        let syllabusItems = [];
-        
-        function openSyllabusBoard() {
-            document.getElementById('syllabusModal').style.display = 'flex';
-            if(document.getElementById('drawer').classList.contains('open')) toggleDrawer();
-            const saved = localStorage.getItem('ticbull_syllabus_' + currentStudentData.email);
-            if(saved) syllabusItems = JSON.parse(saved);
-            renderSyllabus();
-        }
-        
-        function addSyllabusItem() {
-            const input = document.getElementById('newSyllabusItem');
-            if(!input.value.trim()) return;
-            syllabusItems.unshift({ text: input.value.trim(), done: false });
-            input.value = '';
-            saveSyllabus();
-        }
-        
-        function toggleSyllabusItem(index) {
-            syllabusItems[index].done = !syllabusItems[index].done;
-            saveSyllabus();
-        }
-        
-        function deleteSyllabusItem(index) {
-            syllabusItems.splice(index, 1);
-            saveSyllabus();
-        }
-        
-        function saveSyllabus() {
-            localStorage.setItem('ticbull_syllabus_' + currentStudentData.email, JSON.stringify(syllabusItems));
-            renderSyllabus();
-        }
-        
-        function renderSyllabus() {
-            const list = document.getElementById('syllabusList');
-            list.innerHTML = '';
-            if(syllabusItems.length === 0) { 
-                list.innerHTML = '<p style="color:var(--text-muted); font-size:12px; text-align:center; padding:20px;">No topics added yet.</p>'; 
-                return; 
-            }
-            
-            syllabusItems.forEach((item, i) => {
-                list.innerHTML += `
-                    <div class="syllabus-task ${item.done ? 'completed' : ''}">
-                        <input type="checkbox" ${item.done ? 'checked' : ''} onchange="toggleSyllabusItem(${i})">
-                        <span>${item.text}</span>
-                        <i class="fa-solid fa-trash" style="color:#ef4444; font-size:12px; cursor:pointer;" onclick="deleteSyllabusItem(${i})"></i>
-                    </div>`;
-            });
-        }
-
-        window.addEventListener('DOMContentLoaded', () => {
-            updateHeaderTeacherUI();
-            renderBatchesList(all300Batches);
-
-            const savedEmail = localStorage.getItem('ticbull_email');
-            const savedToken = localStorage.getItem('ticbull_token');
-            
-            if(savedEmail && savedToken) {
-                fetch('/api/check-session', {
-                    method: 'POST',
-                    headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify({ email: savedEmail, token: savedToken })
-                })
-                .then(res => res.json())
-                .then(data => {
-                    if(data.success && data.active) {
-                        currentStudentData.email = savedEmail;
-                        currentStudentData.name = data.user.name || localStorage.getItem('ticbull_name') || '';
-                        currentStudentData.dob = data.user.dob || localStorage.getItem('ticbull_dob') || '';
-                        currentStudentData.photo = data.user.photo || localStorage.getItem('ticbull_photo') || '';
-                        
-                        localStorage.setItem('ticbull_name', currentStudentData.name);
-                        if(currentStudentData.photo) localStorage.setItem('ticbull_photo', currentStudentData.photo);
-
-                        document.getElementById('auth-screen').style.display = 'none';
-                        document.getElementById('batches-screen').style.display = 'flex';
-                        updateProfileUI();
-                        loadSidebarHistory();
-                        checkAndUpdateStreak(); 
-                    } else {
-                        localStorage.clear();
-                        showToast("Session Expired! Logged in from another device.", "error");
-                    }
-                }).catch(() => {
-                    currentStudentData.email = savedEmail;
-                    currentStudentData.name = localStorage.getItem('ticbull_name') || '';
-                    document.getElementById('auth-screen').style.display = 'none';
-                    document.getElementById('batches-screen').style.display = 'flex';
-                    updateProfileUI();
-                    loadSidebarHistory();
-                    checkAndUpdateStreak(); 
+                box.innerHTML = `<div class="msg ai"><div class="ai-header"><i class="fa-solid fa-chalkboard-user"></i> ${currentChatSubject.teacher}</div>${welcomeText}</div>`;
+            } else {
+                history.forEach(msg => {
+                    if(msg.type === 'user') box.innerHTML += `<div class="msg user">${msg.text}</div>`;
+                    else box.innerHTML += `<div class="msg ai"><div class="ai-header"><i class="fa-solid fa-chalkboard-user"></i> ${msg.teacher}</div>${msg.text}</div>`;
                 });
             }
-        });
+            box.scrollTop = box.scrollHeight;
+        }
 
-        window.addEventListener('load', () => {
+        function saveChatHistory(type, text, teacher) {
+            const historyKey = `chat_${activeBatch.id}_${currentChatSubject.name}`;
+            const history = JSON.parse(localStorage.getItem(historyKey)) || [];
+            history.push({ type, text, teacher });
+            localStorage.setItem(historyKey, JSON.stringify(history));
+        }
+
+        // --- 8. SMART AI ROUTING (Gemini vs Meta) ---
+        function sendChatMessage() {
+            const input = document.getElementById('chatInput');
+            const text = input.value.trim();
+            if(!text) return;
+
+            if(userProfile.limitsLeft <= 0) {
+                document.getElementById('chatBox').innerHTML += `<div class="msg system"><b>Free Limit Exhausted!</b><br>Aapke daily doubts khatam ho gaye hain. Please upgrade your pass to continue chat.</div>`;
+                openSubscriptionModal();
+                scrollToBottom();
+                return;
+            }
+
+            // User Message
+            const box = document.getElementById('chatBox');
+            box.innerHTML += `<div class="msg user">${text}</div>`;
+            saveChatHistory('user', text, '');
+            input.value = '';
+            scrollToBottom();
+
+            userProfile.limitsLeft--;
+            document.getElementById('doubtCounterUI').innerText = `${userProfile.limitsLeft} Doubts Left`;
+
+            // Loading state
+            const loadId = 'load_' + Date.now();
+            box.innerHTML += `<div class="msg ai" id="${loadId}"><i>${currentChatSubject.teacher} is typing...</i></div>`;
+            scrollToBottom();
+
+            // MOCK BACKEND ROUTING LOGIC (Simulating API)
             setTimeout(() => {
-                const splash = document.getElementById('splash-screen');
-                splash.style.opacity = '0';
-                setTimeout(() => splash.style.visibility = 'hidden', 500);
-            }, 3500);
-        });
+                let aiResponse = "";
+                const tName = currentChatSubject.teacher;
+                const isFemale = currentChatSubject.gender === 'female';
+                const lowerText = text.toLowerCase();
 
-        window.addEventListener('resize', () => scrollToBottom());
+                // 1. NON-ACADEMIC / CASUAL (Routed to DeepSeek/Meta Logic)
+                if(lowerText.includes('hi') || lowerText.includes('hello') || lowerText.includes('kaise ho') || lowerText.includes('who are you') || lowerText.includes('maker') || lowerText.includes('man nahi lag raha') || lowerText.includes('bored')) {
+                    
+                    if(lowerText.includes('maker') || lowerText.includes('developer') || lowerText.includes('banaya')) {
+                        aiResponse = `Mujhe TicBull Academy aur MrYuviYadav ne develop kiya hai taaki main aapko ${currentChatSubject.name} padha saku!`;
+                    } else if(lowerText.includes('man nahi lag raha') || lowerText.includes('bored')) {
+                        aiResponse = isFemale 
+                            ? `Dekho beta, padhai me man lagana padta hai! Agar abhi mehnat kar loge toh ${activeBatch.title} me top karoge. Chalo batao kis topic me problem aa rahi hai, main easy way me samjhati hu.`
+                            : `Aise kaise chalega? Competition dekha hai bahar? Thoda focus karo, ${activeBatch.title} clear karna hai ya nahi? Chalo koi easy topic se start karte hain.`;
+                    } else if(lowerText.includes('plan') || lowerText.includes('subscribe') || lowerText.includes('price')) {
+                        aiResponse = `Aap apne doubts limit badhane ke liye Menu se 'Upgrade Course Pass' le sakte hain. Basic ₹199 (15 doubts/day), Pro ₹499 (40 doubts) aur Max Pro ₹999 me available hai.`;
+                    } else {
+                        aiResponse = isFemale ? `Hello! Main aapki ${currentChatSubject.name} teacher, ${tName}. Kaisi chal rahi hai padhai?` : `Hello dear student. Main ${tName}. Focus on your study. Koi doubt hai?`;
+                    }
+                } 
+                // 2. ACADEMIC / EDUCATIONAL (Routed to Gemini Logic - Strictly Syllabus)
+                else {
+                    aiResponse = isFemale 
+                        ? `Bilkul sahi sawal hai. ${currentChatSubject.name} ke ${activeBatch.title} syllabus ke according iska answer ye hoga ki... [Conceptual explanation based on NCERT]. Samajh aaya aapko?`
+                        : `Good question. ${activeBatch.title} ke syllabus me ye bahut important topic hai. Iska answer hai... [Point wise explanation]. Isko note karlo.`;
+                }
+
+                document.getElementById(loadId).innerHTML = `<div class="ai-header"><i class="fa-solid fa-chalkboard-user"></i> ${tName}</div>${aiResponse}`;
+                saveChatHistory('ai', aiResponse, tName);
+                scrollToBottom();
+
+            }, 1200);
+        }
 
         function scrollToBottom() {
-            setTimeout(() => {
-                const chatBox = document.getElementById('chatBox');
-                if(chatBox) chatBox.scrollTop = chatBox.scrollHeight;
-            }, 200);
+            const box = document.getElementById('chatBox');
+            box.scrollTop = box.scrollHeight;
         }
 
-        function autoResizeInput(el) {
-            el.style.height = 'auto';
-            el.style.height = (el.scrollHeight) + 'px';
-        }
-
-        function handleInputKeydown(e) {
-            if(e.key === 'Enter' && !e.shiftKey) {
-                e.preventDefault();
-                askAI();
-            }
-        }
-
-        function togglePassword(inputId) {
-            const pwdInput = document.getElementById(inputId);
-            pwdInput.type = pwdInput.type === 'password' ? 'text' : 'password';
-        }
-
-        function openForgotModal() { 
-            document.getElementById('forgotModal').style.display = 'flex'; 
-        }
-
-        function initiateForgotOTP() {
-            const email = document.getElementById('forgotEmail').value.trim();
-            const newPass = document.getElementById('forgotNewPassword').value.trim();
+        function updateSidebarHistory() {
+            const list = document.getElementById('recentChatsList');
+            if(!activeBatch) return;
+            const subjects = subjectLibrary[activeBatch.stream] || subjectLibrary['general'];
             
-            if(!email || !newPass) { 
-                showToast("Email and New Password are required!", "error"); 
-                return; 
-            }
-
-            currentStudentData.email = email;
-            currentAuthMode = 'forgot';
-            document.getElementById('password').value = newPass; 
-
-            const btn = document.getElementById('forgotBtn');
-            btn.disabled = true;
-            btn.innerText = "SENDING OTP...";
-
-            fetch(`/api/send-otp`, {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({ email: email, auth_mode: 'forgot' })
-            }).then(res => res.json()).then(data => {
-                btn.disabled = false;
-                btn.innerText = "SEND RESET OTP";
-                if(data.success) {
-                    document.getElementById('forgotModal').style.display = 'none';
-                    document.getElementById('otpModal').style.display = 'flex';
-                    showToast(data.message, "success");
-                } else {
-                    showToast(data.message, "error");
-                }
-            }).catch(() => {
-                btn.disabled = false;
-                btn.innerText = "SEND RESET OTP";
-                showToast("Server error!", "error");
-            });
-        }
-
-        function switchAuth(mode) {
-            currentAuthMode = mode;
-            document.getElementById('tab-login').classList.toggle('active', mode === 'login');
-            document.getElementById('tab-signup').classList.toggle('active', mode === 'signup');
-            document.getElementById('signupFields').style.display = mode === 'signup' ? 'flex' : 'none';
-            document.getElementById('authSubmitBtn').innerText = mode === 'login' ? 'SEND VERIFICATION OTP' : 'CREATE ACCOUNT WITH OTP';
-        }
-
-        function toggleTheme() {
-            document.body.classList.toggle('light-theme');
-            const isLight = document.body.classList.contains('light-theme');
-            document.getElementById('themeToggleText').innerText = isLight ? 'Switch to Dark Mode' : 'Switch to Light Mode';
-        }
-
-        function calculateAge(dobString) {
-            if(!dobString) return null;
-            const birthDate = new Date(dobString);
-            const today = new Date();
-            let age = today.getFullYear() - birthDate.getFullYear();
-            const monthDiff = today.getMonth() - birthDate.getMonth();
-            if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) age--;
-            return age;
-        }
-
-        function initiateAuthWithOTP() {
-            const email = document.getElementById('email').value.trim();
-            const name = document.getElementById('studentName').value.trim();
-            const dob = document.getElementById('studentDob').value;
-            const password = document.getElementById('password').value.trim();
-            const btn = document.getElementById('authSubmitBtn');
-
-            if(!email) { showToast("Email ID is required!", "error"); return; }
-            if(!password) { showToast("Password is required!", "error"); return; }
-            if(currentAuthMode === 'signup' && !name) { showToast("Full Name is required!", "error"); return; }
-
-            currentStudentData.email = email;
-            if(name) currentStudentData.name = name;
-            if(dob) currentStudentData.dob = dob;
-
-            btn.disabled = true;
-            btn.innerText = "SENDING OTP...";
-
-            fetch(`/api/send-otp`, {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({ email: email, password: password, auth_mode: currentAuthMode })
-            })
-            .then(res => res.json())
-            .then(data => {
-                btn.disabled = false;
-                btn.innerText = currentAuthMode === 'login' ? 'SEND VERIFICATION OTP' : 'CREATE ACCOUNT WITH OTP';
-                if (data.success) {
-                    showToast(data.message, "success");
-                    document.getElementById('otpModal').style.display = 'flex';
-                } else {
-                    showToast(data.message, "error");
-                }
-            })
-            .catch(() => {
-                btn.disabled = false;
-                btn.innerText = currentAuthMode === 'login' ? 'SEND VERIFICATION OTP' : 'CREATE ACCOUNT WITH OTP';
-                showToast("Server error! Backend might be down.", "error");
-            });
-        }
-
-        function verifyOTPAndLogin() {
-            const otp = document.getElementById('otpInput').value.trim();
-            const password = document.getElementById('password').value.trim();
-            const btn = document.getElementById('verifyBtn');
-
-            if(!otp) { showToast("Enter 6-digit OTP!", "error"); return; }
-            
-            btn.disabled = true;
-            btn.innerText = "VERIFYING...";
-
-            let deviceId = localStorage.getItem('ticbull_device_id') || ('dev_' + Math.random().toString(36).substring(2) + Date.now());
-            localStorage.setItem('ticbull_device_id', deviceId);
-
-            fetch(`/api/verify-otp`, {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({ email: currentStudentData.email, otp: otp, password: password, auth_mode: currentAuthMode, device_id: deviceId })
-            })
-            .then(res => res.json())
-            .then(data => {
-                btn.disabled = false;
-                btn.innerText = "VERIFY & CONTINUE";
-                if (data.success) {
-                    localStorage.setItem('ticbull_email', currentStudentData.email);
-                    localStorage.setItem('ticbull_token', data.token);
-                    
-                    if(data.user) {
-                        if(data.user.name) currentStudentData.name = data.user.name;
-                        if(data.user.dob) currentStudentData.dob = data.user.dob;
-                        if(data.user.photo) currentStudentData.photo = data.user.photo;
-                    }
-                    
-                    localStorage.setItem('ticbull_name', currentStudentData.name);
-                    if(currentStudentData.dob) localStorage.setItem('ticbull_dob', currentStudentData.dob);
-                    if(currentStudentData.photo) localStorage.setItem('ticbull_photo', currentStudentData.photo);
-
-                    updateProfileUI();
-                    document.getElementById('otpModal').style.display = 'none';
-                    document.getElementById('auth-screen').style.display = 'none';
-                    document.getElementById('batches-screen').style.display = 'flex';
-                    loadSidebarHistory();
-                    checkAndUpdateStreak();
-                    showToast("Login Successful!", "success");
-                } else {
-                    showToast(data.message || "Invalid OTP!", "error");
-                }
-            })
-            .catch(() => {
-                btn.disabled = false;
-                btn.innerText = "VERIFY & CONTINUE";
-                showToast("Server Error! Try again.", "error");
-            });
-        }
-
-        function closeOtpModal() { 
-            document.getElementById('otpModal').style.display = 'none'; 
-        }
-
-        function logoutUser() {
-            localStorage.clear();
-            location.reload();
-        }
-
-        function openSettingsModal() {
-            document.getElementById('settingsModal').style.display = 'flex';
-            if(document.getElementById('drawer').classList.contains('open')) toggleDrawer();
-        }
-
-        function openDeleteAccountModal() {
-            document.getElementById('settingsModal').style.display = 'none';
-            document.getElementById('deleteAccountModal').style.display = 'flex';
-            document.getElementById('delAccEmail').value = currentStudentData.email;
-            document.getElementById('delAccOtpSection').style.display = 'none';
-            document.getElementById('sendDelOtpBtn').style.display = 'block';
-        }
-
-        function initiateAccountDeletion() {
-            const btn = document.getElementById('sendDelOtpBtn');
-            btn.disabled = true;
-            btn.innerText = "SENDING WARNING OTP...";
-
-            fetch(`/api/send-delete-otp`, {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({ email: currentStudentData.email })
-            }).then(res => res.json()).then(data => {
-                if(data.success) {
-                    showToast(data.message, "success");
-                    btn.style.display = 'none';
-                    document.getElementById('delAccOtpSection').style.display = 'block';
-                } else {
-                    btn.disabled = false;
-                    btn.innerText = "SEND DELETION OTP";
-                    showToast(data.message, "error");
+            let html = '';
+            subjects.forEach(s => {
+                const hasChat = localStorage.getItem(`chat_${activeBatch.id}_${s.n}`);
+                if(hasChat) {
+                    html += `<div class="drawer-item" style="font-size:12px; background:rgba(255,255,255,0.05);" onclick="openSubjectChat('${s.n}', '${s.i}', '${s.t}', '${s.g}'); toggleDrawer();"><i class="fa-solid fa-comments"></i> ${s.n} Chat</div>`;
                 }
             });
-        }
-
-        function verifyAndDeleteAccount() {
-            const otp = document.getElementById('delAccOtp').value.trim();
-            if(!otp) { showToast("OTP is required!", "error"); return; }
-            
-            const btn = document.getElementById('confirmDeleteAccBtn');
-            btn.disabled = true;
-            btn.innerText = "DELETING PERMANENTLY...";
-
-            fetch(`/api/delete-account`, {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({ email: currentStudentData.email, otp: otp })
-            }).then(res => res.json()).then(data => {
-                if(data.success) {
-                    showToast("Account deleted successfully.", "success");
-                    localStorage.clear();
-                    setTimeout(() => location.reload(), 1500);
-                } else {
-                    btn.disabled = false;
-                    btn.innerText = "PERMANENTLY DELETE ACCOUNT";
-                    showToast(data.message, "error");
-                }
-            });
-        }
-
-        function updateProfileUI() {
-            const name = currentStudentData.name;
-            const email = currentStudentData.email;
-            const dob = currentStudentData.dob;
-
-            if(name) {
-                document.getElementById('portalHeaderName').innerText = `Welcome, ${name.split(' ')[0]}`;
-                document.getElementById('drawerStudentName').innerText = name;
-                document.getElementById('drawerAvatarInitial').innerText = name.charAt(0).toUpperCase();
-            } else if(email) {
-                const emailPrefix = email.split('@')[0];
-                document.getElementById('drawerStudentName').innerText = emailPrefix;
-                document.getElementById('drawerAvatarInitial').innerText = emailPrefix.charAt(0).toUpperCase();
-            }
-            
-            if(email) {
-                document.getElementById('drawerStudentEmail').innerText = email;
-                document.getElementById('editStudentEmail').value = email;
-            }
-            
-            const userAge = calculateAge(dob);
-            
-            if(userAge !== null) {
-                document.getElementById('drawerStudentAge').innerText = `Age: ${userAge} Years Old`;
-            } else {
-                document.getElementById('drawerStudentAge').innerText = `Active Student`;
-            }
-            
-            if(currentStudentData.photo) {
-                const img = document.getElementById('drawerAvatarImg');
-                img.src = currentStudentData.photo;
-                img.style.display = 'block';
-                document.getElementById('drawerAvatarInitial').style.display = 'none';
-            }
-        }
-
-        function openEditProfileModal() {
-            document.getElementById('editStudentName').value = currentStudentData.name || '';
-            document.getElementById('editStudentDob').value = currentStudentData.dob || '';
-            document.getElementById('editProfileModal').style.display = 'flex';
-        }
-
-        function closeEditProfileModal() { 
-            document.getElementById('editProfileModal').style.display = 'none'; 
-        }
-
-        function saveProfileChanges() {
-            currentStudentData.name = document.getElementById('editStudentName').value;
-            currentStudentData.dob = document.getElementById('editStudentDob').value;
-            localStorage.setItem('ticbull_name', currentStudentData.name);
-            localStorage.setItem('ticbull_dob', currentStudentData.dob);
-
-            fetch(`/api/update-profile`, {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({ email: currentStudentData.email, name: currentStudentData.name, dob: currentStudentData.dob, photo: currentStudentData.photo })
-            }).then(() => {
-                updateProfileUI();
-                closeEditProfileModal();
-                showToast("Profile details updated successfully!", "success");
-            });
-        }
-
-        function handleAvatarUpload(event) {
-            const file = event.target.files[0];
-            if(file) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    currentStudentData.photo = e.target.result;
-                    localStorage.setItem('ticbull_photo', e.target.result);
-                    updateProfileUI();
-                    
-                    fetch(`/api/update-profile`, {
-                        method: 'POST',
-                        headers: {'Content-Type': 'application/json'},
-                        body: JSON.stringify({ email: currentStudentData.email, name: currentStudentData.name, dob: currentStudentData.dob, photo: currentStudentData.photo })
-                    });
-                };
-                reader.readAsDataURL(file);
-            }
-        }
-
-        function toggleDrawer() {
-            const drawer = document.getElementById('drawer');
-            const overlay = document.getElementById('drawerOverlay');
-            drawer.classList.toggle('open');
-            overlay.style.display = drawer.classList.contains('open') ? 'block' : 'none';
+            list.innerHTML = html || `<span style="font-size:11px; color:var(--text-muted); padding-left:14px;">No active chats yet.</span>`;
         }
 
         function openSubscriptionModal() {
-            document.getElementById('subModal').style.display = 'flex';
+            document.getElementById('pricingModal').style.display = 'flex';
             if(document.getElementById('drawer').classList.contains('open')) toggleDrawer();
         }
 
-        function closeSubscriptionModal() { 
-            document.getElementById('subModal').style.display = 'none'; 
-        }
-
-        function toggleToolsMenu() {
-            const menu = document.getElementById('aiToolsMenu');
-            menu.style.display = (menu.style.display === 'flex') ? 'none' : 'flex';
-        }
-
-        function triggerTool(promptAction) {
-            document.getElementById('aiToolsMenu').style.display = 'none';
-            document.getElementById('userInput').value = promptAction;
-            askAI();
-        }
-
-        function triggerAppGuideBot() {
-            if(document.getElementById('drawer').classList.contains('open')) toggleDrawer();
+        function selectPlan(type) {
+            document.querySelectorAll('.plan-card').forEach(el => el.classList.remove('active'));
+            event.currentTarget.classList.add('active');
             
-            const chatBox = document.getElementById('chatBox');
-            chatBox.innerHTML += `
-                <div class="msg guide-ai">
-                    <div style="display:flex; align-items:center; gap:10px; margin-bottom:8px;">
-                        <img src="${getTeacherImage()}" onerror="this.src='${getTeacherFallback()}'" style="width:36px; height:36px; border-radius:50%; object-fit:cover; border:2px solid var(--gold-color);">
-                        <b style="color:var(--gold-color);">TicBull ${currentTeacher === 'female' ? 'Ma\'am' : 'Sir'}:</b>
-                    </div>
-                    • <b>App Founder:</b> Created by MrYuviYadav.<br>
-                    • <b>App Purpose:</b> AI Powered Learning, Exam Engine.<br>
-                    • <b>Key Features:</b> Detailed Notes, MCQs, AI Diagram & Video Explanations.<br>
-                    • <b>How to Use:</b> Select your Batch from Dashboard and ask your subject doubts!
-                </div>`;
-                
-            scrollToBottom();
-            saveChatUI();
-        }
-
-        function startNewChat() {
-            currentSessionId = Date.now().toString();
-            currentSessionTitle = "New Chat";
+            if(type === 'BASIC') userProfile.limitsLeft = 15;
+            if(type === 'PRO') userProfile.limitsLeft = 40;
+            if(type === 'MAX') userProfile.limitsLeft = 75;
             
-            document.getElementById('chatBox').innerHTML = `
-                <div class="msg ai" id="defaultWelcomeMsg">
-                    <b>Welcome to TicBull Academy! 🚀</b><br>New Chat started. Ask your question!
-                </div>`;
-                
-            if(document.getElementById('drawer').classList.contains('open')) toggleDrawer();
-            
-            showToast("New Chat Started!", "success");
-            
-            const items = document.querySelectorAll('.history-item');
-            items.forEach(el => el.classList.remove('active-session'));
+            document.getElementById('doubtCounterUI').innerText = `${userProfile.limitsLeft} Doubts Left`;
         }
-
-        function loadSidebarHistory() {
-            fetch('/api/get-sessions', {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({ email: currentStudentData.email })
-            })
-            .then(res => res.json())
-            .then(data => {
-                if(data.success && data.sessions) {
-                    renderHistoryList(data.sessions);
-                    if (isInitialLoad && data.sessions.length > 0) {
-                        loadSession(data.sessions[0].id, data.sessions[0].title);
-                        isInitialLoad = false;
-                    }
-                }
-            }).catch(() => {});
-        }
-
-        function renderHistoryList(historyArray) {
-            const list = document.getElementById('historyList');
-            if(!list) return;
-            
-            list.innerHTML = '';
-            
-            historyArray.forEach((item) => {
-                const isActive = (item.id === currentSessionId) ? 'active-session' : '';
-                list.innerHTML += `
-                    <div class="history-item ${isActive}" onclick="loadSession('${item.id}', '${item.title.replace(/'/g, "\\'")}')">
-                        <span style="white-space:nowrap; overflow:hidden; text-overflow:ellipsis; width:85%;">${item.title}</span>
-                        <i class="fa-solid fa-trash delete-chat-icon" title="Delete Chat" onclick="promptDeleteHistory('${item.id}', event)"></i>
-                    </div>`;
-            });
-        }
-
-        function loadSession(id, title) {
-            currentSessionId = id;
-            currentSessionTitle = title;
-            
-            fetch('/api/get-session-html', {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({ email: currentStudentData.email, session_id: id })
-            })
-            .then(res => res.json())
-            .then(data => {
-                if(data.success && data.html) {
-                    document.getElementById('chatBox').innerHTML = data.html;
-                    scrollToBottom();
-                    
-                    if(document.getElementById('drawer').classList.contains('open')) toggleDrawer();
-                    
-                    const items = document.querySelectorAll('.history-item');
-                    items.forEach(el => el.classList.remove('active-session'));
-                    
-                    if(window.event && window.event.currentTarget) {
-                        window.event.currentTarget.classList.add('active-session');
-                    }
-                }
-            });
-        }
-
-        let pendingDeleteId = null;
-        function promptDeleteHistory(id, event) {
-            event.stopPropagation();
-            pendingDeleteId = id;
-            document.getElementById('deleteWarningModal').style.display = 'flex';
-        }
-
-        document.getElementById('confirmDeleteBtn').onclick = function() {
-            if(pendingDeleteId) {
-                fetch(`/api/delete-session`, {
-                    method: 'POST',
-                    headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify({ email: currentStudentData.email, session_id: pendingDeleteId })
-                }).then(() => {
-                    showToast("Chat permanently deleted.", "success");
-                    document.getElementById('deleteWarningModal').style.display = 'none';
-                    if(currentSessionId === pendingDeleteId) { startNewChat(); }
-                    loadSidebarHistory();
-                });
-            }
-        };
-
-        function saveChatUI() {
-            const chatHtml = document.getElementById('chatBox').innerHTML;
-            
-            fetch('/api/sync-session', {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({ 
-                    email: currentStudentData.email, 
-                    session_id: currentSessionId, 
-                    title: currentSessionTitle, 
-                    html: chatHtml 
-                })
-            }).then(() => loadSidebarHistory());
-        }
-
-        let recognition;
         
-        if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
-            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-            recognition = new SpeechRecognition();
-            recognition.continuous = false;
-            recognition.interimResults = false;
-            
-            recognition.onresult = function(event) {
-                const text = event.results[0][0].transcript;
-                const inputEl = document.getElementById('userInput');
-                inputEl.value += " " + text;
-                autoResizeInput(inputEl);
-                document.getElementById('voiceBtn').classList.remove('voice-active');
-            };
-            
-            recognition.onerror = function() { document.getElementById('voiceBtn').classList.remove('voice-active'); };
-            recognition.onend = function() { document.getElementById('voiceBtn').classList.remove('voice-active'); };
-        }
-
-        function toggleVoiceInput() {
-            const voiceBtn = document.getElementById('voiceBtn');
-            if(voiceBtn.classList.contains('voice-active')) {
-                if(recognition) recognition.stop();
-                voiceBtn.classList.remove('voice-active');
-            } else {
-                if(recognition) {
-                    recognition.start();
-                    voiceBtn.classList.add('voice-active');
-                } else {
-                    showToast("Voice typing not supported in this browser.", "error");
-                }
-            }
-        }
-
-        function handleMultipleFilesSelect(event) {
-            const files = event.target.files;
-            if(files && files.length > 0) {
-                selectedFilesArray = [];
-                for(let i=0; i<files.length; i++) {
-                    const reader = new FileReader();
-                    reader.onload = function(e) { selectedFilesArray.push(e.target.result); };
-                    reader.readAsDataURL(files[i]);
-                }
-                document.getElementById('imagePreviewText').innerHTML = `<i class="fa-solid fa-paperclip"></i> ${files.length} File(s) Selected`;
-                document.getElementById('imagePreview').style.display = 'flex';
-            }
-        }
-
-        function removeImage() {
-            selectedFilesArray = [];
-            document.getElementById('photoInput').value = '';
-            document.getElementById('imagePreview').style.display = 'none';
-        }
-
-        function saveChatLang(val) {
-            localStorage.setItem('tb_lang', val);
-            showToast(`AI Language set to ${val}`, "success");
-        }
-
-        function askAI() {
-            const input = document.getElementById('userInput');
-            const chatBox = document.getElementById('chatBox');
-            const lang = document.getElementById('chatLangSelect').value || 'Hinglish';
-            const sendBtn = document.getElementById('sendBtn');
-
-            if(!input.value.trim() && selectedFilesArray.length === 0) return;
-
-            let userMsgContent = '';
-            
-            selectedFilesArray.forEach(file => {
-                if(file.includes('pdf')) {
-                    userMsgContent += `<i class="fa-solid fa-file-pdf" style="font-size:24px; color:red;"></i> <b>[PDF Attached]</b><br>`;
-                } else {
-                    userMsgContent += `<img src="${file}" class="msg-image"><br>`;
-                }
-            });
-            
-            if(input.value.trim()) userMsgContent += input.value.trim();
-            const questionText = input.value.trim() || "Analyze attached files";
-
-            if(currentSessionTitle === "New Chat") {
-                currentSessionTitle = questionText.substring(0, 30) + (questionText.length > 30 ? "..." : "");
-            }
-
-            chatBox.innerHTML += `<div class="msg user">${userMsgContent}</div>`;
-           
-            const filesToSend = [...selectedFilesArray]; 
-            input.value = '';
-            input.style.height = 'auto'; 
-            removeImage(); 
-            document.getElementById('aiToolsMenu').style.display = 'none';
-            scrollToBottom();
-
-            const tImg = activeContext.teacherImage || getTeacherImage();
-            const tFall = getTeacherFallback();
-            const loadingId = 'loading-' + Date.now();
-            const displayName = activeContext.teacherName || `TicBull ${currentTeacher === 'female' ? 'Ma\'am' : 'Sir'}`;
-            
-            chatBox.innerHTML += `
-                <div class="msg ai" id="${loadingId}">
-                    <div style="display:flex; align-items:center; gap:10px; margin-bottom:8px;">
-                        <img src="${tImg}" onerror="this.src='${tFall}'" style="width:36px; height:36px; border-radius:50%; object-fit:cover; border:2px solid var(--accent-color);">
-                        <i>${displayName} is thinking...</i>
-                    </div>
-                </div>`;
-            
-            scrollToBottom();
-            sendBtn.disabled = true;
-
-            // 🚀 AI SMART ROUTING API REQUEST
-            fetch(`/api/chat`, {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({
-                    email: currentStudentData.email,
-                    token: localStorage.getItem('ticbull_token'), 
-                    prompt: questionText,
-                    images: filesToSend, 
-                    ai_routing_engine: "smart_switch",
-                    active_batch: activeContext.batchName || currentActiveBatch,
-                    current_subject: activeContext.subjectName || "",
-                    tier_type: localStorage.getItem('tb_tier_type') || 'PRO',
-                    lang: lang,
-                    student_name: currentStudentData.name,
-                    purchased_plan: purchasedPlanName,
-                    teacher_name: displayName,
-                    session_id: currentSessionId
-                })
-            })
-            .then(res => res.json())
-            .then(data => {
-                sendBtn.disabled = false;
-                const loadElem = document.getElementById(loadingId);
-                
-                if(data.session_expired) {
-                    loadElem.classList.replace('ai', 'error');
-                    loadElem.innerHTML = `<b>❌ Security Alert:</b> ${data.message}`;
-                    showToast(data.message, "error");
-                    setTimeout(() => logoutUser(), 3000); 
-                    return;
-                }
-
-                if (data.success) {
-                    let formattedReply = data.reply.replace(/\*\*(.*?)\*\*/g, '<b>$1</b>');
-                    formattedReply = formattedReply.replace(/\n/g, '<br>');
-
-                    if (questionText.toLowerCase().includes('image') || questionText.toLowerCase().includes('diagram')) {
-                        let topicSafe = encodeURIComponent(questionText.replace('Generate Detailed Diagram Image', '').trim() || 'Education');
-                        formattedReply += `<br><br><b>🖼️ Visual Reference:</b><br><img src="https://image.pollinations.ai/prompt/${topicSafe}%20educational%20diagram?width=600&height=350&nologo=true" class="msg-image" alt="AI Generated Image" style="border-radius:12px; margin-top:8px; border:1px solid #333;">`;
-                    }
-                    
-                    if (questionText.toLowerCase().includes('video')) {
-                        let topicSafe = encodeURIComponent(questionText.replace('Generate AI Video Visual Explanation', '').trim() || 'Study Concept');
-                        formattedReply += `<br><br><b>🎥 Video Concept Reference:</b><br><iframe style="width:100%; height:200px; border-radius:12px; margin-top:8px; border:none;" src="https://www.youtube.com/embed?listType=search&list=${topicSafe}+${currentActiveBatch}" allowfullscreen></iframe>`;
-                    }
-
-                    loadElem.innerHTML = `
-                        <div style="display:flex; align-items:center; gap:10px; margin-bottom:10px; border-bottom: 1px solid var(--border-color); padding-bottom: 8px;">
-                            <img src="${tImg}" onerror="this.src='${tFall}'" style="width:36px; height:36px; border-radius:50%; object-fit:cover; border:2px solid var(--gold-color);">
-                            <b style="color:var(--gold-color);">${displayName}</b>
-                        </div>
-                        <div style="width:100%; line-height: 1.6; overflow-x: auto; word-break: break-word; overflow-wrap: break-word;">${formattedReply}</div>`;
-                    
-                    saveChatUI(); 
-                } else {
-                    loadElem.classList.replace('ai', 'error');
-                    loadElem.innerHTML = `<b>❌ AI Limit / Lock:</b> ${data.message}`;
-                    showToast(data.message, "error");
-                }
-                scrollToBottom();
-            })
-            .catch(() => {
-                sendBtn.disabled = false;
-                const loadElem = document.getElementById(loadingId);
-                loadElem.classList.replace('ai', 'error');
-                loadElem.innerHTML = `<b>❌ Server Connection Failed.</b>`;
-                showToast("Server Connection Failed", "error");
-                scrollToBottom();
-            });
+        function logout() {
+            localStorage.clear();
+            location.reload();
         }
     </script>
 </body>
