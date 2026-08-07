@@ -135,7 +135,7 @@
         .auth-footer-socials a { color: var(--text-muted); font-size: 16px; transition: 0.2s; }
         .auth-footer-socials a:hover { color: var(--accent-color); transform: scale(1.1); }
 
-        /* 🚀 PW BATCHES DASHBOARD SCREEN (DYNAMIC 300+ BATCHES UI) */
+        /* 🚀 PW BATCHES DASHBOARD SCREEN */
         #batches-screen { display:none; flex-direction:column; height:100%; max-width:850px; margin:0 auto; width:100%; padding:14px; overflow-y:auto; }
         .batches-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; background:var(--card-bg); padding:12px 16px; border-radius:16px; border:1px solid var(--border-color); }
         
@@ -154,11 +154,32 @@
         .batch-title { font-size: 16.5px; font-weight: 800; color: #fff; margin-bottom: 4px; }
         .batch-desc { font-size: 12px; color: var(--text-muted); margin-bottom: 12px; line-height:1.4; }
         .batch-teachers-strip { font-size: 11px; color: var(--gold-color); font-weight: 600; margin-bottom: 12px; background: rgba(245, 158, 11, 0.1); padding: 6px 10px; border-radius: 8px; border: 1px solid rgba(245, 158, 11, 0.2); }
-        .batch-footer { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border-color); padding-top: 12px; }
+        .batch-footer { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border-color); padding-top: 12px; flex-wrap:wrap; gap:10px; }
         .batch-price { font-size: 14.5px; font-weight: 800; color: var(--success-color); }
-        .batch-actions { display: flex; gap: 8px; }
+        .batch-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+        .btn-outline { background: transparent; color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.5); padding: 8px 12px; border-radius: 10px; font-size: 11.5px; font-weight: 700; cursor: pointer; }
         .btn-trial { background: rgba(245, 158, 11, 0.2); color: var(--gold-color); border: 1px solid rgba(245, 158, 11, 0.5); padding: 8px 12px; border-radius: 10px; font-size: 11.5px; font-weight: 700; cursor: pointer; }
         .btn-buy { background: var(--accent-color); color: #fff; border: none; padding: 8px 16px; border-radius: 10px; font-size: 11.5px; font-weight: 700; cursor: pointer; box-shadow: 0 4px 15px var(--accent-glow); }
+
+        /* BATCH EXPLORER MODAL */
+        .modal-overlay { position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); z-index:2000; display:none; justify-content:center; align-items:center; padding:16px; }
+        .modal-card { background:var(--card-bg); border:1px solid var(--border-color); border-radius:20px; padding:22px; max-width:480px; width:100%; text-align:center; position:relative; max-height:92vh; display:flex; flex-direction:column; animation: popIn 0.3s ease; }
+        
+        .subject-card { background: var(--input-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 14px; margin-bottom: 12px; display:flex; align-items:center; justify-content:space-between; cursor: pointer; transition: 0.2s; text-align: left; }
+        .subject-card:hover { border-color: var(--accent-color); transform: translateX(5px); background:rgba(37, 99, 235, 0.05); }
+        .subject-icon { font-size: 24px; color: var(--accent-color); margin-right: 14px; width: 30px; text-align: center; }
+        .teacher-tag { display:inline-block; font-size: 10px; color: var(--gold-color); background: rgba(245, 158, 11, 0.1); padding: 2px 6px; border-radius: 4px; margin-top: 4px; border: 1px solid rgba(245, 158, 11, 0.3); }
+        
+        .chapter-item { background: var(--chat-bg); border: 1px solid var(--border-color); border-left: 3px solid var(--accent-color); padding: 12px; margin-bottom: 8px; border-radius: 8px; font-size: 13px; color: var(--text-main); text-align: left; }
+        .book-tag { display: inline-block; background: rgba(16, 185, 129, 0.15); color: var(--success-color); border: 1px solid rgba(16, 185, 129, 0.3); padding: 4px 8px; border-radius: 6px; font-size: 10px; font-weight: 700; margin-right: 6px; margin-bottom: 6px; }
+
+        /* TIER CARDS */
+        .tier-card-option { background: var(--chat-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 12px; margin-bottom: 10px; text-align: left; cursor: pointer; transition: 0.2s; }
+        .tier-card-option:hover, .tier-card-option.selected { border-color: var(--accent-color); background: rgba(37, 99, 235, 0.15); }
+        .tier-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; }
+        .tier-name { font-size: 13.5px; font-weight: 800; color: #fff; }
+        .tier-price { font-size: 14px; font-weight: 800; color: var(--success-color); }
+        .tier-desc { font-size: 11px; color: var(--text-muted); line-height: 1.3; }
 
         /* MAIN CHAT DASHBOARD */
         #main-dashboard { display:none; flex-direction:column; height:100%; max-width:850px; margin:0 auto; width:100%; position:relative; padding:10px; }
@@ -228,17 +249,6 @@
         .history-list { display:flex; flex-direction:column; gap:6px; overflow-y:auto; max-height:160px; }
         .history-item { font-size:12px; color:var(--text-muted); padding:8px 10px; border-radius:8px; background:var(--chat-bg); border:1px solid var(--border-color); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; cursor:pointer; display: flex; justify-content: space-between; align-items: center; transition:0.2s; }
         .history-item:hover, .history-item.active-session { background:rgba(37, 99, 235, 0.15); color:var(--text-main); border-color:var(--accent-color); }
-
-        /* MODALS */
-        .modal-overlay { position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); z-index:2000; display:none; justify-content:center; align-items:center; padding:16px; }
-        .modal-card { background:var(--card-bg); border:1px solid var(--border-color); border-radius:20px; padding:22px; max-width:480px; width:100%; text-align:center; position:relative; max-height:92vh; display:flex; flex-direction:column; animation: popIn 0.3s ease; }
-        
-        .tier-card-option { background: var(--chat-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 12px; margin-bottom: 10px; text-align: left; cursor: pointer; transition: 0.2s; }
-        .tier-card-option:hover, .tier-card-option.selected { border-color: var(--accent-color); background: rgba(37, 99, 235, 0.15); }
-        .tier-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; }
-        .tier-name { font-size: 13.5px; font-weight: 800; color: #fff; }
-        .tier-price { font-size: 14px; font-weight: 800; color: var(--success-color); }
-        .tier-desc { font-size: 11px; color: var(--text-muted); line-height: 1.3; }
 
         .setting-item { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; font-size: 13.5px; color: var(--text-main); text-align:left; }
         .switch { position: relative; display: inline-block; width: 38px; height: 22px; flex-shrink:0; }
@@ -423,7 +433,7 @@
         </div>
     </div>
 
-    <!-- 🚀 1. PW STYLE 300+ BATCHES DASHBOARD SCREEN -->
+    <!-- 🚀 BATCHES DASHBOARD SCREEN (DYNAMIC) -->
     <div id="batches-screen">
         <div class="batches-header">
             <div style="display:flex; align-items:center; gap:10px;">
@@ -447,15 +457,14 @@
             <div class="cat-chip" onclick="filterCategory('ICSE', this)">ICSE / ISC Board</div>
             <div class="cat-chip" onclick="filterCategory('NEET', this)">NEET Medical</div>
             <div class="cat-chip" onclick="filterCategory('JEE', this)">IIT-JEE Engineering</div>
-            <div class="cat-chip" onclick="filterCategory('UPSC', this)">UPSC Civil Services</div>
-            <div class="cat-chip" onclick="filterCategory('BPSC', this)">BPSC State PCS</div>
+            <div class="cat-chip" onclick="filterCategory('UPSC', this)">UPSC / BPSC</div>
             <div class="cat-chip" onclick="filterCategory('DEFENSE', this)">NDA / Defense</div>
-            <div class="cat-chip" onclick="filterCategory('COMMERCE', this)">CA / CS / Commerce</div>
+            <div class="cat-chip" onclick="filterCategory('COMMERCE', this)">Commerce / CA</div>
         </div>
 
         <div class="search-batches-box">
             <i class="fa-solid fa-magnifying-glass"></i>
-            <input type="text" id="batchSearchInput" placeholder="Search for Class 9-12, Bihar, CBSE, NEET, JEE, UPSC..." onkeyup="searchBatches()">
+            <input type="text" id="batchSearchInput" placeholder="Search for Class 9-12, Bihar, CBSE, NEET, JEE..." onkeyup="searchBatches()">
         </div>
 
         <div id="batchesContainer">
@@ -463,7 +472,25 @@
         </div>
     </div>
 
-    <!-- 🚀 3-TIER BATCH PLAN SELECTION MODAL (BASIC / PRO / MAX PRO) -->
+    <!-- 🚀 BATCH EXPLORER MODAL (SUBJECTS & CHAPTERS) -->
+    <div class="modal-overlay" id="batchExplorerModal" style="z-index: 3000;">
+        <div class="modal-card" style="padding:0; display:flex; flex-direction:column; overflow:hidden; max-width:550px; height:85vh; background:var(--bg-color);">
+            <!-- HEADER -->
+            <div style="padding:16px; border-bottom:1px solid var(--border-color); display:flex; align-items:center; gap:12px; background:var(--card-bg);">
+                <i class="fa-solid fa-arrow-left" style="cursor:pointer; color:var(--text-main); font-size:18px;" onclick="navigateExplorerBack()"></i>
+                <div>
+                    <h3 id="explorerHeaderTitle" style="font-size:16px; margin:0; color:#fff;">Explore Batch</h3>
+                    <p id="explorerHeaderSub" style="font-size:11px; color:var(--text-muted); margin:0;">Select a subject to view chapters and books</p>
+                </div>
+            </div>
+            <!-- DYNAMIC CONTENT AREA -->
+            <div id="explorerContentArea" style="flex:1; overflow-y:auto; padding:16px;">
+                <!-- Content injected via JS -->
+            </div>
+        </div>
+    </div>
+
+    <!-- 🚀 3-TIER BATCH PLAN SELECTION MODAL -->
     <div class="modal-overlay" id="tierModal">
         <div class="modal-card">
             <i class="fa-solid fa-xmark" style="position:absolute; right:16px; top:16px; color:var(--text-muted); cursor:pointer;" onclick="closeTierModal()"></i>
@@ -498,7 +525,7 @@
         </div>
     </div>
 
-    <!-- 🚀 2. MAIN CHAT DASHBOARD -->
+    <!-- 🚀 MAIN CHAT DASHBOARD -->
     <div id="main-dashboard">
         <div class="header">
             <div class="header-brand">
@@ -625,15 +652,6 @@
             <a href="mailto:ticbull.support@gmail.com" target="_blank" style="color:var(--text-main); text-decoration:none; display:block; margin-bottom:6px; font-size:12px;"><i class="fa-solid fa-envelope" style="color:#2563eb;"></i> ticbull.support@gmail.com</a>
             <a href="https://www.instagram.com/ticbull" target="_blank" style="color:#e1306c; text-decoration:none; display:block; margin-bottom:6px; font-size:12px;"><i class="fa-brands fa-instagram"></i> @ticbull Official Support</a>
             <a href="https://t.me/ticbullteam" target="_blank" style="color:#0088cc; text-decoration:none; display:block; font-size:12px;"><i class="fa-brands fa-telegram"></i> @ticbullteam Telegram Support</a>
-            
-            <div style="font-size:10px; color:var(--text-muted); margin:10px 0 4px 0;">DEVELOPER SOCIALS:</div>
-            <div class="dev-socials" style="justify-content:flex-start;">
-                <a href="https://youtube.com/@mryuviyadav" target="_blank" style="color:#ff0000;"><i class="fa-brands fa-youtube"></i></a>
-                <a href="https://www.instagram.com/mryuvi_yadav" target="_blank" style="color:#e1306c;"><i class="fa-brands fa-instagram"></i></a>
-                <a href="https://x.com/mryuviyadav" target="_blank"><i class="fa-brands fa-x-twitter"></i></a>
-                <a href="https://t.me/mryuviyadav" target="_blank" style="color:#0088cc;"><i class="fa-brands fa-telegram"></i></a>
-                <a href="https://facebook.com/mryuviyadav" target="_blank" style="color:#1877f2;"><i class="fa-brands fa-facebook"></i></a>
-            </div>
         </div>
     </div>
 
@@ -732,66 +750,128 @@
     </div>
 
     <script>
-        let currentTeacher = localStorage.getItem('ticbull_teacher') || 'male';
-        let currentActiveBatch = localStorage.getItem('tb_active_batch') || 'Class 10 CBSE Udaan Batch';
-        let selectedBatchForModal = null;
-        let selectedTierType = 'PRO';
-        let selectedTierPrice = 499;
+        // ==========================================
+        // 📚 TEACHER & SYLLABUS ENGINE
+        // ==========================================
+        const maleNames = ["Mr. Vikram", "Mr. Rahul", "Mr. Amit", "Mr. Suresh", "Mr. Raj", "Mr. Manoj", "Mr. Anil", "Mr. Sanjay", "Mr. Ajay", "Mr. Sunil"];
+        const femaleNames = ["Ms. Priya", "Ms. Neha", "Ms. Pooja", "Ms. Anjali", "Ms. Sneha", "Ms. Kavita", "Ms. Ritu", "Ms. Suman", "Ms. Kiran", "Ms. Aarti"];
+        
+        // Deterministic function to assign a teacher name and gender based on subject and level (9-10, 11-12, COMPETITIVE)
+        function getTeacher(subjectName, levelString) {
+            let hash = 0;
+            const str = subjectName + levelString;
+            for (let i = 0; i < str.length; i++) hash = str.charCodeAt(i) + ((hash << 5) - hash);
+            hash = Math.abs(hash);
+            
+            const isMale = hash % 2 === 0; // 50-50 ratio
+            const arr = isMale ? maleNames : femaleNames;
+            const name = arr[hash % arr.length];
+            return { name: `${name} (${levelString})`, gender: isMale ? 'Male' : 'Female', icon: isMale ? 'fa-user-tie' : 'fa-user-graduate' };
+        }
 
-        // 🚀 DYNAMIC 300+ BATCHES GENERATOR ENGINE (COVERING ALL BOARDS & EXAMS IN INDIA)
+        const syllabusDB = {
+            "CLASS_9_10": [
+                { name: "Mathematics", icon: "fa-calculator", books: ["NCERT", "R.D. Sharma", "RS Aggarwal", "S. Chand"], chapters: ["Real Numbers", "Polynomials", "Linear Equations", "Quadratic Equations", "Triangles", "Statistics", "Probability"], teacher: getTeacher("Mathematics", "Class 9-10") },
+                { name: "Science", icon: "fa-flask", books: ["NCERT", "S. Chand (Lakhmir Singh)", "Pradeep's", "Xam Idea"], chapters: ["Chemical Reactions", "Acids, Bases & Salts", "Metals & Non-metals", "Life Processes", "Control & Coordination", "Light", "Electricity"], teacher: getTeacher("Science", "Class 9-10") },
+                { name: "Social Science", icon: "fa-globe", books: ["NCERT", "All in One", "Golden Guide"], chapters: ["Rise of Nationalism in Europe", "Nationalism in India", "Resources & Development", "Power Sharing"], teacher: getTeacher("Social Science", "Class 9-10") },
+                { name: "English", icon: "fa-language", books: ["NCERT First Flight", "Footprints Without Feet"], chapters: ["A Letter to God", "Nelson Mandela", "Grammar & Tenses"], teacher: getTeacher("English", "Class 9-10") },
+                { name: "Hindi", icon: "fa-om", books: ["NCERT Kshitij", "Kritika", "Vyakaran"], chapters: ["Surdas Ke Pad", "Netaji Ka Chashma", "Vyakaran"], teacher: getTeacher("Hindi", "Class 9-10") }
+            ],
+            "PCM_11_12": [
+                { name: "Physics", icon: "fa-atom", books: ["NCERT", "H.C. Verma (Vol 1 & 2)", "S.L. Arora", "DC Pandey"], chapters: ["Electric Charges & Fields", "Current Electricity", "Moving Charges & Magnetism", "Electromagnetic Induction", "Ray Optics", "Semiconductor Electronics"], teacher: getTeacher("Physics", "Class 11-12") },
+                { name: "Chemistry", icon: "fa-vial", books: ["NCERT", "O.P. Tandon", "Pradeep's", "Modern ABC"], chapters: ["Solid State", "Solutions", "Electrochemistry", "Chemical Kinetics", "Surface Chemistry", "p-Block Elements", "Coordination Compounds"], teacher: getTeacher("Chemistry", "Class 11-12") },
+                { name: "Mathematics", icon: "fa-square-root-variable", books: ["NCERT", "R.D. Sharma", "Cengage Mathematics"], chapters: ["Relations and Functions", "Inverse Trigonometric Functions", "Matrices", "Determinants", "Continuity & Differentiability", "Application of Derivatives"], teacher: getTeacher("Mathematics", "Class 11-12") },
+                { name: "English Core", icon: "fa-book-open", books: ["NCERT Flamingo", "Vistas"], chapters: ["The Last Lesson", "Lost Spring", "Deep Water", "Writing Skills"], teacher: getTeacher("English", "Class 11-12") }
+            ],
+            "PCB_11_12": [
+                { name: "Biology", icon: "fa-dna", books: ["NCERT", "Trueman's Elementary Biology", "Pradeep's", "S. Chand"], chapters: ["Reproduction in Organisms", "Sexual Reproduction in Flowering Plants", "Human Reproduction", "Reproductive Health", "Principles of Inheritance"], teacher: getTeacher("Biology", "Class 11-12") },
+                { name: "Physics", icon: "fa-atom", books: ["NCERT", "H.C. Verma", "DC Pandey"], chapters: ["Same as PCM Syllabus"], teacher: getTeacher("Physics", "Class 11-12") },
+                { name: "Chemistry", icon: "fa-vial", books: ["NCERT", "O.P. Tandon", "Pradeep's"], chapters: ["Same as PCM Syllabus"], teacher: getTeacher("Chemistry", "Class 11-12") },
+                { name: "English Core", icon: "fa-book-open", books: ["NCERT Flamingo", "Vistas"], chapters: ["Writing Skills & Comprehension"], teacher: getTeacher("English", "Class 11-12") }
+            ],
+            "COMMERCE_11_12": [
+                { name: "Accountancy", icon: "fa-file-invoice-dollar", books: ["NCERT", "T.S. Grewal", "D.K. Goel"], chapters: ["Accounting for Partnership", "Goodwill", "Company Accounts", "Cash Flow Statement"], teacher: getTeacher("Accountancy", "Class 11-12") },
+                { name: "Business Studies", icon: "fa-briefcase", books: ["NCERT", "Poonam Gandhi", "Sandeep Garg"], chapters: ["Nature & Significance of Management", "Principles of Management", "Financial Management", "Marketing"], teacher: getTeacher("Business", "Class 11-12") },
+                { name: "Economics", icon: "fa-chart-line", books: ["NCERT", "T.R. Jain & V.K. Ohri", "Sandeep Garg"], chapters: ["National Income", "Money and Banking", "Government Budget", "Balance of Payments"], teacher: getTeacher("Economics", "Class 11-12") },
+                { name: "Mathematics", icon: "fa-calculator", books: ["NCERT", "R.D. Sharma", "M.L. Aggarwal"], chapters: ["Numbers, Quantification", "Algebra", "Calculus", "Financial Mathematics"], teacher: getTeacher("Mathematics", "Class 11-12") }
+            ],
+            "ARTS_11_12": [
+                { name: "History", icon: "fa-monument", books: ["NCERT Themes in Indian History"], chapters: ["Bricks, Beads and Bones", "Kings, Farmers and Towns", "Mahatma Gandhi and Nationalist Movement"], teacher: getTeacher("History", "Class 11-12") },
+                { name: "Political Science", icon: "fa-landmark", books: ["NCERT Contemporary World Politics"], chapters: ["Cold War Era", "End of Bipolarity", "US Hegemony", "Alternative Centres of Power"], teacher: getTeacher("Pol. Science", "Class 11-12") },
+                { name: "Geography", icon: "fa-map", books: ["NCERT Fundamentals of Human Geography"], chapters: ["Human Geography", "The World Population", "Human Development", "Primary Activities"], teacher: getTeacher("Geography", "Class 11-12") },
+                { name: "Sociology", icon: "fa-users", books: ["NCERT"], chapters: ["Indian Society", "Social Change and Development"], teacher: getTeacher("Sociology", "Class 11-12") }
+            ],
+            "NEET_COMP": [
+                { name: "Zoology (NEET Target)", icon: "fa-frog", books: ["NCERT Biology", "MTG Fingertips", "Trueman's Objective"], chapters: ["Animal Kingdom", "Structural Organisation", "Human Physiology Complete", "Human Reproduction", "Evolution"], teacher: getTeacher("Zoology", "Competitive NEET") },
+                { name: "Botany (NEET Target)", icon: "fa-leaf", books: ["NCERT Biology", "MTG Fingertips", "Allen Modules"], chapters: ["Biological Classification", "Plant Kingdom", "Plant Physiology", "Genetics", "Ecology"], teacher: getTeacher("Botany", "Competitive NEET") },
+                { name: "Physics (NEET Target)", icon: "fa-atom", books: ["NCERT", "HC Verma", "DC Pandey Objective", "Errorless Physics"], chapters: ["Mechanics Complete", "Thermodynamics", "Electromagnetism", "Optics", "Modern Physics"], teacher: getTeacher("Physics", "Competitive NEET") },
+                { name: "Chemistry (NEET Target)", icon: "fa-vial", books: ["NCERT", "MS Chouhan", "N Awasthi", "VK Jaiswal"], chapters: ["Physical Chemistry", "Inorganic Chemistry", "Organic Chemistry Complete"], teacher: getTeacher("Chemistry", "Competitive NEET") }
+            ],
+            "JEE_COMP": [
+                { name: "Mathematics (JEE Advanced)", icon: "fa-square-root-variable", books: ["Cengage Calculus & Algebra", "Arihant Series", "Black Book", "Das Gupta"], chapters: ["Quadratic Equations", "Complex Numbers", "Permutations", "Binomial Theorem", "Coordinate Geometry", "Calculus", "Vectors & 3D"], teacher: getTeacher("Mathematics", "Competitive JEE") },
+                { name: "Physics (JEE Advanced)", icon: "fa-atom", books: ["H.C. Verma", "I.E. Irodov", "Cengage Physics", "Feynman Lectures"], chapters: ["Kinematics", "Newton's Laws", "Rotational Dynamics", "Thermodynamics", "Electrodynamics", "Optics", "Modern Physics"], teacher: getTeacher("Physics", "Competitive JEE") },
+                { name: "Chemistry (JEE Advanced)", icon: "fa-vial", books: ["NCERT", "MS Chouhan", "N Awasthi", "Peter Sykes", "J.D. Lee"], chapters: ["Mole Concept", "Atomic Structure", "Gaseous State", "Thermodynamics", "Chemical Equilibrium", "Reaction Mechanism", "Coordination Chemistry"], teacher: getTeacher("Chemistry", "Competitive JEE") }
+            ]
+        };
+
+        // ==========================================
+        // 🚀 BATCH GENERATOR ENGINE
+        // ==========================================
         function generate300Batches() {
             const list = [];
             
-            // 1. SCHOOL BOARDS (CBSE, Bihar, UP, ICSE, Rajasthan, MP, Maharashtra, Bengal, etc.)
+            // Boards List
             const boards = [
-                { code: 'CBSE', name: 'CBSE Board' },
-                { code: 'BIHAR', name: 'Bihar Board (BSEB)' },
-                { code: 'UP', name: 'UP Board (UPMSP)' },
-                { code: 'ICSE', name: 'ICSE / ISC Board' },
-                { code: 'MP', name: 'MP Board (MPBSE)' },
-                { code: 'RAJ', name: 'Rajasthan Board (RBSE)' },
-                { code: 'MH', name: 'Maharashtra Board (MSBSHSE)' }
+                { code: 'CBSE', name: 'CBSE Board' }, { code: 'BIHAR', name: 'Bihar Board (BSEB)' },
+                { code: 'UP', name: 'UP Board (UPMSP)' }, { code: 'ICSE', name: 'ICSE / ISC Board' },
+                { code: 'MP', name: 'MP Board' }, { code: 'RAJ', name: 'Rajasthan Board' }, { code: 'MH', name: 'Maharashtra Board' }
             ];
 
-            const classes = ['Class 9th', 'Class 10th', 'Class 11th Science (PCM)', 'Class 11th Science (PCB)', 'Class 11th Commerce', 'Class 11th Arts', 'Class 12th Science (PCM)', 'Class 12th Science (PCB)', 'Class 12th Commerce', 'Class 12th Arts'];
+            const classesData = [
+                { name: 'Class 9th Foundation', schema: 'CLASS_9_10' },
+                { name: 'Class 10th Target', schema: 'CLASS_9_10' },
+                { name: 'Class 11th Science (PCM)', schema: 'PCM_11_12' },
+                { name: 'Class 11th Science (PCB)', schema: 'PCB_11_12' },
+                { name: 'Class 11th Commerce', schema: 'COMMERCE_11_12' },
+                { name: 'Class 11th Arts', schema: 'ARTS_11_12' },
+                { name: 'Class 12th Science (PCM) Board', schema: 'PCM_11_12' },
+                { name: 'Class 12th Science (PCB) Board', schema: 'PCB_11_12' },
+                { name: 'Class 12th Commerce', schema: 'COMMERCE_11_12' },
+                { name: 'Class 12th Arts', schema: 'ARTS_11_12' }
+            ];
 
+            // Generate Board Batches
             boards.forEach(b => {
-                classes.forEach(c => {
+                classesData.forEach(c => {
                     list.push({
-                        id: `${b.code}_${c.replace(/[^a-zA-Z0-9]/g, '')}`,
-                        category: b.code,
-                        name: `${b.name} - ${c} Topper Batch`,
-                        tag: '13 Dedicated Subject Experts',
-                        teachers: 'Math, Physics, Chem, Bio, History, SST, English, Hindi + 6 More',
-                        desc: `Complete syllabus coverage according to strict ${b.name} examination guidelines.`,
-                        basicPrice: 199,
-                        proPrice: 499,
-                        maxProPrice: 999
+                        id: `${b.code}_${c.name.replace(/[^a-zA-Z0-9]/g, '')}`,
+                        category: b.code, name: `${b.name} - ${c.name} Batch`, schema: c.schema,
+                        tag: 'Dedicated Board Experts', teachers: 'NCERT & Board Specialists',
+                        desc: `Complete syllabus coverage with NCERT solutions and previous year board papers.`,
+                        basicPrice: 199, proPrice: 499, maxProPrice: 999
                     });
                 });
             });
 
-            // 2. COMPETITIVE EXAMS
+            // Competitive Exams (11th, 12th, Dropper)
             const compExams = [
-                { cat: 'NEET', name: 'NEET 2027 Medical Dropper / Class 12 Batch', tag: 'Medical Entrance Specialist', teachers: 'Dr. Physics, Chem Specialist, Botany & Zoology Experts', price1: 299, price2: 749, price3: 1499 },
-                { cat: 'JEE', name: 'IIT-JEE 2027 Momentum Engineering Batch', tag: 'IIT Rankers Faculty', teachers: 'Advanced Mechanics, Calculus & Physical Chem Specialists', price1: 299, price2: 799, price3: 1599 },
-                { cat: 'UPSC', name: 'UPSC IAS Civil Services Complete Foundation', tag: 'IAS / IPS Goal', teachers: 'Polity, Geography, Modern History & CSAT Faculty', price1: 399, price2: 899, price3: 1999 },
-                { cat: 'BPSC', name: 'BPSC Combined Civil Services Bihar Special', tag: 'Bihar PSC Specialist', teachers: 'Bihar GK, Current Affairs & Mains Writing Faculty', price1: 249, price2: 499, price3: 1199 },
-                { cat: 'DEFENSE', name: 'NDA / Defense Academy Shaurya Batch', tag: 'Defense Goal', teachers: 'Mathematics & General Ability Test Specialist', price1: 199, price2: 499, price3: 999 },
-                { cat: 'COMMERCE', name: 'CA / CS / CMA Foundation Mastery', tag: 'Commerce Leader', teachers: 'Accounting, Law, Business Math & Economics Specialists', price1: 299, price2: 699, price3: 1399 }
+                { cat: 'NEET', name: 'NEET Class 11 Foundation Batch', schema: 'NEET_COMP', tag: 'Medical Entrance Starter', price: 299 },
+                { cat: 'NEET', name: 'NEET Class 12 Target Batch', schema: 'NEET_COMP', tag: 'Board + NEET Focus', price: 299 },
+                { cat: 'NEET', name: 'NEET 2027 Dropper Mastery Batch', schema: 'NEET_COMP', tag: 'Medical Entrance Specialist', price: 399 },
+                { cat: 'JEE', name: 'IIT-JEE Class 11 Foundation Batch', schema: 'JEE_COMP', tag: 'IIT Engineering Starter', price: 299 },
+                { cat: 'JEE', name: 'IIT-JEE Class 12 Target Batch', schema: 'JEE_COMP', tag: 'Board + JEE Focus', price: 299 },
+                { cat: 'JEE', name: 'IIT-JEE 2027 Dropper Advanced Batch', schema: 'JEE_COMP', tag: 'IIT Rankers Faculty', price: 399 },
+                { cat: 'UPSC', name: 'UPSC IAS / BPSC Civil Services Foundation', schema: 'ARTS_11_12', tag: 'IAS / IPS Goal', price: 399 },
+                { cat: 'DEFENSE', name: 'NDA / Defense Academy Shaurya Batch', schema: 'PCM_11_12', tag: 'Defense Goal', price: 199 },
+                { cat: 'COMMERCE', name: 'CA Foundation / CMA Complete Mastery', schema: 'COMMERCE_11_12', tag: 'Commerce Leader', price: 299 }
             ];
 
             compExams.forEach((e, idx) => {
                 list.push({
-                    id: `comp_${idx}`,
-                    category: e.cat,
-                    name: e.name,
-                    tag: e.tag,
-                    teachers: e.teachers,
-                    desc: `Strict competitive exam syllabus boundary with dual Board + Entrance preparation.`,
-                    basicPrice: e.price1,
-                    proPrice: e.price2,
-                    maxProPrice: e.price3
+                    id: `comp_${idx}`, category: e.cat, name: e.name, schema: e.schema,
+                    tag: e.tag, teachers: 'Top Tier Entrance Faculties',
+                    desc: `Strict competitive exam syllabus boundary with detailed modules, DPPs, and All India Test Series.`,
+                    basicPrice: e.price, proPrice: e.price + 300, maxProPrice: e.price + 700
                 });
             });
 
@@ -799,7 +879,6 @@
         }
 
         const all300Batches = generate300Batches();
-        let currentSelectedCategory = 'ALL';
 
         function renderBatchesList(batchesArray) {
             const container = document.getElementById('batchesContainer');
@@ -824,7 +903,7 @@
                                 <span class="batch-price">₹${batch.basicPrice}/yr</span>
                             </div>
                             <div class="batch-actions">
-                                <button class="btn-trial" onclick="startFreeTrialDirect('${batch.name}')"><i class="fa-solid fa-gift"></i> 2 Days Free</button>
+                                <button class="btn-outline" onclick="exploreBatch('${batch.id}')"><i class="fa-solid fa-book-open"></i> Explore Subjects</button>
                                 <button class="btn-buy" onclick="openTierModal('${batch.id}')">View Plans</button>
                             </div>
                         </div>
@@ -855,6 +934,110 @@
             renderBatchesList(filtered);
         }
 
+        // ==========================================
+        // 🚀 BATCH EXPLORER NAVIGATION LOGIC
+        // ==========================================
+        let explorerHistory = []; 
+        let currentBatchInExplorer = null;
+
+        function exploreBatch(batchId) {
+            const batch = all300Batches.find(b => b.id === batchId);
+            if(!batch) return;
+            currentBatchInExplorer = batch;
+            explorerHistory = []; 
+
+            const subjects = syllabusDB[batch.schema] || syllabusDB["CLASS_9_10"]; 
+            
+            document.getElementById('explorerHeaderTitle').innerText = batch.name;
+            document.getElementById('explorerHeaderSub').innerText = "Select a subject to view chapters and books";
+            document.getElementById('batchExplorerModal').style.display = 'flex';
+
+            renderSubjectsView(subjects);
+        }
+
+        function renderSubjectsView(subjects) {
+            const contentArea = document.getElementById('explorerContentArea');
+            contentArea.innerHTML = `
+                <div style="font-size:12px; color:var(--text-muted); margin-bottom:12px; font-weight:600; text-transform:uppercase; text-align:left;">
+                    📚 ALL SUBJECTS IN THIS BATCH
+                </div>
+            `;
+
+            subjects.forEach((subj, index) => {
+                const subjHtml = `
+                    <div class="subject-card" onclick="openSubjectChapters(${index})">
+                        <div style="display:flex; align-items:center;">
+                            <i class="fa-solid ${subj.icon} subject-icon"></i>
+                            <div>
+                                <strong style="color:var(--text-main); font-size:15px; display:block;">${subj.name}</strong>
+                                <span class="teacher-tag"><i class="fa-solid ${subj.teacher.icon}"></i> ${subj.teacher.name} (${subj.teacher.gender})</span>
+                            </div>
+                        </div>
+                        <i class="fa-solid fa-chevron-right" style="color:var(--text-muted); font-size:14px;"></i>
+                    </div>
+                `;
+                contentArea.innerHTML += subjHtml;
+            });
+
+            explorerHistory.push({ type: 'subjects', subjects: subjects });
+        }
+
+        function openSubjectChapters(subjectIndex) {
+            const subjects = explorerHistory[0].subjects; 
+            const subj = subjects[subjectIndex];
+            
+            document.getElementById('explorerHeaderTitle').innerText = subj.name;
+            document.getElementById('explorerHeaderSub').innerText = `Teacher: ${subj.teacher.name}`;
+
+            const contentArea = document.getElementById('explorerContentArea');
+            contentArea.innerHTML = '';
+
+            let booksHtml = `<div style="margin-bottom:16px; text-align:left;">
+                <div style="font-size:12px; color:var(--text-muted); margin-bottom:8px; font-weight:600; text-transform:uppercase;">📖 Reference Books Covered</div>
+                <div>`;
+            subj.books.forEach(book => {
+                booksHtml += `<span class="book-tag"><i class="fa-solid fa-book-open-reader"></i> ${book}</span>`;
+            });
+            booksHtml += `</div></div>`;
+            contentArea.innerHTML += booksHtml;
+
+            let chaptersHtml = `
+                <div style="font-size:12px; color:var(--text-muted); margin-bottom:8px; font-weight:600; text-transform:uppercase; text-align:left;">📝 Chapters / Syllabus</div>
+            `;
+            subj.chapters.forEach((chap, idx) => {
+                chaptersHtml += `
+                    <div class="chapter-item">
+                        <strong style="color:var(--accent-color); margin-right:8px;">${idx + 1}.</strong> ${chap}
+                    </div>
+                `;
+            });
+            contentArea.innerHTML += chaptersHtml;
+
+            explorerHistory.push({ type: 'chapters', subject: subj });
+        }
+
+        function navigateExplorerBack() {
+            if(explorerHistory.length > 1) {
+                explorerHistory.pop(); 
+                document.getElementById('explorerHeaderTitle').innerText = currentBatchInExplorer.name;
+                document.getElementById('explorerHeaderSub').innerText = "Select a subject to view chapters and books";
+                renderSubjectsView(explorerHistory[0].subjects);
+                explorerHistory.pop(); 
+            } else {
+                document.getElementById('batchExplorerModal').style.display = 'none';
+            }
+        }
+
+        // ==========================================
+        // 🚀 AUTH, CHAT & SYSTEM LOGIC
+        // ==========================================
+        let currentTeacher = localStorage.getItem('ticbull_teacher') || 'male';
+        let currentActiveBatch = localStorage.getItem('tb_active_batch') || 'Class 10 CBSE Target Batch';
+        let selectedBatchForModal = null;
+        let selectedTierType = 'PRO';
+        let selectedTierPrice = 499;
+        let currentSelectedCategory = 'ALL';
+
         function openTierModal(batchId) {
             const batch = all300Batches.find(b => b.id === batchId);
             if(!batch) return;
@@ -868,14 +1051,11 @@
             document.getElementById('tierModal').style.display = 'flex';
         }
 
-        function closeTierModal() {
-            document.getElementById('tierModal').style.display = 'none';
-        }
+        function closeTierModal() { document.getElementById('tierModal').style.display = 'none'; }
 
         function selectTier(type, price) {
             selectedTierType = type;
             selectedTierPrice = price;
-
             document.getElementById('tierBasicCard').classList.toggle('selected', type === 'BASIC');
             document.getElementById('tierProCard').classList.toggle('selected', type === 'PRO');
             document.getElementById('tierMaxProCard').classList.toggle('selected', type === 'MAX_PRO');
@@ -883,7 +1063,6 @@
 
         function confirmTierSelection() {
             if(!selectedBatchForModal) return;
-
             currentActiveBatch = selectedBatchForModal.name;
             localStorage.setItem('tb_active_batch', currentActiveBatch);
             localStorage.setItem('tb_tier_type', selectedTierType);
@@ -899,19 +1078,6 @@
             closeTierModal();
             switchToMainChat();
             showToast(`🎉 Enrolled in ${selectedBatchForModal.name} (${selectedTierType} Pass)!`, "success");
-        }
-
-        function startFreeTrialDirect(batchName) {
-            currentActiveBatch = batchName;
-            localStorage.setItem('tb_active_batch', batchName);
-            localStorage.setItem('tb_tier_type', 'FREE_TRIAL');
-
-            document.getElementById('activeBatchLabel').innerHTML = `<i class="fa-solid fa-graduation-cap" style="color:var(--accent-color);"></i> Active Batch: ${batchName}`;
-            document.getElementById('badgePlanText').innerText = `Free Trial`;
-            document.getElementById('doubtLimitChip').innerText = `Trial Active`;
-
-            switchToMainChat();
-            showToast(`🎁 2 Days Free Trial Activated for ${batchName}!`, "success");
         }
 
         function switchToMainChat() {
@@ -935,15 +1101,10 @@
 
         function updateHeaderTeacherUI() {
             const el = document.getElementById('headerTeacherText');
-            if(el) {
-                el.innerText = currentTeacher === 'male' ? 'Sir' : "Ma'am";
-            }
+            if(el) el.innerText = currentTeacher === 'male' ? 'Sir' : "Ma'am";
         }
 
-        function getTeacherImage() {
-            return currentTeacher === 'female' ? './11723.png' : './11708.png';
-        }
-
+        function getTeacherImage() { return currentTeacher === 'female' ? './11723.png' : './11708.png'; }
         function getTeacherFallback() {
             return currentTeacher === 'female' 
                 ? 'https://raw.githubusercontent.com/yuviyadav16/ticbull-academy/main/11723.png' 
@@ -952,9 +1113,6 @@
 
         let currentAuthMode = 'login';
         let purchasedPlanName = 'Free Demo Plan';
-        let isProUser = false;
-        let selectedPlanName = 'Class 12 Science';
-        let selectedPlanPrice = 499;
         let selectedFilesArray = [];
         let currentStudentData = { name: '', email: '', dob: '', photo: '' };
         
@@ -982,7 +1140,7 @@
         }
 
         document.addEventListener('click', function(e) {
-            if(e.target.closest('button') || e.target.closest('.action-icon-btn') || e.target.closest('.drawer-item') || e.target.closest('.auth-tab') || e.target.closest('.price-item') || e.target.closest('.theme-circle') || e.target.closest('.batch-card') || e.target.closest('.cat-chip')) {
+            if(e.target.closest('button') || e.target.closest('.action-icon-btn') || e.target.closest('.drawer-item') || e.target.closest('.auth-tab') || e.target.closest('.theme-circle') || e.target.closest('.batch-card') || e.target.closest('.cat-chip') || e.target.closest('.subject-card')) {
                 playClickSound();
             }
         });
@@ -1025,9 +1183,7 @@
                         currentStreak = 1; 
                         if(diffDays > 1) setTimeout(() => showToast(`Oh no! Streak broken. Starting fresh at Day 1 🔥`, "error"), 2000);
                     }
-                } else {
-                    currentStreak = 1; 
-                }
+                } else { currentStreak = 1; }
                 localStorage.setItem('ticbull_last_login_' + currentStudentData.email, today);
                 localStorage.setItem('ticbull_streak_' + currentStudentData.email, currentStreak);
             }
@@ -1086,17 +1242,14 @@
                     method: 'POST',
                     headers: {'Content-Type': 'application/json'},
                     body: JSON.stringify({ email: savedEmail, token: savedToken })
-                })
-                .then(res => res.json())
-                .then(data => {
+                }).then(res => res.json()).then(data => {
                     if(data.success && data.active) {
                         currentStudentData.email = savedEmail;
                         currentStudentData.name = data.user.name || localStorage.getItem('ticbull_name') || '';
                         currentStudentData.dob = data.user.dob || localStorage.getItem('ticbull_dob') || '';
                         currentStudentData.photo = data.user.photo || localStorage.getItem('ticbull_photo') || '';
                         localStorage.setItem('ticbull_name', currentStudentData.name);
-                        if(currentStudentData.photo) localStorage.setItem('ticbull_photo', currentStudentData.photo);
-
+                        
                         document.getElementById('auth-screen').style.display = 'none';
                         document.getElementById('batches-screen').style.display = 'flex';
                         updateProfileUI();
@@ -1127,65 +1280,27 @@
         });
 
         window.addEventListener('resize', () => scrollToBottom());
-
-        function scrollToBottom() {
-            setTimeout(() => {
-                const chatBox = document.getElementById('chatBox');
-                if(chatBox) chatBox.scrollTop = chatBox.scrollHeight;
-            }, 200);
-        }
-
-        function autoResizeInput(el) {
-            el.style.height = 'auto';
-            el.style.height = (el.scrollHeight) + 'px';
-        }
-
-        function handleInputKeydown(e) {
-            if(e.key === 'Enter' && !e.shiftKey) {
-                e.preventDefault();
-                askAI();
-            }
-        }
-
-        function togglePassword(inputId) {
-            const pwdInput = document.getElementById(inputId);
-            pwdInput.type = pwdInput.type === 'password' ? 'text' : 'password';
-        }
+        function scrollToBottom() { setTimeout(() => { const chatBox = document.getElementById('chatBox'); if(chatBox) chatBox.scrollTop = chatBox.scrollHeight; }, 200); }
+        function autoResizeInput(el) { el.style.height = 'auto'; el.style.height = (el.scrollHeight) + 'px'; }
+        function handleInputKeydown(e) { if(e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); askAI(); } }
+        function togglePassword(inputId) { const pwdInput = document.getElementById(inputId); pwdInput.type = pwdInput.type === 'password' ? 'text' : 'password'; }
 
         function openForgotModal() { document.getElementById('forgotModal').style.display = 'flex'; }
-
         function initiateForgotOTP() {
             const email = document.getElementById('forgotEmail').value.trim();
             const newPass = document.getElementById('forgotNewPassword').value.trim();
             if(!email || !newPass) { showToast("Email and New Password are required!", "error"); return; }
-
             currentStudentData.email = email;
             currentAuthMode = 'forgot';
             document.getElementById('password').value = newPass; 
-
             const btn = document.getElementById('forgotBtn');
-            btn.disabled = true;
-            btn.innerText = "SENDING OTP...";
-
-            fetch(`/api/send-otp`, {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({ email: email, auth_mode: 'forgot' })
-            }).then(res => res.json()).then(data => {
-                btn.disabled = false;
-                btn.innerText = "SEND RESET OTP";
-                if(data.success) {
-                    document.getElementById('forgotModal').style.display = 'none';
-                    document.getElementById('otpModal').style.display = 'flex';
-                    showToast(data.message, "success");
-                } else {
-                    showToast(data.message, "error");
-                }
-            }).catch(() => {
-                btn.disabled = false;
-                btn.innerText = "SEND RESET OTP";
-                showToast("Server error!", "error");
-            });
+            btn.disabled = true; btn.innerText = "SENDING OTP...";
+            fetch(`/api/send-otp`, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ email: email, auth_mode: 'forgot' }) })
+            .then(res => res.json()).then(data => {
+                btn.disabled = false; btn.innerText = "SEND RESET OTP";
+                if(data.success) { document.getElementById('forgotModal').style.display = 'none'; document.getElementById('otpModal').style.display = 'flex'; showToast(data.message, "success"); } 
+                else { showToast(data.message, "error"); }
+            }).catch(() => { btn.disabled = false; btn.innerText = "SEND RESET OTP"; showToast("Server error!", "error"); });
         }
 
         function switchAuth(mode) {
@@ -1218,257 +1333,93 @@
             const dob = document.getElementById('studentDob').value;
             const password = document.getElementById('password').value.trim();
             const btn = document.getElementById('authSubmitBtn');
-
             if(!email) { showToast("Email ID is required!", "error"); return; }
             if(!password) { showToast("Password is required!", "error"); return; }
             if(currentAuthMode === 'signup' && !name) { showToast("Full Name is required!", "error"); return; }
-
             currentStudentData.email = email;
             if(name) currentStudentData.name = name;
             if(dob) currentStudentData.dob = dob;
-
-            btn.disabled = true;
-            btn.innerText = "SENDING OTP...";
-
-            fetch(`/api/send-otp`, {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({ email: email, password: password, auth_mode: currentAuthMode })
-            })
-            .then(res => res.json())
-            .then(data => {
-                btn.disabled = false;
-                btn.innerText = currentAuthMode === 'login' ? 'SEND VERIFICATION OTP' : 'CREATE ACCOUNT WITH OTP';
-                if (data.success) {
-                    showToast(data.message, "success");
-                    document.getElementById('otpModal').style.display = 'flex';
-                } else {
-                    showToast(data.message, "error");
-                }
-            })
-            .catch(() => {
-                btn.disabled = false;
-                btn.innerText = currentAuthMode === 'login' ? 'SEND VERIFICATION OTP' : 'CREATE ACCOUNT WITH OTP';
-                showToast("Server error! Backend might be down.", "error");
-            });
+            btn.disabled = true; btn.innerText = "SENDING OTP...";
+            fetch(`/api/send-otp`, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ email: email, password: password, auth_mode: currentAuthMode }) })
+            .then(res => res.json()).then(data => {
+                btn.disabled = false; btn.innerText = currentAuthMode === 'login' ? 'SEND VERIFICATION OTP' : 'CREATE ACCOUNT WITH OTP';
+                if (data.success) { showToast(data.message, "success"); document.getElementById('otpModal').style.display = 'flex'; } 
+                else { showToast(data.message, "error"); }
+            }).catch(() => { btn.disabled = false; btn.innerText = currentAuthMode === 'login' ? 'SEND VERIFICATION OTP' : 'CREATE ACCOUNT WITH OTP'; showToast("Server error! Backend might be down.", "error"); });
         }
 
         function verifyOTPAndLogin() {
             const otp = document.getElementById('otpInput').value.trim();
             const password = document.getElementById('password').value.trim();
             const btn = document.getElementById('verifyBtn');
-
             if(!otp) { showToast("Enter 6-digit OTP!", "error"); return; }
-            btn.disabled = true;
-            btn.innerText = "VERIFYING...";
-
+            btn.disabled = true; btn.innerText = "VERIFYING...";
             let deviceId = localStorage.getItem('ticbull_device_id') || ('dev_' + Math.random().toString(36).substring(2) + Date.now());
             localStorage.setItem('ticbull_device_id', deviceId);
-
-            fetch(`/api/verify-otp`, {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({ email: currentStudentData.email, otp: otp, password: password, auth_mode: currentAuthMode, device_id: deviceId })
-            })
-            .then(res => res.json())
-            .then(data => {
-                btn.disabled = false;
-                btn.innerText = "VERIFY & CONTINUE";
+            fetch(`/api/verify-otp`, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ email: currentStudentData.email, otp: otp, password: password, auth_mode: currentAuthMode, device_id: deviceId }) })
+            .then(res => res.json()).then(data => {
+                btn.disabled = false; btn.innerText = "VERIFY & CONTINUE";
                 if (data.success) {
                     localStorage.setItem('ticbull_email', currentStudentData.email);
                     localStorage.setItem('ticbull_token', data.token);
-                    if(data.user) {
-                        if(data.user.name) currentStudentData.name = data.user.name;
-                        if(data.user.dob) currentStudentData.dob = data.user.dob;
-                        if(data.user.photo) currentStudentData.photo = data.user.photo;
-                    }
+                    if(data.user) { if(data.user.name) currentStudentData.name = data.user.name; if(data.user.dob) currentStudentData.dob = data.user.dob; if(data.user.photo) currentStudentData.photo = data.user.photo; }
                     localStorage.setItem('ticbull_name', currentStudentData.name);
-                    if(currentStudentData.dob) localStorage.setItem('ticbull_dob', currentStudentData.dob);
-                    if(currentStudentData.photo) localStorage.setItem('ticbull_photo', currentStudentData.photo);
-
                     updateProfileUI();
                     document.getElementById('otpModal').style.display = 'none';
                     document.getElementById('auth-screen').style.display = 'none';
                     document.getElementById('batches-screen').style.display = 'flex';
-                    loadSidebarHistory();
-                    checkAndUpdateStreak();
-                    showToast("Login Successful!", "success");
-                } else {
-                    showToast(data.message || "Invalid OTP!", "error");
-                }
-            })
-            .catch(() => {
-                btn.disabled = false;
-                btn.innerText = "VERIFY & CONTINUE";
-                showToast("Server Error! Try again.", "error");
-            });
+                    loadSidebarHistory(); checkAndUpdateStreak(); showToast("Login Successful!", "success");
+                } else { showToast(data.message || "Invalid OTP!", "error"); }
+            }).catch(() => { btn.disabled = false; btn.innerText = "VERIFY & CONTINUE"; showToast("Server Error! Try again.", "error"); });
         }
 
         function closeOtpModal() { document.getElementById('otpModal').style.display = 'none'; }
+        function logoutUser() { localStorage.clear(); location.reload(); }
+        function openSettingsModal() { document.getElementById('settingsModal').style.display = 'flex'; if(document.getElementById('drawer').classList.contains('open')) toggleDrawer(); }
 
-        function logoutUser() {
-            localStorage.clear();
-            location.reload();
-        }
-
-        function openSettingsModal() {
-            document.getElementById('settingsModal').style.display = 'flex';
-            if(document.getElementById('drawer').classList.contains('open')) toggleDrawer();
-        }
-
-        function openDeleteAccountModal() {
-            document.getElementById('settingsModal').style.display = 'none';
-            document.getElementById('deleteAccountModal').style.display = 'flex';
-            document.getElementById('delAccEmail').value = currentStudentData.email;
-            document.getElementById('delAccOtpSection').style.display = 'none';
-            document.getElementById('sendDelOtpBtn').style.display = 'block';
-        }
-
+        function openDeleteAccountModal() { document.getElementById('settingsModal').style.display = 'none'; document.getElementById('deleteAccountModal').style.display = 'flex'; document.getElementById('delAccEmail').value = currentStudentData.email; document.getElementById('delAccOtpSection').style.display = 'none'; document.getElementById('sendDelOtpBtn').style.display = 'block'; }
         function initiateAccountDeletion() {
-            const btn = document.getElementById('sendDelOtpBtn');
-            btn.disabled = true;
-            btn.innerText = "SENDING WARNING OTP...";
-
-            fetch(`/api/send-delete-otp`, {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({ email: currentStudentData.email })
-            }).then(res => res.json()).then(data => {
-                if(data.success) {
-                    showToast(data.message, "success");
-                    btn.style.display = 'none';
-                    document.getElementById('delAccOtpSection').style.display = 'block';
-                } else {
-                    btn.disabled = false;
-                    btn.innerText = "SEND DELETION OTP";
-                    showToast(data.message, "error");
-                }
+            const btn = document.getElementById('sendDelOtpBtn'); btn.disabled = true; btn.innerText = "SENDING WARNING OTP...";
+            fetch(`/api/send-delete-otp`, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ email: currentStudentData.email }) }).then(res => res.json()).then(data => {
+                if(data.success) { showToast(data.message, "success"); btn.style.display = 'none'; document.getElementById('delAccOtpSection').style.display = 'block'; } else { btn.disabled = false; btn.innerText = "SEND DELETION OTP"; showToast(data.message, "error"); }
             });
         }
-
         function verifyAndDeleteAccount() {
             const otp = document.getElementById('delAccOtp').value.trim();
             if(!otp) { showToast("OTP is required!", "error"); return; }
-            const btn = document.getElementById('confirmDeleteAccBtn');
-            btn.disabled = true;
-            btn.innerText = "DELETING PERMANENTLY...";
-
-            fetch(`/api/delete-account`, {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({ email: currentStudentData.email, otp: otp })
-            }).then(res => res.json()).then(data => {
-                if(data.success) {
-                    showToast("Account deleted successfully.", "success");
-                    localStorage.clear();
-                    setTimeout(() => location.reload(), 1500);
-                } else {
-                    btn.disabled = false;
-                    btn.innerText = "PERMANENTLY DELETE ACCOUNT";
-                    showToast(data.message, "error");
-                }
+            const btn = document.getElementById('confirmDeleteAccBtn'); btn.disabled = true; btn.innerText = "DELETING PERMANENTLY...";
+            fetch(`/api/delete-account`, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ email: currentStudentData.email, otp: otp }) }).then(res => res.json()).then(data => {
+                if(data.success) { showToast("Account deleted successfully.", "success"); localStorage.clear(); setTimeout(() => location.reload(), 1500); } else { btn.disabled = false; btn.innerText = "PERMANENTLY DELETE ACCOUNT"; showToast(data.message, "error"); }
             });
         }
 
         function updateProfileUI() {
-            const name = currentStudentData.name;
-            const email = currentStudentData.email;
-            const dob = currentStudentData.dob;
-
-            if(name) {
-                document.getElementById('portalHeaderName').innerText = `Welcome, ${name.split(' ')[0]}`;
-                document.getElementById('drawerStudentName').innerText = name;
-                document.getElementById('drawerAvatarInitial').innerText = name.charAt(0).toUpperCase();
-            } else if(email) {
-                const emailPrefix = email.split('@')[0];
-                document.getElementById('drawerStudentName').innerText = emailPrefix;
-                document.getElementById('drawerAvatarInitial').innerText = emailPrefix.charAt(0).toUpperCase();
-            }
-            if(email) {
-                document.getElementById('drawerStudentEmail').innerText = email;
-                document.getElementById('editStudentEmail').value = email;
-            }
+            const name = currentStudentData.name; const email = currentStudentData.email; const dob = currentStudentData.dob;
+            if(name) { document.getElementById('portalHeaderName').innerText = `Welcome, ${name.split(' ')[0]}`; document.getElementById('drawerStudentName').innerText = name; document.getElementById('drawerAvatarInitial').innerText = name.charAt(0).toUpperCase(); } 
+            else if(email) { const emailPrefix = email.split('@')[0]; document.getElementById('drawerStudentName').innerText = emailPrefix; document.getElementById('drawerAvatarInitial').innerText = emailPrefix.charAt(0).toUpperCase(); }
+            if(email) { document.getElementById('drawerStudentEmail').innerText = email; document.getElementById('editStudentEmail').value = email; }
             const userAge = calculateAge(dob);
-            if(userAge !== null) {
-                document.getElementById('drawerStudentAge').innerText = `Age: ${userAge} Years Old`;
-            } else {
-                document.getElementById('drawerStudentAge').innerText = `Active Student`;
-            }
-            if(currentStudentData.photo) {
-                const img = document.getElementById('drawerAvatarImg');
-                img.src = currentStudentData.photo;
-                img.style.display = 'block';
-                document.getElementById('drawerAvatarInitial').style.display = 'none';
-            }
+            if(userAge !== null) { document.getElementById('drawerStudentAge').innerText = `Age: ${userAge} Years Old`; } else { document.getElementById('drawerStudentAge').innerText = `Active Student`; }
+            if(currentStudentData.photo) { const img = document.getElementById('drawerAvatarImg'); img.src = currentStudentData.photo; img.style.display = 'block'; document.getElementById('drawerAvatarInitial').style.display = 'none'; }
         }
 
-        function openEditProfileModal() {
-            document.getElementById('editStudentName').value = currentStudentData.name || '';
-            document.getElementById('editStudentDob').value = currentStudentData.dob || '';
-            document.getElementById('editProfileModal').style.display = 'flex';
-        }
-
+        function openEditProfileModal() { document.getElementById('editStudentName').value = currentStudentData.name || ''; document.getElementById('editStudentDob').value = currentStudentData.dob || ''; document.getElementById('editProfileModal').style.display = 'flex'; }
         function closeEditProfileModal() { document.getElementById('editProfileModal').style.display = 'none'; }
-
         function saveProfileChanges() {
-            currentStudentData.name = document.getElementById('editStudentName').value;
-            currentStudentData.dob = document.getElementById('editStudentDob').value;
-            localStorage.setItem('ticbull_name', currentStudentData.name);
-            localStorage.setItem('ticbull_dob', currentStudentData.dob);
-
-            fetch(`/api/update-profile`, {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({ email: currentStudentData.email, name: currentStudentData.name, dob: currentStudentData.dob, photo: currentStudentData.photo })
-            }).then(() => {
-                updateProfileUI();
-                closeEditProfileModal();
-                showToast("Profile details updated successfully!", "success");
-            });
+            currentStudentData.name = document.getElementById('editStudentName').value; currentStudentData.dob = document.getElementById('editStudentDob').value;
+            localStorage.setItem('ticbull_name', currentStudentData.name); localStorage.setItem('ticbull_dob', currentStudentData.dob);
+            fetch(`/api/update-profile`, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ email: currentStudentData.email, name: currentStudentData.name, dob: currentStudentData.dob, photo: currentStudentData.photo }) }).then(() => { updateProfileUI(); closeEditProfileModal(); showToast("Profile details updated successfully!", "success"); });
         }
-
         function handleAvatarUpload(event) {
             const file = event.target.files[0];
-            if(file) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    currentStudentData.photo = e.target.result;
-                    localStorage.setItem('ticbull_photo', e.target.result);
-                    updateProfileUI();
-                    fetch(`/api/update-profile`, {
-                        method: 'POST',
-                        headers: {'Content-Type': 'application/json'},
-                        body: JSON.stringify({ email: currentStudentData.email, name: currentStudentData.name, dob: currentStudentData.dob, photo: currentStudentData.photo })
-                    });
-                };
-                reader.readAsDataURL(file);
-            }
+            if(file) { const reader = new FileReader(); reader.onload = function(e) { currentStudentData.photo = e.target.result; localStorage.setItem('ticbull_photo', e.target.result); updateProfileUI(); fetch(`/api/update-profile`, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ email: currentStudentData.email, name: currentStudentData.name, dob: currentStudentData.dob, photo: currentStudentData.photo }) }); }; reader.readAsDataURL(file); }
         }
 
-        function toggleDrawer() {
-            const drawer = document.getElementById('drawer');
-            const overlay = document.getElementById('drawerOverlay');
-            drawer.classList.toggle('open');
-            overlay.style.display = drawer.classList.contains('open') ? 'block' : 'none';
-        }
-
-        function openSubscriptionModal() {
-            document.getElementById('subModal').style.display = 'flex';
-            if(document.getElementById('drawer').classList.contains('open')) toggleDrawer();
-        }
-
+        function toggleDrawer() { const drawer = document.getElementById('drawer'); const overlay = document.getElementById('drawerOverlay'); drawer.classList.toggle('open'); overlay.style.display = drawer.classList.contains('open') ? 'block' : 'none'; }
+        function openSubscriptionModal() { document.getElementById('subModal').style.display = 'flex'; if(document.getElementById('drawer').classList.contains('open')) toggleDrawer(); }
         function closeSubscriptionModal() { document.getElementById('subModal').style.display = 'none'; }
-
-        function toggleToolsMenu() {
-            const menu = document.getElementById('aiToolsMenu');
-            menu.style.display = (menu.style.display === 'flex') ? 'none' : 'flex';
-        }
-
-        function triggerTool(promptAction) {
-            document.getElementById('aiToolsMenu').style.display = 'none';
-            document.getElementById('userInput').value = promptAction;
-            askAI();
-        }
+        function toggleToolsMenu() { const menu = document.getElementById('aiToolsMenu'); menu.style.display = (menu.style.display === 'flex') ? 'none' : 'flex'; }
+        function triggerTool(promptAction) { document.getElementById('aiToolsMenu').style.display = 'none'; document.getElementById('userInput').value = promptAction; askAI(); }
 
         function triggerAppGuideBot() {
             if(document.getElementById('drawer').classList.contains('open')) toggleDrawer();
@@ -1484,279 +1435,120 @@
                     • <b>Key Features:</b> Detailed Notes, MCQs, AI Diagram & Video Explanations.<br>
                     • <b>How to Use:</b> Select your Batch from Dashboard and ask your subject doubts!
                 </div>`;
-            scrollToBottom();
-            saveChatUI();
+            scrollToBottom(); saveChatUI();
         }
 
         function startNewChat() {
-            currentSessionId = Date.now().toString();
-            currentSessionTitle = "New Chat";
+            currentSessionId = Date.now().toString(); currentSessionTitle = "New Chat";
             document.getElementById('chatBox').innerHTML = `<div class="msg ai" id="defaultWelcomeMsg"><b>Welcome to TicBull Academy! 🚀</b><br>New Chat started. Ask your question!</div>`;
             if(document.getElementById('drawer').classList.contains('open')) toggleDrawer();
             showToast("New Chat Started!", "success");
-            const items = document.querySelectorAll('.history-item');
-            items.forEach(el => el.classList.remove('active-session'));
+            document.querySelectorAll('.history-item').forEach(el => el.classList.remove('active-session'));
         }
 
         function loadSidebarHistory() {
-            fetch('/api/get-sessions', {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({ email: currentStudentData.email })
-            })
-            .then(res => res.json())
-            .then(data => {
-                if(data.success && data.sessions) {
-                    renderHistoryList(data.sessions);
-                    if (isInitialLoad && data.sessions.length > 0) {
-                        loadSession(data.sessions[0].id, data.sessions[0].title);
-                        isInitialLoad = false;
-                    }
-                }
+            fetch('/api/get-sessions', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ email: currentStudentData.email }) })
+            .then(res => res.json()).then(data => {
+                if(data.success && data.sessions) { renderHistoryList(data.sessions); if (isInitialLoad && data.sessions.length > 0) { loadSession(data.sessions[0].id, data.sessions[0].title); isInitialLoad = false; } }
             }).catch(() => {});
         }
 
         function renderHistoryList(historyArray) {
-            const list = document.getElementById('historyList');
-            if(!list) return;
-            list.innerHTML = '';
+            const list = document.getElementById('historyList'); if(!list) return; list.innerHTML = '';
             historyArray.forEach((item) => {
                 const isActive = (item.id === currentSessionId) ? 'active-session' : '';
-                list.innerHTML += `
-                    <div class="history-item ${isActive}" onclick="loadSession('${item.id}', '${item.title.replace(/'/g, "\\'")}')">
-                        <span style="white-space:nowrap; overflow:hidden; text-overflow:ellipsis; width:85%;">${item.title}</span>
-                        <i class="fa-solid fa-trash delete-chat-icon" title="Delete Chat" onclick="promptDeleteHistory('${item.id}', event)"></i>
-                    </div>`;
+                list.innerHTML += `<div class="history-item ${isActive}" onclick="loadSession('${item.id}', '${item.title.replace(/'/g, "\\'")}')"><span style="white-space:nowrap; overflow:hidden; text-overflow:ellipsis; width:85%;">${item.title}</span><i class="fa-solid fa-trash delete-chat-icon" title="Delete Chat" onclick="promptDeleteHistory('${item.id}', event)"></i></div>`;
             });
         }
 
         function loadSession(id, title) {
-            currentSessionId = id;
-            currentSessionTitle = title;
-            fetch('/api/get-session-html', {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({ email: currentStudentData.email, session_id: id })
-            })
-            .then(res => res.json())
-            .then(data => {
+            currentSessionId = id; currentSessionTitle = title;
+            fetch('/api/get-session-html', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ email: currentStudentData.email, session_id: id }) })
+            .then(res => res.json()).then(data => {
                 if(data.success && data.html) {
-                    document.getElementById('chatBox').innerHTML = data.html;
-                    scrollToBottom();
+                    document.getElementById('chatBox').innerHTML = data.html; scrollToBottom();
                     if(document.getElementById('drawer').classList.contains('open')) toggleDrawer();
-                    const items = document.querySelectorAll('.history-item');
-                    items.forEach(el => el.classList.remove('active-session'));
-                    if(window.event && window.event.currentTarget) {
-                        window.event.currentTarget.classList.add('active-session');
-                    }
+                    document.querySelectorAll('.history-item').forEach(el => el.classList.remove('active-session'));
+                    if(window.event && window.event.currentTarget) { window.event.currentTarget.classList.add('active-session'); }
                 }
             });
         }
 
         let pendingDeleteId = null;
-        function promptDeleteHistory(id, event) {
-            event.stopPropagation();
-            pendingDeleteId = id;
-            document.getElementById('deleteWarningModal').style.display = 'flex';
-        }
-
+        function promptDeleteHistory(id, event) { event.stopPropagation(); pendingDeleteId = id; document.getElementById('deleteWarningModal').style.display = 'flex'; }
         document.getElementById('confirmDeleteBtn').onclick = function() {
-            if(pendingDeleteId) {
-                fetch(`/api/delete-session`, {
-                    method: 'POST',
-                    headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify({ email: currentStudentData.email, session_id: pendingDeleteId })
-                }).then(() => {
-                    showToast("Chat permanently deleted.", "success");
-                    document.getElementById('deleteWarningModal').style.display = 'none';
-                    if(currentSessionId === pendingDeleteId) { startNewChat(); }
-                    loadSidebarHistory();
-                });
-            }
+            if(pendingDeleteId) { fetch(`/api/delete-session`, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ email: currentStudentData.email, session_id: pendingDeleteId }) }).then(() => { showToast("Chat permanently deleted.", "success"); document.getElementById('deleteWarningModal').style.display = 'none'; if(currentSessionId === pendingDeleteId) { startNewChat(); } loadSidebarHistory(); }); }
         };
 
-        function saveChatUI() {
-            const chatHtml = document.getElementById('chatBox').innerHTML;
-            fetch('/api/sync-session', {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({ 
-                    email: currentStudentData.email, 
-                    session_id: currentSessionId, 
-                    title: currentSessionTitle, 
-                    html: chatHtml 
-                })
-            }).then(() => loadSidebarHistory());
-        }
+        function saveChatUI() { const chatHtml = document.getElementById('chatBox').innerHTML; fetch('/api/sync-session', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ email: currentStudentData.email, session_id: currentSessionId, title: currentSessionTitle, html: chatHtml }) }).then(() => loadSidebarHistory()); }
 
         let recognition;
         if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
-            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-            recognition = new SpeechRecognition();
-            recognition.continuous = false;
-            recognition.interimResults = false;
-            recognition.onresult = function(event) {
-                const text = event.results[0][0].transcript;
-                const inputEl = document.getElementById('userInput');
-                inputEl.value += " " + text;
-                autoResizeInput(inputEl);
-                document.getElementById('voiceBtn').classList.remove('voice-active');
-            };
-            recognition.onerror = function() { document.getElementById('voiceBtn').classList.remove('voice-active'); };
-            recognition.onend = function() { document.getElementById('voiceBtn').classList.remove('voice-active'); };
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition; recognition = new SpeechRecognition(); recognition.continuous = false; recognition.interimResults = false;
+            recognition.onresult = function(event) { const text = event.results[0][0].transcript; const inputEl = document.getElementById('userInput'); inputEl.value += " " + text; autoResizeInput(inputEl); document.getElementById('voiceBtn').classList.remove('voice-active'); };
+            recognition.onerror = function() { document.getElementById('voiceBtn').classList.remove('voice-active'); }; recognition.onend = function() { document.getElementById('voiceBtn').classList.remove('voice-active'); };
         }
 
         function toggleVoiceInput() {
             const voiceBtn = document.getElementById('voiceBtn');
-            if(voiceBtn.classList.contains('voice-active')) {
-                if(recognition) recognition.stop();
-                voiceBtn.classList.remove('voice-active');
-            } else {
-                if(recognition) {
-                    recognition.start();
-                    voiceBtn.classList.add('voice-active');
-                } else {
-                    showToast("Voice typing not supported in this browser.", "error");
-                }
-            }
+            if(voiceBtn.classList.contains('voice-active')) { if(recognition) recognition.stop(); voiceBtn.classList.remove('voice-active'); } 
+            else { if(recognition) { recognition.start(); voiceBtn.classList.add('voice-active'); } else { showToast("Voice typing not supported in this browser.", "error"); } }
         }
 
         function handleMultipleFilesSelect(event) {
             const files = event.target.files;
             if(files && files.length > 0) {
                 selectedFilesArray = [];
-                for(let i=0; i<files.length; i++) {
-                    const reader = new FileReader();
-                    reader.onload = function(e) { selectedFilesArray.push(e.target.result); };
-                    reader.readAsDataURL(files[i]);
-                }
-                document.getElementById('imagePreviewText').innerHTML = `<i class="fa-solid fa-paperclip"></i> ${files.length} File(s) Selected`;
-                document.getElementById('imagePreview').style.display = 'flex';
+                for(let i=0; i<files.length; i++) { const reader = new FileReader(); reader.onload = function(e) { selectedFilesArray.push(e.target.result); }; reader.readAsDataURL(files[i]); }
+                document.getElementById('imagePreviewText').innerHTML = `<i class="fa-solid fa-paperclip"></i> ${files.length} File(s) Selected`; document.getElementById('imagePreview').style.display = 'flex';
             }
         }
-
-        function removeImage() {
-            selectedFilesArray = [];
-            document.getElementById('photoInput').value = '';
-            document.getElementById('imagePreview').style.display = 'none';
-        }
-
-        function saveChatLang(val) {
-            localStorage.setItem('tb_lang', val);
-            showToast(`AI Language set to ${val}`, "success");
-        }
+        function removeImage() { selectedFilesArray = []; document.getElementById('photoInput').value = ''; document.getElementById('imagePreview').style.display = 'none'; }
+        function saveChatLang(val) { localStorage.setItem('tb_lang', val); showToast(`AI Language set to ${val}`, "success"); }
 
         function askAI() {
-            const input = document.getElementById('userInput');
-            const chatBox = document.getElementById('chatBox');
-            const lang = document.getElementById('chatLangSelect').value || 'Hinglish';
-            const sendBtn = document.getElementById('sendBtn');
-
+            const input = document.getElementById('userInput'); const chatBox = document.getElementById('chatBox'); const lang = document.getElementById('chatLangSelect').value || 'Hinglish'; const sendBtn = document.getElementById('sendBtn');
             if(!input.value.trim() && selectedFilesArray.length === 0) return;
 
             let userMsgContent = '';
-            selectedFilesArray.forEach(file => {
-                if(file.includes('pdf')) {
-                    userMsgContent += `<i class="fa-solid fa-file-pdf" style="font-size:24px; color:red;"></i> <b>[PDF Attached]</b><br>`;
-                } else {
-                    userMsgContent += `<img src="${file}" class="msg-image"><br>`;
-                }
-            });
+            selectedFilesArray.forEach(file => { if(file.includes('pdf')) { userMsgContent += `<i class="fa-solid fa-file-pdf" style="font-size:24px; color:red;"></i> <b>[PDF Attached]</b><br>`; } else { userMsgContent += `<img src="${file}" class="msg-image"><br>`; } });
             if(input.value.trim()) userMsgContent += input.value.trim();
             const questionText = input.value.trim() || "Analyze attached files";
 
-            if(currentSessionTitle === "New Chat") {
-                currentSessionTitle = questionText.substring(0, 30) + (questionText.length > 30 ? "..." : "");
-            }
-
+            if(currentSessionTitle === "New Chat") { currentSessionTitle = questionText.substring(0, 30) + (questionText.length > 30 ? "..." : ""); }
             chatBox.innerHTML += `<div class="msg user">${userMsgContent}</div>`;
            
-            const filesToSend = [...selectedFilesArray]; 
-            input.value = '';
-            input.style.height = 'auto'; 
-            removeImage(); 
-            document.getElementById('aiToolsMenu').style.display = 'none';
-            scrollToBottom();
+            const filesToSend = [...selectedFilesArray]; input.value = ''; input.style.height = 'auto'; removeImage(); document.getElementById('aiToolsMenu').style.display = 'none'; scrollToBottom();
 
-            const tImg = getTeacherImage();
-            const tFall = getTeacherFallback();
-            const loadingId = 'loading-' + Date.now();
-            
+            const tImg = getTeacherImage(); const tFall = getTeacherFallback(); const loadingId = 'loading-' + Date.now();
             chatBox.innerHTML += `<div class="msg ai" id="${loadingId}">
                 <div style="display:flex; align-items:center; gap:10px; margin-bottom:8px;">
                     <img src="${tImg}" onerror="this.src='${tFall}'" style="width:36px; height:36px; border-radius:50%; object-fit:cover; border:2px solid var(--accent-color);">
                     <i>TicBull ${currentTeacher === 'female' ? 'Ma\'am' : 'Sir'} is thinking...</i>
                 </div>
             </div>`;
-            
-            scrollToBottom();
-            sendBtn.disabled = true;
+            scrollToBottom(); sendBtn.disabled = true;
 
             fetch(`/api/chat`, {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({
-                    email: currentStudentData.email,
-                    token: localStorage.getItem('ticbull_token'), 
-                    prompt: questionText,
-                    images: filesToSend, 
-                    active_batch: currentActiveBatch,
-                    tier_type: localStorage.getItem('tb_tier_type') || 'PRO',
-                    lang: lang,
-                    student_name: currentStudentData.name,
-                    purchased_plan: purchasedPlanName,
-                    teacher_gender: currentTeacher
-                })
+                method: 'POST', headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ email: currentStudentData.email, token: localStorage.getItem('ticbull_token'), prompt: questionText, images: filesToSend, active_batch: currentActiveBatch, tier_type: localStorage.getItem('tb_tier_type') || 'PRO', lang: lang, student_name: currentStudentData.name, purchased_plan: purchasedPlanName, teacher_gender: currentTeacher })
             })
             .then(res => res.json())
             .then(data => {
-                sendBtn.disabled = false;
-                const loadElem = document.getElementById(loadingId);
-                
-                if(data.session_expired) {
-                    loadElem.classList.replace('ai', 'error');
-                    loadElem.innerHTML = `<b>❌ Security Alert:</b> ${data.message}`;
-                    showToast(data.message, "error");
-                    setTimeout(() => logoutUser(), 3000); 
-                    return;
-                }
-
+                sendBtn.disabled = false; const loadElem = document.getElementById(loadingId);
+                if(data.session_expired) { loadElem.classList.replace('ai', 'error'); loadElem.innerHTML = `<b>❌ Security Alert:</b> ${data.message}`; showToast(data.message, "error"); setTimeout(() => logoutUser(), 3000); return; }
                 if (data.success) {
-                    let formattedReply = data.reply.replace(/\*\*(.*?)\*\*/g, '<b>$1</b>');
-                    formattedReply = formattedReply.replace(/\n/g, '<br>');
-
-                    if (questionText.toLowerCase().includes('image') || questionText.toLowerCase().includes('diagram')) {
-                        let topicSafe = encodeURIComponent(questionText.replace('Generate Detailed Diagram Image', '').trim() || 'Education');
-                        formattedReply += `<br><br><b>🖼️ Visual Reference:</b><br><img src="https://image.pollinations.ai/prompt/${topicSafe}%20educational%20diagram?width=600&height=350&nologo=true" class="msg-image" alt="AI Generated Image" style="border-radius:12px; margin-top:8px; border:1px solid #333;">`;
-                    }
-                    if (questionText.toLowerCase().includes('video')) {
-                        let topicSafe = encodeURIComponent(questionText.replace('Generate AI Video Visual Explanation', '').trim() || 'Study Concept');
-                        formattedReply += `<br><br><b>🎥 Video Concept Reference:</b><br><iframe style="width:100%; height:200px; border-radius:12px; margin-top:8px; border:none;" src="https://www.youtube.com/embed?listType=search&list=${topicSafe}+${currentActiveBatch}" allowfullscreen></iframe>`;
-                    }
-
-                    loadElem.innerHTML = `<div style="display:flex; align-items:center; gap:10px; margin-bottom:10px; border-bottom: 1px solid var(--border-color); padding-bottom: 8px;">
-                        <img src="${tImg}" onerror="this.src='${tFall}'" style="width:36px; height:36px; border-radius:50%; object-fit:cover; border:2px solid var(--gold-color);">
-                        <b style="color:var(--gold-color);">TicBull ${currentTeacher === 'female' ? 'Ma\'am' : 'Sir'} (${currentActiveBatch.split(' - ')[0]})</b>
-                    </div>
-                    <div style="width:100%; line-height: 1.6; overflow-x: auto; word-break: break-word; overflow-wrap: break-word;">${formattedReply}</div>`;
-                    
+                    let formattedReply = data.reply.replace(/\*\*(.*?)\*\*/g, '<b>$1</b>'); formattedReply = formattedReply.replace(/\n/g, '<br>');
+                    if (questionText.toLowerCase().includes('image') || questionText.toLowerCase().includes('diagram')) { let topicSafe = encodeURIComponent(questionText.replace('Generate Detailed Diagram Image', '').trim() || 'Education'); formattedReply += `<br><br><b>🖼️ Visual Reference:</b><br><img src="https://image.pollinations.ai/prompt/${topicSafe}%20educational%20diagram?width=600&height=350&nologo=true" class="msg-image" alt="AI Generated Image" style="border-radius:12px; margin-top:8px; border:1px solid #333;">`; }
+                    if (questionText.toLowerCase().includes('video')) { let topicSafe = encodeURIComponent(questionText.replace('Generate AI Video Visual Explanation', '').trim() || 'Study Concept'); formattedReply += `<br><br><b>🎥 Video Concept Reference:</b><br><iframe style="width:100%; height:200px; border-radius:12px; margin-top:8px; border:none;" src="https://www.youtube.com/embed?listType=search&list=${topicSafe}+${currentActiveBatch}" allowfullscreen></iframe>`; }
+                    loadElem.innerHTML = `<div style="display:flex; align-items:center; gap:10px; margin-bottom:10px; border-bottom: 1px solid var(--border-color); padding-bottom: 8px;"><img src="${tImg}" onerror="this.src='${tFall}'" style="width:36px; height:36px; border-radius:50%; object-fit:cover; border:2px solid var(--gold-color);"><b style="color:var(--gold-color);">TicBull ${currentTeacher === 'female' ? 'Ma\'am' : 'Sir'} (${currentActiveBatch.split(' - ')[0]})</b></div><div style="width:100%; line-height: 1.6; overflow-x: auto; word-break: break-word; overflow-wrap: break-word;">${formattedReply}</div>`;
                     saveChatUI(); 
-                } else {
-                    loadElem.classList.replace('ai', 'error');
-                    loadElem.innerHTML = `<b>❌ AI Limit / Lock:</b> ${data.message}`;
-                    showToast(data.message, "error");
-                }
+                } else { loadElem.classList.replace('ai', 'error'); loadElem.innerHTML = `<b>❌ AI Limit / Lock:</b> ${data.message}`; showToast(data.message, "error"); }
                 scrollToBottom();
-            })
-            .catch(() => {
-                sendBtn.disabled = false;
-                const loadElem = document.getElementById(loadingId);
-                loadElem.classList.replace('ai', 'error');
-                loadElem.innerHTML = `<b>❌ Server Connection Failed.</b>`;
-                showToast("Server Connection Failed", "error");
-                scrollToBottom();
+            }).catch(() => {
+                sendBtn.disabled = false; const loadElem = document.getElementById(loadingId); loadElem.classList.replace('ai', 'error'); loadElem.innerHTML = `<b>❌ Server Connection Failed.</b>`; showToast("Server Connection Failed", "error"); scrollToBottom();
             });
         }
     </script>
 </body>
-        </html>
+</html>
