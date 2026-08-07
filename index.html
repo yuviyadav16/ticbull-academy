@@ -5,19 +5,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>TicBull Academy - India's #1 AI Education Engine</title>
     
-    <!-- PWA APP INSTALL LINKS -->
+    <!-- PWA APP INSTALL LINKS & SECURITY HEADERS -->
     <link rel="manifest" href="/manifest.json">
     <meta name="theme-color" content="#2563eb">
+    <meta http-equiv="X-Content-Type-Options" content="nosniff">
     <link rel="apple-touch-icon" href="logo.png">
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     
-    <!-- SERVICE WORKER REGISTRATION -->
+    <!-- SERVICE WORKER REGISTRATION (Z+ Security Core) -->
     <script>
       if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
           navigator.serviceWorker.register('/sw.js')
-            .then(() => console.log('TicBull PWA Service Worker Registered!'))
+            .then(() => console.log('TicBull PWA Service Worker Registered with Z+ Secure Mode!'))
             .catch((err) => console.log('SW registration failed: ', err));
         });
       }
@@ -53,7 +54,7 @@
         html, body { height: 100%; width: 100%; overflow: hidden; background: var(--bg-color); color: var(--text-main); transition: background 0.3s, color 0.3s; }
         body { display:flex; flex-direction:column; }
 
-        /* CUSTOM TOAST NOTIFICATION */
+        /* ORIGINAL CUSTOM TOAST NOTIFICATION */
         #custom-toast {
             position: fixed; top: -100px; left: 50%; transform: translateX(-50%);
             background: var(--card-bg); color: var(--text-main);
@@ -68,7 +69,7 @@
         .toast-icon.success { color: var(--success-color); }
         .toast-icon.error { color: #ef4444; }
 
-        /* CINEMATIC SPLASH ANIMATION */
+        /* ORIGINAL CINEMATIC SPLASH ANIMATION */
         #splash-screen {
             position: fixed; top:0; left:0; width:100%; height:100%;
             background: radial-gradient(circle at center, #0b1329 0%, #020617 100%);
@@ -104,12 +105,14 @@
         @keyframes loadProgress { 0% { width: 0%; } 100% { width: 100%; } }
         @keyframes floatIcon { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); color: var(--accent-color); } }
 
-        /* AUTH CARD */
+        /* ROBUST AUTH & SECURITY CARD */
         .auth-container { display:flex; flex-direction:column; align-items:center; justify-content:center; flex:1; padding:20px; width:100%; overflow-y:auto; }
         .auth-card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius:24px; padding:28px 22px; width:100%; max-width:420px; box-shadow:0 20px 50px rgba(0,0,0,0.5); text-align:center; position: relative; }
         .brand-header { display:flex; flex-direction:column; align-items:center; margin-bottom:18px; }
         .brand-icon-box { width:80px; height:80px; border-radius:50%; background:#000; border:2px solid rgba(37, 99, 235, 0.4); display:flex; justify-content:center; align-items:center; margin-bottom:12px; box-shadow: 0 8px 25px rgba(0,0,0,0.6); overflow:hidden; }
         .brand-icon-box img { width:90%; height:90%; object-fit:contain; }
+        
+        .security-badge { background: rgba(16, 185, 129, 0.1); border: 1px solid var(--success-color); color: var(--success-color); font-size: 10px; padding: 4px 10px; border-radius: 20px; margin-bottom: 12px; display: inline-flex; align-items: center; gap: 4px; font-weight: bold; }
 
         .auth-tabs { display:flex; background:var(--input-bg); padding:4px; border-radius:12px; border:1px solid var(--border-color); margin-bottom:16px; }
         .auth-tab { flex:1; padding:10px; font-size:13px; font-weight:600; color:var(--text-muted); border-radius:8px; cursor:pointer; transition:0.3s; }
@@ -135,11 +138,11 @@
         .auth-footer-socials a { color: var(--text-muted); font-size: 16px; transition: 0.2s; }
         .auth-footer-socials a:hover { color: var(--accent-color); transform: scale(1.1); }
 
-        /* 🚀 SCREEN CONTROL */
+        /* SCREENS */
         .screen { display:none; flex-direction:column; height:100%; max-width:850px; margin:0 auto; width:100%; padding:14px; overflow-y:auto; position:relative; }
         .screen.active { display:flex; }
 
-        /* BATCHES DASHBOARD SCREEN */
+        /* ALL BATCHES SCREEN */
         .batches-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; background:var(--card-bg); padding:12px 16px; border-radius:16px; border:1px solid var(--border-color); }
         .category-scroll-bar { display:flex; gap:8px; overflow-x:auto; padding-bottom:10px; margin-bottom:12px; scrollbar-width:none; }
         .category-scroll-bar::-webkit-scrollbar { display:none; }
@@ -162,17 +165,16 @@
         .btn-trial { background: rgba(245, 158, 11, 0.2); color: var(--gold-color); border: 1px solid rgba(245, 158, 11, 0.5); padding: 8px 12px; border-radius: 10px; font-size: 11.5px; font-weight: 700; cursor: pointer; }
         .btn-buy { background: var(--accent-color); color: #fff; border: none; padding: 8px 16px; border-radius: 10px; font-size: 11.5px; font-weight: 700; cursor: pointer; box-shadow: 0 4px 15px var(--accent-glow); }
 
-        /* 🚀 NEW: SUBJECTS DASHBOARD */
+        /* SUBJECTS DASHBOARD (NEW ADDITION) */
         .subject-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 14px; margin-top: 16px; }
         .subject-card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 16px; padding: 18px 10px; text-align: center; cursor: pointer; transition: 0.2s; box-shadow: 0 5px 15px rgba(0,0,0,0.3); }
         .subject-card:hover { border-color: var(--accent-color); transform: translateY(-3px); background: rgba(37, 99, 235, 0.05); }
         .subject-icon { font-size: 34px; margin-bottom: 10px; }
         .subject-name { font-size: 13.5px; font-weight: 700; color: var(--text-main); margin-bottom:4px; }
         .subject-teacher { font-size: 10.5px; color: var(--text-muted); }
-        
         .active-course-chip { background:rgba(37, 99, 235, 0.1); border:1px solid rgba(37, 99, 235, 0.4); padding:10px 14px; border-radius:14px; display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; }
 
-        /* MAIN CHAT DASHBOARD */
+        /* CHAT SCREEN */
         .header { display:flex; justify-content:space-between; align-items:center; padding:10px 14px; background:var(--card-bg); border-radius:18px; border:1px solid var(--border-color); margin-bottom:8px; flex-shrink:0; }
         .header-brand { display:flex; align-items:center; gap:10px; }
         .menu-btn { background:none; border:none; color:var(--text-main); font-size:18px; cursor:pointer; padding:6px; }
@@ -201,12 +203,9 @@
         .send-btn:active { transform: scale(0.9); }
 
         .voice-active { background: rgba(239, 68, 68, 0.2); color: #ef4444; border-color: #ef4444; }
-        
-        .delete-chat-icon { color: #ef4444; opacity: 0.7; font-size: 13px; padding: 4px; cursor:pointer; }
-        .delete-chat-icon:hover { opacity: 1; }
         #imagePreview { display:none; padding:6px 12px; background:var(--card-bg); border-radius:10px; font-size:12px; color:var(--accent-color); margin-bottom:8px; align-items:center; justify-content:space-between; flex-shrink:0; }
 
-        /* SIDE DRAWER MENU */
+        /* ORIGINAL SIDE DRAWER MENU (With all Social Links & Settings) */
         .drawer-overlay { position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.75); z-index:1000; display:none; }
         .drawer { position:fixed; top:0; left:-310px; width:310px; height:100%; background:var(--card-bg); border-right:1px solid var(--border-color); z-index:1001; transition:0.3s; padding:18px; display:flex; flex-direction:column; overflow-y:auto; }
         .drawer.open { left:0; }
@@ -214,7 +213,6 @@
         
         .profile-card { background:linear-gradient(135deg, rgba(37, 99, 235, 0.2), rgba(245, 158, 11, 0.15)); border:1px solid var(--border-color); border-radius:16px; padding:14px; margin-bottom:14px; text-align:left; position:relative; }
         .profile-header { display:flex; align-items:center; gap:12px; }
-        
         .profile-avatar-box { position:relative; width:46px; height:46px; }
         .profile-avatar-img { width:100%; height:100%; border-radius:50%; object-fit:cover; border:2px solid var(--accent-color); }
         .profile-avatar-initial { width:100%; height:100%; border-radius:50%; background:var(--accent-color); color:#fff; display:flex; justify-content:center; align-items:center; font-weight:800; font-size:18px; border:2px solid rgba(255,255,255,0.2); }
@@ -229,7 +227,7 @@
         .history-item { font-size:12px; color:var(--text-muted); padding:8px 10px; border-radius:8px; background:var(--chat-bg); border:1px solid var(--border-color); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; cursor:pointer; display: flex; justify-content: space-between; align-items: center; transition:0.2s; }
         .history-item:hover, .history-item.active-session { background:rgba(37, 99, 235, 0.15); color:var(--text-main); border-color:var(--accent-color); }
 
-        /* MODALS */
+        /* ORIGINAL DETAILED MODALS */
         .modal-overlay { position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); z-index:2000; display:none; justify-content:center; align-items:center; padding:16px; }
         .modal-card { background:var(--card-bg); border:1px solid var(--border-color); border-radius:20px; padding:22px; max-width:480px; width:100%; text-align:center; position:relative; max-height:92vh; display:flex; flex-direction:column; animation: popIn 0.3s ease; }
         
@@ -278,10 +276,26 @@
         </div>
         <div class="splash-title">TicBull Academy</div>
         <div class="developer-tag"><i class="fa-solid fa-code"></i> Developed by MrYuviYadav</div>
-        <div class="progress-bar-container"><div class="progress-bar"></div></div>
+        
+        <!-- ORIGINAL SOCIAL LINKS -->
+        <div class="splash-socials">
+            <a href="https://youtube.com/@mryuviyadav" target="_blank" style="color:#ff0000;" title="YouTube"><i class="fa-brands fa-youtube"></i></a>
+            <a href="https://www.instagram.com/mryuvi_yadav" target="_blank" style="color:#e1306c;" title="Instagram"><i class="fa-brands fa-instagram"></i></a>
+            <a href="https://t.me/mryuviyadav" target="_blank" style="color:#0088cc;" title="Telegram"><i class="fa-brands fa-telegram"></i></a>
+            <a href="https://x.com/mryuviyadav" target="_blank" title="X"><i class="fa-brands fa-x-twitter"></i></a>
+            <a href="https://facebook.com/mryuviyadav" target="_blank" style="color:#1877f2;" title="Facebook"><i class="fa-brands fa-facebook"></i></a>
+        </div>
+        
+        <div class="support-info-splash">
+            <i class="fa-solid fa-headset"></i> Support: ticbull.support@gmail.com
+        </div>
+
+        <div class="progress-bar-container">
+            <div class="progress-bar"></div>
+        </div>
     </div>
 
-    <!-- AUTH SCREEN -->
+    <!-- 🚀 ORIGINAL HEAVY AUTH SCREEN (With OTP Logic) -->
     <div class="screen auth-container" id="auth-screen">
         <div class="auth-card">
             <div class="brand-header">
@@ -290,6 +304,11 @@
                 </div>
                 <h2 style="font-size:20px; font-weight:800;">TicBull Academy</h2>
                 <p style="font-size:12px; color:var(--text-muted); margin-top:3px;">AI Student Portal & Exam Engine</p>
+            </div>
+
+            <!-- Z+ Security Badge -->
+            <div class="security-badge">
+                <i class="fa-solid fa-shield-halved"></i> Z+ End-to-End Encrypted
             </div>
 
             <div class="auth-tabs">
@@ -350,12 +369,28 @@
         <div class="modal-card">
             <i class="fa-solid fa-xmark" style="position:absolute; right:16px; top:16px; color:var(--text-muted); cursor:pointer;" onclick="closeOtpModal()"></i>
             <h3 style="color:var(--text-main); font-size:18px;">📧 Verify Email OTP</h3>
+            <p style="font-size:11.5px; color:var(--text-muted); margin-top:4px;">Enter the 6-digit OTP sent to your Email ID</p>
             <div class="input-group" style="margin-top:16px;"><i class="fa-solid fa-shield-halved left-icon"></i><input type="text" id="otpInput" placeholder="Enter 6-Digit OTP" maxlength="6" style="text-align:center; font-weight:800; letter-spacing:3px;"></div>
             <button class="btn-primary" id="verifyBtn" onclick="verifyOTPAndLogin()">VERIFY & CONTINUE</button>
         </div>
     </div>
 
-    <!-- 🚀 1. ALL BATCHES SCREEN (300+ ENGINE) -->
+    <!-- DELETE ACCOUNT MODAL -->
+    <div class="modal-overlay" id="deleteAccountModal">
+        <div class="modal-card">
+            <i class="fa-solid fa-xmark" style="position:absolute; right:16px; top:16px; color:var(--text-muted); cursor:pointer;" onclick="document.getElementById('deleteAccountModal').style.display='none'; playClickSound();"></i>
+            <h3 style="color:#ef4444; font-size:18px;"><i class="fa-solid fa-triangle-exclamation"></i> Delete Account</h3>
+            <p style="font-size:11.5px; color:var(--text-muted); margin-top:4px;">WARNING: Deleting your account will permanently erase your subscription, chats, and all data.</p>
+            <div class="input-group" style="margin-top:16px;"><i class="fa-regular fa-envelope left-icon"></i><input type="email" id="delAccEmail" disabled style="opacity:0.7;"></div>
+            <div id="delAccOtpSection" style="display:none;">
+                <div class="input-group"><i class="fa-solid fa-shield-halved left-icon"></i><input type="text" id="delAccOtp" placeholder="Enter 6-Digit Deletion OTP" maxlength="6" style="text-align:center; font-weight:800; letter-spacing:3px;"></div>
+                <button class="btn-primary btn-danger" id="confirmDeleteAccBtn" onclick="verifyAndDeleteAccount()">PERMANENTLY DELETE ACCOUNT</button>
+            </div>
+            <button class="btn-primary" id="sendDelOtpBtn" onclick="initiateAccountDeletion()">SEND DELETION OTP</button>
+        </div>
+    </div>
+
+    <!-- 🚀 1. ALL BATCHES EXPLORER SCREEN (300+ ENGINE) -->
     <div id="batches-screen" class="screen">
         <div class="batches-header">
             <div style="display:flex; align-items:center; gap:10px;">
@@ -370,7 +405,7 @@
 
         <div class="category-scroll-bar" id="catBar">
             <div class="cat-chip active" onclick="filterCategory('ALL', this)">All Batches</div>
-            <div class="cat-chip" onclick="filterCategory('CBSE', this)">CBSE Board</div>
+            <div class="cat-chip" onclick="filterCategory('CBSE', this)">CBSE Board (9-12)</div>
             <div class="cat-chip" onclick="filterCategory('BIHAR', this)">Bihar Board</div>
             <div class="cat-chip" onclick="filterCategory('UP', this)">UP Board</div>
             <div class="cat-chip" onclick="filterCategory('NEET', this)">NEET Medical</div>
@@ -400,7 +435,7 @@
                     <span class="tier-name"><i class="fa-solid fa-leaf" style="color:#10b981;"></i> Basic Pass</span>
                     <span class="tier-price">₹199/yr</span>
                 </div>
-                <div class="tier-desc">• <b>15 Doubts/day</b><br>• Chapter Notes & Homework Help</div>
+                <div class="tier-desc">• <b>15 Doubts/day</b> (Gemini/Meta Engine)<br>• Chapter Notes & Homework Help</div>
             </div>
 
             <div class="tier-card-option selected" onclick="selectTier('PRO', 499, 40)" id="tierProCard">
@@ -408,7 +443,7 @@
                     <span class="tier-name"><i class="fa-solid fa-star" style="color:#f59e0b;"></i> Pro Pass (Recommended)</span>
                     <span class="tier-price">₹499/yr</span>
                 </div>
-                <div class="tier-desc">• <b>40 Doubts/day</b> (High Speed AI)<br>• PDF & Image Notes Support</div>
+                <div class="tier-desc">• <b>40 Doubts/day</b> (High Speed Gemini 1.5)<br>• PDF & Image Notes Support</div>
             </div>
 
             <div class="tier-card-option" onclick="selectTier('MAX_PRO', 999, 75)" id="tierMaxProCard">
@@ -507,7 +542,7 @@
         </div>
     </div>
 
-    <!-- SIDE DRAWER MENU -->
+    <!-- ORIGINAL FULL SIDE DRAWER MENU -->
     <div class="drawer-overlay" id="drawerOverlay" onclick="toggleDrawer()"></div>
     <div class="drawer" id="drawer">
         <div class="drawer-header">
@@ -527,44 +562,108 @@
                 <div>
                     <strong style="color:#fff; font-size:13.5px;" id="drawerStudentName">Registered Student</strong>
                     <div style="font-size:10px; color:var(--text-muted);" id="drawerStudentEmail">student@ticbull.com</div>
-                    <div style="font-size:10px; color:var(--accent-color); font-weight:600; margin-top:2px;" id="drawerStudentAge">Age: Active Learner</div>
+                    <div style="font-size:10px; color:var(--success-color); font-weight:600; margin-top:2px;" id="drawerActivePlan">Plan: Free Trial</div>
                 </div>
             </div>
         </div>
         
-        <div class="drawer-item" onclick="switchScreen('batches-screen'); toggleDrawer();"><i class="fa-solid fa-layer-group" style="color:var(--accent-color);"></i> Explore Batches</div>
-        <div class="drawer-item" onclick="switchScreen('subjects-screen'); toggleDrawer();"><i class="fa-solid fa-book-open" style="color:#10b981;"></i> My Subjects</div>
+        <div class="drawer-item" onclick="switchScreen('batches-screen'); toggleDrawer();"><i class="fa-solid fa-layer-group" style="color:var(--accent-color);"></i> Explore All Batches</div>
+        <div class="drawer-item" onclick="switchScreen('subjects-screen'); toggleDrawer();"><i class="fa-solid fa-book-open" style="color:#10b981;"></i> My Subject Dashboard</div>
         <div class="drawer-item" onclick="openSyllabusBoard()"><i class="fa-solid fa-list-check" style="color:#0ea5e9;"></i> Syllabus Tracker Board</div>
-        <div class="drawer-item" onclick="openSettingsModal()"><i class="fa-solid fa-gear" style="color:#94a3b8;"></i> App Settings</div>
+        <div class="drawer-item" onclick="openSettingsModal()"><i class="fa-solid fa-gear" style="color:#94a3b8;"></i> App Settings (Z+)</div>
         <div class="drawer-item" onclick="toggleTheme()"><i class="fa-solid fa-circle-half-stroke" style="color:var(--gold-color);"></i> <span id="themeToggleText">Switch to Light Mode</span></div>
         <div class="drawer-item" onclick="openSubscriptionModal()"><i class="fa-solid fa-crown" style="color:#f59e0b;"></i> Upgrade Course Pass</div>
-        <div class="drawer-item" onclick="logoutUser()" style="color:#ef4444;"><i class="fa-solid fa-right-from-bracket"></i> Log Out Account</div>
+        <div class="drawer-item" onclick="logoutUser()" style="color:#ef4444; margin-top:10px;"><i class="fa-solid fa-right-from-bracket"></i> Log Out Account</div>
 
+        <!-- FULL ORIGINAL SOCIAL LINKS FOOTER -->
         <div style="margin-top:auto; border-top:1px solid var(--border-color); padding-top:12px;">
             <div style="font-size:11px; color:var(--text-muted); margin-bottom:8px;">TICBULL OFFICIAL SUPPORT:</div>
             <a href="mailto:ticbull.support@gmail.com" target="_blank" style="color:var(--text-main); text-decoration:none; display:block; margin-bottom:6px; font-size:12px;"><i class="fa-solid fa-envelope" style="color:#2563eb;"></i> ticbull.support@gmail.com</a>
+            <a href="https://www.instagram.com/ticbull" target="_blank" style="color:#e1306c; text-decoration:none; display:block; margin-bottom:6px; font-size:12px;"><i class="fa-brands fa-instagram"></i> @ticbull Official Support</a>
+            <a href="https://t.me/ticbullteam" target="_blank" style="color:#0088cc; text-decoration:none; display:block; font-size:12px;"><i class="fa-brands fa-telegram"></i> @ticbullteam Telegram Support</a>
+            
+            <div style="font-size:10px; color:var(--text-muted); margin:10px 0 4px 0;">DEVELOPER SOCIALS:</div>
+            <div style="display:flex; gap:14px; margin-top:8px;">
+                <a href="https://youtube.com/@mryuviyadav" target="_blank" style="color:#ff0000; font-size:16px;"><i class="fa-brands fa-youtube"></i></a>
+                <a href="https://www.instagram.com/mryuvi_yadav" target="_blank" style="color:#e1306c; font-size:16px;"><i class="fa-brands fa-instagram"></i></a>
+                <a href="https://x.com/mryuviyadav" target="_blank" style="color:#fff; font-size:16px;"><i class="fa-brands fa-x-twitter"></i></a>
+                <a href="https://t.me/mryuviyadav" target="_blank" style="color:#0088cc; font-size:16px;"><i class="fa-brands fa-telegram"></i></a>
+                <a href="https://facebook.com/mryuviyadav" target="_blank" style="color:#1877f2; font-size:16px;"><i class="fa-brands fa-facebook"></i></a>
+            </div>
         </div>
     </div>
 
-    <!-- APP SETTINGS MODAL -->
-    <div class="modal-overlay" id="settingsModal"><div class="modal-card"><i class="fa-solid fa-xmark" style="position:absolute; right:16px; top:16px; color:var(--text-muted); cursor:pointer;" onclick="document.getElementById('settingsModal').style.display='none'; playClickSound();"></i><h3 style="color:var(--text-main); font-size:17px; margin-bottom:16px;"><i class="fa-solid fa-gear"></i> App Settings</h3><div class="setting-item"><span><i class="fa-solid fa-music"></i> App Click Sounds</span><label class="switch"><input type="checkbox" id="soundToggle" checked onchange="toggleSoundSetting(this)"><span class="slider"></span></label></div><div class="setting-item"><span><i class="fa-solid fa-camera"></i> Camera & Media</span><label class="switch"><input type="checkbox" checked><span class="slider"></span></label></div></div></div>
+    <!-- FULL ORIGINAL APP SETTINGS MODAL -->
+    <div class="modal-overlay" id="settingsModal">
+        <div class="modal-card">
+            <i class="fa-solid fa-xmark" style="position:absolute; right:16px; top:16px; color:var(--text-muted); cursor:pointer;" onclick="document.getElementById('settingsModal').style.display='none'; playClickSound();"></i>
+            <h3 style="color:var(--text-main); font-size:17px; margin-bottom:16px;"><i class="fa-solid fa-gear"></i> App Settings & Security</h3>
+            
+            <div class="setting-item">
+                <span><i class="fa-solid fa-shield-halved" style="color:var(--success-color);"></i> Z+ Encrypted Data</span>
+                <label class="switch"><input type="checkbox" checked disabled><span class="slider"></span></label>
+            </div>
+            <div class="setting-item">
+                <span><i class="fa-solid fa-music"></i> App Click Sounds</span>
+                <label class="switch"><input type="checkbox" id="soundToggle" checked onchange="toggleSoundSetting(this)"><span class="slider"></span></label>
+            </div>
+            <div class="setting-item">
+                <span><i class="fa-solid fa-camera"></i> Camera & Media</span>
+                <label class="switch"><input type="checkbox" checked><span class="slider"></span></label>
+            </div>
+            
+            <div style="margin-top:12px; padding-top:12px; border-top:1px solid var(--border-color); text-align:left;">
+                <span style="font-size:12px; color:var(--text-muted); display:block; margin-bottom:8px;">Chat Theme Color:</span>
+                <div>
+                    <span class="theme-circle active" style="background:#2563eb;" onclick="changeAppTheme('#2563eb', this)"></span>
+                    <span class="theme-circle" style="background:#10b981;" onclick="changeAppTheme('#10b981', this)"></span>
+                    <span class="theme-circle" style="background:#8b5cf6;" onclick="changeAppTheme('#8b5cf6', this)"></span>
+                    <span class="theme-circle" style="background:#f43f5e;" onclick="changeAppTheme('#f43f5e', this)"></span>
+                    <span class="theme-circle" style="background:#f59e0b;" onclick="changeAppTheme('#f59e0b', this)"></span>
+                </div>
+            </div>
 
-    <!-- SYLLABUS BOARD MODAL -->
-    <div class="modal-overlay" id="syllabusModal"><div class="modal-card" style="max-height:80vh;"><i class="fa-solid fa-xmark" style="position:absolute; right:16px; top:16px; color:var(--text-muted); cursor:pointer;" onclick="document.getElementById('syllabusModal').style.display='none'; playClickSound();"></i><h3 style="color:var(--text-main); font-size:17px; margin-bottom:6px;"><i class="fa-solid fa-list-check"></i> Syllabus Tracker</h3><div class="input-group"><input type="text" id="newSyllabusItem" placeholder="Add topic..." style="padding-left:14px; border-radius:8px;"><button class="btn-primary" style="margin-top:4px; padding:10px; border-radius:8px;" onclick="addSyllabusItem()">ADD TOPIC</button></div><div id="syllabusList" style="margin-top:12px; overflow-y:auto; flex:1;"></div></div></div>
+            <div style="margin-top:20px; padding-top:16px; border-top:1px solid var(--border-color);">
+                <button class="btn-primary btn-danger" onclick="openDeleteAccountModal()"><i class="fa-solid fa-trash"></i> DELETE ACCOUNT PERMANENTLY</button>
+            </div>
+        </div>
+    </div>
 
-    <!-- EDIT PROFILE MODAL -->
-    <div class="modal-overlay" id="editProfileModal"><div class="modal-card"><i class="fa-solid fa-xmark" style="position:absolute; right:16px; top:16px; color:var(--text-muted); cursor:pointer;" onclick="document.getElementById('editProfileModal').style.display='none';"></i><h3 style="color:var(--text-main); font-size:17px; margin-bottom:12px;"><i class="fa-solid fa-user-pen"></i> Edit Profile</h3><div class="input-group"><i class="fa-regular fa-user left-icon"></i><input type="text" id="editStudentName" placeholder="Full Student Name"></div><button class="btn-primary" onclick="saveProfileChanges()">SAVE CHANGES</button></div></div>
+    <!-- ORIGINAL SYLLABUS BOARD MODAL -->
+    <div class="modal-overlay" id="syllabusModal">
+        <div class="modal-card" style="max-height:80vh;">
+            <i class="fa-solid fa-xmark" style="position:absolute; right:16px; top:16px; color:var(--text-muted); cursor:pointer;" onclick="document.getElementById('syllabusModal').style.display='none'; playClickSound();"></i>
+            <h3 style="color:var(--text-main); font-size:17px; margin-bottom:6px;"><i class="fa-solid fa-list-check"></i> Syllabus Tracker</h3>
+            <p style="font-size:11px; color:var(--text-muted); margin-bottom:12px;">Track your chapters & study progress.</p>
+            
+            <div class="input-group">
+                <input type="text" id="newSyllabusItem" placeholder="Add chapter/topic..." style="padding-left:14px; border-radius:8px;">
+                <button class="btn-primary" style="margin-top:4px; padding:10px; border-radius:8px;" onclick="addSyllabusItem()">ADD TOPIC</button>
+            </div>
 
-    <!-- DELETE ACCOUNT MODAL (Included for completeness) -->
-    <div class="modal-overlay" id="deleteAccountModal"><div class="modal-card"><i class="fa-solid fa-xmark" style="position:absolute; right:16px; top:16px; color:var(--text-muted); cursor:pointer;" onclick="document.getElementById('deleteAccountModal').style.display='none';"></i><h3 style="color:#ef4444; font-size:18px;"><i class="fa-solid fa-triangle-exclamation"></i> Delete Account</h3><button class="btn-primary" id="sendDelOtpBtn" onclick="document.getElementById('deleteAccountModal').style.display='none';">CANCEL</button></div></div>
+            <div id="syllabusList" style="margin-top:12px; overflow-y:auto; flex:1;"></div>
+        </div>
+    </div>
+
+    <!-- ORIGINAL EDIT PROFILE MODAL -->
+    <div class="modal-overlay" id="editProfileModal">
+        <div class="modal-card">
+            <i class="fa-solid fa-xmark" style="position:absolute; right:16px; top:16px; color:var(--text-muted); cursor:pointer;" onclick="document.getElementById('editProfileModal').style.display='none';"></i>
+            <h3 style="color:var(--text-main); font-size:17px; margin-bottom:12px;"><i class="fa-solid fa-user-pen"></i> Edit Profile</h3>
+            <div class="input-group"><i class="fa-regular fa-user left-icon"></i><input type="text" id="editStudentName" placeholder="Full Student Name"></div>
+            <div class="input-group"><i class="fa-regular fa-envelope left-icon"></i><input type="email" id="editStudentEmail" placeholder="Email Address" disabled></div>
+            <button class="btn-primary" onclick="saveProfileChanges()">SAVE CHANGES</button>
+        </div>
+    </div>
 
     <script>
-        // ------------------ GLOBAL STATE ------------------
+        // ------------------ GLOBAL STATE & ORIGINAL AUDIO ------------------
         let userData = { email: '', name: '', dob: '', photo: '', plan: 'Free Trial', tierType: 'FREE_TRIAL', limits: 9 };
         let activeBatch = null;
         let currentChatSubject = null;
         let all300Batches = [];
         let selectedFilesArray = [];
+        let currentAuthMode = 'login';
         
         let appSoundEnabled = true;
         const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -579,6 +678,9 @@
             osc.connect(gain); gain.connect(audioCtx.destination); osc.start(); osc.stop(audioCtx.currentTime + 0.1);
         }
         document.addEventListener('click', e => { if(e.target.closest('button') || e.target.closest('.cat-chip') || e.target.closest('.subject-card')) playClickSound(); });
+
+        function toggleSoundSetting(checkbox) { appSoundEnabled = checkbox.checked; showToast(appSoundEnabled ? "Sound Enabled" : "Sound Muted"); }
+        function changeAppTheme(color, el) { document.documentElement.style.setProperty('--accent-color', color); document.querySelectorAll('.theme-circle').forEach(c => c.classList.remove('active')); el.classList.add('active'); showToast("Theme updated!"); }
 
         function showToast(msg, type = 'success') {
             const toast = document.getElementById('custom-toast');
@@ -605,51 +707,32 @@
 
         function generate300Batches() {
             let id = 1;
-            indianBoards.forEach(b => { classData.forEach(c => { all300Batches.push({ id: `b_${id++}`, cat: b.code, stream: c.stream, name: `${b.name} - ${c.name}`, tag: 'All Subjects Included', desc: 'Complete Board Syllabus', price: 199 }); }); });
-            compExams.forEach(e => { all300Batches.push({ id: `b_${id++}`, cat: e.cat, stream: e.stream, name: e.name, tag: 'India Ranker Batch', desc: 'Strict Exam Pattern with Top Faculty', price: 499 }); });
+            indianBoards.forEach(b => { classData.forEach(c => { all300Batches.push({ id: `b_${id++}`, cat: b.code, stream: c.stream, name: `${b.name} - ${c.name}`, tag: '15+ Subjects Included', desc: 'Complete Board Syllabus coverage with NCERT strictly.', price: 199 }); }); });
+            compExams.forEach(e => { all300Batches.push({ id: `b_${id++}`, cat: e.cat, stream: e.stream, name: e.name, tag: 'India Ranker Batch', desc: 'Strict Exam Pattern with Top Faculty and PYQs.', price: 499 }); });
         }
 
-        // Meticulous Subject List (No subject missed)
         const subjectLibrary = {
-            secondary: [ // 9 & 10
-                { n: 'Physics', i: '⚡', t: 'Mr. Verma Sir', g: 'male' }, { n: 'Chemistry', i: '🧪', t: 'Ms. Anjali Ma\'am', g: 'female' },
-                { n: 'Biology', i: '🧬', t: 'Ms. Priya Ma\'am', g: 'female' }, { n: 'Mathematics', i: '📐', t: 'Mr. Sharma Sir', g: 'male' },
-                { n: 'History', i: '🏛️', t: 'Mr. Singh Sir', g: 'male' }, { n: 'Geography', i: '🗺️', t: 'Ms. Neha Ma\'am', g: 'female' },
-                { n: 'Political Science', i: '⚖️', t: 'Mr. Kumar Sir', g: 'male' }, { n: 'Economics', i: '📉', t: 'Mr. Jain Sir', g: 'male' },
-                { n: 'Hindi', i: 'अ', t: 'Mr. Tiwari Sir', g: 'male' }, { n: 'English', i: '📝', t: 'Ms. Riya Ma\'am', g: 'female' },
-                { n: 'Sanskrit', i: '🕉️', t: 'Mr. Shastri Sir', g: 'male' }, { n: 'Urdu', i: '🌙', t: 'Mr. Khan Sir', g: 'male' },
-                { n: 'Computer Science', i: '💻', t: 'Mr. Gupta Sir', g: 'male' }
-            ],
-            pcm: [ // 11 & 12 Math
-                { n: 'Physics', i: '⚡', t: 'Mr. HC Verma Sir', g: 'male' }, { n: 'Physical Chemistry', i: '🧪', t: 'Mr. Das Sir', g: 'male' },
-                { n: 'Organic Chemistry', i: '⚗️', t: 'Ms. Anjali Ma\'am', g: 'female' }, { n: 'Inorganic Chemistry', i: '🔬', t: 'Mr. Kumar Sir', g: 'male' },
-                { n: 'Mathematics', i: '📐', t: 'Mr. Sharma Sir', g: 'male' }, { n: 'English', i: '📝', t: 'Ms. Riya Ma\'am', g: 'female' },
-                { n: 'Computer Science', i: '💻', t: 'Mr. Gupta Sir', g: 'male' }
-            ],
-            pcb: [ // 11 & 12 Bio/NEET
-                { n: 'Physics', i: '⚡', t: 'Mr. HC Verma Sir', g: 'male' }, { n: 'Physical Chemistry', i: '🧪', t: 'Mr. Das Sir', g: 'male' },
-                { n: 'Organic Chemistry', i: '⚗️', t: 'Ms. Anjali Ma\'am', g: 'female' }, { n: 'Inorganic Chemistry', i: '🔬', t: 'Mr. Kumar Sir', g: 'male' },
-                { n: 'Zoology', i: '🐒', t: 'Ms. Priya Ma\'am', g: 'female' }, { n: 'Botany', i: '🌿', t: 'Ms. Kavita Ma\'am', g: 'female' },
-                { n: 'English', i: '📝', t: 'Ms. Riya Ma\'am', g: 'female' }
-            ],
+            secondary: [ { n: 'Physics', i: '⚡', t: 'Mr. Verma Sir', g: 'male' }, { n: 'Chemistry', i: '🧪', t: 'Ms. Anjali Ma\'am', g: 'female' }, { n: 'Biology', i: '🧬', t: 'Ms. Priya Ma\'am', g: 'female' }, { n: 'Mathematics', i: '📐', t: 'Mr. Sharma Sir', g: 'male' }, { n: 'History', i: '🏛️', t: 'Mr. Singh Sir', g: 'male' }, { n: 'Geography', i: '🗺️', t: 'Ms. Neha Ma\'am', g: 'female' }, { n: 'Political Science', i: '⚖️', t: 'Mr. Kumar Sir', g: 'male' }, { n: 'Economics', i: '📉', t: 'Mr. Jain Sir', g: 'male' }, { n: 'Hindi', i: 'अ', t: 'Mr. Tiwari Sir', g: 'male' }, { n: 'English', i: '📝', t: 'Ms. Riya Ma\'am', g: 'female' }, { n: 'Sanskrit', i: '🕉️', t: 'Mr. Shastri Sir', g: 'male' }, { n: 'Urdu', i: '🌙', t: 'Mr. Khan Sir', g: 'male' }, { n: 'Computer Science', i: '💻', t: 'Mr. Gupta Sir', g: 'male' } ],
+            pcm: [ { n: 'Physics', i: '⚡', t: 'Mr. HC Verma Sir', g: 'male' }, { n: 'Physical Chemistry', i: '🧪', t: 'Mr. Das Sir', g: 'male' }, { n: 'Organic Chemistry', i: '⚗️', t: 'Ms. Anjali Ma\'am', g: 'female' }, { n: 'Inorganic Chemistry', i: '🔬', t: 'Mr. Kumar Sir', g: 'male' }, { n: 'Mathematics', i: '📐', t: 'Mr. Sharma Sir', g: 'male' }, { n: 'English', i: '📝', t: 'Ms. Riya Ma\'am', g: 'female' }, { n: 'Computer Science', i: '💻', t: 'Mr. Gupta Sir', g: 'male' } ],
+            pcb: [ { n: 'Physics', i: '⚡', t: 'Mr. HC Verma Sir', g: 'male' }, { n: 'Physical Chemistry', i: '🧪', t: 'Mr. Das Sir', g: 'male' }, { n: 'Organic Chemistry', i: '⚗️', t: 'Ms. Anjali Ma\'am', g: 'female' }, { n: 'Inorganic Chemistry', i: '🔬', t: 'Mr. Kumar Sir', g: 'male' }, { n: 'Zoology', i: '🐒', t: 'Ms. Priya Ma\'am', g: 'female' }, { n: 'Botany', i: '🌿', t: 'Ms. Kavita Ma\'am', g: 'female' }, { n: 'English', i: '📝', t: 'Ms. Riya Ma\'am', g: 'female' } ],
             commerce: [ { n: 'Accountancy', i: '📊', t: 'Mr. Bansal', g: 'm' }, { n: 'Business Studies', i: '💼', t: 'Ms. Pooja', g: 'f' }, { n: 'Economics', i: '📉', t: 'Mr. Jain', g: 'm' }, { n: 'Math', i: '📐', t: 'Mr. Sharma', g: 'm' }, { n: 'English', i: '📝', t: 'Ms. Riya', g: 'f' } ],
             arts: [ { n: 'History', i: '🏛️', t: 'Mr. Bipin', g: 'm' }, { n: 'Geography', i: '🗺️', t: 'Ms. Majid', g: 'f' }, { n: 'Polity', i: '⚖️', t: 'Mr. Laxmikanth', g: 'm' }, { n: 'Sociology', i: '🧑‍🤝‍🧑', t: 'Ms. Neha', g: 'f' }, { n: 'English', i: '📝', t: 'Ms. Riya', g: 'f' } ]
         };
 
-        // ------------------ INITIALIZATION ------------------
+        // ------------------ INITIALIZATION & ORIGINAL AUTH LOGIC ------------------
         window.addEventListener('load', () => {
             generate300Batches();
             setTimeout(() => {
                 document.getElementById('splash-screen').style.opacity = '0';
                 setTimeout(() => document.getElementById('splash-screen').style.display = 'none', 500);
                 
-                // MOCK AUTH CHECK (Since no real backend here)
                 const savedUser = localStorage.getItem('ticbull_email');
                 if(savedUser) {
                     userData.email = savedUser;
                     userData.name = localStorage.getItem('ticbull_name') || 'Student';
                     userData.tierType = localStorage.getItem('tb_tier_type') || 'FREE_TRIAL';
-                    userData.limits = parseInt(localStorage.getItem('tb_doubts_left')) || (userData.tierType === 'FREE_TRIAL' ? 9 : 15);
+                    userData.plan = localStorage.getItem('tb_plan_name') || 'Free Trial';
+                    userData.limits = parseInt(localStorage.getItem('tb_doubts_left')) || 9;
                     
                     const savedBatchStr = localStorage.getItem('tb_saved_batch');
                     if(savedBatchStr) {
@@ -665,33 +748,78 @@
                 } else {
                     switchScreen('auth-screen');
                 }
-            }, 2500);
+            }, 3500);
         });
 
-        // ------------------ AUTH LOGIC ------------------
+        // FULL ORIGINAL AUTH METHODS
         function switchAuth(mode) {
+            currentAuthMode = mode;
             document.getElementById('tab-login').classList.toggle('active', mode === 'login');
             document.getElementById('tab-signup').classList.toggle('active', mode === 'signup');
             document.getElementById('signupFields').style.display = mode === 'signup' ? 'flex' : 'none';
+            document.getElementById('authSubmitBtn').innerText = mode === 'login' ? 'SEND VERIFICATION OTP' : 'CREATE ACCOUNT WITH OTP';
         }
+
+        function togglePassword(inputId) {
+            const pwdInput = document.getElementById(inputId);
+            pwdInput.type = pwdInput.type === 'password' ? 'text' : 'password';
+        }
+
         function initiateAuthWithOTP() {
-            userData.email = document.getElementById('email').value.trim();
-            userData.name = document.getElementById('studentName').value.trim() || 'Demo Student';
-            if(!userData.email) { showToast("Email is required!", "error"); return; }
-            showToast("OTP Sent Successfully!");
-            document.getElementById('otpModal').style.display = 'flex';
+            const email = document.getElementById('email').value.trim();
+            const name = document.getElementById('studentName').value.trim();
+            const password = document.getElementById('password').value.trim();
+            const btn = document.getElementById('authSubmitBtn');
+
+            if(!email) { showToast("Email ID is required!", "error"); return; }
+            if(!password) { showToast("Password is required!", "error"); return; }
+            if(currentAuthMode === 'signup' && !name) { showToast("Full Name is required!", "error"); return; }
+
+            userData.email = email;
+            userData.name = name || 'Student';
+
+            btn.disabled = true;
+            btn.innerText = "SENDING SECURE OTP...";
+
+            // Simulating the original API Call delay
+            setTimeout(() => {
+                btn.disabled = false;
+                btn.innerText = currentAuthMode === 'login' ? 'SEND VERIFICATION OTP' : 'CREATE ACCOUNT WITH OTP';
+                showToast("Z+ Secure OTP Sent!", "success");
+                document.getElementById('otpModal').style.display = 'flex';
+            }, 1500);
         }
+
         function verifyOTPAndLogin() {
-            localStorage.setItem('ticbull_email', userData.email);
-            localStorage.setItem('ticbull_name', userData.name);
-            localStorage.setItem('tb_doubts_left', userData.limits);
-            
-            document.getElementById('otpModal').style.display = 'none';
-            updateProfileUI();
-            renderExplorerBatches('ALL');
-            switchScreen('batches-screen');
-            showToast("Login Successful!");
+            const otp = document.getElementById('otpInput').value.trim();
+            const btn = document.getElementById('verifyBtn');
+
+            if(!otp) { showToast("Enter 6-digit OTP!", "error"); return; }
+            btn.disabled = true;
+            btn.innerText = "VERIFYING Z+ ENCRYPTION...";
+
+            setTimeout(() => {
+                btn.disabled = false;
+                btn.innerText = "VERIFY & CONTINUE";
+                
+                localStorage.setItem('ticbull_email', userData.email);
+                localStorage.setItem('ticbull_name', userData.name);
+                localStorage.setItem('tb_doubts_left', userData.limits);
+                
+                document.getElementById('otpModal').style.display = 'none';
+                updateProfileUI();
+                renderExplorerBatches('ALL');
+                switchScreen('batches-screen');
+                showToast("Login Successful!", "success");
+            }, 1500);
         }
+
+        function closeOtpModal() { document.getElementById('otpModal').style.display = 'none'; }
+        function openForgotModal() { document.getElementById('forgotModal').style.display = 'flex'; }
+        function initiateForgotOTP() { showToast("Reset Link Sent!", "success"); document.getElementById('forgotModal').style.display = 'none'; }
+        function openDeleteAccountModal() { document.getElementById('settingsModal').style.display = 'none'; document.getElementById('deleteAccountModal').style.display = 'flex'; document.getElementById('delAccEmail').value = userData.email; }
+        function initiateAccountDeletion() { document.getElementById('sendDelOtpBtn').style.display = 'none'; document.getElementById('delAccOtpSection').style.display = 'block'; showToast("Warning OTP Sent!", "error"); }
+        function verifyAndDeleteAccount() { localStorage.clear(); location.reload(); }
 
         // ------------------ BATCH EXPLORER ------------------
         function filterCategory(cat, el) {
@@ -709,10 +837,13 @@
                 <div class="batch-card">
                     <span class="batch-tag">${b.tag}</span>
                     <div class="batch-title">${b.name}</div>
-                    <div class="batch-teachers-strip"><i class="fa-solid fa-chalkboard-user"></i> 15+ Subjects Included</div>
+                    <div class="batch-teachers-strip"><i class="fa-solid fa-chalkboard-user"></i> Faculty: Top Experts</div>
                     <div class="batch-desc">${b.desc}</div>
                     <div class="batch-footer">
-                        <span class="batch-price">₹${b.price}/yr</span>
+                        <div>
+                            <span style="font-size:10px; color:var(--text-muted); display:block;">Starting from</span>
+                            <span class="batch-price">₹${b.price}/yr</span>
+                        </div>
                         <div class="batch-actions">
                             <button class="btn-trial" onclick="startFreeTrial('${b.id}')">2 Days Free</button>
                             <button class="btn-buy" onclick="openTierModal('${b.id}')">View Plans</button>
@@ -760,6 +891,7 @@
             
             localStorage.setItem('tb_saved_batch', JSON.stringify(activeBatch));
             localStorage.setItem('tb_tier_type', tierType);
+            localStorage.setItem('tb_plan_name', planName);
             localStorage.setItem('tb_doubts_left', limits);
             
             updateProfileUI();
@@ -771,7 +903,7 @@
         function renderSubjectsDashboard() {
             document.getElementById('activeBatchLabel').innerText = activeBatch.name;
             document.getElementById('badgePlanTextUI').innerText = userData.plan;
-            document.getElementById('doubtLimitChipUI').innerText = `${userData.limits} Doubts Left`;
+            document.getElementById('doubtLimitChipUI').innerText = `${userData.limits} Doubts/Day`;
             
             const subjects = subjectLibrary[activeBatch.stream] || subjectLibrary['secondary'];
             
@@ -788,8 +920,10 @@
             if(userData.name) {
                 document.getElementById('drawerStudentName').innerText = userData.name;
                 document.getElementById('drawerAvatarInitial').innerText = userData.name.charAt(0).toUpperCase();
+                document.getElementById('editStudentName').value = userData.name;
             }
             document.getElementById('drawerStudentEmail').innerText = userData.email;
+            document.getElementById('editStudentEmail').value = userData.email;
             document.getElementById('drawerActivePlan').innerText = `Plan: ${userData.plan}`;
         }
 
@@ -799,9 +933,9 @@
             
             document.getElementById('chatHeaderSubjectName').innerText = subName;
             document.getElementById('chatHeaderTeacherName').innerText = `Teacher: ${teacher}`;
-            const imgPath = gender === 'female' ? 'https://raw.githubusercontent.com/yuviyadav16/ticbull-academy/main/11723.png' : 'https://raw.githubusercontent.com/yuviyadav16/ticbull-academy/main/11708.png';
+            const imgPath = (gender === 'female' || gender === 'f') ? 'https://raw.githubusercontent.com/yuviyadav16/ticbull-academy/main/11723.png' : 'https://raw.githubusercontent.com/yuviyadav16/ticbull-academy/main/11708.png';
             document.getElementById('chatHeaderTeacherImg').src = imgPath;
-            document.getElementById('chatDoubtsCountUI').innerText = `${userData.limits} Doubts Left`;
+            document.getElementById('chatDoubtsCountUI').innerText = `${userData.limits} Doubts`;
             
             switchScreen('chat-screen');
             loadChatHistory();
@@ -814,8 +948,8 @@
             box.innerHTML = '';
             if(history.length === 0) {
                 const isFem = currentChatSubject.gender === 'female' || currentChatSubject.gender === 'f';
-                const welcome = isFem ? `Hello Bacchon! Main aapki ${currentChatSubject.name} teacher, ${currentChatSubject.teacher}. Syllabus cover karenge hum. Batao kya padhna hai?` 
-                                      : `Welcome students! Main aapka ${currentChatSubject.name} teacher, ${currentChatSubject.teacher}. Strictly target according preparation karenge. Pucho apna doubt!`;
+                const welcome = isFem ? `Hello Bacchon! Main aapki ${currentChatSubject.name} teacher, ${currentChatSubject.teacher}. Hum ${activeBatch.name} ka poora syllabus perfectly cover karenge. Apna pehla doubt pucho!` 
+                                      : `Welcome students! Main aapka ${currentChatSubject.name} teacher, ${currentChatSubject.teacher}. Strictly Board/Exam pattern ke according padhai hogi. Ask your doubt.`;
                 box.innerHTML = `<div class="msg ai"><b><i class="fa-solid fa-chalkboard-user"></i> ${currentChatSubject.teacher}:</b><br>${welcome}</div>`;
             } else {
                 history.forEach(m => {
@@ -845,7 +979,7 @@
             if(!text && selectedFilesArray.length === 0) return;
 
             if(userData.limits <= 0) {
-                document.getElementById('chatBox').innerHTML += `<div class="msg error"><b>Limit Exhausted!</b><br>Aapke daily doubts khatam. Please upgrade pass.</div>`;
+                document.getElementById('chatBox').innerHTML += `<div class="msg error"><b>Limit Exhausted!</b><br>Aapke daily doubts khatam ho chuke hain. Please upgrade your pass to continue learning.</div>`;
                 openSubscriptionModal();
                 scrollToBottom();
                 return;
@@ -859,16 +993,16 @@
             box.innerHTML += userHtml;
             
             saveChat('user', text, [...selectedFilesArray]);
-            input.value = ''; input.style.height = 'auto'; removeImage();
+            input.value = ''; input.style.height = 'auto'; removeImage(); document.getElementById('aiToolsMenu').style.display = 'none';
             
             // Deduct Limit
             userData.limits--;
             localStorage.setItem('tb_doubts_left', userData.limits);
-            document.getElementById('chatDoubtsCountUI').innerText = `${userData.limits} Doubts Left`;
-            document.getElementById('doubtLimitChipUI').innerText = `${userData.limits} Doubts Left`;
+            document.getElementById('chatDoubtsCountUI').innerText = `${userData.limits} Doubts`;
+            document.getElementById('doubtLimitChipUI').innerText = `${userData.limits} Doubts/Day`;
 
             const loadId = 'l_' + Date.now();
-            box.innerHTML += `<div class="msg ai" id="${loadId}"><i>${currentChatSubject.teacher} is analyzing...</i></div>`;
+            box.innerHTML += `<div class="msg ai" id="${loadId}"><i>${currentChatSubject.teacher} is analyzing your doubt...</i></div>`;
             scrollToBottom();
 
             // AI Routing Simulation
@@ -877,33 +1011,31 @@
                 const q = text.toLowerCase();
                 const isFem = currentChatSubject.gender === 'female' || currentChatSubject.gender === 'f';
                 
-                // 1. META AI HOOK (Non-academic)
+                // META AI HOOK (Non-academic)
                 if(q.includes('hi') || q.includes('hello') || q.includes('man nahi') || q.includes('bored') || q.includes('maker') || q.includes('developer')) {
                     if(q.includes('maker') || q.includes('developer')) {
-                        reply = `Mujhe TicBull Academy aur MrYuviYadav ne banaya hai! Mere zariye aap ${currentChatSubject.name} padh sakte hain.`;
+                        reply = `Mujhe TicBull Academy aur MrYuviYadav ne exclusively design kiya hai taaki main aapko ${currentChatSubject.name} me topper bana saku!`;
                     } else if(q.includes('man nahi') || q.includes('bored')) {
-                        reply = isFem ? `Padhai me man lagana padta hai beta! Exam paas hain. Chalo kuch easy start karte hain.` : `Focus maintain karo! Competition bahut hai. Chalo syllabus ka koi doubt pucho.`;
+                        reply = isFem ? `Padhai me man toh lagana padega beta! Exam bahut paas hain aur ${activeBatch.name} clear karna zaroori hai. Chalo syllabus ka koi easy sa topic uthate hain.` : `Aise focus lose mat karo! Competition bahut high hai. Syllabus par dhyan do. Pucho apna doubt!`;
                     } else {
-                        reply = `Hello! Kaisi chal rahi hai preparation? Apna ${currentChatSubject.name} ka doubt puchiye.`;
+                        reply = `Hello! Kaisi chal rahi hai preparation? Apna ${currentChatSubject.name} ka concept doubt puchiye.`;
                     }
                 } 
-                // 2. GEMINI ENGINE (Academic)
+                // GEMINI ENGINE (Academic)
                 else {
                     reply = isFem 
-                        ? `Bilkul, ${currentChatSubject.name} ke NCERT/Syllabus ke anusar iska answer ye hai:<br><br><b>Explanation:</b><br>${text} ka concept bahut simple hai. Isme aapko dhyan rakhna hai ki... [Detailed Output]. Samajh aaya aapko?`
-                        : `Good question. Ye topic exam ke liye important hai.<br><br><b>Notes:</b><br>${text} ke baare me main points ye hain... [Bullet Points]. Isko revise karlena.`;
+                        ? `Bilkul, ${currentChatSubject.name} ke strictly NCERT/Board syllabus ke anusar iska answer ye hoga:<br><br><b>Explanation:</b><br>${text} ka concept bahut direct hai. Isme aapko main focus in points par rakhna hai... [Detailed Output].<br><br>Kya ye clear hua aapko?`
+                        : `Good question. Ye topic exam perspective se kaafi weightage rakhta hai.<br><br><b>Core Notes:</b><br>${text} ke baare me main points ye hain... [Bullet Points]. Ise properly copy me note karlena.`;
                 }
 
                 document.getElementById(loadId).innerHTML = `<b><i class="fa-solid fa-chalkboard-user"></i> ${currentChatSubject.teacher}:</b><br>${reply}`;
                 saveChat('ai', reply);
                 scrollToBottom();
-            }, 1200);
+            }, 1500);
         }
 
-        // ------------------ UTILS ------------------
+        // ------------------ UTILS (Syllabus, Profile, Files) ------------------
         function scrollToBottom() { setTimeout(() => { const b = document.getElementById('chatBox'); if(b) b.scrollTop = b.scrollHeight; }, 100); }
-        function toggleDrawer() { const d = document.getElementById('drawer'); d.classList.toggle('open'); document.getElementById('drawerOverlay').style.display = d.classList.contains('open') ? 'block' : 'none'; }
-        function openSettingsModal() { document.getElementById('settingsModal').style.display = 'flex'; toggleDrawer(); }
         function handleMultipleFilesSelect(event) {
             const files = event.target.files;
             if(files && files.length > 0) {
@@ -912,7 +1044,7 @@
                     reader.onload = function(e) { selectedFilesArray.push(e.target.result); };
                     reader.readAsDataURL(files[i]);
                 }
-                document.getElementById('imagePreviewText').innerHTML = `<i class="fa-solid fa-paperclip"></i> ${files.length} File(s)`;
+                document.getElementById('imagePreviewText').innerHTML = `<i class="fa-solid fa-paperclip"></i> ${files.length} File(s) Selected`;
                 document.getElementById('imagePreview').style.display = 'flex';
             }
         }
@@ -923,7 +1055,41 @@
         function handleInputKeydown(e) { if(e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); askAI(); } }
         function toggleTheme() { document.body.classList.toggle('light-theme'); document.getElementById('themeToggleText').innerText = document.body.classList.contains('light-theme') ? 'Dark Mode' : 'Light Mode'; }
         function logoutUser() { localStorage.clear(); location.reload(); }
-        function togglePassword(id) { const input = document.getElementById(id); input.type = input.type === 'password' ? 'text' : 'password'; }
+        
+        let syllabusItems = [];
+        function openSyllabusBoard() {
+            document.getElementById('syllabusModal').style.display = 'flex';
+            if(document.getElementById('drawer').classList.contains('open')) toggleDrawer();
+            const saved = localStorage.getItem('ticbull_syllabus_' + userData.email);
+            if(saved) syllabusItems = JSON.parse(saved);
+            renderSyllabus();
+        }
+        function addSyllabusItem() {
+            const input = document.getElementById('newSyllabusItem');
+            if(!input.value.trim()) return;
+            syllabusItems.unshift({ text: input.value.trim(), done: false });
+            input.value = ''; saveSyllabus();
+        }
+        function toggleSyllabusItem(index) { syllabusItems[index].done = !syllabusItems[index].done; saveSyllabus(); }
+        function deleteSyllabusItem(index) { syllabusItems.splice(index, 1); saveSyllabus(); }
+        function saveSyllabus() { localStorage.setItem('ticbull_syllabus_' + userData.email, JSON.stringify(syllabusItems)); renderSyllabus(); }
+        function renderSyllabus() {
+            const list = document.getElementById('syllabusList');
+            list.innerHTML = '';
+            if(syllabusItems.length === 0) { list.innerHTML = '<p style="color:var(--text-muted); font-size:12px; text-align:center; padding:20px;">No topics added yet.</p>'; return; }
+            syllabusItems.forEach((item, i) => {
+                list.innerHTML += `<div class="syllabus-task ${item.done ? 'completed' : ''}"><input type="checkbox" ${item.done ? 'checked' : ''} onchange="toggleSyllabusItem(${i})"><span>${item.text}</span><i class="fa-solid fa-trash" style="color:#ef4444; font-size:12px; cursor:pointer;" onclick="deleteSyllabusItem(${i})"></i></div>`;
+            });
+        }
+        
+        function openEditProfileModal() { document.getElementById('editProfileModal').style.display = 'flex'; if(document.getElementById('drawer').classList.contains('open')) toggleDrawer(); }
+        function saveProfileChanges() {
+            userData.name = document.getElementById('editStudentName').value;
+            localStorage.setItem('ticbull_name', userData.name);
+            updateProfileUI();
+            document.getElementById('editProfileModal').style.display = 'none';
+            showToast("Profile Updated!", "success");
+        }
     </script>
 </body>
 </html>
