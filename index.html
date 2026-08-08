@@ -345,7 +345,7 @@
                         localStorage.setItem('ticbull_dob', data.user.dob || currentStudentData.dob);
                     }
                     showToast("Login Successful!", "success");
-                    setTimeout(() => { window.location.href = "batches.html"; }, 1000);
+                    setTimeout(() => { window.location.href = "dashboard.html"; }, 1000);
                 } else {
                     showToast(data.message || "Invalid OTP!", "error");
                 }
