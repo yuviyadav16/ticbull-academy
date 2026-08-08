@@ -2,147 +2,267 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TicBull Super Admin</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>TicBull Academy - Secure Login</title>
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#2563eb">
+    <link rel="apple-touch-icon" href="logo.png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
     <style>
-        body { margin: 0; font-family: -apple-system, sans-serif; background: #020617; color: #f8fafc; }
-        .container { max-width: 1100px; margin: 0 auto; padding: 20px; }
-        
-        .login-box { max-width: 350px; margin: 100px auto; background: #0f172a; padding: 30px; border-radius: 16px; border: 1px solid #1e293b; text-align: center; }
-        .login-box input { width: 100%; padding: 12px; margin: 15px 0; background: #020617; border: 1px solid #334155; color: white; border-radius: 8px; }
-        .btn { background: #2563eb; color: white; border: none; padding: 12px 20px; width: 100%; border-radius: 8px; cursor: pointer; font-weight: bold; }
-        .btn-danger { background: #ef4444; font-size:12px; padding: 8px 12px; }
-        
-        #dashboard { display: none; }
-        .stat-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 30px; }
-        .card { background: #0f172a; padding: 20px; border-radius: 12px; border: 1px solid #1e293b; text-align: center; }
-        .card h3 { margin: 0; color: #94a3b8; font-size: 14px; text-transform: uppercase; }
-        .card h1 { margin: 10px 0 0; font-size: 32px; color: #10b981; }
+        :root { --bg-color: #030712; --card-bg: rgba(15, 23, 42, 0.95); --accent-color: #2563eb; --accent-glow: rgba(37, 99, 235, 0.45); --text-main: #f8fafc; --text-muted: #94a3b8; --border-color: rgba(255, 255, 255, 0.12); --success-color: #10b981; --gold-color: #f59e0b; --input-bg: #0f172a; }
+        body.light-theme { --bg-color: #f1f5f9; --card-bg: #ffffff; --text-main: #0f172a; --text-muted: #64748b; --border-color: #cbd5e1; --input-bg: #ffffff; }
+        * { margin:0; padding:0; box-sizing:border-box; font-family:-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; -webkit-tap-highlight-color: transparent; }
+        html, body { height: 100%; width: 100%; overflow: hidden; background: var(--bg-color); color: var(--text-main); display:flex; flex-direction:column; }
 
-        table { width: 100%; border-collapse: collapse; background: #0f172a; border-radius: 12px; overflow: hidden; }
-        th, td { padding: 12px 15px; text-align: left; border-bottom: 1px solid #1e293b; font-size: 14px; }
-        th { background: #1e293b; color: #cbd5e1; }
-        .chat-pills { font-size:11px; background:#1e293b; padding:4px 8px; border-radius:20px; display:inline-block; margin:2px; color:#3b82f6;}
+        /* TOAST */
+        #custom-toast { position: fixed; top: -100px; left: 50%; transform: translateX(-50%); background: var(--card-bg); color: var(--text-main); border: 1px solid var(--accent-color); padding: 12px 24px; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); z-index: 10000; display: flex; align-items: center; gap: 12px; font-size: 13.5px; font-weight: 600; transition: top 0.4s; }
+        #custom-toast.show { top: 30px; }
+
+        /* SPLASH SCREEN & SOCIALS */
+        #splash-screen { position: fixed; top:0; left:0; width:100%; height:100%; background: radial-gradient(circle at center, #0b1329 0%, #020617 100%); display:flex; flex-direction:column; justify-content:center; align-items:center; z-index:9999; transition: opacity 0.8s ease; padding: 20px; }
+        .splash-logo { width: 105px; height: 105px; border-radius: 50%; background: #000; border: 2px solid rgba(37, 99, 235, 0.5); display:flex; justify-content:center; align-items:center; box-shadow: 0 0 35px var(--accent-glow); }
+        .splash-logo img { width:90%; height:90%; object-fit:contain; }
+        .splash-title { margin-top:20px; font-size:26px; font-weight:800; color:#fff; }
+        .developer-tag { margin-top:6px; font-size:13px; color: var(--accent-color); font-weight:700; }
+        .splash-socials { display:flex; gap:18px; margin-top:20px; }
+        .splash-socials a { color:var(--text-muted); font-size:24px; transition:0.3s; }
+        .splash-socials a:hover { color:#fff; transform:scale(1.2); }
+
+        /* AUTH CARD */
+        .auth-container { display:flex; flex-direction:column; align-items:center; justify-content:center; flex:1; padding:20px; width:100%; overflow-y:auto; position: relative; }
+        .top-menu-btn { position:absolute; top:20px; right:20px; background:rgba(255,255,255,0.05); border:1px solid var(--border-color); color:var(--text-main); font-size:18px; padding:10px 14px; border-radius:12px; cursor:pointer; z-index:50; }
+        .auth-card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius:24px; padding:28px 22px; width:100%; max-width:420px; box-shadow:0 20px 50px rgba(0,0,0,0.5); text-align:center; }
+        .brand-icon-box { width:80px; height:80px; border-radius:50%; background:#000; border:2px solid rgba(37, 99, 235, 0.4); margin:0 auto 12px; display:flex; justify-content:center; align-items:center; }
+        .brand-icon-box img { width:90%; height:90%; object-fit:contain; }
+        
+        .auth-tabs { display:flex; background:var(--input-bg); padding:4px; border-radius:12px; border:1px solid var(--border-color); margin-bottom:16px; }
+        .auth-tab { flex:1; padding:10px; font-size:13px; font-weight:600; color:var(--text-muted); border-radius:8px; cursor:pointer; }
+        .auth-tab.active { background:var(--accent-color); color:#fff; }
+
+        .input-group { position:relative; margin-bottom:12px; text-align:left; }
+        .input-group i.left-icon { position:absolute; left:14px; top:50%; transform:translateY(-50%); color:var(--text-muted); }
+        .input-group input { width:100%; background:var(--input-bg); border:1px solid var(--border-color); color:var(--text-main); padding:12px 40px; border-radius:12px; font-size:14px; outline:none; }
+        .btn-primary { width:100%; background: var(--accent-color); color:#fff; font-weight:700; padding:13px; border:none; border-radius:12px; cursor:pointer; font-size:14px; margin-top:8px; }
+
+        /* DRAWER MENU */
+        .drawer-overlay { position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.75); z-index:1000; display:none; }
+        .drawer { position:fixed; top:0; left:-310px; width:310px; height:100%; background:var(--card-bg); border-right:1px solid var(--border-color); z-index:1001; transition:0.3s; padding:20px; display:flex; flex-direction:column; overflow-y:auto; }
+        .drawer.open { left:0; }
+        .drawer-item { padding:12px 14px; border-radius:12px; color:var(--text-main); font-size:13.5px; font-weight:600; display:flex; align-items:center; gap:14px; cursor:pointer; margin-bottom:8px; }
+        
+        /* MODALS */
+        .modal-overlay { position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); z-index:2000; display:none; justify-content:center; align-items:center; padding:16px; }
+        .modal-card { background:var(--card-bg); border:1px solid var(--border-color); border-radius:24px; padding:26px; max-width:400px; width:100%; text-align:center; position:relative; }
     </style>
 </head>
 <body>
 
-    <div class="container">
-        <!-- ADMIN LOGIN -->
-        <div class="login-box" id="loginBox">
-            <h2><i class="fa-solid fa-user-shield"></i> TicBull Super Admin</h2>
-            <input type="password" id="adminPwd" placeholder="Enter Admin Password">
-            <button class="btn" onclick="loginAdmin()">LOGIN TO DASHBOARD</button>
+    <div id="custom-toast"><i class="fa-solid fa-circle-check" style="color:var(--success-color);"></i> <span id="toast-message"></span></div>
+
+    <!-- SPLASH SCREEN -->
+    <div id="splash-screen">
+        <div class="splash-logo"><img src="./logo.png" onerror="this.src='https://raw.githubusercontent.com/yuviyadav16/ticbull-academy/main/logo.png'"></div>
+        <div class="splash-title">TicBull Academy</div>
+        <div class="developer-tag"><i class="fa-solid fa-code"></i> Developed by MrYuviYadav</div>
+        <div class="splash-socials">
+            <a href="https://youtube.com/@mryuviyadav" target="_blank" style="color:#ff0000;"><i class="fa-brands fa-youtube"></i></a>
+            <a href="https://www.instagram.com/mryuvi_yadav" target="_blank" style="color:#e1306c;"><i class="fa-brands fa-instagram"></i></a>
+            <a href="https://t.me/mryuviyadav" target="_blank" style="color:#0088cc;"><i class="fa-brands fa-telegram"></i></a>
+            <a href="https://x.com/mryuviyadav" target="_blank"><i class="fa-brands fa-x-twitter"></i></a>
+            <a href="https://facebook.com/mryuviyadav" target="_blank" style="color:#1877f2;"><i class="fa-brands fa-facebook"></i></a>
         </div>
+    </div>
 
-        <!-- DASHBOARD -->
-        <div id="dashboard">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-                <h2><i class="fa-solid fa-server"></i> Server Analytics & Users</h2>
-                <button class="btn" style="width: auto; background: #334155;" onclick="location.reload()">Logout</button>
+    <!-- AUTH SCREEN -->
+    <div class="auth-container">
+        <button class="top-menu-btn" onclick="toggleDrawer()"><i class="fa-solid fa-bars"></i></button>
+
+        <div class="auth-card">
+            <div class="brand-icon-box"><img src="./logo.png" onerror="this.src='https://raw.githubusercontent.com/yuviyadav16/ticbull-academy/main/logo.png'"></div>
+            <h2 style="font-size:22px; font-weight:800;">TicBull Academy</h2>
+            <p style="font-size:12.5px; color:var(--text-muted); margin-bottom:20px;">AI Student Portal & Exam Engine</p>
+
+            <div class="auth-tabs">
+                <div class="auth-tab active" id="tab-login" onclick="switchAuth('login')">Sign In</div>
+                <div class="auth-tab" id="tab-signup" onclick="switchAuth('signup')">Sign Up</div>
             </div>
 
-            <div class="stat-cards">
-                <div class="card">
-                    <h3>Total Registered Students</h3>
-                    <h1 id="totalUsers">0</h1>
-                </div>
-                <div class="card">
-                    <h3>Database Status</h3>
-                    <h1 style="color:#3b82f6;">Highly Secure</h1>
-                </div>
+            <div id="signupFields" style="display:none;">
+                <div class="input-group"><i class="fa-regular fa-user left-icon"></i><input type="text" id="studentName" placeholder="Full Student Name"></div>
             </div>
 
-            <h3>Student Data & Actions</h3>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Name</th>
-                        <th>Email Address</th>
-                        <th>Today's AI Prompts</th>
-                        <th>Recent Chat Topics</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody id="userTableBody">
-                    <tr><td colspan="5" style="text-align:center;">Loading data...</td></tr>
-                </tbody>
-            </table>
+            <div class="input-group"><i class="fa-regular fa-envelope left-icon"></i><input type="email" id="email" placeholder="Student Email ID"></div>
+            <div class="input-group"><i class="fa-solid fa-lock left-icon"></i><input type="password" id="password" placeholder="Password"></div>
+
+            <button class="btn-primary" id="authSubmitBtn" onclick="initiateAuth()">SEND VERIFICATION OTP</button>
+        </div>
+    </div>
+
+    <!-- OTP MODAL -->
+    <div class="modal-overlay" id="otpModal">
+        <div class="modal-card">
+            <i class="fa-solid fa-xmark" style="position:absolute; right:16px; top:16px; color:var(--text-muted); cursor:pointer;" onclick="document.getElementById('otpModal').style.display='none'"></i>
+            <h3 style="color:var(--text-main); font-size:18px;">📧 Verify Email OTP</h3>
+            <div class="input-group" style="margin-top:20px;">
+                <i class="fa-solid fa-shield-halved left-icon"></i>
+                <input type="text" id="otpInput" placeholder="Enter 6-Digit OTP" maxlength="6" style="text-align:center; font-weight:800; letter-spacing:4px;">
+            </div>
+            <button class="btn-primary" id="verifyBtn" onclick="verifyOTPAndLogin()">VERIFY & CONTINUE</button>
+        </div>
+    </div>
+
+    <!-- MENU DRAWER -->
+    <div class="drawer-overlay" id="drawerOverlay" onclick="toggleDrawer()"></div>
+    <div class="drawer" id="drawer">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+            <strong style="color:var(--text-main); font-size:16px;">Menu & Profile</strong>
+            <i class="fa-solid fa-xmark" style="color:var(--text-muted); cursor:pointer; font-size:18px;" onclick="toggleDrawer()"></i>
+        </div>
+        <div class="drawer-item" onclick="toggleTheme()"><i class="fa-solid fa-circle-half-stroke" style="color:var(--gold-color);"></i> Switch to Light Mode</div>
+        <div style="margin-top:auto; padding-top:16px; border-top:1px solid var(--border-color);">
+            <div style="font-size:11.5px; font-weight:700; color:var(--text-muted); margin-bottom:10px;">SUPPORT:</div>
+            <a href="mailto:ticbull.support@gmail.com" style="color:var(--text-main); text-decoration:none; display:block; font-size:12.5px;"><i class="fa-solid fa-envelope" style="color:#2563eb;"></i> ticbull.support@gmail.com</a>
         </div>
     </div>
 
     <script>
-        let currentPassword = "";
+        let currentAuthMode = 'login';
+        let currentStudentData = { email: '', name: '', dob: '' };
 
-        function loginAdmin() {
-            const pwd = document.getElementById('adminPwd').value;
-            if(!pwd) return alert("Enter password");
-            
-            document.querySelector('.btn').innerText = "Authenticating...";
-            
-            fetch('/api/admin/data', {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({ password: pwd })
-            })
-            .then(res => res.json())
-            .then(data => {
-                if(data.success) {
-                    currentPassword = pwd; // Save password for ban action
-                    document.getElementById('loginBox').style.display = 'none';
-                    document.getElementById('dashboard').style.display = 'block';
-                    
-                    document.getElementById('totalUsers').innerText = data.total_users;
-                    
-                    const tbody = document.getElementById('userTableBody');
-                    tbody.innerHTML = '';
-                    
-                    data.users.reverse().forEach(u => {
-                        let chatHTML = u.recent_chats.length > 0 
-                            ? u.recent_chats.map(c => `<span class="chat-pills">${c}</span>`).join('') 
-                            : '<span style="color:#64748b; font-size:12px;">No chats yet</span>';
-                            
-                        tbody.innerHTML += `
-                            <tr>
-                                <td><strong>${u.name}</strong><br><span style="font-size:10px; color:#64748b;">Joined: ${u.joined}</span></td>
-                                <td style="color:#f59e0b;">${u.email}</td>
-                                <td><strong>${u.today_usage}</strong> Questions</td>
-                                <td>${chatHTML}</td>
-                                <td><button class="btn btn-danger" onclick="banUser('${u.email}')"><i class="fa-solid fa-ban"></i> BAN / DELETE</button></td>
-                            </tr>
-                        `;
-                    });
-                } else {
-                    document.querySelector('.btn').innerText = "LOGIN TO DASHBOARD";
-                    alert(data.message);
-                }
-            })
-            .catch(() => {
-                document.querySelector('.btn').innerText = "LOGIN TO DASHBOARD";
-                alert("Server error.");
-            });
-        }
+        // 1. SPLASH SCREEN & AUTO-LOGIN CHECK
+        window.addEventListener('load', () => {
+            const savedEmail = localStorage.getItem('ticbull_email');
+            const savedToken = localStorage.getItem('ticbull_token');
 
-        function banUser(email) {
-            const confirmBan = confirm(`⚠️ WARNING!\nAre you sure you want to PERMANENTLY BAN and delete all data for: ${email}?`);
-            
-            if(confirmBan) {
-                fetch('/api/admin/ban-user', {
+            if (savedEmail && savedToken) {
+                // Real Backend Check
+                fetch('/api/check-session', {
                     method: 'POST',
                     headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify({ password: currentPassword, target_email: email })
+                    body: JSON.stringify({ email: savedEmail, token: savedToken })
                 })
                 .then(res => res.json())
                 .then(data => {
-                    if(data.success) {
-                        alert(data.message);
-                        loginAdmin(); // Refresh the table
+                    if(data.success && data.active) {
+                        window.location.href = "batches.html";
                     } else {
-                        alert("Error: " + data.message);
+                        localStorage.clear();
+                        showToast("Session Expired!", "error");
                     }
+                })
+                .catch(err => {
+                    // IF API FAILS (Not running), DO NOT BYPASS
+                    console.log("Backend offline or error");
                 });
             }
+
+            setTimeout(() => {
+                document.getElementById('splash-screen').style.opacity = '0';
+                setTimeout(() => document.getElementById('splash-screen').style.display = 'none', 800);
+            }, 3000);
+        });
+
+        function showToast(msg, type = 'success') {
+            const toast = document.getElementById('custom-toast');
+            document.getElementById('toast-message').innerText = msg;
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 3000);
+        }
+
+        function toggleDrawer() {
+            document.getElementById('drawer').classList.toggle('open');
+            document.getElementById('drawerOverlay').style.display = document.getElementById('drawer').classList.contains('open') ? 'block' : 'none';
+        }
+
+        function toggleTheme() { document.body.classList.toggle('light-theme'); }
+
+        function switchAuth(mode) {
+            currentAuthMode = mode;
+            document.getElementById('tab-login').classList.toggle('active', mode === 'login');
+            document.getElementById('tab-signup').classList.toggle('active', mode === 'signup');
+            document.getElementById('signupFields').style.display = mode === 'signup' ? 'block' : 'none';
+            document.getElementById('authSubmitBtn').innerText = mode === 'login' ? 'SEND VERIFICATION OTP' : 'CREATE ACCOUNT WITH OTP';
+        }
+
+        // 2. REAL BACKEND OTP FETCH
+        function initiateAuth() {
+            const email = document.getElementById('email').value.trim();
+            const pwd = document.getElementById('password').value.trim();
+            const name = document.getElementById('studentName') ? document.getElementById('studentName').value.trim() : '';
+            
+            if(!email || !pwd) { showToast("Email & Password required", "error"); return; }
+            if(currentAuthMode === 'signup' && !name) { showToast("Name required", "error"); return; }
+
+            currentStudentData = { email: email, name: name };
+            const btn = document.getElementById('authSubmitBtn');
+            btn.disabled = true;
+            btn.innerText = "SENDING OTP...";
+
+            fetch('/api/send-otp', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ email: email, password: pwd, auth_mode: currentAuthMode, name: name })
+            })
+            .then(res => res.json())
+            .then(data => {
+                btn.disabled = false;
+                btn.innerText = currentAuthMode === 'login' ? 'SEND VERIFICATION OTP' : 'CREATE ACCOUNT WITH OTP';
+                
+                if (data.success) {
+                    showToast(data.message, "success");
+                    document.getElementById('otpModal').style.display = 'flex';
+                } else {
+                    showToast(data.message, "error");
+                }
+            })
+            .catch(err => {
+                btn.disabled = false;
+                btn.innerText = currentAuthMode === 'login' ? 'SEND VERIFICATION OTP' : 'CREATE ACCOUNT WITH OTP';
+                showToast("Server error! Backend might be down.", "error"); // Strict Error, no bypass
+            });
+        }
+
+        // 3. REAL BACKEND OTP VERIFY
+        function verifyOTPAndLogin() {
+            const otp = document.getElementById('otpInput').value.trim();
+            const pwd = document.getElementById('password').value.trim();
+            const btn = document.getElementById('verifyBtn');
+
+            if(!otp) { showToast("Enter 6-digit OTP!", "error"); return; }
+
+            btn.disabled = true;
+            btn.innerText = "VERIFYING...";
+
+            let deviceId = localStorage.getItem('ticbull_device_id') || ('dev_' + Math.random().toString(36).substring(2) + Date.now());
+            localStorage.setItem('ticbull_device_id', deviceId);
+
+            fetch('/api/verify-otp', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ email: currentStudentData.email, otp: otp, password: pwd, auth_mode: currentAuthMode, device_id: deviceId })
+            })
+            .then(res => res.json())
+            .then(data => {
+                btn.disabled = false;
+                btn.innerText = "VERIFY & CONTINUE";
+                if (data.success) {
+                    localStorage.setItem('ticbull_email', currentStudentData.email);
+                    localStorage.setItem('ticbull_token', data.token);
+                    if(data.user) {
+                        localStorage.setItem('ticbull_name', data.user.name || currentStudentData.name);
+                    }
+                    showToast("Login Successful!", "success");
+                    setTimeout(() => { window.location.href = "batches.html"; }, 1000);
+                } else {
+                    showToast(data.message || "Invalid OTP!", "error");
+                }
+            })
+            .catch(err => {
+                btn.disabled = false;
+                btn.innerText = "VERIFY & CONTINUE";
+                showToast("Server Error! Try again.", "error"); // Strict Error, no bypass
+            });
         }
     </script>
 </body>
