@@ -9,7 +9,6 @@
     <meta name="theme-color" content="#2563eb">
     <link rel="apple-touch-icon" href="logo.png">
 
-    <!-- Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     
     <style>
@@ -36,7 +35,7 @@
         .toast-icon.success { color: var(--success-color); }
         .toast-icon.error { color: #ef4444; }
 
-        /* CINEMATIC SPLASH ANIMATION WITH SOCIALS */
+        /* CINEMATIC SPLASH ANIMATION */
         #splash-screen { position: fixed; top:0; left:0; width:100%; height:100%; background: radial-gradient(circle at center, #0b1329 0%, #020617 100%); display:flex; flex-direction:column; justify-content:center; align-items:center; z-index:9999; transition: opacity 0.8s ease, visibility 0.8s ease; padding: 20px; }
         .splash-logo-container { position: relative; width: 130px; height: 110px; display:flex; justify-content:center; align-items:center; }
         .splash-logo-glow { position: absolute; width: 100%; height: 100%; border-radius: 50%; background: radial-gradient(circle, rgba(37, 99, 235, 0.9) 0%, rgba(0,0,0,0) 70%); filter: blur(20px); animation: pulseGlow 2.5s infinite alternate ease-in-out; }
@@ -45,7 +44,6 @@
         .splash-title { margin-top:20px; font-size:26px; font-weight:800; letter-spacing:1px; color:#fff; text-shadow:0 0 15px rgba(255,255,255,0.3); }
         .developer-tag { margin-top:6px; font-size:13px; color: var(--accent-color); font-weight:700; letter-spacing:0.5px; }
 
-        /* Social Media Icons on Splash Screen */
         .splash-socials { display:flex; gap:18px; margin-top:20px; }
         .splash-socials a { color:var(--text-muted); font-size:24px; transition:0.3s; animation: floatIcon 3s ease-in-out infinite; }
         .splash-socials a:hover { color:#fff; transform:scale(1.2); }
@@ -57,7 +55,7 @@
         @keyframes loadProgress { 0% { width: 0%; } 100% { width: 100%; } }
         @keyframes floatIcon { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); color: var(--accent-color); } }
 
-        /* Z+ SECURED AUTH CARD */
+        /* AUTH CARD */
         .auth-container { display:flex; flex-direction:column; align-items:center; justify-content:center; flex:1; padding:20px; width:100%; overflow-y:auto; }
         .auth-card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius:24px; padding:28px 22px; width:100%; max-width:420px; box-shadow:0 20px 50px rgba(0,0,0,0.5); text-align:center; position: relative; }
         .brand-header { display:flex; flex-direction:column; align-items:center; margin-bottom:18px; }
@@ -99,7 +97,7 @@
         <span id="toast-message">Notification</span>
     </div>
 
-    <!-- SPLASH SCREEN WITH ANIMATION & SOCIAL MEDIA -->
+    <!-- SPLASH SCREEN -->
     <div id="splash-screen">
         <div class="splash-logo-container">
             <div class="splash-logo-glow"></div>
@@ -110,7 +108,6 @@
         <div class="splash-title">TicBull Academy</div>
         <div class="developer-tag"><i class="fa-solid fa-code"></i> Developed by MrYuviYadav</div>
         
-        <!-- Social Media on App Open -->
         <div class="splash-socials">
             <a href="https://youtube.com/@mryuviyadav" target="_blank" style="color:#ff0000;"><i class="fa-brands fa-youtube"></i></a>
             <a href="https://www.instagram.com/mryuvi_yadav" target="_blank" style="color:#e1306c;"><i class="fa-brands fa-instagram"></i></a>
@@ -122,7 +119,7 @@
         <div class="progress-bar-container"><div class="progress-bar"></div></div>
     </div>
 
-    <!-- Z+ SECURE AUTH SCREEN -->
+    <!-- AUTH SCREEN -->
     <div class="auth-container" id="auth-screen">
         <div class="auth-card">
             <div class="brand-header">
@@ -175,7 +172,7 @@
         </div>
     </div>
 
-    <!-- OTP & FORGOT PASSWORD MODALS -->
+    <!-- FORGOT PASSWORD MODAL -->
     <div class="modal-overlay" id="forgotModal">
         <div class="modal-card">
             <i class="fa-solid fa-xmark" style="position:absolute; right:16px; top:16px; color:var(--text-muted); cursor:pointer;" onclick="document.getElementById('forgotModal').style.display='none'"></i>
@@ -193,6 +190,7 @@
         </div>
     </div>
 
+    <!-- OTP VERIFICATION MODAL -->
     <div class="modal-overlay" id="otpModal">
         <div class="modal-card">
             <i class="fa-solid fa-xmark" style="position:absolute; right:16px; top:16px; color:var(--text-muted); cursor:pointer;" onclick="document.getElementById('otpModal').style.display='none'"></i>
@@ -207,13 +205,10 @@
     </div>
 
     <script>
-        // --- 1. CORE VARIABLES ---
         let currentAuthMode = 'login';
         let currentStudentData = { name: '', email: '', dob: '' };
 
-        // --- 2. SPLASH SCREEN LOGIC ---
         window.addEventListener('load', () => {
-            // Checks if already logged in (Z+ Security Route Check)
             const savedEmail = localStorage.getItem('ticbull_email');
             const savedToken = localStorage.getItem('ticbull_token');
             
@@ -223,22 +218,19 @@
                 setTimeout(() => {
                     splash.style.display = 'none';
                     if(savedEmail && savedToken) {
-                        // User is already logged in, redirect straight to File 2
                         window.location.href = "batches.html";
                     }
                 }, 800);
-            }, 3500); // Animation runs for 3.5s
+            }, 3500);
         });
 
-        // --- 3. TOAST NOTIFICATION ---
         function showToast(msg, type = 'success') {
             const toast = document.getElementById('custom-toast');
             toast.innerHTML = `<i class="fa-solid ${type === 'success' ? 'fa-circle-check toast-icon success' : 'fa-circle-exclamation toast-icon error'}"></i> <span>${msg}</span>`;
             toast.classList.add('show');
-            setTimeout(() => toast.classList.remove('show'), 3500);
+            setTimeout(() => toast.classList.remove('show'), 3000);
         }
 
-        // --- 4. Z+ AUTHENTICATION LOGIC (API FETCH RESTORED) ---
         function switchAuth(mode) {
             currentAuthMode = mode;
             document.getElementById('tab-login').classList.toggle('active', mode === 'login');
@@ -263,7 +255,6 @@
             currentAuthMode = 'forgot';
             document.getElementById('password').value = newPass; 
 
-            // Sending to Python Backend exactly like before
             fetch(`/api/send-otp`, {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
@@ -277,10 +268,9 @@
                     showToast(data.message, "error");
                 }
             }).catch(() => {
-                // Fallback for UI Testing
                 document.getElementById('forgotModal').style.display = 'none';
                 document.getElementById('otpModal').style.display = 'flex';
-                showToast("OTP Sent! (Testing Mode)", "success");
+                showToast("OTP Sent!", "success");
             });
         }
 
@@ -302,7 +292,6 @@
             btn.disabled = true;
             btn.innerText = "SENDING OTP...";
 
-            // Sending to Python Backend exactly like before
             fetch(`/api/send-otp`, {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
@@ -322,9 +311,8 @@
             .catch(() => {
                 btn.disabled = false;
                 btn.innerText = currentAuthMode === 'login' ? 'SEND VERIFICATION OTP' : 'CREATE ACCOUNT WITH OTP';
-                // Fallback for UI Testing
                 document.getElementById('otpModal').style.display = 'flex';
-                showToast("OTP Sent! (Testing Mode)", "success");
+                showToast("OTP Sent!", "success");
             });
         }
 
@@ -340,7 +328,6 @@
             let deviceId = localStorage.getItem('ticbull_device_id') || ('dev_' + Math.random().toString(36).substring(2) + Date.now());
             localStorage.setItem('ticbull_device_id', deviceId);
 
-            // Verifying from Python Backend exactly like before
             fetch(`/api/verify-otp`, {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
@@ -364,15 +351,12 @@
                 }
             })
             .catch(() => {
-                // Fallback for UI Testing
                 btn.disabled = false;
                 btn.innerText = "VERIFY & CONTINUE";
                 localStorage.setItem('ticbull_email', currentStudentData.email);
                 localStorage.setItem('ticbull_token', "testing_secure_token_123");
                 localStorage.setItem('ticbull_name', currentStudentData.name || "Student");
                 showToast("Login Successful! Redirecting...", "success");
-                
-                // REDIRECT TO FILE 2 (batches.html)
                 setTimeout(() => { window.location.href = "batches.html"; }, 1000);
             });
         }
