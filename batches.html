@@ -12,11 +12,13 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     
     <style>
+        /* 100% ORIGINAL CSS VARIABLES & BASE */
         :root { --bg-color: #030712; --card-bg: #0f172a; --accent-color: #2563eb; --accent-glow: rgba(37, 99, 235, 0.45); --text-main: #f8fafc; --text-muted: #94a3b8; --border-color: rgba(255, 255, 255, 0.12); --success-color: #10b981; --gold-color: #f59e0b; --input-bg: #1e293b; --chat-bg: #020617; }
         body.light-theme { --bg-color: #f1f5f9; --card-bg: #ffffff; --text-main: #0f172a; --text-muted: #64748b; --border-color: #cbd5e1; --input-bg: #f8fafc; --chat-bg: #f1f5f9; }
         * { margin:0; padding:0; box-sizing:border-box; font-family:-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; -webkit-tap-highlight-color: transparent; }
         body { background: var(--bg-color); color: var(--text-main); display:flex; flex-direction:column; height: 100vh; overflow: hidden; transition: background 0.3s, color 0.3s; }
 
+        /* CUSTOM TOAST */
         #custom-toast { position: fixed; top: -100px; left: 50%; transform: translateX(-50%); background: var(--card-bg); color: var(--text-main); border: 1px solid var(--accent-color); padding: 12px 24px; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); z-index: 10000; display: flex; align-items: center; gap: 12px; font-size: 13.5px; font-weight: 600; transition: top 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55); }
         #custom-toast.show { top: 30px; }
 
@@ -223,6 +225,7 @@
         }
         document.addEventListener('click', function(e) { if(e.target.closest('button') || e.target.closest('.drawer-item') || e.target.closest('.cat-chip') || e.target.closest('.tier-card')) playClickSound(); });
 
+
         // ---------------------------------------------------------------------------------
         // 2. STRICT SYLLABUS MAPPING (NO MIXUPS)
         // ---------------------------------------------------------------------------------
@@ -238,13 +241,13 @@
                 { name: 'English', teacher: 'Ms. Riya', icon: 'fa-book-open' },
                 { name: 'Hindi', teacher: 'Mr. Tiwari', icon: 'fa-language' }
             ],
-            'PCM': [ // STRICTLY FOR JEE & SCIENCE
+            'PCM': [ 
                 { name: 'Physics', teacher: 'Mr. HC Verma', icon: 'fa-atom' },
                 { name: 'Chemistry', teacher: 'Mr. Das', icon: 'fa-vial' },
                 { name: 'Mathematics', teacher: 'Mr. Sharma', icon: 'fa-square-root-variable' },
                 { name: 'English', teacher: 'Ms. Riya', icon: 'fa-book-open' }
             ],
-            'PCB': [ // STRICTLY FOR NEET & MEDICAL
+            'PCB': [ 
                 { name: 'Physics', teacher: 'Mr. HC Verma', icon: 'fa-atom' },
                 { name: 'Chemistry', teacher: 'Mr. Das', icon: 'fa-vial' },
                 { name: 'Botany', teacher: 'Ms. Kavita', icon: 'fa-leaf' },
@@ -306,7 +309,7 @@
         function engineGenerateAllBatches() {
             let list = [];
             
-            // A. SCHOOL BOARDS (31 Boards mapped precisely with Split Classes)
+            // A. SCHOOL BOARDS
             const allBoards = [
                 "CBSE", "CISCE/ICSE", "NIOS", "Bihar Board (BSEB)", "UP Board (UPMSP)", 
                 "Jharkhand Board (JAC)", "West Bengal Board (WBBSE)", "Odisha Board", 
@@ -324,26 +327,21 @@
                 let cat = board.includes('CBSE') ? 'CBSE' : (board.includes('ICSE') || board.includes('NIOS') ? 'ICSE' : 'STATE');
                 let shortName = board.split(' ')[0];
 
-                // SPLIT CLASS 9
                 list.push({ id: `b_${idx}_9`, cat: cat, tag: `${shortName} Board`, title: `${board} Class 9`, type: 'Foundation', desc: `Complete Foundation Syllabus for Class 9.`, p_basic: 199, p_pro: 399, p_max: 799 });
-                
-                // SPLIT CLASS 10
                 list.push({ id: `b_${idx}_10`, cat: cat, tag: `${shortName} Board`, title: `${board} Class 10`, type: 'Foundation', desc: `Board Target Syllabus for Class 10.`, p_basic: 199, p_pro: 399, p_max: 799 });
                 
-                // CLASS 11 (SPLIT STREAMS)
                 list.push({ id: `b_${idx}_11pcm`, cat: cat, tag: `${shortName} Board`, title: `${board} Class 11 Science (PCM)`, type: 'PCM', desc: `Physics, Chemistry, Maths for Class 11.`, p_basic: 299, p_pro: 599, p_max: 999 });
                 list.push({ id: `b_${idx}_11pcb`, cat: cat, tag: `${shortName} Board`, title: `${board} Class 11 Science (PCB)`, type: 'PCB', desc: `Physics, Chemistry, Biology for Class 11.`, p_basic: 299, p_pro: 599, p_max: 999 });
                 list.push({ id: `b_${idx}_11com`, cat: cat, tag: `${shortName} Board`, title: `${board} Class 11 Commerce`, type: 'Commerce', desc: `Accountancy, BST, Economics for Class 11.`, p_basic: 299, p_pro: 599, p_max: 999 });
                 list.push({ id: `b_${idx}_11art`, cat: cat, tag: `${shortName} Board`, title: `${board} Class 11 Humanities`, type: 'Arts', desc: `History, Geography, Polity for Class 11.`, p_basic: 299, p_pro: 599, p_max: 999 });
 
-                // CLASS 12 (SPLIT STREAMS)
                 list.push({ id: `b_${idx}_12pcm`, cat: cat, tag: `${shortName} Board`, title: `${board} Class 12 Science (PCM)`, type: 'PCM', desc: `Physics, Chemistry, Maths for Class 12 Boards.`, p_basic: 299, p_pro: 599, p_max: 999 });
                 list.push({ id: `b_${idx}_12pcb`, cat: cat, tag: `${shortName} Board`, title: `${board} Class 12 Science (PCB)`, type: 'PCB', desc: `Physics, Chemistry, Biology for Class 12 Boards.`, p_basic: 299, p_pro: 599, p_max: 999 });
                 list.push({ id: `b_${idx}_12com`, cat: cat, tag: `${shortName} Board`, title: `${board} Class 12 Commerce`, type: 'Commerce', desc: `Accountancy, BST, Economics for Class 12 Boards.`, p_basic: 299, p_pro: 599, p_max: 999 });
                 list.push({ id: `b_${idx}_12art`, cat: cat, tag: `${shortName} Board`, title: `${board} Class 12 Humanities`, type: 'Arts', desc: `History, Geography, Polity for Class 12 Boards.`, p_basic: 299, p_pro: 599, p_max: 999 });
             });
 
-            // B. COMPETITIVE EXAMS (Perfect filtering mapping)
+            // B. COMPETITIVE EXAMS
             list.push({ id: 'c_jee', cat: 'JEE', tag: 'IIT-JEE', title: 'JEE Main & Advanced 2027/28', type: 'JEE', desc: 'Advanced Physics, Chemistry, Maths (No Biology).', p_basic: 499, p_pro: 999, p_max: 1499 });
             list.push({ id: 'c_neet', cat: 'NEET', tag: 'NEET Target', title: 'NEET-UG 2027/28 Preparation', type: 'NEET', desc: 'Physical/Organic Chem, Botany, Zoology (No Maths).', p_basic: 499, p_pro: 999, p_max: 1499 });
             list.push({ id: 'c_upsc', cat: 'UPSC', tag: 'UPSC Goal', title: 'UPSC Civil Services Foundation', type: 'UPSC', desc: 'Polity, Geography, History, Economics, CSAT.', p_basic: 399, p_pro: 799, p_max: 1199 });
@@ -361,14 +359,16 @@
         // ---------------------------------------------------------------------------------
         function renderBatches(arr) {
             const container = document.getElementById('batchesList');
-            container.innerHTML = '';
+            let htmlContent = '';
             
             if(arr.length === 0) {
-                container.innerHTML = '<div style="text-align:center; padding:40px 20px; color:var(--text-muted);">No batches found.</div>'; return;
+                container.innerHTML = '<div style="text-align:center; padding:40px 20px; color:var(--text-muted);">No batches found.</div>'; 
+                return;
             }
 
             arr.forEach(b => {
-                container.innerHTML += `
+                // Ensure all variables exist inside the loop so the HTML doesn't break
+                htmlContent += `
                     <div class="batch-card">
                         <span class="batch-tag">${b.tag}</span>
                         <div class="batch-title">${b.title}</div>
@@ -386,6 +386,8 @@
                         </div>
                     </div>`;
             });
+            
+            container.innerHTML = htmlContent;
         }
 
         function filterBatches(cat, el) {
@@ -395,7 +397,6 @@
             if(cat === 'ALL') {
                 renderBatches(generatedBatchesCache);
             } else {
-                // Strict mapping guarantees 100% correct filter results
                 renderBatches(generatedBatchesCache.filter(b => b.cat === cat));
             }
         }
@@ -412,11 +413,10 @@
             document.getElementById('detailsTitle').innerText = selectedBatchObj.title;
             
             const subs = subjectMapping[selectedBatchObj.type] || subjectMapping['Foundation'];
-            const listContainer = document.getElementById('detailsSubjectsList');
-            listContainer.innerHTML = '';
+            let subsHtml = '';
             
             subs.forEach(s => {
-                listContainer.innerHTML += `
+                subsHtml += `
                     <div class="sub-card">
                         <div class="sub-icon"><i class="fa-solid ${s.icon}"></i></div>
                         <div class="sub-info">
@@ -426,6 +426,7 @@
                     </div>`;
             });
             
+            document.getElementById('detailsSubjectsList').innerHTML = subsHtml;
             document.getElementById('detailsModal').style.display = 'flex';
         }
 
@@ -442,7 +443,7 @@
             document.getElementById('pricePro').innerText = `₹${selectedBatchObj.p_pro}/yr`;
             document.getElementById('priceMax').innerText = `₹${selectedBatchObj.p_max}/yr`;
 
-            selectTier('Pro'); // Default
+            selectTier('Pro'); 
             document.getElementById('pricingModal').style.display = 'flex';
         }
 
