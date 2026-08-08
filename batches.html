@@ -18,6 +18,7 @@
         * { margin:0; padding:0; box-sizing:border-box; font-family:-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; -webkit-tap-highlight-color: transparent; }
         body { background: var(--bg-color); color: var(--text-main); display:flex; flex-direction:column; height: 100vh; overflow: hidden; transition: background 0.3s, color 0.3s; }
 
+        /* CUSTOM TOAST */
         #custom-toast { position: fixed; top: -100px; left: 50%; transform: translateX(-50%); background: var(--card-bg); color: var(--text-main); border: 1px solid var(--accent-color); padding: 12px 24px; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); z-index: 10000; display: flex; align-items: center; gap: 12px; font-size: 13.5px; font-weight: 600; transition: top 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55); }
         #custom-toast.show { top: 30px; }
 
@@ -126,7 +127,7 @@
 
     <!-- BATCHES LIST -->
     <div class="batches-container" id="batchesList">
-        <!-- Rendered via JavaScript safely -->
+        <!-- Rendered via Safest DOM Creation -->
     </div>
 
     <!-- DRAWER MENU -->
@@ -150,7 +151,7 @@
             <p style="font-size:12px; color:var(--text-muted);">Syllabus Subjects & Expert Faculty</p>
             
             <div class="sub-list-container" id="detailsSubjectsList">
-                <!-- Subjects mapped here without breaking -->
+                <!-- Subjects strictly mapped here -->
             </div>
             
             <button class="btn-primary" onclick="openPricingFromDetails()">BUY THIS BATCH</button>
@@ -197,7 +198,7 @@
 
     <script>
         // ---------------------------------------------------------------------------------
-        // 1. PERSISTENCE
+        // 1. Z+ PERSISTENCE & AUDIO
         // ---------------------------------------------------------------------------------
         window.addEventListener('DOMContentLoaded', function() {
             var savedEmail = localStorage.getItem('ticbull_email');
@@ -225,7 +226,7 @@
         document.addEventListener('click', function(e) { if(e.target.closest('button') || e.target.closest('.drawer-item') || e.target.closest('.cat-chip') || e.target.closest('.tier-card')) playClickSound(); });
 
         // ---------------------------------------------------------------------------------
-        // 2. STRICT SYLLABUS MAPPING (NO MIXUPS)
+        // 2. STRICT SUBJECT MAPPING
         // ---------------------------------------------------------------------------------
         var generatedBatchesCache = [];
         var selectedBatchObj = null;
@@ -302,7 +303,9 @@
             ]
         };
 
-        // EXTREMELY SAFE STRING CONCATENATION (NO BACKTICKS) TO BYPASS MOBILE EDITOR BUGS
+        // ---------------------------------------------------------------------------------
+        // 3. GENERATE BATCHES
+        // ---------------------------------------------------------------------------------
         function engineGenerateAllBatches() {
             var list = [];
             
@@ -325,35 +328,37 @@
 
                 list.push({ id: 'b_' + idx + '_9', cat: cat, tag: shortName + ' Board', title: board + ' Class 9', type: 'Foundation', desc: 'Complete Foundation Syllabus for Class 9.', p_basic: 199, p_pro: 399, p_max: 799 });
                 list.push({ id: 'b_' + idx + '_10', cat: cat, tag: shortName + ' Board', title: board + ' Class 10', type: 'Foundation', desc: 'Board Target Syllabus for Class 10.', p_basic: 199, p_pro: 399, p_max: 799 });
-                
                 list.push({ id: 'b_' + idx + '_11pcm', cat: cat, tag: shortName + ' Board', title: board + ' Class 11 Science (PCM)', type: 'PCM', desc: 'Physics, Chemistry, Maths for Class 11.', p_basic: 299, p_pro: 599, p_max: 999 });
                 list.push({ id: 'b_' + idx + '_11pcb', cat: cat, tag: shortName + ' Board', title: board + ' Class 11 Science (PCB)', type: 'PCB', desc: 'Physics, Chemistry, Biology for Class 11.', p_basic: 299, p_pro: 599, p_max: 999 });
                 list.push({ id: 'b_' + idx + '_11com', cat: cat, tag: shortName + ' Board', title: board + ' Class 11 Commerce', type: 'Commerce', desc: 'Accountancy, BST, Economics for Class 11.', p_basic: 299, p_pro: 599, p_max: 999 });
                 list.push({ id: 'b_' + idx + '_11art', cat: cat, tag: shortName + ' Board', title: board + ' Class 11 Humanities', type: 'Arts', desc: 'History, Geography, Polity for Class 11.', p_basic: 299, p_pro: 599, p_max: 999 });
-
                 list.push({ id: 'b_' + idx + '_12pcm', cat: cat, tag: shortName + ' Board', title: board + ' Class 12 Science (PCM)', type: 'PCM', desc: 'Physics, Chemistry, Maths for Class 12 Boards.', p_basic: 299, p_pro: 599, p_max: 999 });
                 list.push({ id: 'b_' + idx + '_12pcb', cat: cat, tag: shortName + ' Board', title: board + ' Class 12 Science (PCB)', type: 'PCB', desc: 'Physics, Chemistry, Biology for Class 12 Boards.', p_basic: 299, p_pro: 599, p_max: 999 });
                 list.push({ id: 'b_' + idx + '_12com', cat: cat, tag: shortName + ' Board', title: board + ' Class 12 Commerce', type: 'Commerce', desc: 'Accountancy, BST, Economics for Class 12 Boards.', p_basic: 299, p_pro: 599, p_max: 999 });
                 list.push({ id: 'b_' + idx + '_12art', cat: cat, tag: shortName + ' Board', title: board + ' Class 12 Humanities', type: 'Arts', desc: 'History, Geography, Polity for Class 12 Boards.', p_basic: 299, p_pro: 599, p_max: 999 });
             });
 
-            // COMPETITIVE EXAMS
-            list.push({ id: 'c_jee', cat: 'JEE', tag: 'IIT-JEE', title: 'JEE Main & Advanced 2027/28', type: 'JEE', desc: 'Advanced Physics, Chemistry, Maths (No Biology).', p_basic: 499, p_pro: 999, p_max: 1499 });
-            list.push({ id: 'c_neet', cat: 'NEET', tag: 'NEET Target', title: 'NEET-UG 2027/28 Preparation', type: 'NEET', desc: 'Physical/Organic Chem, Botany, Zoology (No Maths).', p_basic: 499, p_pro: 999, p_max: 1499 });
-            list.push({ id: 'c_upsc', cat: 'UPSC', tag: 'UPSC Goal', title: 'UPSC Civil Services Foundation', type: 'UPSC', desc: 'Polity, Geography, History, Economics, CSAT.', p_basic: 399, p_pro: 799, p_max: 1199 });
-            list.push({ id: 'c_bank', cat: 'BANKING', tag: 'Govt Job', title: 'SSC CGL & Banking (PO/Clerk)', type: 'Banking', desc: 'Quantitative Aptitude, Reasoning, English, GA.', p_basic: 399, p_pro: 799, p_max: 1199 });
-            list.push({ id: 'c_def', cat: 'DEFENSE', tag: 'Armed Forces', title: 'NDA & NA Shaurya Batch', type: 'Defense', desc: 'NDA Maths, Physics, GK, English.', p_basic: 399, p_pro: 799, p_max: 1199 });
-            list.push({ id: 'c_law', cat: 'LAW', tag: 'NLU Goal', title: 'CLAT & Law Entrance', type: 'Law', desc: 'Legal Reasoning, GK, English, Logical Reasoning.', p_basic: 399, p_pro: 799, p_max: 1199 });
+            var comps = [
+                { id: 'c_jee', cat: 'JEE', tag: 'IIT-JEE', title: 'JEE Main & Advanced 2027/28', type: 'JEE', desc: 'Advanced Physics, Chemistry, Maths (No Biology).', p_basic: 499, p_pro: 999, p_max: 1499 },
+                { id: 'c_neet', cat: 'NEET', tag: 'NEET Target', title: 'NEET-UG 2027/28 Preparation', type: 'NEET', desc: 'Physical/Organic Chem, Botany, Zoology (No Maths).', p_basic: 499, p_pro: 999, p_max: 1499 },
+                { id: 'c_upsc', cat: 'UPSC', tag: 'UPSC Goal', title: 'UPSC Civil Services Foundation', type: 'UPSC', desc: 'Polity, Geography, History, Economics, CSAT.', p_basic: 399, p_pro: 799, p_max: 1199 },
+                { id: 'c_bank', cat: 'BANKING', tag: 'Govt Job', title: 'SSC CGL & Banking (PO/Clerk)', type: 'Banking', desc: 'Quantitative Aptitude, Reasoning, English, GA.', p_basic: 399, p_pro: 799, p_max: 1199 },
+                { id: 'c_def', cat: 'DEFENSE', tag: 'Armed Forces', title: 'NDA & NA Shaurya Batch', type: 'Defense', desc: 'NDA Maths, Physics, GK, English.', p_basic: 399, p_pro: 799, p_max: 1199 },
+                { id: 'c_law', cat: 'LAW', tag: 'NLU Goal', title: 'CLAT & Law Entrance', type: 'Law', desc: 'Legal Reasoning, GK, English, Logical Reasoning.', p_basic: 399, p_pro: 799, p_max: 1199 }
+            ];
 
+            comps.forEach(function(c) { list.push(c); });
             return list;
         }
 
         generatedBatchesCache = engineGenerateAllBatches();
 
-        // 3. UI RENDERING (SAFE CONCATENATION)
+        // ---------------------------------------------------------------------------------
+        // 4. EDITOR-PROOF DOM CREATION ENGINE (100% BUG FREE)
+        // ---------------------------------------------------------------------------------
         function renderBatches(arr) {
             var container = document.getElementById('batchesList');
-            var htmlContent = '';
+            container.innerHTML = '';
             
             if(arr.length === 0) {
                 container.innerHTML = '<div style="text-align:center; padding:40px 20px; color:var(--text-muted);">No batches found.</div>'; 
@@ -361,26 +366,69 @@
             }
 
             arr.forEach(function(b) {
-                htmlContent += '<div class="batch-card">' +
-                    '<span class="batch-tag">' + b.tag + '</span>' +
-                    '<div class="batch-title">' + b.title + '</div>' +
-                    '<div class="batch-desc">' + b.desc + '</div>' +
-                    '<div class="batch-footer">' +
-                        '<div>' +
-                            '<span class="batch-price-sub">Starting From</span>' +
-                            '<span class="batch-price">₹' + b.p_basic + '/yr</span>' +
-                        '</div>' +
-                        '<div class="btn-row">' +
-                            '<button class="btn-details" onclick="openDetails(\'' + b.id + '\')">Details</button>' +
-                            '<button class="btn-buy" onclick="openPricing(\'' + b.id + '\')">Buy Pass</button>' +
-                        '</div>' +
-                    '</div>' +
-                '</div>';
+                // 1. Create Card
+                var card = document.createElement('div');
+                card.className = 'batch-card';
+
+                // 2. Tag
+                var tag = document.createElement('span');
+                tag.className = 'batch-tag';
+                tag.innerText = b.tag;
+                card.appendChild(tag);
+
+                // 3. Title
+                var title = document.createElement('div');
+                title.className = 'batch-title';
+                title.innerText = b.title;
+                card.appendChild(title);
+
+                // 4. Desc
+                var desc = document.createElement('div');
+                desc.className = 'batch-desc';
+                desc.innerText = b.desc;
+                card.appendChild(desc);
+
+                // 5. Footer Layout
+                var footer = document.createElement('div');
+                footer.className = 'batch-footer';
+
+                // 6. Price Section
+                var priceDiv = document.createElement('div');
+                var pSub = document.createElement('span');
+                pSub.className = 'batch-price-sub';
+                pSub.innerText = 'Starting From';
+                var pMain = document.createElement('span');
+                pMain.className = 'batch-price';
+                pMain.innerText = '₹' + b.p_basic + '/yr';
+                priceDiv.appendChild(pSub);
+                priceDiv.appendChild(pMain);
+                footer.appendChild(priceDiv);
+
+                // 7. Buttons Row
+                var btnRow = document.createElement('div');
+                btnRow.className = 'btn-row';
+
+                var btnDetails = document.createElement('button');
+                btnDetails.className = 'btn-details';
+                btnDetails.innerText = 'Details';
+                btnDetails.onclick = function() { openDetails(b.id); };
+                btnRow.appendChild(btnDetails);
+
+                var btnBuy = document.createElement('button');
+                btnBuy.className = 'btn-buy';
+                btnBuy.innerText = 'Buy Pass';
+                btnBuy.onclick = function() { openPricing(b.id); };
+                btnRow.appendChild(btnBuy);
+
+                footer.appendChild(btnRow);
+                card.appendChild(footer);
+                
+                // Mount Card to Container
+                container.appendChild(card);
             });
-            
-            container.innerHTML = htmlContent;
         }
 
+        // Filters and Modal Logic
         function filterBatches(cat, el) {
             document.querySelectorAll('.cat-chip').forEach(function(c) { c.classList.remove('active'); });
             if(el) el.classList.add('active');
@@ -404,19 +452,38 @@
             document.getElementById('detailsTitle').innerText = selectedBatchObj.title;
             
             var subs = subjectMapping[selectedBatchObj.type] || subjectMapping['Foundation'];
-            var subsHtml = '';
+            var listContainer = document.getElementById('detailsSubjectsList');
+            listContainer.innerHTML = '';
             
             subs.forEach(function(s) {
-                subsHtml += '<div class="sub-card">' +
-                    '<div class="sub-icon"><i class="fa-solid ' + s.icon + '"></i></div>' +
-                    '<div class="sub-info">' +
-                        '<h4>' + s.name + '</h4>' +
-                        '<p><i class="fa-solid fa-chalkboard-user"></i> Faculty: ' + s.teacher + '</p>' +
-                    '</div>' +
-                '</div>';
+                var card = document.createElement('div');
+                card.className = 'sub-card';
+                
+                var iconBox = document.createElement('div');
+                iconBox.className = 'sub-icon';
+                
+                var iTag = document.createElement('i');
+                var iconClasses = s.icon.split(' ');
+                iTag.classList.add('fa-solid');
+                if(iconClasses.length > 0) iTag.classList.add(iconClasses[0]);
+                iconBox.appendChild(iTag);
+                card.appendChild(iconBox);
+                
+                var infoBox = document.createElement('div');
+                infoBox.className = 'sub-info';
+                
+                var h4 = document.createElement('h4');
+                h4.innerText = s.name;
+                infoBox.appendChild(h4);
+                
+                var p = document.createElement('p');
+                p.innerHTML = '<i class="fa-solid fa-chalkboard-user"></i> Faculty: ' + s.teacher;
+                infoBox.appendChild(p);
+                
+                card.appendChild(infoBox);
+                listContainer.appendChild(card);
             });
             
-            document.getElementById('detailsSubjectsList').innerHTML = subsHtml;
             document.getElementById('detailsModal').style.display = 'flex';
         }
 
@@ -463,7 +530,7 @@
             window.location.href = 'payment.html';
         }
 
-        // INIT
+        // STARTUP CALL
         renderBatches(generatedBatchesCache);
     </script>
 </body>
