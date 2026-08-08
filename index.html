@@ -3,548 +3,96 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>TicBull Academy - AI Exam Engine</title>
-    
-    <link rel="manifest" href="/manifest.json">
-    <meta name="theme-color" content="#2563eb">
-    <link rel="apple-touch-icon" href="logo.png">
+    <title>TicBull Academy - Login</title>
+    <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     
-    <style>
-        :root {
-            --bg-color: #030712;
-            --card-bg: rgba(15, 23, 42, 0.95);
-            --accent-color: #2563eb;
-            --accent-glow: rgba(37, 99, 235, 0.45);
-            --text-main: #f8fafc;
-            --text-muted: #94a3b8;
-            --border-color: rgba(255, 255, 255, 0.12);
-            --success-color: #10b981;
-            --gold-color: #f59e0b;
-            --chat-bg: #020617;
-            --input-bg: #0f172a;
-        }
-
-        body.light-theme {
-            --bg-color: #f1f5f9;
-            --card-bg: #ffffff;
-            --text-main: #0f172a;
-            --text-muted: #64748b;
-            --border-color: #cbd5e1;
-            --chat-bg: #f8fafc;
-            --input-bg: #ffffff;
-        }
-
-        * { margin:0; padding:0; box-sizing:border-box; font-family:-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; -webkit-tap-highlight-color: transparent; }
-        html, body { height: 100%; width: 100%; overflow: hidden; background: var(--bg-color); color: var(--text-main); transition: background 0.3s, color 0.3s; }
-        body { display:flex; flex-direction:column; }
-
-        /* CUSTOM TOAST */
-        #custom-toast { position: fixed; top: -100px; left: 50%; transform: translateX(-50%); background: var(--card-bg); color: var(--text-main); border: 1px solid var(--accent-color); padding: 12px 24px; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); z-index: 10000; display: flex; align-items: center; gap: 12px; font-size: 13.5px; font-weight: 600; transition: top 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55); }
-        #custom-toast.show { top: 30px; }
-        .toast-icon { font-size: 18px; }
-        .toast-icon.success { color: var(--success-color); }
-        .toast-icon.error { color: #ef4444; }
-
-        /* SPLASH SCREEN */
-        #splash-screen { position: fixed; top:0; left:0; width:100%; height:100%; background: radial-gradient(circle at center, #0b1329 0%, #020617 100%); display:flex; flex-direction:column; justify-content:center; align-items:center; z-index:9999; transition: opacity 0.8s ease, visibility 0.8s ease; padding: 20px; }
-        .splash-logo { width: 105px; height: 105px; border-radius: 50%; background: #000; border: 2px solid rgba(37, 99, 235, 0.5); display:flex; justify-content:center; align-items:center; box-shadow: 0 0 35px var(--accent-glow); animation: pulseGlow 2.5s infinite alternate ease-in-out; }
-        .splash-logo img { width:90%; height:90%; object-fit:contain; }
-        .splash-title { margin-top:20px; font-size:26px; font-weight:800; color:#fff; text-shadow:0 0 15px rgba(255,255,255,0.3); }
-        .developer-tag { margin-top:6px; font-size:13px; color: var(--accent-color); font-weight:700; }
-        @keyframes pulseGlow { 0% { transform: scale(0.85); opacity: 0.5; } 100% { transform: scale(1.1); opacity: 0.95; } }
-
-        /* AUTH CARD */
-        .auth-container { display:flex; flex-direction:column; align-items:center; justify-content:center; flex:1; padding:20px; width:100%; overflow-y:auto; }
-        .auth-card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius:24px; padding:28px 22px; width:100%; max-width:420px; box-shadow:0 20px 50px rgba(0,0,0,0.5); text-align:center; }
-        .input-group { position:relative; margin-bottom:12px; text-align:left; }
-        .input-group i.left-icon { position:absolute; left:14px; top:50%; transform:translateY(-50%); color:var(--text-muted); font-size:14px; }
-        .input-group input { width:100%; background:var(--input-bg); border:1px solid var(--border-color); color:var(--text-main); padding:12px 40px; border-radius:12px; font-size:14px; outline:none; transition:0.3s; }
-        .input-group input:focus { border-color:var(--accent-color); box-shadow: 0 0 12px var(--accent-glow); }
-        .pwd-toggle { position:absolute; right:14px; top:50%; transform:translateY(-50%); color:var(--text-muted); cursor:pointer; }
-        .btn-primary { width:100%; background: var(--accent-color); color:#fff; font-weight:700; padding:13px; border:none; border-radius:12px; cursor:pointer; font-size:14px; box-shadow:0 8px 20px var(--accent-glow); transition:0.2s; margin-top:8px; }
-        .btn-danger { background: #ef4444; box-shadow:0 8px 20px rgba(239, 68, 68, 0.4); }
-
-        /* BATCHES DASHBOARD */
-        #batches-screen { display:none; flex-direction:column; height:100%; max-width:850px; margin:0 auto; width:100%; padding:0; overflow-y:auto; }
-        .hero-banner { background: linear-gradient(135deg, var(--accent-color), #1e3a8a); padding: 35px 20px; text-align: center; border-bottom-left-radius: 35px; border-bottom-right-radius: 35px; margin-bottom: 20px; position:relative; }
-        .hero-banner h1 { font-size: 24px; font-weight: 800; color: #fff; margin-bottom: 6px; }
-        .hero-banner p { font-size: 13px; color: rgba(255,255,255,0.9); }
-        .menu-btn-hero { position:absolute; top:15px; right:20px; background:rgba(0,0,0,0.2); border:1px solid rgba(255,255,255,0.2); color:#fff; font-size:18px; cursor:pointer; padding:8px 12px; border-radius:12px; }
-
-        .category-scroll-bar { display:flex; gap:8px; overflow-x:auto; padding:0 15px 10px 15px; margin-bottom:12px; scrollbar-width:none; }
-        .category-scroll-bar::-webkit-scrollbar { display:none; }
-        .cat-chip { background:var(--input-bg); border:1px solid var(--border-color); color:var(--text-muted); padding:8px 18px; border-radius:20px; font-size:12.5px; font-weight:700; white-space:nowrap; cursor:pointer; }
-        .cat-chip.active { background:var(--accent-color); color:#fff; border-color:var(--accent-color); box-shadow:0 4px 15px var(--accent-glow); }
-
-        .search-batches-box { position:relative; margin: 0 15px 16px 15px; }
-        .search-batches-box input { width:100%; background:var(--card-bg); border:1px solid var(--border-color); color:var(--text-main); padding:14px 16px 14px 42px; border-radius:16px; font-size:14px; outline:none; }
-        .search-batches-box i { position:absolute; left:16px; top:50%; transform:translateY(-50%); color:var(--text-muted); }
-
-        .batch-card { background: linear-gradient(135deg, rgba(15, 23, 42, 0.95), rgba(30, 41, 59, 0.95)); border: 1px solid rgba(37, 99, 235, 0.3); border-radius: 20px; padding: 20px; margin: 0 15px 16px 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.4); position: relative; }
-        .batch-tag { background: rgba(16, 185, 129, 0.15); color: var(--success-color); font-size: 10.5px; font-weight: 700; padding: 4px 12px; border-radius: 20px; display: inline-block; margin-bottom: 10px; border: 1px solid rgba(16, 185, 129, 0.3); }
-        .batch-title { font-size: 18px; font-weight: 800; color: #fff; margin-bottom: 6px; }
-        .batch-desc { font-size: 12.5px; color: var(--text-muted); margin-bottom: 12px; line-height:1.4; }
-        .batch-price { font-size: 17px; font-weight: 800; color: var(--success-color); }
-        .batch-actions-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-top: 12px; border-top: 1px solid var(--border-color); padding-top: 15px; }
-        .btn-b-action { text-align:center; padding: 10px 5px; border-radius: 12px; font-size: 12px; font-weight: 700; cursor: pointer; display:flex; align-items:center; justify-content:center; }
-        .btn-buy-now { background: var(--accent-color); color: #fff; border: none; box-shadow: 0 4px 15px var(--accent-glow); }
-        .btn-details { background: var(--input-bg); color: var(--text-main); border: 1px solid var(--border-color); }
-
-        /* SUBJECT SCREEN */
-        #subjects-screen { display:none; flex-direction:column; height:100%; max-width:850px; margin:0 auto; width:100%; overflow-y:auto; padding-bottom: 20px; }
-        .subject-hero { background: var(--card-bg); padding: 20px 15px; border-bottom: 1px solid var(--border-color); position:sticky; top:0; z-index:10; display:flex; align-items:center; gap:15px; }
-        .back-btn { background: var(--input-bg); border: 1px solid var(--border-color); color: var(--text-main); width: 38px; height: 38px; border-radius: 12px; display:flex; justify-content:center; align-items:center; cursor:pointer; }
-        .subjects-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; padding: 20px 15px; }
-        .subject-card { background: var(--chat-bg); border: 1px solid var(--border-color); border-radius: 18px; padding: 20px 15px; text-align: center; cursor: pointer; transition: 0.3s; }
-        .subject-card:hover { border-color: var(--accent-color); background: rgba(37,99,235,0.05); transform:translateY(-4px); }
-        .subject-icon { font-size: 30px; color: var(--accent-color); margin-bottom: 12px; }
-        .subject-name { font-size: 14px; font-weight: 800; color: var(--text-main); margin-bottom: 8px; }
-        .teacher-name { font-size: 11px; color: var(--gold-color); font-weight: 600; background: rgba(245, 158, 11, 0.1); padding: 5px 10px; border-radius: 8px; display:inline-block; }
-
-        /* CHAT DASHBOARD */
-        #main-dashboard { display:none; flex-direction:column; height:100%; max-width:850px; margin:0 auto; width:100%; position:relative; padding:10px; }
-        .header { display:flex; justify-content:space-between; align-items:center; padding:12px 16px; background:var(--card-bg); border-radius:20px; border:1px solid var(--border-color); margin-bottom:8px; }
-        
-        .chat-menu-container { position: relative; display:flex; align-items:center; gap:10px; }
-        .lang-select { background: var(--input-bg); border: 1px solid var(--border-color); color: var(--text-main); padding: 6px 10px; border-radius: 10px; font-size: 12px; outline: none; font-weight: 600; }
-        
-        .dot-menu-btn { background:rgba(255,255,255,0.05); border:1px solid var(--border-color); color:var(--text-main); font-size:18px; cursor:pointer; padding:6px 12px; border-radius: 10px; }
-        .chat-dropdown { display:none; position:absolute; right:0; top:45px; background:var(--card-bg); border:1px solid var(--border-color); border-radius:14px; width:220px; box-shadow:0 15px 40px rgba(0,0,0,0.6); z-index:100; overflow:hidden; }
-        .chat-dropdown-item { padding: 14px 16px; font-size: 13.5px; font-weight:600; color: var(--text-main); display:flex; align-items:center; gap:12px; cursor:pointer; border-bottom: 1px solid var(--border-color); }
-        .chat-dropdown-item:hover { background: rgba(37, 99, 235, 0.1); color: var(--accent-color); }
-
-        .active-course-chip { background:rgba(16, 185, 129, 0.1); border:1px solid rgba(16, 185, 129, 0.4); padding:8px 14px; border-radius:14px; font-size:11.5px; font-weight:700; color:var(--text-main); margin-bottom:8px; display:flex; justify-content:space-between; }
-        
-        .chat-container { background:var(--chat-bg); border:1px solid var(--border-color); border-radius:20px; padding:16px; flex:1; overflow-y:auto; display:flex; flex-direction:column; gap:12px; margin-bottom:8px; }
-        .msg { padding:14px 16px; border-radius:18px; font-size:14px; line-height:1.5; max-width:88%; word-break: break-word; animation: popIn 0.3s forwards; }
-        .msg.user { background:var(--accent-color); color:#fff; align-self:flex-end; border-bottom-right-radius:4px; box-shadow: 0 6px 20px var(--accent-glow); }
-        .msg.ai { background:var(--card-bg); color:var(--text-main); border:1px solid var(--border-color); align-self:flex-start; border-bottom-left-radius:4px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); width: 100%; max-width: 92%; }
-        @keyframes popIn { 0% { opacity:0; transform:scale(0.8) translateY(10px); } 100% { opacity:1; transform:scale(1) translateY(0); } }
-
-        .chat-input-bar { display:flex; align-items:center; background:var(--card-bg); border:1px solid var(--border-color); border-radius:20px; padding:6px 8px 6px 12px; gap:8px; }
-        .chat-input-bar textarea { flex:1; background:transparent; border:none; color:var(--text-main); outline:none; font-size:14px; resize: none; max-height: 120px; padding-top: 8px; }
-        .send-btn { background:var(--accent-color); color:#fff; border:none; width:40px; height:40px; border-radius:12px; display:flex; justify-content:center; align-items:center; cursor:pointer; }
-
-        /* MODALS */
-        .modal-overlay { position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); z-index:2000; display:none; justify-content:center; align-items:center; padding:16px; backdrop-filter: blur(5px); }
-        .modal-card { background:var(--card-bg); border:1px solid var(--border-color); border-radius:24px; padding:26px; max-width:480px; width:100%; text-align:center; position:relative; max-height:92vh; display:flex; flex-direction:column; overflow-y:auto; }
-        .history-item-modal { display:flex; justify-content:space-between; align-items:center; background:var(--input-bg); border:1px solid var(--border-color); padding:12px; border-radius:12px; margin-bottom:8px; cursor:pointer; font-size:13px; text-align:left; color:var(--text-main); }
-        .history-item-modal:hover { border-color:var(--accent-color); }
-        .del-icon { color:#ef4444; padding:5px; cursor:pointer; }
-    </style>
+    <!-- Firebase SDK Setup -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
 </head>
 <body>
 
-    <!-- CUSTOM TOAST -->
-    <div id="custom-toast"><i class="fa-solid fa-circle-check toast-icon success"></i><span id="toast-message">Notification</span></div>
+    <div id="custom-toast"><i class="fa-solid fa-circle-check"></i><span id="toast-message">Notification</span></div>
 
-    <!-- SPLASH SCREEN -->
+    <!-- Splash Screen -->
     <div id="splash-screen">
         <div class="splash-logo"><img src="./logo.png" onerror="this.src='https://raw.githubusercontent.com/yuviyadav16/ticbull-academy/main/logo.png'"></div>
         <div class="splash-title">TicBull Academy</div>
         <div class="developer-tag">Developed by MrYuviYadav</div>
-        <div class="progress-bar-container"><div class="progress-bar"></div></div>
     </div>
 
-    <!-- AUTH SCREEN -->
-    <div class="auth-container" id="auth-screen">
+    <!-- Firebase Auth Screen -->
+    <div class="auth-container">
         <div class="auth-card">
-            <h2 style="font-size:22px; font-weight:800; margin-bottom:20px;">TicBull Academy</h2>
+            <h2 style="font-size:22px; font-weight:800; margin-bottom:6px;">TicBull Academy</h2>
+            <p style="font-size:12px; color:var(--text-muted); margin-bottom:20px;">AI Student Portal & Exam Engine</p>
+
             <div class="input-group">
                 <i class="fa-regular fa-envelope left-icon"></i>
                 <input type="email" id="email" placeholder="Student Email ID">
             </div>
+            
             <div class="input-group">
                 <i class="fa-solid fa-lock left-icon"></i>
                 <input type="password" id="password" placeholder="Password">
             </div>
-            <button class="btn-primary" onclick="login()">SECURE LOGIN</button>
-        </div>
-    </div>
 
-    <!-- BATCHES DASHBOARD -->
-    <div id="batches-screen">
-        <div class="hero-banner">
-            <h1>Welcome to TicBull</h1>
-            <p>India's Most Accurate AI Learning Engine</p>
-        </div>
-
-        <div class="category-scroll-bar" id="catBar">
-            <div class="cat-chip active" onclick="filterCategory('ALL', this)">All Batches</div>
-            <div class="cat-chip" onclick="filterCategory('CBSE', this)">CBSE Board (9-12)</div>
-            <div class="cat-chip" onclick="filterCategory('BIHAR', this)">Bihar Board</div>
-            <div class="cat-chip" onclick="filterCategory('NEET', this)">NEET Medical</div>
-            <div class="cat-chip" onclick="filterCategory('JEE', this)">IIT-JEE</div>
-            <div class="cat-chip" onclick="filterCategory('UPSC', this)">UPSC & PCS</div>
-            <div class="cat-chip" onclick="filterCategory('BANKING', this)">Banking & SSC</div>
-            <div class="cat-chip" onclick="filterCategory('DEFENSE', this)">NDA & CDS</div>
-        </div>
-
-        <div id="batchesContainer"></div>
-    </div>
-
-    <!-- SUBJECT SELECTION -->
-    <div id="subjects-screen">
-        <div class="subject-hero">
-            <button class="back-btn" onclick="goBackToBatches()"><i class="fa-solid fa-arrow-left"></i></button>
-            <div class="subject-hero-text">
-                <h2 id="activeBatchTitle">Batch Name</h2>
-                <p><i class="fa-solid fa-circle-check"></i> Strictly Syllabus Based</p>
-            </div>
-        </div>
-        <div class="subjects-grid" id="subjectsGridContainer"></div>
-    </div>
-
-    <!-- MAIN CHAT DASHBOARD -->
-    <div id="main-dashboard">
-        <div class="header">
-            <div class="header-brand">
-                <button class="back-btn" style="background:transparent; border:none;" onclick="goBackToSubjects()"><i class="fa-solid fa-arrow-left"></i></button>
-                <div style="margin-left: 5px;">
-                    <strong style="color:var(--text-main); font-size:16px; display:block;" id="chatSubjectName">Subject</strong>
-                    <span style="font-size:11.5px; color:var(--gold-color);" id="chatTeacherName">Teacher</span>
-                </div>
-            </div>
+            <button class="btn-primary" id="loginBtn" onclick="handleFirebaseLogin()">SECURE LOGIN / SIGNUP</button>
             
-            <div class="chat-menu-container">
-                <select id="chatLang" class="lang-select">
-                    <option value="Hinglish">Hinglish</option>
-                    <option value="Hindi">Hindi (हिंदी)</option>
-                    <option value="English">English</option>
-                </select>
-                <button class="dot-menu-btn" onclick="toggleChat3DotMenu()"><i class="fa-solid fa-ellipsis-vertical"></i></button>
-                <div class="chat-dropdown" id="chat3DotMenu">
-                    <div class="chat-dropdown-item" onclick="openChatHistoryModal(); toggleChat3DotMenu();"><i class="fa-solid fa-clock-rotate-left" style="color:#10b981;"></i> Chat History</div>
-                    <div class="chat-dropdown-item" onclick="startNewChat(); toggleChat3DotMenu();"><i class="fa-solid fa-plus-circle" style="color:#f59e0b;"></i> New Chat</div>
-                    <div class="chat-dropdown-item" onclick="goBackToSubjects(); toggleChat3DotMenu();"><i class="fa-solid fa-graduation-cap" style="color:#ef4444;"></i> Change Subject</div>
-                </div>
-            </div>
-        </div>
-
-        <div class="active-course-chip">
-            <span id="chatBoardContext"><i class="fa-solid fa-shield-halved"></i> Board Active</span>
-            <span style="font-size:10.5px; color:var(--success-color);">AI Verification: Active</span>
-        </div>
-
-        <div class="chat-container" id="chatBox"></div>
-
-        <div class="chat-input-bar">
-            <textarea id="userInput" placeholder="Type your doubt here..." rows="1" onkeydown="handleInputKeydown(event)"></textarea>
-            <button class="send-btn" id="sendBtn" onclick="askAI()"><i class="fa-solid fa-paper-plane"></i></button>
-        </div>
-    </div>
-
-    <!-- DEDICATED CHAT HISTORY MODAL -->
-    <div class="modal-overlay" id="historyModal">
-        <div class="modal-card">
-            <i class="fa-solid fa-xmark" style="position:absolute; right:16px; top:16px; color:var(--text-muted); cursor:pointer;" onclick="document.getElementById('historyModal').style.display='none'"></i>
-            <h3 style="color:var(--text-main); font-size:18px; margin-bottom:16px; text-align:left;"><i class="fa-solid fa-clock-rotate-left"></i> Recent Chat History</h3>
-            <div id="historyListContainer" style="display:flex; flex-direction:column; gap:8px;"></div>
-        </div>
-    </div>
-
-    <!-- DELETE WARNING MODAL -->
-    <div class="modal-overlay" id="deleteWarningModal">
-        <div class="modal-card" style="max-width:340px;">
-            <i class="fa-solid fa-triangle-exclamation" style="font-size:45px; color:#ef4444; margin-bottom:16px;"></i>
-            <h3 style="color:var(--text-main); font-size:18px;">Delete Chat Session?</h3>
-            <p style="font-size:13px; color:var(--text-muted); margin:10px 0 20px;">Are you sure you want to permanently delete this chat? ⚠️</p>
-            <div style="display:flex; gap:12px;">
-                <button class="btn-primary" style="background:transparent; border:1px solid var(--border-color); color:var(--text-main);" onclick="document.getElementById('deleteWarningModal').style.display='none';">CANCEL</button>
-                <button class="btn-primary" style="background:#ef4444;" id="confirmDeleteBtn">DELETE</button>
-            </div>
+            <div id="recaptcha-container" style="margin-top: 15px;"></div>
         </div>
     </div>
 
     <script>
-        // -------------------------------------------------------------
-        // 1. DATA: 300+ BATCHES WITH ALL SUBJECTS & COMPETITIVE EXAMS
-        // -------------------------------------------------------------
-        const all300Batches = [
-            // CBSE 9 & 10 (With Computer & 12 Subjects)
-            { id: 'cbse_9', category: 'CBSE', name: 'CBSE Class 9th Topper Batch', tag: 'All Subjects', desc: 'Strict CBSE pattern. Includes IT/Computer.', basicPrice: 199,
-              subjects: [ { name: 'Physics', icon: 'fa-atom', teacher: 'Er. Vivek' }, { name: 'Chemistry', icon: 'fa-flask', teacher: 'Dr. Roy' }, { name: 'Biology', icon: 'fa-dna', teacher: 'Dr. Neha' }, { name: 'Mathematics', icon: 'fa-calculator', teacher: 'Prof. Sharma' }, { name: 'History', icon: 'fa-landmark', teacher: 'V.K. Mishra' }, { name: 'Political Science', icon: 'fa-scale-balanced', teacher: 'S.K. Singh' }, { name: 'Economics', icon: 'fa-chart-line', teacher: 'A. Gupta' }, { name: 'Geography', icon: 'fa-earth-asia', teacher: 'Dr. Ranjan' }, { name: 'Computer / IT', icon: 'fa-desktop', teacher: 'Er. Yash' }, { name: 'Hindi', icon: 'fa-language', teacher: 'R. Pandey' }, { name: 'English', icon: 'fa-book-open', teacher: 'Anjali M.' }, { name: 'Sanskrit', icon: 'fa-om', teacher: 'Acharya V.N.' }, { name: 'Urdu', icon: 'fa-pen-nib', teacher: 'Maulana Tariq' } ]
-            },
-            { id: 'cbse_10', category: 'CBSE', name: 'CBSE Class 10th Board Topper', tag: 'Board Special', desc: 'Strict NCERT guidelines for 10th Board success.', basicPrice: 199,
-              subjects: [ { name: 'Physics', icon: 'fa-atom', teacher: 'Er. Vivek' }, { name: 'Chemistry', icon: 'fa-flask', teacher: 'Dr. Roy' }, { name: 'Biology', icon: 'fa-dna', teacher: 'Dr. Neha' }, { name: 'Mathematics', icon: 'fa-calculator', teacher: 'Prof. Sharma' }, { name: 'History', icon: 'fa-landmark', teacher: 'V.K. Mishra' }, { name: 'Political Science', icon: 'fa-scale-balanced', teacher: 'S.K. Singh' }, { name: 'Economics', icon: 'fa-chart-line', teacher: 'A. Gupta' }, { name: 'Geography', icon: 'fa-earth-asia', teacher: 'Dr. Ranjan' }, { name: 'Computer App', icon: 'fa-desktop', teacher: 'Er. Yash' }, { name: 'Hindi', icon: 'fa-language', teacher: 'R. Pandey' }, { name: 'English', icon: 'fa-book-open', teacher: 'Anjali M.' }, { name: 'Sanskrit', icon: 'fa-om', teacher: 'Acharya V.N.' } ]
-            },
-            
-            // CBSE 11 & 12 (Science, Commerce, Arts)
-            { id: 'cbse_11_pcbm', category: 'CBSE', name: 'Class 11th Science (PCBM)', tag: 'Science Core', desc: 'Physics, Chemistry, Bio, Math & Computer Science.', basicPrice: 249,
-              subjects: [ { name: 'Physics', icon: 'fa-atom', teacher: 'Er. Vivek' }, { name: 'Chemistry', icon: 'fa-flask', teacher: 'Dr. Roy' }, { name: 'Biology', icon: 'fa-dna', teacher: 'Dr. Neha' }, { name: 'Mathematics', icon: 'fa-calculator', teacher: 'Prof. Sharma' }, { name: 'Computer Science', icon: 'fa-laptop-code', teacher: 'Er. Yash' }, { name: 'English', icon: 'fa-book-open', teacher: 'Anjali M.' } ]
-            },
-            { id: 'cbse_11_com', category: 'CBSE', name: 'Class 11th Commerce', tag: 'Commerce Core', desc: 'Accounts, BST, Economics, Math, English.', basicPrice: 249,
-              subjects: [ { name: 'Accountancy', icon: 'fa-file-invoice-dollar', teacher: 'CA R. Bajaj' }, { name: 'Business Studies', icon: 'fa-briefcase', teacher: 'M. Agarwal' }, { name: 'Economics', icon: 'fa-chart-pie', teacher: 'Dr. A. Gupta' }, { name: 'Mathematics', icon: 'fa-calculator', teacher: 'Prof. Sharma' }, { name: 'English', icon: 'fa-book-open', teacher: 'Anjali M.' } ]
-            },
-            { id: 'cbse_11_arts', category: 'CBSE', name: 'Class 11th Arts / Humanities', tag: 'Arts Core', desc: 'History, Geography, Pol Sci, Sociology, English.', basicPrice: 249,
-              subjects: [ { name: 'History', icon: 'fa-landmark', teacher: 'V.K. Mishra' }, { name: 'Political Science', icon: 'fa-scale-balanced', teacher: 'S.K. Singh' }, { name: 'Geography', icon: 'fa-earth-asia', teacher: 'Dr. Ranjan' }, { name: 'Sociology', icon: 'fa-users', teacher: 'Dr. K. Devi' }, { name: 'English', icon: 'fa-book-open', teacher: 'Anjali M.' } ]
-            },
-
-            // COMPETITIVE: NEET
-            { id: 'neet_11', category: 'NEET', name: 'NEET UG 11th Foundation', tag: 'Medical Goal', desc: 'Class 11 syllabus + NEET level depth.', basicPrice: 299,
-              subjects: [ { name: 'Physics', icon: 'fa-atom', teacher: 'Er. Vivek' }, { name: 'Physical Chem', icon: 'fa-flask', teacher: 'Dr. P. Roy' }, { name: 'Organic Chem', icon: 'fa-vial', teacher: 'M. Patel' }, { name: 'Botany', icon: 'fa-leaf', teacher: 'Dr. Mukherjee' }, { name: 'Zoology', icon: 'fa-frog', teacher: 'Dr. Sinha' } ]
-            },
-            { id: 'neet_drop', category: 'NEET', name: 'NEET UG Dropper Victory', tag: 'Target 720', desc: 'Complete 11th+12th syllabus strictly for NEET NTA.', basicPrice: 399,
-              subjects: [ { name: 'Physics', icon: 'fa-atom', teacher: 'Er. Vivek' }, { name: 'Physical Chem', icon: 'fa-flask', teacher: 'Dr. P. Roy' }, { name: 'Organic Chem', icon: 'fa-vial', teacher: 'M. Patel' }, { name: 'Inorganic Chem', icon: 'fa-flask-vial', teacher: 'S. Gupta' }, { name: 'Botany', icon: 'fa-leaf', teacher: 'Dr. Mukherjee' }, { name: 'Zoology', icon: 'fa-frog', teacher: 'Dr. Sinha' } ]
-            },
-
-            // COMPETITIVE: JEE
-            { id: 'jee_11', category: 'JEE', name: 'IIT-JEE 11th Foundation', tag: 'Engg. Goal', desc: 'Class 11 syllabus + JEE Mains & Adv level.', basicPrice: 299,
-              subjects: [ { name: 'Mathematics', icon: 'fa-square-root-variable', teacher: 'Prof. Verma' }, { name: 'Physics', icon: 'fa-atom', teacher: 'Er. Vivek' }, { name: 'Physical Chem', icon: 'fa-flask', teacher: 'Dr. P. Roy' }, { name: 'Organic Chem', icon: 'fa-vial', teacher: 'M. Patel' } ]
-            },
-            { id: 'jee_drop', category: 'JEE', name: 'IIT-JEE Dropper Momentum', tag: 'Target IIT', desc: 'Advanced Mechanics, Calculus & Physical Chem.', basicPrice: 399,
-              subjects: [ { name: 'Advanced Math', icon: 'fa-square-root-variable', teacher: 'Prof. Verma' }, { name: 'Physics (Mechanics)', icon: 'fa-atom', teacher: 'Er. Vivek' }, { name: 'Physics (Electro)', icon: 'fa-bolt', teacher: 'Er. S. Gupta' }, { name: 'Chemistry Full', icon: 'fa-flask', teacher: 'Dr. P. Roy' } ]
-            },
-
-            // COMPETITIVE: UPSC, BANKING, DEFENSE (From Images)
-            { id: 'upsc_ias', category: 'UPSC', name: 'UPSC Civil Services (IAS/IPS)', tag: 'Govt. Elite', desc: 'Polity, Geography, History, Economics, CSAT.', basicPrice: 499,
-              subjects: [ { name: 'Indian Polity', icon: 'fa-landmark', teacher: 'S.K. Singh' }, { name: 'Geography', icon: 'fa-earth-asia', teacher: 'Dr. Ranjan' }, { name: 'Modern History', icon: 'fa-book-journal-whills', teacher: 'V.K. Mishra' }, { name: 'Indian Economy', icon: 'fa-chart-line', teacher: 'A. Gupta' }, { name: 'Science & Tech', icon: 'fa-microscope', teacher: 'Dr. Roy' }, { name: 'CSAT', icon: 'fa-brain', teacher: 'Prof. Sharma' } ]
-            },
-            { id: 'banking_po', category: 'BANKING', name: 'IBPS PO & SBI PO Batch', tag: 'Bank Officer', desc: 'Quant, Reasoning, English, General Awareness.', basicPrice: 249,
-              subjects: [ { name: 'Quantitative Aptitude', icon: 'fa-calculator', teacher: 'Prof. Sharma' }, { name: 'Reasoning', icon: 'fa-brain', teacher: 'K. Verma' }, { name: 'English Lang', icon: 'fa-book-open', teacher: 'Anjali M.' }, { name: 'General Awareness', icon: 'fa-newspaper', teacher: 'A. Gupta' } ]
-            },
-            { id: 'ssc_cgl', category: 'BANKING', name: 'SSC CGL & RRB NTPC Batch', tag: 'Govt. Jobs', desc: 'Non-technical Group B/C Govt Exam Prep.', basicPrice: 249,
-              subjects: [ { name: 'Maths (Adv & Arith)', icon: 'fa-calculator', teacher: 'Prof. Sharma' }, { name: 'Reasoning', icon: 'fa-brain', teacher: 'K. Verma' }, { name: 'English', icon: 'fa-book-open', teacher: 'Anjali M.' }, { name: 'General Studies', icon: 'fa-globe', teacher: 'V.K. Mishra' } ]
-            },
-            { id: 'nda_cds', category: 'DEFENSE', name: 'NDA & CDS Defense Academy', tag: 'Indian Armed Forces', desc: 'Maths & General Ability Test Specialist.', basicPrice: 249,
-              subjects: [ { name: 'Mathematics', icon: 'fa-calculator', teacher: 'Prof. Sharma' }, { name: 'English', icon: 'fa-book-open', teacher: 'Anjali M.' }, { name: 'General Science', icon: 'fa-flask', teacher: 'Er. Vivek' }, { name: 'General Studies', icon: 'fa-landmark', teacher: 'S.K. Singh' } ]
-            }
-        ];
-
-        // -------------------------------------------------------------
-        // 2. LOGIC VARIABLES
-        // -------------------------------------------------------------
-        let currentSessionId = "";
-        let currentActiveBatch = null;
-        let currentBoardContext = null;
-        let currentActiveSubject = null;
-        let currentActiveTeacher = null;
-        let pendingDeleteId = null;
-
-        // -------------------------------------------------------------
-        // 3. UI RENDER FUNCTIONS
-        // -------------------------------------------------------------
-        function renderBatchesList(batchesArray) {
-            const container = document.getElementById('batchesContainer');
-            container.innerHTML = '';
-            batchesArray.forEach(batch => {
-                container.innerHTML += `
-                    <div class="batch-card">
-                        <span class="batch-tag">${batch.tag}</span>
-                        <div class="batch-title">${batch.name}</div>
-                        <div class="batch-desc">${batch.desc}</div>
-                        <div class="batch-price">₹${batch.basicPrice}/yr</div>
-                        <div class="batch-actions-row">
-                            <button class="btn-b-action btn-buy-now" onclick="openBatchSubjects('${batch.id}')">Buy Now</button>
-                            <button class="btn-b-action btn-details" onclick="openBatchSubjects('${batch.id}')">Details</button>
-                        </div>
-                    </div>`;
-            });
-        }
-
-        function filterCategory(cat, el) {
-            document.querySelectorAll('.cat-chip').forEach(c => c.classList.remove('active'));
-            el.classList.add('active');
-            if(cat === 'ALL') renderBatchesList(all300Batches);
-            else renderBatchesList(all300Batches.filter(b => b.category === cat));
-        }
-
-        function searchBatches() {
-            const query = document.getElementById('batchSearchInput').value.toLowerCase();
-            renderBatchesList(all300Batches.filter(b => b.name.toLowerCase().includes(query) || b.category.toLowerCase().includes(query)));
-        }
-
-        // Navigation
-        function login() {
-            document.getElementById('auth-screen').style.display = 'none';
-            document.getElementById('batches-screen').style.display = 'flex';
-            renderBatchesList(all300Batches);
-        }
-
-        function goBackToBatches() {
-            document.getElementById('subjects-screen').style.display = 'none';
-            document.getElementById('batches-screen').style.display = 'flex';
-        }
-
-        function goBackToSubjects() {
-            document.getElementById('main-dashboard').style.display = 'none';
-            document.getElementById('subjects-screen').style.display = 'flex';
-        }
-
-        function openBatchSubjects(batchId) {
-            const batch = all300Batches.find(b => b.id === batchId);
-            currentActiveBatch = batch.name;
-            currentBoardContext = batch.category;
-            
-            document.getElementById('activeBatchTitle').innerText = batch.name;
-            document.getElementById('batches-screen').style.display = 'none';
-            document.getElementById('subjects-screen').style.display = 'flex';
-
-            const subContainer = document.getElementById('subjectsGridContainer');
-            subContainer.innerHTML = '';
-            batch.subjects.forEach(sub => {
-                subContainer.innerHTML += `
-                    <div class="subject-card" onclick="openSubjectChat('${sub.name}', '${sub.teacher}')">
-                        <div class="subject-icon"><i class="fa-solid ${sub.icon}"></i></div>
-                        <div class="subject-name">${sub.name}</div>
-                        <div class="teacher-name">${sub.teacher}</div>
-                    </div>`;
-            });
-        }
-
-        // -------------------------------------------------------------
-        // 4. CHAT HISTORY (LOCAL STORAGE IMPLEMENTATION)
-        // -------------------------------------------------------------
-        function openSubjectChat(subjectName, teacherName) {
-            currentActiveSubject = subjectName;
-            currentActiveTeacher = teacherName;
-            currentSessionId = `chat_${Date.now()}`;
-            
-            document.getElementById('chatSubjectName').innerText = subjectName;
-            document.getElementById('chatTeacherName').innerText = "By " + teacherName;
-            document.getElementById('chatBoardContext').innerHTML = `<i class="fa-solid fa-shield-halved"></i> ${currentBoardContext} Active`;
-
-            document.getElementById('subjects-screen').style.display = 'none';
-            document.getElementById('main-dashboard').style.display = 'flex';
-            
-            document.getElementById('chatBox').innerHTML = `
-                <div class="msg ai">
-                    <b>Welcome to ${subjectName} Class! 🚀</b><br>
-                    Main aapka subject expert teacher <b>${teacherName}</b> hoon. Aap mujhse strictly <b>${currentBoardContext}</b> syllabus ke according doubts puchiye. Out-of-syllabus answers allowed nahi hain.
-                </div>`;
-            
-            saveChatToLocal(currentSessionId, `${subjectName} - ${currentActiveBatch.split(' ')[0]}`);
-        }
-
-        function startNewChat() {
-            openSubjectChat(currentActiveSubject, currentActiveTeacher);
-            showToast("New Chat Started!", "success");
-        }
-
-        function toggleChat3DotMenu() {
-            const menu = document.getElementById('chat3DotMenu');
-            menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
-        }
-
-        function openChatHistoryModal() {
-            const modal = document.getElementById('historyModal');
-            const container = document.getElementById('historyListContainer');
-            container.innerHTML = '';
-            
-            let chats = JSON.parse(localStorage.getItem('ticbull_chats')) || {};
-            let hasChats = false;
-
-            for(let id in chats) {
-                hasChats = true;
-                container.innerHTML += `
-                    <div class="history-item-modal" onclick="loadChatFromLocal('${id}')">
-                        <div>
-                            <div style="font-weight:700; margin-bottom:4px;">${chats[id].title}</div>
-                            <div style="font-size:10.5px; color:var(--text-muted);">${new Date(parseInt(id.split('_')[1])).toLocaleString()}</div>
-                        </div>
-                        <i class="fa-solid fa-trash del-icon" onclick="confirmDelete(event, '${id}')"></i>
-                    </div>`;
-            }
-
-            if(!hasChats) {
-                container.innerHTML = `<div style="text-align:center; padding:20px; color:var(--text-muted); font-size:13px;">No history found.</div>`;
-            }
-            modal.style.display = 'flex';
-        }
-
-        function saveChatToLocal(id, title) {
-            let chats = JSON.parse(localStorage.getItem('ticbull_chats')) || {};
-            chats[id] = { title: title, html: document.getElementById('chatBox').innerHTML };
-            localStorage.setItem('ticbull_chats', JSON.stringify(chats));
-        }
-
-        function loadChatFromLocal(id) {
-            let chats = JSON.parse(localStorage.getItem('ticbull_chats')) || {};
-            if(chats[id]) {
-                currentSessionId = id;
-                document.getElementById('chatBox').innerHTML = chats[id].html;
-                document.getElementById('historyModal').style.display = 'none';
-                scrollToBottom();
-                showToast("Chat loaded", "success");
-            }
-        }
-
-        function confirmDelete(e, id) {
-            e.stopPropagation();
-            pendingDeleteId = id;
-            document.getElementById('deleteWarningModal').style.display = 'flex';
-        }
-
-        document.getElementById('confirmDeleteBtn').onclick = function() {
-            if(pendingDeleteId) {
-                let chats = JSON.parse(localStorage.getItem('ticbull_chats')) || {};
-                delete chats[pendingDeleteId];
-                localStorage.setItem('ticbull_chats', JSON.stringify(chats));
-                document.getElementById('deleteWarningModal').style.display = 'none';
-                openChatHistoryModal(); // Refresh list
-                if(currentSessionId === pendingDeleteId) {
-                    document.getElementById('chatBox').innerHTML = `<div class="msg ai">Chat Deleted. Start a new topic.</div>`;
-                }
-                showToast("Chat permanently deleted", "success");
-            }
+        // 1. FIREBASE CONFIGURATION (Replace with your Firebase Project Keys later)
+        const firebaseConfig = {
+            apiKey: "YOUR_API_KEY",
+            authDomain: "ticbull-academy.firebaseapp.com",
+            projectId: "ticbull-academy",
+            storageBucket: "ticbull-academy.appspot.com",
+            messagingSenderId: "YOUR_SENDER_ID",
+            appId: "YOUR_APP_ID"
         };
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
 
-        // -------------------------------------------------------------
-        // 5. AI LOGIC & BACKEND PAYLOAD (100% ACCURACY COMMAND)
-        // -------------------------------------------------------------
-        function askAI() {
-            const inputEl = document.getElementById('userInput');
-            const userText = inputEl.value.trim();
-            if(!userText) return;
-
-            const chatBox = document.getElementById('chatBox');
-            chatBox.innerHTML += `<div class="msg user">${userText}</div>`;
-            inputEl.value = '';
-            scrollToBottom();
-
-            // Language Selection
-            const selectedLang = document.getElementById('chatLang').value;
-
-            // 🚀 DUAL API + 100% ACCURACY PAYLOAD (Sent to Python Backend)
-            const payload = {
-                prompt: userText,
-                language: selectedLang,
-                subject_context: currentActiveSubject,
-                board_context: currentBoardContext,
-                teacher_name: currentActiveTeacher,
-                // System Instruction to force Gemini into 100% accuracy and remove watermark
-                system_instruction: `You are TicBull AI, a 100% accurate, highly professional subject expert teacher named ${currentActiveTeacher}. You teach ${currentActiveSubject} strictly according to the ${currentBoardContext} syllabus. Never hallucinate. Never give wrong answers. Do not mention you are an AI model by Google. Answer completely in ${selectedLang} language in a clear, educational tone.`,
-                is_casual_chat: isCasualGreeting(userText) // If true -> route to free Meta API in backend
-            };
-
-            const loadingId = 'load-' + Date.now();
-            chatBox.innerHTML += `<div class="msg ai" id="${loadingId}"><i>${currentActiveTeacher} is verifying syllabus...</i></div>`;
-            scrollToBottom();
-
-            // Simulated Backend Response
+        // 2. SPLASH SCREEN LOGIC
+        window.addEventListener('load', () => {
             setTimeout(() => {
-                const loadElem = document.getElementById(loadingId);
-                if (payload.is_casual_chat) {
-                    loadElem.innerHTML = `<b>${currentActiveTeacher} (Casual Mode):</b> Namaste! Main yahan strictly aapka ${currentActiveSubject} ka syllabus cover karne ke liye hu. Kripya apne exam se related doubt puchiye. <br><small style="color:var(--success-color);">[Free Meta Hook API - 0 Token Used]</small>`;
-                } else {
-                    loadElem.innerHTML = `<b>${currentActiveTeacher} (100% Verified):</b> ${currentBoardContext} board ke according aapke question ka bilkul sateek (accurate) answer ye hai: <br><br> (Detailed concept explained in ${selectedLang}). <br><small style="color:#ef4444;">[Gemini Premium - 1 Doubt Deducted]</small>`;
-                }
-                saveChatToLocal(currentSessionId, currentSessionTitle || currentActiveSubject);
-                scrollToBottom();
-            }, 1000);
+                const splash = document.getElementById('splash-screen');
+                splash.style.opacity = '0';
+                setTimeout(() => splash.style.display = 'none', 500);
+            }, 2500);
+        });
+
+        function showToast(msg) {
+            const toast = document.getElementById('custom-toast');
+            document.getElementById('toast-message').innerText = msg;
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 3000);
         }
 
-        function isCasualGreeting(text) {
-            const casualWords = ['hi', 'hello', 'good morning', 'motivate', 'bore', 'thanks'];
-            return casualWords.some(word => text.toLowerCase().includes(word));
+        // 3. FIREBASE LOGIN LOGIC (Routes to batches.html upon success)
+        function handleFirebaseLogin() {
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value.trim();
+            
+            if(!email || !password) {
+                showToast("Please enter Email and Password");
+                return;
+            }
+
+            // Simulate routing for now until you put real Firebase keys
+            // In real scenario: auth.signInWithEmailAndPassword(email, password)
+            showToast("Authenticating with Firebase...");
+            setTimeout(() => {
+                // Redirect to File 2 (Batches Screen)
+                window.location.href = "batches.html";
+            }, 1500);
         }
-
-        function handleInputKeydown(e) { if(e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); askAI(); } }
-        function scrollToBottom() { setTimeout(() => { const cb = document.getElementById('chatBox'); if(cb) cb.scrollTop = cb.scrollHeight; }, 200); }
-        function showToast(msg, type='success') { const t = document.getElementById('custom-toast'); t.innerHTML = `<i class="fa-solid fa-circle-check"></i> <span>${msg}</span>`; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 3000); }
-
-        window.onload = () => { setTimeout(() => { document.getElementById('splash-screen').style.opacity = '0'; setTimeout(()=> document.getElementById('splash-screen').style.display='none', 500); }, 2000); }
     </script>
 </body>
 </html>
