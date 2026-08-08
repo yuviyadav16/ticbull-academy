@@ -18,7 +18,6 @@
         * { margin:0; padding:0; box-sizing:border-box; font-family:-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; -webkit-tap-highlight-color: transparent; }
         body { background: var(--bg-color); color: var(--text-main); display:flex; flex-direction:column; height: 100vh; overflow: hidden; transition: background 0.3s, color 0.3s; }
 
-        /* CUSTOM TOAST */
         #custom-toast { position: fixed; top: -100px; left: 50%; transform: translateX(-50%); background: var(--card-bg); color: var(--text-main); border: 1px solid var(--accent-color); padding: 12px 24px; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); z-index: 10000; display: flex; align-items: center; gap: 12px; font-size: 13.5px; font-weight: 600; transition: top 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55); }
         #custom-toast.show { top: 30px; }
 
@@ -50,7 +49,6 @@
         .batch-title { font-size: 18px; font-weight: 800; color: var(--text-main); margin-bottom: 8px; line-height: 1.3; }
         .batch-desc { font-size: 13px; color: var(--text-muted); margin-bottom: 20px; line-height: 1.5; }
         
-        /* Removed dashed line, made it a clean solid line */
         .batch-footer { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border-color); padding-top: 15px; margin-top: auto; }
         .batch-price { font-size: 18px; font-weight: 800; color: var(--success-color); }
         .batch-price-sub { font-size: 10px; color: var(--text-muted); display: block; font-weight: 800; text-transform: uppercase; margin-bottom: 2px; }
@@ -128,7 +126,7 @@
 
     <!-- BATCHES LIST -->
     <div class="batches-container" id="batchesList">
-        <!-- Rendered via JavaScript -->
+        <!-- Rendered via JavaScript safely -->
     </div>
 
     <!-- DRAWER MENU -->
@@ -152,7 +150,7 @@
             <p style="font-size:12px; color:var(--text-muted);">Syllabus Subjects & Expert Faculty</p>
             
             <div class="sub-list-container" id="detailsSubjectsList">
-                <!-- Subjects strictly mapped here -->
+                <!-- Subjects mapped here without breaking -->
             </div>
             
             <button class="btn-primary" onclick="openPricingFromDetails()">BUY THIS BATCH</button>
@@ -198,38 +196,42 @@
     </div>
 
     <script>
+        // ---------------------------------------------------------------------------------
         // 1. PERSISTENCE
-        window.addEventListener('DOMContentLoaded', () => {
-            const savedEmail = localStorage.getItem('ticbull_email');
-            const savedToken = localStorage.getItem('ticbull_token');
+        // ---------------------------------------------------------------------------------
+        window.addEventListener('DOMContentLoaded', function() {
+            var savedEmail = localStorage.getItem('ticbull_email');
+            var savedToken = localStorage.getItem('ticbull_token');
             if(!savedEmail || !savedToken) { if(window.location.hostname !== 'localhost') { window.location.href = "index.html"; return; } }
             
-            const isLight = localStorage.getItem('ticbull_theme') === 'light';
+            var isLight = localStorage.getItem('ticbull_theme') === 'light';
             if(isLight) { document.body.classList.add('light-theme'); document.getElementById('themeToggleText').innerText = 'Switch to Dark Mode'; }
         });
 
         function toggleDrawer() { document.getElementById('drawer').classList.toggle('open'); document.getElementById('drawerOverlay').style.display = document.getElementById('drawer').classList.contains('open') ? 'block' : 'none'; }
-        function toggleTheme() { document.body.classList.toggle('light-theme'); const isLight = document.body.classList.contains('light-theme'); localStorage.setItem('ticbull_theme', isLight ? 'light' : 'dark'); document.getElementById('themeToggleText').innerText = isLight ? 'Switch to Dark Mode' : 'Switch to Light Mode'; }
+        function toggleTheme() { document.body.classList.toggle('light-theme'); var isLight = document.body.classList.contains('light-theme'); localStorage.setItem('ticbull_theme', isLight ? 'light' : 'dark'); document.getElementById('themeToggleText').innerText = isLight ? 'Switch to Dark Mode' : 'Switch to Light Mode'; }
         function logoutUser() { localStorage.removeItem('ticbull_token'); window.location.href = "index.html"; }
 
         function playClickSound() {
             if(localStorage.getItem('ticbull_sound') === 'false') return;
-            const AudioContext = window.AudioContext || window.webkitAudioContext;
-            const audioCtx = new AudioContext();
+            var AudioContext = window.AudioContext || window.webkitAudioContext;
+            var audioCtx = new AudioContext();
             if(audioCtx.state === 'suspended') audioCtx.resume();
-            const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain();
+            var osc = audioCtx.createOscillator(); var gain = audioCtx.createGain();
             osc.type = 'sine'; osc.frequency.setValueAtTime(800, audioCtx.currentTime);
             gain.gain.setValueAtTime(0.05, audioCtx.currentTime); gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.1);
             osc.connect(gain); gain.connect(audioCtx.destination); osc.start(); osc.stop(audioCtx.currentTime + 0.1);
         }
         document.addEventListener('click', function(e) { if(e.target.closest('button') || e.target.closest('.drawer-item') || e.target.closest('.cat-chip') || e.target.closest('.tier-card')) playClickSound(); });
 
-        // 2. STRICT SYLLABUS MAPPING 
-        let generatedBatchesCache = [];
-        let selectedBatchObj = null;
-        let selectedTier = 'Pro';
+        // ---------------------------------------------------------------------------------
+        // 2. STRICT SYLLABUS MAPPING (NO MIXUPS)
+        // ---------------------------------------------------------------------------------
+        var generatedBatchesCache = [];
+        var selectedBatchObj = null;
+        var selectedTier = 'Pro';
 
-        const subjectMapping = {
+        var subjectMapping = {
             'Foundation': [
                 { name: 'Mathematics', teacher: 'Mr. HC Verma', icon: 'fa-calculator' },
                 { name: 'Science (Phy/Chem/Bio)', teacher: 'Ms. Anjali', icon: 'fa-flask' },
@@ -300,11 +302,11 @@
             ]
         };
 
-        // FIXED MOBILE PARSING BUG: Used standard string concatenation (+) instead of backticks (`).
+        // EXTREMELY SAFE STRING CONCATENATION (NO BACKTICKS) TO BYPASS MOBILE EDITOR BUGS
         function engineGenerateAllBatches() {
-            let list = [];
+            var list = [];
             
-            const allBoards = [
+            var allBoards = [
                 "CBSE", "CISCE/ICSE", "NIOS", "Bihar Board (BSEB)", "UP Board (UPMSP)", 
                 "Jharkhand Board (JAC)", "West Bengal Board (WBBSE)", "Odisha Board", 
                 "Chhattisgarh Board", "Madhya Pradesh Board", "Rajasthan Board", 
@@ -318,8 +320,8 @@
             ];
 
             allBoards.forEach(function(board, idx) {
-                let cat = board.includes('CBSE') ? 'CBSE' : (board.includes('ICSE') || board.includes('NIOS') ? 'ICSE' : 'STATE');
-                let shortName = board.split(' ')[0];
+                var cat = board.includes('CBSE') ? 'CBSE' : (board.includes('ICSE') || board.includes('NIOS') ? 'ICSE' : 'STATE');
+                var shortName = board.split(' ')[0];
 
                 list.push({ id: 'b_' + idx + '_9', cat: cat, tag: shortName + ' Board', title: board + ' Class 9', type: 'Foundation', desc: 'Complete Foundation Syllabus for Class 9.', p_basic: 199, p_pro: 399, p_max: 799 });
                 list.push({ id: 'b_' + idx + '_10', cat: cat, tag: shortName + ' Board', title: board + ' Class 10', type: 'Foundation', desc: 'Board Target Syllabus for Class 10.', p_basic: 199, p_pro: 399, p_max: 799 });
@@ -348,10 +350,10 @@
 
         generatedBatchesCache = engineGenerateAllBatches();
 
-        // 3. UI RENDERING 
+        // 3. UI RENDERING (SAFE CONCATENATION)
         function renderBatches(arr) {
-            const container = document.getElementById('batchesList');
-            let htmlContent = '';
+            var container = document.getElementById('batchesList');
+            var htmlContent = '';
             
             if(arr.length === 0) {
                 container.innerHTML = '<div style="text-align:center; padding:40px 20px; color:var(--text-muted);">No batches found.</div>'; 
@@ -359,62 +361,59 @@
             }
 
             arr.forEach(function(b) {
-                htmlContent += `
-                    <div class="batch-card">
-                        <span class="batch-tag">${b.tag}</span>
-                        <div class="batch-title">${b.title}</div>
-                        <div class="batch-desc">${b.desc}</div>
-                        
-                        <div class="batch-footer">
-                            <div>
-                                <span class="batch-price-sub">Starting From</span>
-                                <span class="batch-price">₹${b.p_basic}/yr</span>
-                            </div>
-                            <div class="btn-row">
-                                <button class="btn-details" onclick="openDetails('${b.id}')">Details</button>
-                                <button class="btn-buy" onclick="openPricing('${b.id}')">Buy Pass</button>
-                            </div>
-                        </div>
-                    </div>`;
+                htmlContent += '<div class="batch-card">' +
+                    '<span class="batch-tag">' + b.tag + '</span>' +
+                    '<div class="batch-title">' + b.title + '</div>' +
+                    '<div class="batch-desc">' + b.desc + '</div>' +
+                    '<div class="batch-footer">' +
+                        '<div>' +
+                            '<span class="batch-price-sub">Starting From</span>' +
+                            '<span class="batch-price">₹' + b.p_basic + '/yr</span>' +
+                        '</div>' +
+                        '<div class="btn-row">' +
+                            '<button class="btn-details" onclick="openDetails(\'' + b.id + '\')">Details</button>' +
+                            '<button class="btn-buy" onclick="openPricing(\'' + b.id + '\')">Buy Pass</button>' +
+                        '</div>' +
+                    '</div>' +
+                '</div>';
             });
             
             container.innerHTML = htmlContent;
         }
 
         function filterBatches(cat, el) {
-            document.querySelectorAll('.cat-chip').forEach(c => c.classList.remove('active'));
+            document.querySelectorAll('.cat-chip').forEach(function(c) { c.classList.remove('active'); });
             if(el) el.classList.add('active');
             
             if(cat === 'ALL') {
                 renderBatches(generatedBatchesCache);
             } else {
-                renderBatches(generatedBatchesCache.filter(b => b.cat === cat));
+                renderBatches(generatedBatchesCache.filter(function(b) { return b.cat === cat; }));
             }
         }
 
         function handleSearch() {
-            const q = document.getElementById('searchInput').value.toLowerCase();
-            const filtered = generatedBatchesCache.filter(b => b.title.toLowerCase().includes(q) || b.desc.toLowerCase().includes(q));
-            document.querySelectorAll('.cat-chip').forEach(c => c.classList.remove('active'));
+            var q = document.getElementById('searchInput').value.toLowerCase();
+            var filtered = generatedBatchesCache.filter(function(b) { return b.title.toLowerCase().includes(q) || b.desc.toLowerCase().includes(q); });
+            document.querySelectorAll('.cat-chip').forEach(function(c) { c.classList.remove('active'); });
             renderBatches(filtered);
         }
 
         function openDetails(id) {
-            selectedBatchObj = generatedBatchesCache.find(b => b.id === id);
+            selectedBatchObj = generatedBatchesCache.find(function(b) { return b.id === id; });
             document.getElementById('detailsTitle').innerText = selectedBatchObj.title;
             
-            const subs = subjectMapping[selectedBatchObj.type] || subjectMapping['Foundation'];
-            let subsHtml = '';
+            var subs = subjectMapping[selectedBatchObj.type] || subjectMapping['Foundation'];
+            var subsHtml = '';
             
-            subs.forEach(s => {
-                subsHtml += `
-                    <div class="sub-card">
-                        <div class="sub-icon"><i class="fa-solid ${s.icon}"></i></div>
-                        <div class="sub-info">
-                            <h4>${s.name}</h4>
-                            <p><i class="fa-solid fa-chalkboard-user"></i> Faculty: ${s.teacher}</p>
-                        </div>
-                    </div>`;
+            subs.forEach(function(s) {
+                subsHtml += '<div class="sub-card">' +
+                    '<div class="sub-icon"><i class="fa-solid ' + s.icon + '"></i></div>' +
+                    '<div class="sub-info">' +
+                        '<h4>' + s.name + '</h4>' +
+                        '<p><i class="fa-solid fa-chalkboard-user"></i> Faculty: ' + s.teacher + '</p>' +
+                    '</div>' +
+                '</div>';
             });
             
             document.getElementById('detailsSubjectsList').innerHTML = subsHtml;
@@ -427,12 +426,12 @@
         }
 
         function openPricing(id) {
-            selectedBatchObj = generatedBatchesCache.find(b => b.id === id);
+            selectedBatchObj = generatedBatchesCache.find(function(b) { return b.id === id; });
             document.getElementById('pricingBatchTitle').innerText = selectedBatchObj.title;
             
-            document.getElementById('priceBasic').innerText = `₹${selectedBatchObj.p_basic}/yr`;
-            document.getElementById('pricePro').innerText = `₹${selectedBatchObj.p_pro}/yr`;
-            document.getElementById('priceMax').innerText = `₹${selectedBatchObj.p_max}/yr`;
+            document.getElementById('priceBasic').innerText = '₹' + selectedBatchObj.p_basic + '/yr';
+            document.getElementById('pricePro').innerText = '₹' + selectedBatchObj.p_pro + '/yr';
+            document.getElementById('priceMax').innerText = '₹' + selectedBatchObj.p_max + '/yr';
 
             selectTier('Pro'); 
             document.getElementById('pricingModal').style.display = 'flex';
@@ -450,8 +449,8 @@
         }
 
         function proceedToPayment() {
-            let finalPrice = selectedBatchObj.p_pro;
-            let doubts = 50;
+            var finalPrice = selectedBatchObj.p_pro;
+            var doubts = 50;
             if(selectedTier === 'Basic') { finalPrice = selectedBatchObj.p_basic; doubts = 20; }
             if(selectedTier === 'Max Pro') { finalPrice = selectedBatchObj.p_max; doubts = 80; }
 
