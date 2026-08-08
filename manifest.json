@@ -1,4 +1,28 @@
-{
+background_color": "#ffffff",
+  "dir": "ltr",
+  "display": "standalone",
+  "name": "ticbull-academy.vercel",
+  "orientation": "any",
+  "scope": "/",
+  "short_name": "ticbull-academy.vercel",
+  "start_url": "/",
+  "theme_color": "#2563eb",
+  "icons": [
+    {
+      "src": "https://ticbull-academy.vercel.app/logo.png",
+      "type": "image/png",
+      "sizes": "1254x1254",
+      "isSquare": true,
+      "isPng": true,
+      "isWebp": false,
+      "isJpg": false,
+      "width": 1254,
+      "is512x512": false,
+      "is256x256": false,
+      "is192x192": false
+    }
+  ]
+}{
   "name": "TicBull Academy",
   "short_name": "TicBull",
   "start_url": "/",
