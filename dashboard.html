@@ -131,14 +131,21 @@
             <a href="https://x.com/mryuviyadav" target="_blank" class="icon-x"><i class="fa-brands fa-x-twitter"></i></a>
             <a href="https://facebook.com/mryuviyadav" target="_blank" class="icon-fb"><i class="fa-brands fa-facebook"></i></a>
         </div>
-
-        <!-- 🚀 VIDEO ANIMATION PLACEHOLDER -->
-        <div class="video-container">
+        
+        <!-- 🚀 VIDEO ANIMATION PLACEHOLDER WITH SOUND BUTTON -->
+        <div class="video-container" style="position: relative;">
             <video autoplay loop muted playsinline id="bg-video">
-                <source src="animation.mp4" type="video/mp4">
-                <p style="color:var(--text-muted); font-size:12px; text-align:center;">Upload 'animation.mp4' on GitHub.</p>
+                <source src="/animation.mp4" type="video/mp4">
+                <source src="https://raw.githubusercontent.com/yuviyadav16/ticbull-academy/main/animation.mp4" type="video/mp4">
             </video>
+            
+            <!-- Professional Mute/Unmute Button -->
+            <button id="videoSoundBtn" onclick="toggleVideoSound()" style="position: absolute; bottom: 12px; right: 12px; background: rgba(0,0,0,0.6); color: #fff; border: 1px solid rgba(255,255,255,0.2); border-radius: 50%; width: 35px; height: 35px; cursor: pointer; display: flex; align-items: center; justify-content: center; z-index: 20; transition: 0.3s; box-shadow: 0 4px 10px rgba(0,0,0,0.5);">
+                <i class="fa-solid fa-volume-xmark"></i>
+            </button>
         </div>
+
+        
 
         <!-- ACTION CARD -->
         <div class="action-card">
@@ -580,8 +587,23 @@
             if(syllabusItems.length === 0) return list.innerHTML = '<p style="color:var(--text-muted); font-size:12px; text-align:center;">No topics added.</p>';
             syllabusItems.forEach((item, i) => {
                 list.innerHTML += `<div class="syllabus-task ${item.done ? 'completed' : ''}"><input type="checkbox" ${item.done ? 'checked' : ''} onchange="toggleSyllabusItem(${i})"><span>${item.text}</span><i class="fa-solid fa-trash" style="color:#ef4444; font-size:14px; cursor:pointer;" onclick="deleteSyllabusItem(${i})"></i></div>`;
-            });
+        // 🚀 VIDEO SOUND TOGGLE LOGIC
+        function toggleVideoSound() {
+            const vid = document.getElementById('bg-video');
+            const btn = document.getElementById('videoSoundBtn');
+            
+            if (vid.muted) {
+                vid.muted = false;
+                btn.innerHTML = '<i class="fa-solid fa-volume-high" style="color:var(--success-color);"></i>';
+                showToast("Video Sound On", "success");
+            } else {
+                vid.muted = true;
+                btn.innerHTML = '<i class="fa-solid fa-volume-xmark"></i>';
+                showToast("Video Muted", "success");
+            }
         }
+
+                
     </script>
 </body>
 </html>
