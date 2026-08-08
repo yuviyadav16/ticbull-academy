@@ -12,13 +12,11 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     
     <style>
-        /* 100% ORIGINAL CSS VARIABLES & BASE */
         :root { --bg-color: #030712; --card-bg: #0f172a; --accent-color: #2563eb; --accent-glow: rgba(37, 99, 235, 0.45); --text-main: #f8fafc; --text-muted: #94a3b8; --border-color: rgba(255, 255, 255, 0.12); --success-color: #10b981; --gold-color: #f59e0b; --input-bg: #1e293b; --chat-bg: #020617; }
         body.light-theme { --bg-color: #f1f5f9; --card-bg: #ffffff; --text-main: #0f172a; --text-muted: #64748b; --border-color: #cbd5e1; --input-bg: #f8fafc; --chat-bg: #f1f5f9; }
         * { margin:0; padding:0; box-sizing:border-box; font-family:-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; -webkit-tap-highlight-color: transparent; }
         body { background: var(--bg-color); color: var(--text-main); display:flex; flex-direction:column; height: 100vh; overflow: hidden; transition: background 0.3s, color 0.3s; }
 
-        /* CUSTOM TOAST */
         #custom-toast { position: fixed; top: -100px; left: 50%; transform: translateX(-50%); background: var(--card-bg); color: var(--text-main); border: 1px solid var(--accent-color); padding: 12px 24px; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); z-index: 10000; display: flex; align-items: center; gap: 12px; font-size: 13.5px; font-weight: 600; transition: top 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55); }
         #custom-toast.show { top: 30px; }
 
@@ -38,7 +36,7 @@
         .category-scroll { display: flex; gap: 10px; overflow-x: auto; padding: 10px 20px 15px; scrollbar-width: none; background: var(--bg-color); z-index: 40; }
         .category-scroll::-webkit-scrollbar { display: none; }
         .cat-chip { background: var(--card-bg); border: 1px solid var(--border-color); color: var(--text-muted); padding: 8px 18px; border-radius: 20px; font-size: 13px; font-weight: 700; white-space: nowrap; cursor: pointer; transition: 0.2s; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
-        .cat-chip.active { background: #9f1239; color: #fff; border-color: #9f1239; box-shadow: 0 4px 15px rgba(159, 18, 57, 0.4); } /* Premium Red Active Color matching image */
+        .cat-chip.active { background: #9f1239; color: #fff; border-color: #9f1239; box-shadow: 0 4px 15px rgba(159, 18, 57, 0.4); } 
 
         /* BATCHES LIST AREA */
         .batches-container { flex: 1; overflow-y: auto; padding: 5px 20px 20px; display: flex; flex-direction: column; gap: 16px; }
@@ -46,7 +44,7 @@
         /* CLEAN PROFESSIONAL BATCH CARD */
         .batch-card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 20px; padding: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); transition: 0.3s; position: relative; overflow: hidden; display: flex; flex-direction: column; }
         .batch-card::before { content:''; position:absolute; top:0; left:0; width:5px; height:100%; background: #9f1239; border-radius: 20px 0 0 20px; }
-        .batch-tag { background: rgba(16, 185, 129, 0.15); color: var(--success-color); padding: 4px 10px; border-radius: 8px; font-size: 10px; font-weight: 800; display: inline-block; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.5px; border: 1px solid rgba(16, 185, 129, 0.3); align-self: flex-start; }
+        .batch-tag { background: rgba(16, 185, 129, 0.15); color: var(--success-color); padding: 5px 12px; border-radius: 8px; font-size: 10.5px; font-weight: 800; display: inline-block; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.5px; border: 1px solid rgba(16, 185, 129, 0.3); align-self: flex-start; }
         .batch-title { font-size: 18px; font-weight: 800; color: var(--text-main); margin-bottom: 8px; line-height: 1.3; }
         .batch-desc { font-size: 13px; color: var(--text-muted); margin-bottom: 20px; line-height: 1.5; }
         
@@ -60,7 +58,15 @@
         .btn-buy { background: #9f1239; color: #fff; font-weight: 700; padding: 10px 16px; border: none; border-radius: 12px; cursor: pointer; font-size: 13px; box-shadow: 0 4px 15px rgba(159, 18, 57, 0.4); transition: 0.2s; }
         .btn-buy:active { transform: scale(0.95); }
 
-        /* MODALS & OVERLAYS */
+        /* DRAWER MENU */
+        .drawer-overlay { position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.75); z-index:3000; display:none; }
+        .drawer { position:fixed; top:0; left:-320px; width:320px; height:100%; background:var(--card-bg); border-right:1px solid var(--border-color); z-index:3001; transition:0.3s; padding:20px; display:flex; flex-direction:column; overflow-y:auto; }
+        .drawer.open { left:0; }
+        .drawer-header { display:flex; justify-content:space-between; align-items:center; padding-bottom:14px; border-bottom:1px solid var(--border-color); margin-bottom:14px; }
+        .drawer-item { padding:14px 16px; border-radius:12px; color:var(--text-main); font-size:14.5px; font-weight:600; display:flex; align-items:center; gap:14px; cursor:pointer; margin-bottom:8px; transition:0.2s; }
+        .drawer-item:hover { background:var(--input-bg); }
+
+        /* MODALS */
         .modal-overlay { position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); z-index:2000; display:none; justify-content:center; align-items:center; padding:16px; backdrop-filter: blur(5px); }
         .modal-card { background:var(--card-bg); border:1px solid var(--border-color); border-radius:24px; padding:26px; max-width:420px; width:100%; text-align:left; position:relative; box-shadow: 0 20px 50px rgba(0,0,0,0.5); animation: popIn 0.3s ease; max-height: 90vh; display: flex; flex-direction: column; }
         @keyframes popIn { 0% { opacity:0; transform:scale(0.8) translateY(10px); } 100% { opacity:1; transform:scale(1) translateY(0); } }
@@ -84,14 +90,6 @@
         
         .btn-primary { width:100%; background: #9f1239; color:#fff; font-weight:800; padding:16px; border:none; border-radius:14px; cursor:pointer; font-size:15px; margin-top:15px; transition:0.2s; box-shadow:0 8px 20px rgba(159, 18, 57, 0.4); }
         .btn-primary:active { transform: scale(0.97); }
-
-        /* DRAWER MENU (Minimal as requested) */
-        .drawer-overlay { position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.75); z-index:3000; display:none; }
-        .drawer { position:fixed; top:0; left:-320px; width:320px; height:100%; background:var(--card-bg); border-right:1px solid var(--border-color); z-index:3001; transition:0.3s; padding:20px; display:flex; flex-direction:column; overflow-y:auto; }
-        .drawer.open { left:0; }
-        .drawer-header { display:flex; justify-content:space-between; align-items:center; padding-bottom:14px; border-bottom:1px solid var(--border-color); margin-bottom:14px; }
-        .drawer-item { padding:14px 16px; border-radius:12px; color:var(--text-main); font-size:14.5px; font-weight:600; display:flex; align-items:center; gap:14px; cursor:pointer; margin-bottom:8px; transition:0.2s; }
-        .drawer-item:hover { background:var(--input-bg); }
     </style>
 </head>
 <body>
@@ -113,15 +111,16 @@
     </div>
 
     <div class="category-scroll" id="filterContainer">
-        <div class="cat-chip active" onclick="filterBatches('ALL', this)">All</div>
-        <div class="cat-chip" onclick="filterBatches('CBSE', this)">CBSE</div>
+        <div class="cat-chip active" onclick="filterBatches('ALL', this)">All Batches</div>
+        <div class="cat-chip" onclick="filterBatches('CBSE', this)">CBSE Board</div>
         <div class="cat-chip" onclick="filterBatches('ICSE', this)">ICSE/NIOS</div>
         <div class="cat-chip" onclick="filterBatches('STATE', this)">State Boards</div>
         <div class="cat-chip" onclick="filterBatches('NEET', this)">NEET (Medical)</div>
         <div class="cat-chip" onclick="filterBatches('JEE', this)">JEE (Engg.)</div>
-        <div class="cat-chip" onclick="filterBatches('UPSC', this)">UPSC & Govt.</div>
-        <div class="cat-chip" onclick="filterBatches('LAW_COMM', this)">Law/Commerce</div>
-        <div class="cat-chip" onclick="filterBatches('DEFENSE', this)">Defense</div>
+        <div class="cat-chip" onclick="filterBatches('UPSC', this)">UPSC & PCS</div>
+        <div class="cat-chip" onclick="filterBatches('BANKING', this)">Banking & SSC</div>
+        <div class="cat-chip" onclick="filterBatches('DEFENSE', this)">Defense (NDA)</div>
+        <div class="cat-chip" onclick="filterBatches('LAW', this)">Law & CUET</div>
     </div>
 
     <!-- BATCHES LIST -->
@@ -165,16 +164,16 @@
             <p style="font-size:13px; color:var(--text-muted); margin-bottom:20px;" id="pricingBatchTitle">Batch Name</p>
 
             <div class="tier-card" id="tierBasic" onclick="selectTier('Basic')">
-                <div class="tier-title"><span>Basic Pass</span> <span class="tier-price" id="priceBasic">₹499</span></div>
+                <div class="tier-title"><span>Basic Pass</span> <span class="tier-price" id="priceBasic">₹199</span></div>
                 <div class="tier-features">
                     • <strong>20 Doubts / Day</strong><br>
                     • Complete Syllabus Access<br>
-                    • Chapter Notes & MCQs
+                    • Chapter Notes & Quizzes
                 </div>
             </div>
 
             <div class="tier-card selected" id="tierPro" onclick="selectTier('Pro')">
-                <div class="tier-title"><span>Pro Pass</span> <span class="tier-price" id="pricePro">₹999</span></div>
+                <div class="tier-title"><span>Pro Pass</span> <span class="tier-price" id="pricePro">₹399</span></div>
                 <div class="tier-features">
                     • <strong>50 Doubts / Day</strong><br>
                     • High Speed AI Engine<br>
@@ -183,11 +182,11 @@
             </div>
 
             <div class="tier-card" id="tierMax" onclick="selectTier('Max Pro')">
-                <div class="tier-title"><span>Max Pro Pass</span> <span class="tier-price" id="priceMax">₹1499</span></div>
+                <div class="tier-title"><span>Max Pro Pass</span> <span class="tier-price" id="priceMax">₹799</span></div>
                 <div class="tier-features">
                     • <strong>80 Doubts / Day</strong><br>
                     • Unlimited Video Generation<br>
-                    • Mentorship & Career Guidance
+                    • Mentorship & PDF Export
                 </div>
             </div>
 
@@ -197,24 +196,21 @@
 
     <script>
         // ---------------------------------------------------------------------------------
-        // 1. PERSISTENCE & SECURITY
+        // 1. PERSISTENCE
         // ---------------------------------------------------------------------------------
         window.addEventListener('DOMContentLoaded', () => {
             const savedEmail = localStorage.getItem('ticbull_email');
             const savedToken = localStorage.getItem('ticbull_token');
             if(!savedEmail || !savedToken) { if(window.location.hostname !== 'localhost') { window.location.href = "index.html"; return; } }
-            applySavedSettings();
-        });
-
-        function applySavedSettings() {
+            
             const isLight = localStorage.getItem('ticbull_theme') === 'light';
             if(isLight) { document.body.classList.add('light-theme'); document.getElementById('themeToggleText').innerText = 'Switch to Dark Mode'; }
-        }
+        });
+
         function toggleDrawer() { document.getElementById('drawer').classList.toggle('open'); document.getElementById('drawerOverlay').style.display = document.getElementById('drawer').classList.contains('open') ? 'block' : 'none'; }
         function toggleTheme() { document.body.classList.toggle('light-theme'); const isLight = document.body.classList.contains('light-theme'); localStorage.setItem('ticbull_theme', isLight ? 'light' : 'dark'); document.getElementById('themeToggleText').innerText = isLight ? 'Switch to Dark Mode' : 'Switch to Light Mode'; }
         function logoutUser() { localStorage.removeItem('ticbull_token'); window.location.href = "index.html"; }
 
-        // Audio Engine
         function playClickSound() {
             if(localStorage.getItem('ticbull_sound') === 'false') return;
             const AudioContext = window.AudioContext || window.webkitAudioContext;
@@ -227,9 +223,8 @@
         }
         document.addEventListener('click', function(e) { if(e.target.closest('button') || e.target.closest('.drawer-item') || e.target.closest('.cat-chip') || e.target.closest('.tier-card')) playClickSound(); });
 
-
         // ---------------------------------------------------------------------------------
-        // 2. 100% STRICT SYLLABUS MAPPING (NO SHORTCUTS - ZERO ERRORS)
+        // 2. STRICT SYLLABUS MAPPING (NO MIXUPS)
         // ---------------------------------------------------------------------------------
         let generatedBatchesCache = [];
         let selectedBatchObj = null;
@@ -240,33 +235,46 @@
                 { name: 'Mathematics', teacher: 'Mr. HC Verma', icon: 'fa-calculator' },
                 { name: 'Science (Phy/Chem/Bio)', teacher: 'Ms. Anjali', icon: 'fa-flask' },
                 { name: 'Social Science (His/Geo/Pol/Eco)', teacher: 'Mr. Bipin', icon: 'fa-earth-americas' },
-                { name: 'English & Hindi', teacher: 'Ms. Riya & Mr. Tiwari', icon: 'fa-book-open' }
+                { name: 'English', teacher: 'Ms. Riya', icon: 'fa-book-open' },
+                { name: 'Hindi', teacher: 'Mr. Tiwari', icon: 'fa-language' }
             ],
-            'PCM': [ // STRICTLY FOR JEE & 11-12 SCIENCE (NO BIOLOGY)
+            'PCM': [ // STRICTLY FOR JEE & SCIENCE
                 { name: 'Physics', teacher: 'Mr. HC Verma', icon: 'fa-atom' },
                 { name: 'Chemistry', teacher: 'Mr. Das', icon: 'fa-vial' },
                 { name: 'Mathematics', teacher: 'Mr. Sharma', icon: 'fa-square-root-variable' },
                 { name: 'English', teacher: 'Ms. Riya', icon: 'fa-book-open' }
             ],
-            'PCB': [ // STRICTLY FOR NEET & 11-12 MEDICAL (NO MATHS)
+            'PCB': [ // STRICTLY FOR NEET & MEDICAL
                 { name: 'Physics', teacher: 'Mr. HC Verma', icon: 'fa-atom' },
                 { name: 'Chemistry', teacher: 'Mr. Das', icon: 'fa-vial' },
-                { name: 'Biology (Botany & Zoology)', teacher: 'Ms. Priya', icon: 'fa-dna' },
+                { name: 'Botany', teacher: 'Ms. Kavita', icon: 'fa-leaf' },
+                { name: 'Zoology', teacher: 'Ms. Priya', icon: 'fa-frog' },
                 { name: 'English', teacher: 'Ms. Riya', icon: 'fa-book-open' }
             ],
             'Commerce': [
                 { name: 'Accountancy', teacher: 'Mr. Bansal', icon: 'fa-file-invoice-dollar' },
                 { name: 'Business Studies', teacher: 'Ms. Pooja', icon: 'fa-briefcase' },
                 { name: 'Economics', teacher: 'Mr. Jain', icon: 'fa-chart-line' },
-                { name: 'Mathematics / Applied Maths', teacher: 'Mr. Sharma', icon: 'fa-calculator' },
+                { name: 'Mathematics', teacher: 'Mr. Sharma', icon: 'fa-calculator' },
                 { name: 'English', teacher: 'Ms. Riya', icon: 'fa-book-open' }
             ],
             'Arts': [
                 { name: 'History', teacher: 'Mr. Bipin', icon: 'fa-landmark' },
                 { name: 'Geography', teacher: 'Ms. Majid', icon: 'fa-map' },
                 { name: 'Political Science', teacher: 'Mr. Laxmikanth', icon: 'fa-scale-balanced' },
-                { name: 'Economics / Sociology', teacher: 'Ms. Neha', icon: 'fa-users' },
+                { name: 'Economics', teacher: 'Mr. Jain', icon: 'fa-chart-line' },
                 { name: 'English', teacher: 'Ms. Riya', icon: 'fa-book-open' }
+            ],
+            'JEE': [
+                { name: 'Advanced Physics', teacher: 'Mr. HC Verma', icon: 'fa-atom' },
+                { name: 'Physical & Organic Chemistry', teacher: 'Mr. Das', icon: 'fa-vial' },
+                { name: 'Advanced Mathematics', teacher: 'Mr. Sharma', icon: 'fa-square-root-variable' }
+            ],
+            'NEET': [
+                { name: 'Medical Physics', teacher: 'Mr. HC Verma', icon: 'fa-atom' },
+                { name: 'Chemistry (Org/Inorg/Phy)', teacher: 'Mr. Das', icon: 'fa-vial' },
+                { name: 'Botany', teacher: 'Ms. Kavita', icon: 'fa-leaf' },
+                { name: 'Zoology', teacher: 'Ms. Priya', icon: 'fa-frog' }
             ],
             'UPSC': [
                 { name: 'Polity & Governance', teacher: 'Mr. Laxmikanth', icon: 'fa-scale-balanced' },
@@ -285,7 +293,7 @@
                 { name: 'Quantitative Aptitude', teacher: 'Mr. Sharma', icon: 'fa-calculator' },
                 { name: 'Reasoning Ability', teacher: 'Mr. Kumar', icon: 'fa-brain' },
                 { name: 'English Language', teacher: 'Ms. Riya', icon: 'fa-book-open' },
-                { name: 'General Awareness', teacher: 'Mr. Jain', icon: 'fa-money-bill-trend-up' }
+                { name: 'General/Banking Awareness', teacher: 'Mr. Jain', icon: 'fa-money-bill-trend-up' }
             ],
             'Defense': [
                 { name: 'NDA Mathematics', teacher: 'Mr. Sharma', icon: 'fa-square-root-variable' },
@@ -298,7 +306,7 @@
         function engineGenerateAllBatches() {
             let list = [];
             
-            // A. SCHOOL BOARDS (31 Boards mapped precisely)
+            // A. SCHOOL BOARDS (31 Boards mapped precisely with Split Classes)
             const allBoards = [
                 "CBSE", "CISCE/ICSE", "NIOS", "Bihar Board (BSEB)", "UP Board (UPMSP)", 
                 "Jharkhand Board (JAC)", "West Bengal Board (WBBSE)", "Odisha Board", 
@@ -316,34 +324,32 @@
                 let cat = board.includes('CBSE') ? 'CBSE' : (board.includes('ICSE') || board.includes('NIOS') ? 'ICSE' : 'STATE');
                 let shortName = board.split(' ')[0];
 
-                // Found (9-10) -> Uses 'Foundation'
-                list.push({ id: `b_${idx}_10`, cat: cat, tag: `${shortName} Board`, title: `${board} Class 9 & 10`, type: 'Foundation', desc: `Complete Foundation Syllabus for ${shortName} Board.`, p_basic: 499, p_pro: 999, p_max: 1499 });
+                // SPLIT CLASS 9
+                list.push({ id: `b_${idx}_9`, cat: cat, tag: `${shortName} Board`, title: `${board} Class 9`, type: 'Foundation', desc: `Complete Foundation Syllabus for Class 9.`, p_basic: 199, p_pro: 399, p_max: 799 });
                 
-                // Sci PCM (11-12) -> Uses 'PCM'
-                list.push({ id: `b_${idx}_pcm`, cat: cat, tag: `${shortName} Board`, title: `${board} Class 11 & 12 Science (PCM)`, type: 'PCM', desc: `Physics, Chemistry, Maths for ${shortName} Board.`, p_basic: 799, p_pro: 1499, p_max: 1999 });
+                // SPLIT CLASS 10
+                list.push({ id: `b_${idx}_10`, cat: cat, tag: `${shortName} Board`, title: `${board} Class 10`, type: 'Foundation', desc: `Board Target Syllabus for Class 10.`, p_basic: 199, p_pro: 399, p_max: 799 });
                 
-                // Sci PCB (11-12) -> Uses 'PCB'
-                list.push({ id: `b_${idx}_pcb`, cat: cat, tag: `${shortName} Board`, title: `${board} Class 11 & 12 Science (PCB)`, type: 'PCB', desc: `Physics, Chemistry, Biology for ${shortName} Board.`, p_basic: 799, p_pro: 1499, p_max: 1999 });
+                // CLASS 11 (SPLIT STREAMS)
+                list.push({ id: `b_${idx}_11pcm`, cat: cat, tag: `${shortName} Board`, title: `${board} Class 11 Science (PCM)`, type: 'PCM', desc: `Physics, Chemistry, Maths for Class 11.`, p_basic: 299, p_pro: 599, p_max: 999 });
+                list.push({ id: `b_${idx}_11pcb`, cat: cat, tag: `${shortName} Board`, title: `${board} Class 11 Science (PCB)`, type: 'PCB', desc: `Physics, Chemistry, Biology for Class 11.`, p_basic: 299, p_pro: 599, p_max: 999 });
+                list.push({ id: `b_${idx}_11com`, cat: cat, tag: `${shortName} Board`, title: `${board} Class 11 Commerce`, type: 'Commerce', desc: `Accountancy, BST, Economics for Class 11.`, p_basic: 299, p_pro: 599, p_max: 999 });
+                list.push({ id: `b_${idx}_11art`, cat: cat, tag: `${shortName} Board`, title: `${board} Class 11 Humanities`, type: 'Arts', desc: `History, Geography, Polity for Class 11.`, p_basic: 299, p_pro: 599, p_max: 999 });
 
-                // Com (11-12) -> Uses 'Commerce'
-                list.push({ id: `b_${idx}_com`, cat: cat, tag: `${shortName} Board`, title: `${board} Class 11 & 12 Commerce`, type: 'Commerce', desc: `Accountancy, BST, Economics for ${shortName} Board.`, p_basic: 799, p_pro: 1499, p_max: 1999 });
-                
-                // Arts (11-12) -> Uses 'Arts'
-                list.push({ id: `b_${idx}_art`, cat: cat, tag: `${shortName} Board`, title: `${board} Class 11 & 12 Humanities`, type: 'Arts', desc: `History, Geography, Polity for ${shortName} Board.`, p_basic: 799, p_pro: 1499, p_max: 1999 });
+                // CLASS 12 (SPLIT STREAMS)
+                list.push({ id: `b_${idx}_12pcm`, cat: cat, tag: `${shortName} Board`, title: `${board} Class 12 Science (PCM)`, type: 'PCM', desc: `Physics, Chemistry, Maths for Class 12 Boards.`, p_basic: 299, p_pro: 599, p_max: 999 });
+                list.push({ id: `b_${idx}_12pcb`, cat: cat, tag: `${shortName} Board`, title: `${board} Class 12 Science (PCB)`, type: 'PCB', desc: `Physics, Chemistry, Biology for Class 12 Boards.`, p_basic: 299, p_pro: 599, p_max: 999 });
+                list.push({ id: `b_${idx}_12com`, cat: cat, tag: `${shortName} Board`, title: `${board} Class 12 Commerce`, type: 'Commerce', desc: `Accountancy, BST, Economics for Class 12 Boards.`, p_basic: 299, p_pro: 599, p_max: 999 });
+                list.push({ id: `b_${idx}_12art`, cat: cat, tag: `${shortName} Board`, title: `${board} Class 12 Humanities`, type: 'Arts', desc: `History, Geography, Polity for Class 12 Boards.`, p_basic: 299, p_pro: 599, p_max: 999 });
             });
 
-            // B. COMPETITIVE EXAMS (Higher Tier)
-            const comps = [
-                { cat: 'ENGINEERING', tag: 'IIT-JEE', title: 'JEE Main & Advanced 2027/28', type: 'PCM', desc: 'Advanced Physics, Chemistry, Maths (No Biology).', p_basic: 999, p_pro: 1999, p_max: 2999 },
-                { cat: 'MEDICAL', tag: 'NEET Target', title: 'NEET-UG 2027/28 Preparation', type: 'PCB', desc: 'Physical/Organic Chem, Botany, Zoology (No Maths).', p_basic: 999, p_pro: 1999, p_max: 2999 },
-                { cat: 'GOVT', tag: 'UPSC Goal', title: 'UPSC Civil Services Foundation', type: 'UPSC', desc: 'Polity, Geography, History, Economics, CSAT.', p_basic: 999, p_pro: 1999, p_max: 2999 },
-                { cat: 'LAW_COMM', tag: 'NLU Goal', title: 'CLAT & Law Entrance', type: 'Law', desc: 'Legal Reasoning, GK, English, Logical Reasoning.', p_basic: 899, p_pro: 1799, p_max: 2499 },
-                { cat: 'LAW_COMM', tag: 'CA/CS', title: 'CA Foundation Mastery', type: 'Commerce', desc: 'Accounting, Mercantile Law, Economics.', p_basic: 899, p_pro: 1799, p_max: 2499 },
-                { cat: 'DEFENSE', tag: 'Armed Forces', title: 'NDA & NA Shaurya Batch', type: 'Defense', desc: 'NDA Maths, Physics, GK, English.', p_basic: 799, p_pro: 1499, p_max: 1999 },
-                { cat: 'GOVT', tag: 'Govt Job', title: 'SSC CGL & Banking (PO/Clerk)', type: 'Banking', desc: 'Quantitative Aptitude, Reasoning, English, GA.', p_basic: 799, p_pro: 1499, p_max: 1999 }
-            ];
-
-            comps.forEach((c, i) => { list.push({ id: `c_${i}`, cat: c.cat, tag: c.tag, title: c.title, type: c.type, desc: c.desc, p_basic: c.p_basic, p_pro: c.p_pro, p_max: c.p_max }); });
+            // B. COMPETITIVE EXAMS (Perfect filtering mapping)
+            list.push({ id: 'c_jee', cat: 'JEE', tag: 'IIT-JEE', title: 'JEE Main & Advanced 2027/28', type: 'JEE', desc: 'Advanced Physics, Chemistry, Maths (No Biology).', p_basic: 499, p_pro: 999, p_max: 1499 });
+            list.push({ id: 'c_neet', cat: 'NEET', tag: 'NEET Target', title: 'NEET-UG 2027/28 Preparation', type: 'NEET', desc: 'Physical/Organic Chem, Botany, Zoology (No Maths).', p_basic: 499, p_pro: 999, p_max: 1499 });
+            list.push({ id: 'c_upsc', cat: 'UPSC', tag: 'UPSC Goal', title: 'UPSC Civil Services Foundation', type: 'UPSC', desc: 'Polity, Geography, History, Economics, CSAT.', p_basic: 399, p_pro: 799, p_max: 1199 });
+            list.push({ id: 'c_bank', cat: 'BANKING', tag: 'Govt Job', title: 'SSC CGL & Banking (PO/Clerk)', type: 'Banking', desc: 'Quantitative Aptitude, Reasoning, English, GA.', p_basic: 399, p_pro: 799, p_max: 1199 });
+            list.push({ id: 'c_def', cat: 'DEFENSE', tag: 'Armed Forces', title: 'NDA & NA Shaurya Batch', type: 'Defense', desc: 'NDA Maths, Physics, GK, English.', p_basic: 399, p_pro: 799, p_max: 1199 });
+            list.push({ id: 'c_law', cat: 'LAW', tag: 'NLU Goal', title: 'CLAT & Law Entrance', type: 'Law', desc: 'Legal Reasoning, GK, English, Logical Reasoning.', p_basic: 399, p_pro: 799, p_max: 1199 });
 
             return list;
         }
@@ -351,7 +357,7 @@
         generatedBatchesCache = engineGenerateAllBatches();
 
         // ---------------------------------------------------------------------------------
-        // 3. UI RENDERING & ROUTING TO PAYMENT
+        // 3. UI RENDERING & ROUTING
         // ---------------------------------------------------------------------------------
         function renderBatches(arr) {
             const container = document.getElementById('batchesList');
@@ -385,10 +391,13 @@
         function filterBatches(cat, el) {
             document.querySelectorAll('.cat-chip').forEach(c => c.classList.remove('active'));
             if(el) el.classList.add('active');
-            if(cat === 'ALL') renderBatches(generatedBatchesCache);
-            else if(cat === 'JEE') renderBatches(generatedBatchesCache.filter(b => b.cat === 'ENGINEERING'));
-            else if(cat === 'NEET') renderBatches(generatedBatchesCache.filter(b => b.cat === 'MEDICAL'));
-            else renderBatches(generatedBatchesCache.filter(b => b.cat === cat));
+            
+            if(cat === 'ALL') {
+                renderBatches(generatedBatchesCache);
+            } else {
+                // Strict mapping guarantees 100% correct filter results
+                renderBatches(generatedBatchesCache.filter(b => b.cat === cat));
+            }
         }
 
         function handleSearch() {
@@ -398,12 +407,10 @@
             renderBatches(filtered);
         }
 
-        // VIEW DETAILS MODAL
         function openDetails(id) {
             selectedBatchObj = generatedBatchesCache.find(b => b.id === id);
             document.getElementById('detailsTitle').innerText = selectedBatchObj.title;
             
-            // Fetch STRICT subjects based on exact type
             const subs = subjectMapping[selectedBatchObj.type] || subjectMapping['Foundation'];
             const listContainer = document.getElementById('detailsSubjectsList');
             listContainer.innerHTML = '';
@@ -427,7 +434,6 @@
             openPricing(selectedBatchObj.id);
         }
 
-        // PRICING MODAL
         function openPricing(id) {
             selectedBatchObj = generatedBatchesCache.find(b => b.id === id);
             document.getElementById('pricingBatchTitle').innerText = selectedBatchObj.title;
@@ -436,7 +442,7 @@
             document.getElementById('pricePro').innerText = `₹${selectedBatchObj.p_pro}/yr`;
             document.getElementById('priceMax').innerText = `₹${selectedBatchObj.p_max}/yr`;
 
-            selectTier('Pro'); // Default selection
+            selectTier('Pro'); // Default
             document.getElementById('pricingModal').style.display = 'flex';
         }
 
@@ -457,7 +463,6 @@
             if(selectedTier === 'Basic') { finalPrice = selectedBatchObj.p_basic; doubts = 20; }
             if(selectedTier === 'Max Pro') { finalPrice = selectedBatchObj.p_max; doubts = 80; }
 
-            // Save details for Payment page (File 4)
             sessionStorage.setItem('tb_checkout_id', selectedBatchObj.id);
             sessionStorage.setItem('tb_checkout_title', selectedBatchObj.title);
             sessionStorage.setItem('tb_checkout_tier', selectedTier);
@@ -467,7 +472,7 @@
             window.location.href = 'payment.html';
         }
 
-        // Initialize
+        // INIT
         renderBatches(generatedBatchesCache);
     </script>
 </body>
