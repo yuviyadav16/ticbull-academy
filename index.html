@@ -135,10 +135,9 @@
         .auth-footer-socials a { color: var(--text-muted); font-size: 16px; transition: 0.2s; }
         .auth-footer-socials a:hover { color: var(--accent-color); transform: scale(1.1); }
 
-        /* 🚀 NEW PROFESSIONAL BATCHES DASHBOARD SCREEN (UPDATED) */
+        /* 🚀 PROFESSIONAL BATCHES DASHBOARD SCREEN */
         #batches-screen { display:none; flex-direction:column; height:100%; max-width:850px; margin:0 auto; width:100%; padding:0; overflow-y:auto; }
         
-        /* New Hero Banner for Batches */
         .hero-banner { background: linear-gradient(135deg, var(--accent-color), #1e3a8a); padding: 35px 20px; text-align: center; border-bottom-left-radius: 35px; border-bottom-right-radius: 35px; margin-bottom: 20px; position:relative; box-shadow: 0 10px 20px rgba(0,0,0,0.3); }
         .hero-banner h1 { font-size: 26px; font-weight: 800; color: #fff; margin-bottom: 8px; text-shadow: 0 4px 10px rgba(0,0,0,0.3); }
         .hero-banner p { font-size: 13.5px; color: rgba(255,255,255,0.9); margin-bottom: 0; }
@@ -165,7 +164,6 @@
         .batch-footer { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border-color); padding-top: 15px; }
         .batch-price { font-size: 17px; font-weight: 800; color: var(--success-color); }
         
-        /* 3 Buttons Layout */
         .batch-actions-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-top: 12px; }
         .btn-b-action { text-align:center; padding: 10px 5px; border-radius: 12px; font-size: 12px; font-weight: 700; cursor: pointer; transition: 0.2s; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:4px; }
         .btn-buy-now { background: var(--accent-color); color: #fff; border: none; box-shadow: 0 4px 15px var(--accent-glow); }
@@ -187,7 +185,7 @@
         .subject-name { font-size: 15px; font-weight: 800; color: var(--text-main); margin-bottom: 8px; }
         .teacher-name { font-size: 11.5px; color: var(--gold-color); font-weight: 600; background: rgba(245, 158, 11, 0.1); padding: 5px 10px; border-radius: 8px; display:inline-block; border: 1px solid rgba(245, 158, 11, 0.2); }
 
-        /* MAIN CHAT DASHBOARD (UPDATED WITH 3 DOT MENU) */
+        /* MAIN CHAT DASHBOARD */
         #main-dashboard { display:none; flex-direction:column; height:100%; max-width:850px; margin:0 auto; width:100%; position:relative; padding:10px; }
         .header { display:flex; justify-content:space-between; align-items:center; padding:12px 16px; background:var(--card-bg); border-radius:20px; border:1px solid var(--border-color); margin-bottom:8px; flex-shrink:0; box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
         .header-brand { display:flex; align-items:center; gap:12px; }
@@ -373,7 +371,6 @@
             <span class="forgot-link" onclick="openForgotModal()"><i class="fa-solid fa-key"></i> Forgot Password?</span>
 
             <button class="btn-primary" id="authSubmitBtn" onclick="initiateAuthWithOTP()">SEND VERIFICATION OTP</button>
-            <button class="btn-primary" onclick="bypassAuthForDemo()" style="background:transparent; border:1px solid var(--border-color); color:var(--text-main); box-shadow:none; margin-top:12px;">Bypass Login (Demo View)</button>
             
             <div class="auth-footer-support">
                 <p>Need Help? Contact TicBull Support</p>
@@ -768,80 +765,98 @@
         let selectedBatchForModal = null;
         let selectedTierType = 'PRO';
 
-        // 🚀 DYNAMIC BATCH GENERATOR ENGINE (Covering CBSE, Bihar Board, NEET, JEE etc.)
+        // 🚀 DYNAMIC BATCH GENERATOR ENGINE (Covering 9th/10th All Subjects + NEET/JEE/UPSC)
         function generate300Batches() {
             const list = [];
             
-            // 1. CBSE Board
+            // ==========================================
+            // 1. CBSE BOARD (Class 9 & 10 with ALL Subjects)
+            // ==========================================
             list.push({
-                id: 'cbse_9', category: 'CBSE', name: 'CBSE Class 9th Topper Batch', tag: '13 Dedicated Experts', desc: 'Complete syllabus coverage according to strict CBSE Board examination guidelines.', basicPrice: 199, proPrice: 499, maxProPrice: 999,
+                id: 'cbse_9', category: 'CBSE', name: 'CBSE Class 9th Topper Batch', tag: '12 Dedicated Experts', desc: 'Complete Class 9 syllabus covering all 12 major subjects strictly as per CBSE guidelines.', basicPrice: 199, proPrice: 499, maxProPrice: 999,
                 subjects: [
-                    { name: 'Mathematics', icon: 'fa-calculator', teacher: 'Prof. R.K. Sharma' },
-                    { name: 'Science', icon: 'fa-flask', teacher: 'Dr. A. Verma' },
-                    { name: 'Social Science', icon: 'fa-globe', teacher: 'V.K. Mishra' },
-                    { name: 'English', icon: 'fa-book-open', teacher: 'Anjali Mehta' },
-                    { name: 'Hindi', icon: 'fa-language', teacher: 'R.B. Pandey' }
-                ]
-            });
-            list.push({
-                id: 'cbse_10', category: 'CBSE', name: 'CBSE Class 10th Topper Batch', tag: '13 Dedicated Experts', desc: 'Strict NCERT guidelines for CBSE 10th Board success.', basicPrice: 199, proPrice: 499, maxProPrice: 999,
-                subjects: [
-                    { name: 'Mathematics', icon: 'fa-calculator', teacher: 'Prof. R.K. Sharma' },
-                    { name: 'Science', icon: 'fa-flask', teacher: 'Dr. A. Verma' },
-                    { name: 'Social Science', icon: 'fa-globe', teacher: 'V.K. Mishra' },
-                    { name: 'English', icon: 'fa-book-open', teacher: 'Anjali Mehta' }
-                ]
-            });
-            list.push({
-                id: 'cbse_11_pcm', category: 'CBSE', name: 'CBSE Class 11th Science (PCM)', tag: 'Board + Foundation', desc: 'Targeted preparation for 11th Boards and Engineering foundation.', basicPrice: 249, proPrice: 549, maxProPrice: 1099,
-                subjects: [
-                    { name: 'Mathematics', icon: 'fa-calculator', teacher: 'Prof. R.K. Sharma' },
-                    { name: 'Physics', icon: 'fa-atom', teacher: 'Er. S. Gupta' },
+                    { name: 'Physics', icon: 'fa-atom', teacher: 'Er. Vivek Anand' },
                     { name: 'Chemistry', icon: 'fa-flask', teacher: 'Dr. P. Roy' },
-                    { name: 'English', icon: 'fa-book-open', teacher: 'Anjali Mehta' }
+                    { name: 'Biology', icon: 'fa-dna', teacher: 'Dr. Neha Singh' },
+                    { name: 'Mathematics', icon: 'fa-calculator', teacher: 'Prof. R.K. Sharma' },
+                    { name: 'History', icon: 'fa-landmark', teacher: 'V.K. Mishra' },
+                    { name: 'Political Science', icon: 'fa-scale-balanced', teacher: 'S.K. Singh' },
+                    { name: 'Economics', icon: 'fa-chart-line', teacher: 'A. Gupta' },
+                    { name: 'Geography', icon: 'fa-earth-asia', teacher: 'Dr. R. Ranjan' },
+                    { name: 'Hindi', icon: 'fa-language', teacher: 'R.B. Pandey' },
+                    { name: 'English', icon: 'fa-book-open', teacher: 'Anjali Mehta' },
+                    { name: 'Sanskrit', icon: 'fa-om', teacher: 'Acharya V.N.' },
+                    { name: 'Urdu', icon: 'fa-pen-nib', teacher: 'Maulana Tariq' }
+                ]
+            });
+            
+            list.push({
+                id: 'cbse_10', category: 'CBSE', name: 'CBSE Class 10th Board Topper Batch', tag: '12 Dedicated Experts', desc: 'Strict NCERT guidelines for CBSE 10th Board success across all subjects.', basicPrice: 199, proPrice: 499, maxProPrice: 999,
+                subjects: [
+                    { name: 'Physics', icon: 'fa-atom', teacher: 'Er. Vivek Anand' },
+                    { name: 'Chemistry', icon: 'fa-flask', teacher: 'Dr. P. Roy' },
+                    { name: 'Biology', icon: 'fa-dna', teacher: 'Dr. Neha Singh' },
+                    { name: 'Mathematics', icon: 'fa-calculator', teacher: 'Prof. R.K. Sharma' },
+                    { name: 'History', icon: 'fa-landmark', teacher: 'V.K. Mishra' },
+                    { name: 'Political Science', icon: 'fa-scale-balanced', teacher: 'S.K. Singh' },
+                    { name: 'Economics', icon: 'fa-chart-line', teacher: 'A. Gupta' },
+                    { name: 'Geography', icon: 'fa-earth-asia', teacher: 'Dr. R. Ranjan' },
+                    { name: 'Hindi', icon: 'fa-language', teacher: 'R.B. Pandey' },
+                    { name: 'English', icon: 'fa-book-open', teacher: 'Anjali Mehta' },
+                    { name: 'Sanskrit', icon: 'fa-om', teacher: 'Acharya V.N.' },
+                    { name: 'Urdu', icon: 'fa-pen-nib', teacher: 'Maulana Tariq' }
                 ]
             });
 
-            // 2. BIHAR BOARD (BSEB)
+            // ==========================================
+            // 2. BIHAR BOARD (BSEB Class 9 & 10)
+            // ==========================================
             list.push({
-                id: 'bseb_9', category: 'BIHAR', name: 'Bihar Board Class 9th Batch', tag: 'SCERT Syllabus', desc: 'Bihar Board pattern strictly followed (Hindi/English Medium).', basicPrice: 149, proPrice: 399, maxProPrice: 799,
+                id: 'bseb_9', category: 'BIHAR', name: 'Bihar Board Class 9th Batch', tag: 'SCERT Syllabus', desc: 'Bihar Board pattern strictly followed (Hindi/English Medium) for 9th class.', basicPrice: 149, proPrice: 399, maxProPrice: 799,
                 subjects: [
-                    { name: 'Math (गंणित)', icon: 'fa-calculator', teacher: 'M. Kumar' },
-                    { name: 'Vigyan (विज्ञान)', icon: 'fa-flask', teacher: 'S.N. Ray' },
-                    { name: 'Samajik Vigyan', icon: 'fa-landmark', teacher: 'P.K. Yadav' },
+                    { name: 'Vigyan - Physics', icon: 'fa-atom', teacher: 'S.N. Ray' },
+                    { name: 'Vigyan - Chemistry', icon: 'fa-flask', teacher: 'M. Patel' },
+                    { name: 'Vigyan - Biology', icon: 'fa-dna', teacher: 'Dr. S. Mukherjee' },
+                    { name: 'Math (गणित)', icon: 'fa-calculator', teacher: 'M. Kumar' },
+                    { name: 'Itihas (इतिहास)', icon: 'fa-landmark', teacher: 'P.K. Yadav' },
+                    { name: 'Rajnitik Shastra', icon: 'fa-scale-balanced', teacher: 'S. Tiwari' },
+                    { name: 'Arthashastra', icon: 'fa-chart-line', teacher: 'A. Gupta' },
+                    { name: 'Bhugol (भूगोल)', icon: 'fa-earth-asia', teacher: 'R. Ranjan' },
                     { name: 'Hindi (हिन्दी)', icon: 'fa-language', teacher: 'D. Shastri' },
-                    { name: 'Sanskrit', icon: 'fa-om', teacher: 'Acharya V.N.' }
+                    { name: 'English (अंग्रेजी)', icon: 'fa-book-open', teacher: 'V. Singh' },
+                    { name: 'Sanskrit (संस्कृत)', icon: 'fa-om', teacher: 'Acharya V.N.' },
+                    { name: 'Urdu (उर्दू)', icon: 'fa-pen-nib', teacher: 'Maulana Tariq' }
                 ]
             });
+
             list.push({
                 id: 'bseb_10', category: 'BIHAR', name: 'Bihar Board Class 10th Matric Topper', tag: 'Matric Specialist', desc: 'Complete Bihar Board Matric syllabus strictly covered for high scores.', basicPrice: 149, proPrice: 399, maxProPrice: 799,
                 subjects: [
-                    { name: 'Math (गंणित)', icon: 'fa-calculator', teacher: 'M. Kumar' },
-                    { name: 'Vigyan (विज्ञान)', icon: 'fa-flask', teacher: 'S.N. Ray' },
-                    { name: 'Samajik Vigyan', icon: 'fa-landmark', teacher: 'P.K. Yadav' },
+                    { name: 'Vigyan - Physics', icon: 'fa-atom', teacher: 'S.N. Ray' },
+                    { name: 'Vigyan - Chemistry', icon: 'fa-flask', teacher: 'M. Patel' },
+                    { name: 'Vigyan - Biology', icon: 'fa-dna', teacher: 'Dr. S. Mukherjee' },
+                    { name: 'Math (गणित)', icon: 'fa-calculator', teacher: 'M. Kumar' },
+                    { name: 'Itihas (इतिहास)', icon: 'fa-landmark', teacher: 'P.K. Yadav' },
+                    { name: 'Rajnitik Shastra', icon: 'fa-scale-balanced', teacher: 'S. Tiwari' },
+                    { name: 'Arthashastra', icon: 'fa-chart-line', teacher: 'A. Gupta' },
+                    { name: 'Bhugol (भूगोल)', icon: 'fa-earth-asia', teacher: 'R. Ranjan' },
                     { name: 'Hindi (हिन्दी)', icon: 'fa-language', teacher: 'D. Shastri' },
-                    { name: 'Sanskrit', icon: 'fa-om', teacher: 'Acharya V.N.' }
+                    { name: 'English (अंग्रेजी)', icon: 'fa-book-open', teacher: 'V. Singh' },
+                    { name: 'Sanskrit (संस्कृत)', icon: 'fa-om', teacher: 'Acharya V.N.' },
+                    { name: 'Urdu (उर्दू)', icon: 'fa-pen-nib', teacher: 'Maulana Tariq' }
                 ]
             });
 
-            // 3. UP BOARD
-            list.push({
-                id: 'upmsp_10', category: 'UP', name: 'UP Board Class 10th High School Batch', tag: 'UPMSP Syllabus', desc: 'Strict UP Board guidelines in Hindi and English medium.', basicPrice: 149, proPrice: 399, maxProPrice: 799,
-                subjects: [
-                    { name: 'Ganit (Math)', icon: 'fa-calculator', teacher: 'R. Mishra' },
-                    { name: 'Vigyan (Science)', icon: 'fa-flask', teacher: 'S. Tiwari' },
-                    { name: 'Hindi', icon: 'fa-language', teacher: 'P. Chaubey' },
-                    { name: 'English', icon: 'fa-book-open', teacher: 'V. Singh' }
-                ]
-            });
-
-            // 4. COMPETITIVE EXAMS (NEET / JEE / UPSC)
+            // ==========================================
+            // 3. COMPETITIVE EXAMS (NEET / JEE / UPSC)
+            // ==========================================
             list.push({
                 id: 'neet_dropper', category: 'NEET', name: 'NEET UG 2027 Victory Batch (Dropper/12th)', tag: 'Medical Entrance Specialist', desc: 'NTA Syllabus targeted Physics, Chemistry & Biology Preparation.', basicPrice: 299, proPrice: 699, maxProPrice: 1499,
                 subjects: [
                     { name: 'Physics', icon: 'fa-atom', teacher: 'Er. Vivek Anand' },
                     { name: 'Physical Chemistry', icon: 'fa-flask', teacher: 'Dr. P. Roy' },
                     { name: 'Organic Chemistry', icon: 'fa-vial', teacher: 'M. Patel' },
+                    { name: 'Inorganic Chemistry', icon: 'fa-flask-vial', teacher: 'S. Gupta' },
                     { name: 'Botany', icon: 'fa-leaf', teacher: 'Dr. S. Mukherjee' },
                     { name: 'Zoology', icon: 'fa-frog', teacher: 'Dr. A.K. Sinha' }
                 ]
@@ -850,8 +865,10 @@
                 id: 'jee_momentum', category: 'JEE', name: 'IIT-JEE 2027 Momentum Engineering Batch', tag: 'IIT Rankers Faculty', desc: 'Advanced Mechanics, Calculus & Physical Chem Specialists.', basicPrice: 299, proPrice: 699, maxProPrice: 1499,
                 subjects: [
                     { name: 'Advanced Mathematics', icon: 'fa-calculator', teacher: 'Prof. K. Verma' },
-                    { name: 'Physics', icon: 'fa-atom', teacher: 'Er. Vivek Anand' },
-                    { name: 'Chemistry', icon: 'fa-flask', teacher: 'Dr. P. Roy' }
+                    { name: 'Physics (Mechanics & Thermo)', icon: 'fa-atom', teacher: 'Er. Vivek Anand' },
+                    { name: 'Physics (Electromagnetism)', icon: 'fa-bolt', teacher: 'Er. S. Gupta' },
+                    { name: 'Physical Chemistry', icon: 'fa-flask', teacher: 'Dr. P. Roy' },
+                    { name: 'Organic Chemistry', icon: 'fa-vial', teacher: 'M. Patel' }
                 ]
             });
             list.push({
@@ -859,8 +876,10 @@
                 subjects: [
                     { name: 'Indian Polity', icon: 'fa-landmark', teacher: 'S. K. Singh' },
                     { name: 'Geography', icon: 'fa-earth-asia', teacher: 'Dr. R. Ranjan' },
-                    { name: 'History', icon: 'fa-book-journal-whills', teacher: 'V. K. Mishra' },
-                    { name: 'Economics', icon: 'fa-chart-line', teacher: 'A. Gupta' }
+                    { name: 'Modern History', icon: 'fa-book-journal-whills', teacher: 'V. K. Mishra' },
+                    { name: 'Economics', icon: 'fa-chart-line', teacher: 'A. Gupta' },
+                    { name: 'General Science & Tech', icon: 'fa-microscope', teacher: 'Dr. P. Roy' },
+                    { name: 'CSAT (Maths & Reasoning)', icon: 'fa-brain', teacher: 'Prof. R.K. Sharma' }
                 ]
             });
 
@@ -957,16 +976,6 @@
         }
 
         // NAVIGATION LOGIC (AUTH -> BATCHES -> SUBJECTS -> CHAT)
-        function bypassAuthForDemo() {
-            document.getElementById('auth-screen').style.display = 'none';
-            document.getElementById('batches-screen').style.display = 'flex';
-            currentStudentData.name = 'Demo User';
-            currentStudentData.email = 'demo@ticbull.com';
-            updateProfileUI();
-            renderBatchesList(all300Batches);
-            showToast("Bypassed Login for Demo", "success");
-        }
-
         function switchToBatchesScreen() {
             document.getElementById('main-dashboard').style.display = 'none';
             document.getElementById('subjects-screen').style.display = 'none';
@@ -1163,7 +1172,7 @@
                     <i class="fa-solid fa-chalkboard-user" style="color:var(--gold-color); font-size:20px;"></i>
                     <b style="color:var(--gold-color);">${currentActiveTeacher} (${payload.subject_context} Expert)</b>
                 </div>
-                <div style="width:100%; line-height: 1.6;">${payload.is_casual_chat ? "Hello! Main strictly syllabus cover karunga, jaldi se question puchiye. <br><small style='color:var(--success-color);'>[0 Doubts Deducted - Hook AI]</small>" : "Server is currently offline. Is question ka answer backend Meta/Gemini API setup hone par aayega. <br><small style='color:#ef4444;'>[-1 Doubt Deducted]</small>"}</div>`;
+                <div style="width:100%; line-height: 1.6;">${payload.is_casual_chat ? "Hello! Main strictly syllabus cover karunga, jaldi se question puchiye. <br><small style='color:var(--success-color);'>[0 Doubts Deducted - Hook AI]</small>" : "Server is currently offline. Is question ka answer backend API setup hone par aayega. <br><small style='color:#ef4444;'>[-1 Doubt Deducted]</small>"}</div>`;
                 scrollToBottom();
                 saveChatUI();
             });
@@ -1171,158 +1180,8 @@
 
         // ------------------------------------------------------------------
         // REST OF THE Z+ SECURITY AUTH, PROFILE & UTILITY FUNCTIONS
-        // (KEPT 100% UNTOUCHED FROM YOUR ORIGINAL CODE)
         // ------------------------------------------------------------------
-        const AudioContext = window.AudioContext || window.webkitAudioContext;
-        const audioCtx = new AudioContext();
-
-        function playClickSound() {
-            if(!appSoundEnabled) return;
-            if(audioCtx.state === 'suspended') audioCtx.resume();
-            const osc = audioCtx.createOscillator();
-            const gain = audioCtx.createGain();
-            osc.type = 'sine';
-            osc.frequency.setValueAtTime(800, audioCtx.currentTime);
-            gain.gain.setValueAtTime(0.05, audioCtx.currentTime);
-            gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.1);
-            osc.connect(gain);
-            gain.connect(audioCtx.destination);
-            osc.start();
-            osc.stop(audioCtx.currentTime + 0.1);
-        }
-
-        document.addEventListener('click', function(e) {
-            if(e.target.closest('button') || e.target.closest('.action-icon-btn') || e.target.closest('.drawer-item') || e.target.closest('.auth-tab') || e.target.closest('.cat-chip') || e.target.closest('.theme-circle')) {
-                playClickSound();
-            }
-        });
-
-        function toggleSoundSetting(checkbox) {
-            appSoundEnabled = checkbox.checked;
-            showToast(appSoundEnabled ? "Sound Enabled" : "Sound Muted", "success");
-        }
-
-        function changeAppTheme(color, el) {
-            document.documentElement.style.setProperty('--accent-color', color);
-            document.querySelectorAll('.theme-circle').forEach(c => c.classList.remove('active'));
-            el.classList.add('active');
-            showToast("Theme updated!", "success");
-        }
-
-        function showToast(msg, type = 'success') {
-            const toast = document.getElementById('custom-toast');
-            toast.innerHTML = `<i class="fa-solid ${type === 'success' ? 'fa-circle-check toast-icon success' : 'fa-circle-exclamation toast-icon error'}"></i> <span>${msg}</span>`;
-            toast.classList.add('show');
-            setTimeout(() => toast.classList.remove('show'), 3500);
-        }
-
-        function calculateAge(dobString) {
-            if(!dobString) return null;
-            const birthDate = new Date(dobString);
-            const today = new Date();
-            let age = today.getFullYear() - birthDate.getFullYear();
-            const monthDiff = today.getMonth() - birthDate.getMonth();
-            if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) age--;
-            return age;
-        }
-
-        let syllabusItems = [];
-        function openSyllabusBoard() {
-            document.getElementById('syllabusModal').style.display = 'flex';
-            if(document.getElementById('drawer').classList.contains('open')) toggleDrawer();
-            const saved = localStorage.getItem('ticbull_syllabus_' + currentStudentData.email);
-            if(saved) syllabusItems = JSON.parse(saved);
-            renderSyllabus();
-        }
-        function addSyllabusItem() {
-            const input = document.getElementById('newSyllabusItem');
-            if(!input.value.trim()) return;
-            syllabusItems.unshift({ text: input.value.trim(), done: false });
-            input.value = '';
-            saveSyllabus();
-        }
-        function toggleSyllabusItem(index) {
-            syllabusItems[index].done = !syllabusItems[index].done;
-            saveSyllabus();
-        }
-        function deleteSyllabusItem(index) {
-            syllabusItems.splice(index, 1);
-            saveSyllabus();
-        }
-        function saveSyllabus() {
-            localStorage.setItem('ticbull_syllabus_' + currentStudentData.email, JSON.stringify(syllabusItems));
-            renderSyllabus();
-        }
-        function renderSyllabus() {
-            const list = document.getElementById('syllabusList');
-            list.innerHTML = '';
-            if(syllabusItems.length === 0) { list.innerHTML = '<p style="color:var(--text-muted); font-size:12px; text-align:center; padding:20px;">No topics added yet.</p>'; return; }
-            syllabusItems.forEach((item, i) => {
-                list.innerHTML += `
-                    <div class="syllabus-task ${item.done ? 'completed' : ''}">
-                        <input type="checkbox" ${item.done ? 'checked' : ''} onchange="toggleSyllabusItem(${i})">
-                        <span>${item.text}</span>
-                        <i class="fa-solid fa-trash" style="color:#ef4444; font-size:14px; cursor:pointer;" onclick="deleteSyllabusItem(${i})"></i>
-                    </div>`;
-            });
-        }
-
-        window.addEventListener('DOMContentLoaded', () => {
-            renderBatchesList(all300Batches);
-
-            const savedEmail = localStorage.getItem('ticbull_email');
-            const savedToken = localStorage.getItem('ticbull_token');
-            if(savedEmail && savedToken) {
-                fetch('/api/check-session', {
-                    method: 'POST',
-                    headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify({ email: savedEmail, token: savedToken })
-                })
-                .then(res => res.json())
-                .then(data => {
-                    if(data.success && data.active) {
-                        currentStudentData.email = savedEmail;
-                        currentStudentData.name = data.user.name || localStorage.getItem('ticbull_name') || '';
-                        currentStudentData.dob = data.user.dob || localStorage.getItem('ticbull_dob') || '';
-                        currentStudentData.photo = data.user.photo || localStorage.getItem('ticbull_photo') || '';
-                        
-                        document.getElementById('auth-screen').style.display = 'none';
-                        document.getElementById('batches-screen').style.display = 'flex';
-                        updateProfileUI();
-                        loadSidebarHistory();
-                    } else {
-                        localStorage.clear();
-                        showToast("Session Expired! Logged in from another device.", "error");
-                    }
-                }).catch(() => {
-                    // Fallback if no backend
-                    currentStudentData.email = savedEmail;
-                    currentStudentData.name = localStorage.getItem('ticbull_name') || '';
-                    document.getElementById('auth-screen').style.display = 'none';
-                    document.getElementById('batches-screen').style.display = 'flex';
-                    updateProfileUI();
-                    loadSidebarHistory();
-                });
-            }
-        });
-
-        window.addEventListener('load', () => {
-            setTimeout(() => {
-                const splash = document.getElementById('splash-screen');
-                splash.style.opacity = '0';
-                setTimeout(() => splash.style.visibility = 'hidden', 500);
-            }, 3500);
-        });
-
-        window.addEventListener('resize', () => scrollToBottom());
-
-        function scrollToBottom() {
-            setTimeout(() => {
-                const chatBox = document.getElementById('chatBox');
-                if(chatBox) chatBox.scrollTop = chatBox.scrollHeight;
-            }, 200);
-        }
-
+        
         function autoResizeInput(el) {
             el.style.height = 'auto';
             el.style.height = (el.scrollHeight) + 'px';
@@ -1780,6 +1639,156 @@
             selectedFilesArray = [];
             document.getElementById('photoInput').value = '';
             document.getElementById('imagePreview').style.display = 'none';
+        }
+
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        const audioCtx = new AudioContext();
+
+        function playClickSound() {
+            if(!appSoundEnabled) return;
+            if(audioCtx.state === 'suspended') audioCtx.resume();
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(800, audioCtx.currentTime);
+            gain.gain.setValueAtTime(0.05, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.1);
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.start();
+            osc.stop(audioCtx.currentTime + 0.1);
+        }
+
+        document.addEventListener('click', function(e) {
+            if(e.target.closest('button') || e.target.closest('.action-icon-btn') || e.target.closest('.drawer-item') || e.target.closest('.auth-tab') || e.target.closest('.cat-chip') || e.target.closest('.theme-circle')) {
+                playClickSound();
+            }
+        });
+
+        function toggleSoundSetting(checkbox) {
+            appSoundEnabled = checkbox.checked;
+            showToast(appSoundEnabled ? "Sound Enabled" : "Sound Muted", "success");
+        }
+
+        function changeAppTheme(color, el) {
+            document.documentElement.style.setProperty('--accent-color', color);
+            document.querySelectorAll('.theme-circle').forEach(c => c.classList.remove('active'));
+            el.classList.add('active');
+            showToast("Theme updated!", "success");
+        }
+
+        function showToast(msg, type = 'success') {
+            const toast = document.getElementById('custom-toast');
+            toast.innerHTML = `<i class="fa-solid ${type === 'success' ? 'fa-circle-check toast-icon success' : 'fa-circle-exclamation toast-icon error'}"></i> <span>${msg}</span>`;
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 3500);
+        }
+
+        function calculateAge(dobString) {
+            if(!dobString) return null;
+            const birthDate = new Date(dobString);
+            const today = new Date();
+            let age = today.getFullYear() - birthDate.getFullYear();
+            const monthDiff = today.getMonth() - birthDate.getMonth();
+            if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) age--;
+            return age;
+        }
+
+        let syllabusItems = [];
+        function openSyllabusBoard() {
+            document.getElementById('syllabusModal').style.display = 'flex';
+            if(document.getElementById('drawer').classList.contains('open')) toggleDrawer();
+            const saved = localStorage.getItem('ticbull_syllabus_' + currentStudentData.email);
+            if(saved) syllabusItems = JSON.parse(saved);
+            renderSyllabus();
+        }
+        function addSyllabusItem() {
+            const input = document.getElementById('newSyllabusItem');
+            if(!input.value.trim()) return;
+            syllabusItems.unshift({ text: input.value.trim(), done: false });
+            input.value = '';
+            saveSyllabus();
+        }
+        function toggleSyllabusItem(index) {
+            syllabusItems[index].done = !syllabusItems[index].done;
+            saveSyllabus();
+        }
+        function deleteSyllabusItem(index) {
+            syllabusItems.splice(index, 1);
+            saveSyllabus();
+        }
+        function saveSyllabus() {
+            localStorage.setItem('ticbull_syllabus_' + currentStudentData.email, JSON.stringify(syllabusItems));
+            renderSyllabus();
+        }
+        function renderSyllabus() {
+            const list = document.getElementById('syllabusList');
+            list.innerHTML = '';
+            if(syllabusItems.length === 0) { list.innerHTML = '<p style="color:var(--text-muted); font-size:12px; text-align:center; padding:20px;">No topics added yet.</p>'; return; }
+            syllabusItems.forEach((item, i) => {
+                list.innerHTML += `
+                    <div class="syllabus-task ${item.done ? 'completed' : ''}">
+                        <input type="checkbox" ${item.done ? 'checked' : ''} onchange="toggleSyllabusItem(${i})">
+                        <span>${item.text}</span>
+                        <i class="fa-solid fa-trash" style="color:#ef4444; font-size:14px; cursor:pointer;" onclick="deleteSyllabusItem(${i})"></i>
+                    </div>`;
+            });
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            renderBatchesList(all300Batches);
+
+            const savedEmail = localStorage.getItem('ticbull_email');
+            const savedToken = localStorage.getItem('ticbull_token');
+            if(savedEmail && savedToken) {
+                fetch('/api/check-session', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ email: savedEmail, token: savedToken })
+                })
+                .then(res => res.json())
+                .then(data => {
+                    if(data.success && data.active) {
+                        currentStudentData.email = savedEmail;
+                        currentStudentData.name = data.user.name || localStorage.getItem('ticbull_name') || '';
+                        currentStudentData.dob = data.user.dob || localStorage.getItem('ticbull_dob') || '';
+                        currentStudentData.photo = data.user.photo || localStorage.getItem('ticbull_photo') || '';
+                        
+                        document.getElementById('auth-screen').style.display = 'none';
+                        document.getElementById('batches-screen').style.display = 'flex';
+                        updateProfileUI();
+                        loadSidebarHistory();
+                    } else {
+                        localStorage.clear();
+                        showToast("Session Expired! Logged in from another device.", "error");
+                    }
+                }).catch(() => {
+                    // Fallback
+                    currentStudentData.email = savedEmail;
+                    currentStudentData.name = localStorage.getItem('ticbull_name') || '';
+                    document.getElementById('auth-screen').style.display = 'none';
+                    document.getElementById('batches-screen').style.display = 'flex';
+                    updateProfileUI();
+                    loadSidebarHistory();
+                });
+            }
+        });
+
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                const splash = document.getElementById('splash-screen');
+                splash.style.opacity = '0';
+                setTimeout(() => splash.style.visibility = 'hidden', 500);
+            }, 3500);
+        });
+
+        window.addEventListener('resize', () => scrollToBottom());
+
+        function scrollToBottom() {
+            setTimeout(() => {
+                const chatBox = document.getElementById('chatBox');
+                if(chatBox) chatBox.scrollTop = chatBox.scrollHeight;
+            }, 200);
         }
     </script>
 </body>
