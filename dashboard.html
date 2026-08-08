@@ -12,7 +12,6 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     
     <style>
-        /* 100% ORIGINAL CSS VARIABLES & BASE */
         :root { --bg-color: #030712; --card-bg: rgba(15, 23, 42, 0.95); --accent-color: #2563eb; --accent-glow: rgba(37, 99, 235, 0.45); --text-main: #f8fafc; --text-muted: #94a3b8; --border-color: rgba(255, 255, 255, 0.12); --success-color: #10b981; --gold-color: #f59e0b; --input-bg: #0f172a; }
         body.light-theme { --bg-color: #f1f5f9; --card-bg: #ffffff; --text-main: #0f172a; --text-muted: #64748b; --border-color: #cbd5e1; --input-bg: #ffffff; }
         * { margin:0; padding:0; box-sizing:border-box; font-family:-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; -webkit-tap-highlight-color: transparent; }
@@ -33,7 +32,7 @@
         /* MAIN CONTENT */
         .main-content { display:flex; flex-direction:column; align-items:center; justify-content:center; flex:1; padding:20px; position:relative; }
         
-        /* 🚀 SOCIAL MEDIA BAR (ABOVE VIDEO) */
+        /* SOCIAL MEDIA BAR */
         .dashboard-socials { display: flex; gap: 15px; margin-bottom: 20px; justify-content: center; width: 100%; max-width: 400px; z-index: 10; }
         .dashboard-socials a { color: var(--text-main); font-size: 20px; background: var(--card-bg); border: 1px solid var(--border-color); width: 45px; height: 45px; display: flex; align-items: center; justify-content: center; border-radius: 50%; transition: 0.3s; box-shadow: 0 4px 15px rgba(0,0,0,0.3); text-decoration: none; }
         .dashboard-socials a:hover { transform: translateY(-4px); background: rgba(255,255,255,0.1); box-shadow: 0 8px 25px rgba(255,255,255,0.2); }
@@ -43,12 +42,9 @@
         .icon-tg { color: #0088cc !important; }
         .icon-fb { color: #1877f2 !important; }
 
-        /* 🚀 BACKGROUND ANIMATION VIDEO PLACEHOLDER WITH SOUND BUTTON */
+        /* VIDEO CONTAINER */
         .video-container { width: 100%; max-width: 400px; height: 180px; margin-bottom: 20px; border-radius: 20px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.5); border: 1px solid var(--border-color); background: #000; display:flex; justify-content:center; align-items:center; z-index: 10; position: relative; }
-        /* Pointer events none for video to allow button clicks */
         .video-container video { width: 100%; height: 100%; object-fit: cover; pointer-events: none; }
-        
-        /* Professional Mute/Unmute Button */
         .sound-toggle-btn { position: absolute; bottom: 15px; right: 15px; background: rgba(0,0,0,0.8); color: #fff; border: 2px solid rgba(255,255,255,0.4); border-radius: 50%; width: 45px; height: 45px; cursor: pointer; display: flex; align-items: center; justify-content: center; z-index: 9999; transition: 0.3s; box-shadow: 0 4px 15px rgba(0,0,0,0.8); pointer-events: auto; }
         
         .action-card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius:24px; padding:30px 22px; width:100%; max-width:400px; box-shadow:0 20px 50px rgba(0,0,0,0.5); text-align:center; z-index: 10; }
@@ -60,7 +56,7 @@
         .btn-explore { background: linear-gradient(135deg, #2563eb, #3b82f6); box-shadow: 0 8px 20px rgba(37, 99, 235, 0.4); }
         .btn-classroom { background: linear-gradient(135deg, #10b981, #059669); box-shadow: 0 8px 20px rgba(16, 185, 129, 0.4); }
 
-        /* EXACT OLD MENU DRAWER */
+        /* DRAWER MENU */
         .drawer-overlay { position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.75); z-index:1000; display:none; }
         .drawer { position:fixed; top:0; left:-320px; width:320px; height:100%; background:var(--card-bg); border-right:1px solid var(--border-color); z-index:1001; transition:0.3s; padding:20px; display:flex; flex-direction:column; overflow-y:auto; }
         .drawer.open { left:0; }
@@ -81,7 +77,6 @@
         .modal-card { background:var(--card-bg); border:1px solid var(--border-color); border-radius:24px; padding:26px; max-width:400px; width:100%; text-align:left; position:relative; box-shadow: 0 20px 50px rgba(0,0,0,0.5); animation: popIn 0.3s ease; }
         @keyframes popIn { 0% { opacity:0; transform:scale(0.8) translateY(10px); } 100% { opacity:1; transform:scale(1) translateY(0); } }
 
-        /* Settings Toggle & Theme Circles */
         .setting-item { display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; font-size: 14.5px; font-weight:600; color: var(--text-main); }
         .switch { position: relative; display: inline-block; width: 44px; height: 24px; }
         .switch input { opacity: 0; width: 0; height: 0; }
@@ -104,7 +99,6 @@
         .btn-primary { width:100%; background: var(--accent-color); color:#fff; font-weight:700; padding:14px; border:none; border-radius:12px; cursor:pointer; font-size:14px; margin-top:10px; transition:0.2s;}
         .btn-primary:active { transform: scale(0.98); }
 
-        /* Syllabus List */
         .syllabus-task { display:flex; align-items:center; gap:12px; background:var(--chat-bg); padding:12px 14px; border:1px solid var(--border-color); border-radius:12px; margin-bottom:8px; text-align:left; transition:0.2s; }
         .syllabus-task input[type="checkbox"] { width:18px; height:18px; accent-color:var(--success-color); cursor:pointer; }
         .syllabus-task span { font-size:13.5px; font-weight:600; color:var(--text-main); flex:1; }
@@ -127,7 +121,7 @@
     <!-- MAIN CONTENT -->
     <div class="main-content">
         
-        <!-- 🚀 NEW: SOCIAL MEDIA LINKS -->
+        <!-- SOCIAL MEDIA LINKS -->
         <div class="dashboard-socials">
             <a href="https://www.instagram.com/mryuvi_yadav" target="_blank" class="icon-ig"><i class="fa-brands fa-instagram"></i></a>
             <a href="https://youtube.com/@mryuviyadav" target="_blank" class="icon-yt"><i class="fa-brands fa-youtube"></i></a>
@@ -136,14 +130,13 @@
             <a href="https://facebook.com/mryuviyadav" target="_blank" class="icon-fb"><i class="fa-brands fa-facebook"></i></a>
         </div>
         
-        <!-- 🚀 VIDEO ANIMATION PLACEHOLDER WITH SOUND BUTTON -->
+        <!-- VIDEO ANIMATION -->
         <div class="video-container">
             <video autoplay loop muted playsinline id="bg-video">
                 <source src="/animation.mp4" type="video/mp4">
                 <source src="https://raw.githubusercontent.com/yuviyadav16/ticbull-academy/main/animation.mp4" type="video/mp4">
             </video>
             
-            <!-- Professional Mute/Unmute Button -->
             <button id="videoSoundBtn" class="sound-toggle-btn" onclick="toggleVideoSound(event)">
                 <i class="fa-solid fa-volume-xmark" style="font-size: 18px;"></i>
             </button>
@@ -164,7 +157,7 @@
         </div>
     </div>
 
-    <!-- EXACT OLD MENU DRAWER -->
+    <!-- MENU DRAWER -->
     <div class="drawer-overlay" id="drawerOverlay" onclick="toggleDrawer()"></div>
     <div class="drawer" id="drawer">
         <div class="drawer-header">
@@ -214,7 +207,7 @@
         </div>
     </div>
 
-    <!-- APP SETTINGS MODAL (With 40+ Colors & EXACT Delete Icon) -->
+    <!-- SETTINGS MODAL -->
     <div class="modal-overlay" id="settingsModal">
         <div class="modal-card">
             <i class="fa-solid fa-xmark" style="position:absolute; right:16px; top:16px; color:var(--text-muted); cursor:pointer; font-size:20px;" onclick="document.getElementById('settingsModal').style.display='none';"></i>
@@ -235,17 +228,14 @@
             
             <div style="margin-top:20px; padding-top:16px; border-top:1px solid var(--border-color);">
                 <span style="font-size:12px; color:var(--text-muted); display:block; margin-bottom:12px;">Chat Theme Color (40+ Options):</span>
-                <div class="theme-grid" id="themeGrid">
-                    <!-- Javascript will load 40 colors here -->
-                </div>
+                <div class="theme-grid" id="themeGrid"></div>
             </div>
 
-            <!-- EXACT DELETE ACCOUNT BUTTON -->
             <button class="btn-delete-acc" onclick="openDeleteAccountModal()"><i class="fa-solid fa-trash"></i> DELETE ACCOUNT PERMANENTLY</button>
         </div>
     </div>
 
-    <!-- ACCOUNT DELETE VERIFICATION MODAL -->
+    <!-- DELETE ACCOUNT MODAL -->
     <div class="modal-overlay" id="deleteAccountModal">
         <div class="modal-card">
             <i class="fa-solid fa-xmark" style="position:absolute; right:16px; top:16px; color:var(--text-muted); cursor:pointer; font-size:20px;" onclick="document.getElementById('deleteAccountModal').style.display='none';"></i>
@@ -262,7 +252,6 @@
                     <i class="fa-solid fa-shield-halved left-icon"></i>
                     <input type="text" id="delAccOtp" placeholder="Enter Deletion OTP" maxlength="6" style="text-align:center; font-weight:800; letter-spacing:4px;">
                 </div>
-                <!-- NO BYPASS HERE. STRICT CHECK. -->
                 <button class="btn-primary" id="confirmDeleteAccBtn" style="background:#ef4444; box-shadow:0 8px 20px rgba(239, 68, 68, 0.4);" onclick="verifyAndDeleteAccount()">PERMANENTLY DELETE</button>
             </div>
 
@@ -319,19 +308,19 @@
         let appSoundEnabled = true;
 
         // ---------------------------------------------------------------------------------
-        // 1. DYNAMIC PROFILE LOADING
+        // 1. PERSISTENCE ENGINE & PROFILE LOADING (SETTINGS SAVED FOREVER)
         // ---------------------------------------------------------------------------------
         window.addEventListener('DOMContentLoaded', () => {
             const savedEmail = localStorage.getItem('ticbull_email');
             const savedToken = localStorage.getItem('ticbull_token');
             
             generateThemeColors();
+            applySavedSettings(); // Load theme, color & sound preferences permanently
 
             if(!savedEmail || !savedToken) {
                 if(window.location.hostname !== 'localhost') { window.location.href = "index.html"; return; }
             }
 
-            // Real API Call to check session
             fetch('/api/check-session', {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
@@ -356,7 +345,6 @@
                 }
             })
             .catch(() => {
-                // If backend is offline, rely on localStorage
                 currentStudentData.email = savedEmail;
                 currentStudentData.name = localStorage.getItem('ticbull_name') || 'Student';
                 currentStudentData.dob = localStorage.getItem('ticbull_dob') || '';
@@ -402,27 +390,59 @@
         }
 
         // ---------------------------------------------------------------------------------
-        // 2. MODAL, THEME & UPLOAD CONTROLS
+        // 2. PERSISTENT SETTINGS ENGINE (THEME, COLOR, SOUND SAVED)
         // ---------------------------------------------------------------------------------
+        function applySavedSettings() {
+            // Theme Mode
+            const isLight = localStorage.getItem('ticbull_theme') === 'light';
+            if(isLight) {
+                document.body.classList.add('light-theme');
+                document.getElementById('themeToggleText').innerText = 'Switch to Dark Mode';
+            }
+
+            // Accent Color
+            const savedColor = localStorage.getItem('ticbull_theme_color');
+            if(savedColor) {
+                document.documentElement.style.setProperty('--accent-color', savedColor);
+            }
+
+            // Sound Toggle
+            const savedSound = localStorage.getItem('ticbull_sound');
+            appSoundEnabled = savedSound !== 'false';
+            const soundCheckbox = document.getElementById('soundToggle');
+            if(soundCheckbox) soundCheckbox.checked = appSoundEnabled;
+        }
+
         function toggleDrawer() {
             document.getElementById('drawer').classList.toggle('open');
             document.getElementById('drawerOverlay').style.display = document.getElementById('drawer').classList.contains('open') ? 'block' : 'none';
         }
-        function toggleTheme() { document.body.classList.toggle('light-theme'); const isLight = document.body.classList.contains('light-theme'); document.getElementById('themeToggleText').innerText = isLight ? 'Switch to Dark Mode' : 'Switch to Light Mode'; }
+
+        function toggleTheme() { 
+            document.body.classList.toggle('light-theme'); 
+            const isLight = document.body.classList.contains('light-theme'); 
+            localStorage.setItem('ticbull_theme', isLight ? 'light' : 'dark');
+            document.getElementById('themeToggleText').innerText = isLight ? 'Switch to Dark Mode' : 'Switch to Light Mode'; 
+        }
+
         function openSettingsModal() { document.getElementById('settingsModal').style.display = 'flex'; toggleDrawer(); }
         function openPricingModal() { document.getElementById('pricingModal').style.display = 'flex'; toggleDrawer(); }
         
         function generateThemeColors() {
             const colors = ['#2563eb', '#10b981', '#8b5cf6', '#f43f5e', '#f59e0b', '#06b6d4', '#84cc16', '#14b8a6', '#f97316', '#ef4444', '#ec4899', '#d946ef', '#a855f7', '#6366f1', '#3b82f6', '#0ea5e9', '#0d9488', '#22c55e', '#eab308', '#f97316', '#ef4444', '#f43f5e', '#ec4899', '#d946ef', '#a855f7', '#8b5cf6', '#6366f1', '#4f46e5', '#3b82f6', '#0284c7', '#0369a1', '#075985', '#0f766e', '#115e59', '#166534', '#3f6212', '#854d0e', '#9a3412', '#9f1239', '#9d174d'];
             const grid = document.getElementById('themeGrid');
-            colors.forEach((c, idx) => {
-                const act = idx === 0 ? 'active' : '';
+            if(!grid) return;
+            grid.innerHTML = '';
+            const activeColor = localStorage.getItem('ticbull_theme_color') || '#2563eb';
+            colors.forEach((c) => {
+                const act = (c.toLowerCase() === activeColor.toLowerCase()) ? 'active' : '';
                 grid.innerHTML += `<span class="theme-circle ${act}" style="background:${c};" onclick="changeAppTheme('${c}', this)"></span>`;
             });
         }
 
         function changeAppTheme(color, el) { 
             document.documentElement.style.setProperty('--accent-color', color); 
+            localStorage.setItem('ticbull_theme_color', color);
             document.querySelectorAll('.theme-circle').forEach(c => c.classList.remove('active')); 
             el.classList.add('active'); 
             showToast("Theme Color Updated!", "success"); 
@@ -472,11 +492,12 @@
             }
         }
 
-        // Sounds
         function toggleSoundSetting(checkbox) { 
             appSoundEnabled = checkbox.checked; 
+            localStorage.setItem('ticbull_sound', appSoundEnabled);
             showToast(appSoundEnabled ? "App Sounds Enabled" : "App Sounds Muted", "success"); 
         }
+
         const AudioContext = window.AudioContext || window.webkitAudioContext;
         const audioCtx = new AudioContext();
         function playClickSound() {
@@ -493,7 +514,7 @@
             if(e.target.closest('button') || e.target.closest('.drawer-item') || e.target.closest('.theme-circle') || e.target.closest('.dashboard-socials a')) playClickSound();
         });
 
-        // 🚀 VIDEO SOUND TOGGLE LOGIC (Fixed for Mobile Clicks)
+        // VIDEO SOUND TOGGLE
         function toggleVideoSound(event) {
             event.preventDefault(); 
             event.stopPropagation(); 
@@ -513,7 +534,7 @@
         }
 
         // ---------------------------------------------------------------------------------
-        // 3. ACCOUNT DELETION LOGIC (NO BYPASS! STRICT BACKEND VALIDATION)
+        // 3. ACCOUNT DELETION LOGIC (STRICT BACKEND VALIDATION)
         // ---------------------------------------------------------------------------------
         function openDeleteAccountModal() {
             document.getElementById('settingsModal').style.display = 'none';
@@ -544,7 +565,7 @@
             }).catch(() => {
                 btn.innerText = "SEND DELETION OTP";
                 btn.disabled = false;
-                showToast("Server Error! Check Backend.", "error"); // BYPASS REMOVED
+                showToast("Server Error! Check Backend.", "error");
             });
         }
 
@@ -567,13 +588,12 @@
                 } else {
                     btn.disabled = false;
                     btn.innerText = "PERMANENTLY DELETE";
-                    // THIS WILL NOW SHOW IF OTP IS WRONG
                     showToast(data.message || "Invalid OTP!", "error"); 
                 }
             }).catch(() => {
                 btn.disabled = false;
                 btn.innerText = "PERMANENTLY DELETE";
-                showToast("Server Error. Could not delete.", "error"); // BYPASS REMOVED
+                showToast("Server Error. Could not delete.", "error");
             });
         }
 
