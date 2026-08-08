@@ -5,16 +5,18 @@
   "display": "standalone",
   "background_color": "#030712",
   "theme_color": "#2563eb",
+  "description": "Official TicBull Academy AI Student Portal & Exam Engine",
   "icons": [
     {
-      "src": "logo.png",
+      "src": "/logo.png",
       "sizes": "192x192",
       "type": "image/png"
     },
     {
-      "src": "logo.png",
+      "src": "/logo.png",
       "sizes": "512x512",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any maskable"
     }
   ]
 }
