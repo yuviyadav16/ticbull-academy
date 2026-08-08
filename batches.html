@@ -1,1724 +1,415 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>TicBull Academy - Explore Batches</title>
+    
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#2563eb">
+    <link rel="apple-touch-icon" href="logo.png">
 
-<title>TicBull Academy</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <style>
+        /* 100% ORIGINAL CSS VARIABLES & BASE */
+        :root { --bg-color: #030712; --card-bg: rgba(15, 23, 42, 0.95); --accent-color: #2563eb; --accent-glow: rgba(37, 99, 235, 0.45); --text-main: #f8fafc; --text-muted: #94a3b8; --border-color: rgba(255, 255, 255, 0.12); --success-color: #10b981; --gold-color: #f59e0b; --input-bg: #0f172a; --chat-bg: #020617; }
+        body.light-theme { --bg-color: #f1f5f9; --card-bg: #ffffff; --text-main: #0f172a; --text-muted: #64748b; --border-color: #cbd5e1; --input-bg: #ffffff; --chat-bg: #f8fafc; }
+        * { margin:0; padding:0; box-sizing:border-box; font-family:-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; -webkit-tap-highlight-color: transparent; }
+        body { background: var(--bg-color); color: var(--text-main); display:flex; flex-direction:column; height: 100vh; overflow: hidden; transition: background 0.3s, color 0.3s; }
 
-<style>
-*{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
-    font-family:Arial,Helvetica,sans-serif;
-}
+        /* CUSTOM TOAST */
+        #custom-toast { position: fixed; top: -100px; left: 50%; transform: translateX(-50%); background: var(--card-bg); color: var(--text-main); border: 1px solid var(--accent-color); padding: 12px 24px; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); z-index: 10000; display: flex; align-items: center; gap: 12px; font-size: 13.5px; font-weight: 600; transition: top 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55); }
+        #custom-toast.show { top: 30px; }
 
-body{
-    background:#070707;
-    color:#fff;
-}
+        /* TOP BAR */
+        .top-bar { display:flex; justify-content:space-between; align-items:center; padding:15px 20px; z-index:50; background: var(--card-bg); border-bottom: 1px solid var(--border-color); }
+        .back-btn { background:transparent; border:none; color:var(--text-main); font-size:18px; cursor:pointer; display:flex; align-items:center; gap:10px; font-weight:800; }
+        .menu-btn { background:var(--input-bg); border:1px solid var(--border-color); color:var(--text-main); font-size:16px; padding:8px 12px; border-radius:10px; cursor:pointer; transition: 0.2s; }
+        
+        /* SEARCH & FILTER AREA */
+        .search-area { padding: 15px 20px 5px; }
+        .search-box { position: relative; width: 100%; }
+        .search-box input { width: 100%; background: var(--input-bg); border: 1px solid var(--border-color); color: var(--text-main); padding: 14px 20px 14px 45px; border-radius: 16px; font-size: 14px; outline: none; transition: 0.3s; }
+        .search-box input:focus { border-color: var(--accent-color); box-shadow: 0 0 10px var(--accent-glow); }
+        .search-box i { position: absolute; left: 18px; top: 50%; transform: translateY(-50%); color: var(--text-muted); font-size: 15px; }
 
-header{
-    position:sticky;
-    top:0;
-    z-index:50;
-    background:#0d0d0d;
-    border-bottom:1px solid #242424;
-    padding:17px 20px;
-}
+        /* HORIZONTAL SCROLL CHIPS */
+        .category-scroll { display: flex; gap: 10px; overflow-x: auto; padding: 10px 20px 15px; scrollbar-width: none; }
+        .category-scroll::-webkit-scrollbar { display: none; }
+        .cat-chip { background: var(--card-bg); border: 1px solid var(--border-color); color: var(--text-muted); padding: 8px 16px; border-radius: 20px; font-size: 12.5px; font-weight: 700; white-space: nowrap; cursor: pointer; transition: 0.2s; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        .cat-chip.active { background: var(--accent-color); color: #fff; border-color: var(--accent-color); box-shadow: 0 4px 15px var(--accent-glow); }
 
-.header-inner{
-    max-width:1200px;
-    margin:auto;
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    gap:15px;
-}
+        /* BATCHES LIST AREA */
+        .batches-container { flex: 1; overflow-y: auto; padding: 0 20px 20px; display: flex; flex-direction: column; gap: 15px; }
+        
+        /* FIXED: PREMIUM BATCH CARD (Color Bug Resolved) */
+        .batch-card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 18px; padding: 18px; box-shadow: 0 8px 25px rgba(0,0,0,0.1); transition: 0.3s; position: relative; overflow: hidden; }
+        .batch-card::before { content:''; position:absolute; top:0; left:0; width:4px; height:100%; background: var(--accent-color); border-radius: 18px 0 0 18px; }
+        .batch-tag { background: rgba(16, 185, 129, 0.15); color: var(--success-color); padding: 4px 10px; border-radius: 8px; font-size: 10px; font-weight: 800; display: inline-block; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 0.5px; border: 1px solid rgba(16, 185, 129, 0.3); }
+        .batch-title { font-size: 17px; font-weight: 800; color: var(--text-main); margin-bottom: 6px; line-height: 1.3; }
+        .batch-desc { font-size: 12px; color: var(--text-muted); margin-bottom: 15px; line-height: 1.5; }
+        
+        .batch-footer { display: flex; justify-content: space-between; align-items: center; border-top: 1px dashed var(--border-color); padding-top: 15px; }
+        .batch-price { font-size: 16px; font-weight: 800; color: var(--success-color); }
+        .batch-price-sub { font-size: 9.5px; color: var(--text-muted); display: block; font-weight: 700; text-transform: uppercase; }
+        
+        .btn-row { display: flex; gap: 8px; }
+        .btn-details { background: var(--chat-bg); color: var(--text-main); font-weight: 700; padding: 8px 14px; border: 1px solid var(--border-color); border-radius: 10px; cursor: pointer; font-size: 12px; transition: 0.2s; }
+        .btn-buy { background: var(--accent-color); color: #fff; font-weight: 700; padding: 8px 14px; border: none; border-radius: 10px; cursor: pointer; font-size: 12px; box-shadow: 0 4px 15px var(--accent-glow); transition: 0.2s; }
+        
+        /* DRAWER MENU */
+        .drawer-overlay { position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.75); z-index:1000; display:none; }
+        .drawer { position:fixed; top:0; left:-320px; width:320px; height:100%; background:var(--card-bg); border-right:1px solid var(--border-color); z-index:1001; transition:0.3s; padding:20px; display:flex; flex-direction:column; overflow-y:auto; }
+        .drawer.open { left:0; }
+        .drawer-header { display:flex; justify-content:space-between; align-items:center; padding-bottom:14px; border-bottom:1px solid var(--border-color); margin-bottom:14px; }
+        
+        .drawer-item { padding:12px 14px; border-radius:12px; color:var(--text-main); font-size:14px; font-weight:600; display:flex; align-items:center; gap:14px; cursor:pointer; margin-bottom:8px; transition:0.2s; }
+        .drawer-item:hover { background:rgba(255,255,255,0.08); padding-left: 20px; color: var(--accent-color); }
 
-.logo{
-    font-size:25px;
-    font-weight:900;
-}
+        /* MODALS */
+        .modal-overlay { position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); z-index:2000; display:none; justify-content:center; align-items:center; padding:16px; backdrop-filter: blur(5px); }
+        .modal-card { background:var(--card-bg); border:1px solid var(--border-color); border-radius:24px; padding:26px; max-width:420px; width:100%; text-align:left; position:relative; box-shadow: 0 20px 50px rgba(0,0,0,0.5); animation: popIn 0.3s ease; max-height: 90vh; display: flex; flex-direction: column; }
+        @keyframes popIn { 0% { opacity:0; transform:scale(0.8) translateY(10px); } 100% { opacity:1; transform:scale(1) translateY(0); } }
 
-.logo span{
-    color:#00ff88;
-}
+        /* DETAILS MODAL LIST */
+        .sub-list-container { overflow-y: auto; margin-top: 15px; padding-right: 5px; flex: 1; }
+        .sub-card { display: flex; align-items: center; gap: 12px; background: var(--input-bg); padding: 12px; border-radius: 12px; border: 1px solid var(--border-color); margin-bottom: 10px; }
+        .sub-icon { width: 40px; height: 40px; border-radius: 10px; background: rgba(37, 99, 235, 0.1); color: var(--accent-color); display: flex; justify-content: center; align-items: center; font-size: 18px; }
+        .sub-info h4 { font-size: 13.5px; color: var(--text-main); margin-bottom: 2px; }
+        .sub-info p { font-size: 11px; color: var(--gold-color); font-weight: 600; }
 
-.header-right{
-    color:#aaa;
-    font-size:13px;
-}
-
-.container{
-    width:94%;
-    max-width:1200px;
-    margin:25px auto 50px;
-}
-
-.hero{
-    background:linear-gradient(135deg,#111,#0a0a0a);
-    border:1px solid #242424;
-    border-radius:20px;
-    padding:28px;
-    margin-bottom:22px;
-}
-
-.hero h1{
-    font-size:30px;
-    margin-bottom:8px;
-}
-
-.hero p{
-    color:#999;
-    line-height:1.6;
-}
-
-.tabs{
-    display:flex;
-    gap:10px;
-    margin-bottom:20px;
-}
-
-.tab{
-    flex:1;
-    padding:14px;
-    border-radius:12px;
-    border:1px solid #292929;
-    background:#111;
-    color:#aaa;
-    font-weight:bold;
-    cursor:pointer;
-    text-align:center;
-}
-
-.tab.active{
-    background:#00ff88;
-    color:#000;
-    border-color:#00ff88;
-}
-
-.search{
-    width:100%;
-    padding:15px;
-    margin-bottom:22px;
-    border-radius:12px;
-    border:1px solid #303030;
-    background:#101010;
-    color:white;
-    outline:none;
-    font-size:15px;
-}
-
-.section-title{
-    font-size:23px;
-    margin-bottom:15px;
-}
-
-.grid{
-    display:grid;
-    grid-template-columns:repeat(auto-fit,minmax(235px,1fr));
-    gap:16px;
-}
-
-.card{
-    background:#111;
-    border:1px solid #292929;
-    border-radius:17px;
-    padding:20px;
-    transition:.2s;
-}
-
-.card:hover{
-    border-color:#00ff88;
-    transform:translateY(-3px);
-}
-
-.badge{
-    display:inline-block;
-    background:#19261f;
-    color:#00ff88;
-    border-radius:20px;
-    padding:5px 9px;
-    font-size:11px;
-    margin-bottom:12px;
-}
-
-.card h3{
-    font-size:19px;
-    margin-bottom:7px;
-}
-
-.card p{
-    color:#888;
-    font-size:13px;
-    line-height:1.5;
-    min-height:40px;
-}
-
-.card .count{
-    color:#777;
-    font-size:12px;
-    margin:12px 0;
-}
-
-.btn{
-    width:100%;
-    padding:12px;
-    border:none;
-    border-radius:9px;
-    cursor:pointer;
-    font-weight:bold;
-}
-
-.view-btn{
-    background:#00ff88;
-    color:#000;
-}
-
-.buy-btn{
-    background:#00ff88;
-    color:#000;
-    margin-top:12px;
-}
-
-.back-btn{
-    background:#222;
-    color:#fff;
-    margin-bottom:15px;
-}
-
-.modal{
-    display:none;
-    position:fixed;
-    inset:0;
-    z-index:100;
-    background:rgba(0,0,0,.82);
-    padding:18px;
-    overflow:auto;
-}
-
-.modal-box{
-    max-width:620px;
-    width:100%;
-    margin:30px auto;
-    background:#101010;
-    border:1px solid #303030;
-    border-radius:20px;
-    padding:23px;
-    position:relative;
-}
-
-.close{
-    position:absolute;
-    right:18px;
-    top:12px;
-    font-size:28px;
-    color:#888;
-    cursor:pointer;
-}
-
-.modal-title{
-    padding-right:35px;
-    margin-bottom:5px;
-}
-
-.modal-sub{
-    color:#888;
-    font-size:13px;
-    margin-bottom:20px;
-}
-
-.batch-list{
-    display:grid;
-    gap:12px;
-}
-
-.batch{
-    background:#171717;
-    border:1px solid #292929;
-    border-radius:14px;
-    padding:16px;
-}
-
-.batch h4{
-    margin-bottom:6px;
-}
-
-.batch p{
-    color:#888;
-    font-size:12px;
-    margin-bottom:10px;
-}
-
-.batch-price{
-    color:#00ff88;
-    font-size:21px;
-    font-weight:bold;
-    margin-bottom:10px;
-}
-
-.subjects{
-    display:flex;
-    flex-wrap:wrap;
-    gap:6px;
-    margin-bottom:10px;
-}
-
-.subject{
-    padding:6px 8px;
-    background:#202020;
-    border-radius:7px;
-    color:#bbb;
-    font-size:11px;
-}
-
-.selected-box{
-    background:#151515;
-    border:1px solid #292929;
-    padding:15px;
-    border-radius:12px;
-    margin-bottom:15px;
-}
-
-.payment-note{
-    color:#777;
-    font-size:11px;
-    text-align:center;
-    margin-top:10px;
-}
-
-.empty{
-    grid-column:1/-1;
-    text-align:center;
-    color:#777;
-    padding:50px 10px;
-}
-
-footer{
-    text-align:center;
-    color:#666;
-    padding:30px;
-    font-size:12px;
-    border-top:1px solid #1b1b1b;
-}
-
-@media(max-width:600px){
-
-    .header-inner{
-        display:block;
-        text-align:center;
-    }
-
-    .header-right{
-        margin-top:5px;
-    }
-
-    .hero h1{
-        font-size:24px;
-    }
-
-    .tabs{
-        flex-direction:column;
-    }
-
-    .grid{
-        grid-template-columns:1fr;
-    }
-}
-</style>
+        /* PRICING MODAL TIERS */
+        .tier-card { border: 1px solid var(--border-color); border-radius: 16px; padding: 15px; margin-bottom: 12px; cursor: pointer; transition: 0.2s; background: var(--input-bg); position: relative; overflow: hidden; }
+        .tier-card:hover, .tier-card.selected { border-color: var(--accent-color); background: rgba(37, 99, 235, 0.05); }
+        .tier-card.selected::after { content: '\f058'; font-family: "Font Awesome 6 Free"; font-weight: 900; position: absolute; right: 15px; top: 50%; transform: translateY(-50%); color: var(--success-color); font-size: 20px; }
+        
+        .tier-title { font-size: 15px; font-weight: 800; color: var(--text-main); margin-bottom: 4px; display: flex; justify-content: space-between; }
+        .tier-price { color: var(--success-color); font-size: 16px; }
+        .tier-features { font-size: 11.5px; color: var(--text-muted); line-height: 1.4; }
+        .tier-features strong { color: var(--gold-color); }
+        
+        .btn-primary { width:100%; background: var(--accent-color); color:#fff; font-weight:800; padding:15px; border:none; border-radius:14px; cursor:pointer; font-size:14px; margin-top:15px; transition:0.2s; box-shadow:0 8px 20px var(--accent-glow); }
+        .btn-primary:active { transform: scale(0.97); }
+    </style>
 </head>
-
 <body>
 
-<header>
-    <div class="header-inner">
-        <div class="logo">
-            TicBull <span>Academy</span>
-        </div>
+    <div id="custom-toast"><i class="fa-solid fa-circle-check toast-icon success"></i> <span id="toast-message">Notification</span></div>
 
-        <div class="header-right">
-            Learn • Ask • Understand
-        </div>
-    </div>
-</header>
-
-
-<div class="container">
-
-    <section class="hero">
-        <h1>India's Learning Academy</h1>
-        <p>
-            Choose your board or competitive exam,
-            select your class/batch and connect with
-            your dedicated AI teacher.
-        </p>
-    </section>
-
-
-    <div class="tabs">
-
-        <div
-            class="tab active"
-            onclick="changeCategory('boards',this)"
-        >
-            🏫 School Boards
-        </div>
-
-        <div
-            class="tab"
-            onclick="changeCategory('competitive',this)"
-        >
-            🎯 Competitive Exams
-        </div>
-
+    <!-- TOP BAR -->
+    <div class="top-bar">
+        <button class="back-btn" onclick="window.location.href='dashboard.html'"><i class="fa-solid fa-arrow-left"></i> TicBull Batches</button>
+        <button class="menu-btn" onclick="toggleDrawer()"><i class="fa-solid fa-bars"></i></button>
     </div>
 
-
-    <input
-        id="search"
-        class="search"
-        type="text"
-        placeholder="Search board, exam or batch..."
-        oninput="renderCards()"
-    >
-
-
-    <h2 id="sectionTitle" class="section-title">
-        School Boards
-    </h2>
-
-
-    <div id="cards" class="grid"></div>
-
-</div>
-
-
-<footer>
-    © 2026 TicBull Academy
-</footer>
-
-
-<!-- MODAL -->
-
-<div id="modal" class="modal">
-
-    <div class="modal-box">
-
-        <div
-            class="close"
-            onclick="closeModal()"
-        >
-            ×
+    <!-- SEARCH & FILTER -->
+    <div class="search-area">
+        <div class="search-box">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input type="text" id="searchInput" placeholder="Search Board, NEET, JEE, UPSC, State..." onkeyup="handleSearch()">
         </div>
-
-        <div id="modalContent"></div>
-
     </div>
 
-</div>
-
-
-<script>
-
-/* =========================================================
-   SUBJECT LIBRARY
-   Student को chapter list नहीं दिखाई जाएगी.
-========================================================= */
-
-const commonScience = [
-    "Physics",
-    "Chemistry",
-    "Biology",
-    "Mathematics",
-    "English"
-];
-
-const commonHumanities = [
-    "History",
-    "Geography",
-    "Political Science",
-    "Economics",
-    "English",
-    "Hindi"
-];
-
-const commonCommerce = [
-    "Accountancy",
-    "Business Studies",
-    "Economics",
-    "Mathematics",
-    "English"
-];
-
-
-/* =========================================================
-   BOARD LIST
-========================================================= */
-
-const boards = [
-
-{
-    name:"CBSE",
-    type:"National Board",
-    price:199,
-    batches:[
-        ["Class 9","General Foundation"],
-        ["Class 10","Board Preparation"],
-        ["Class 11","Science - PCM"],
-        ["Class 11","Science - PCB"],
-        ["Class 11","Science - PCMB"],
-        ["Class 11","Commerce"],
-        ["Class 11","Humanities"],
-        ["Class 12","Science - PCM"],
-        ["Class 12","Science - PCB"],
-        ["Class 12","Science - PCMB"],
-        ["Class 12","Commerce"],
-        ["Class 12","Humanities"]
-    ]
-},
-
-{
-    name:"ICSE / ISC",
-    type:"National Board",
-    price:249,
-    batches:[
-        ["Class 9","Foundation"],
-        ["Class 10","ICSE Board"],
-        ["Class 11","Science"],
-        ["Class 11","Commerce"],
-        ["Class 11","Humanities"],
-        ["Class 12","Science"],
-        ["Class 12","Commerce"],
-        ["Class 12","Humanities"]
-    ]
-},
-
-{
-    name:"Bihar Board",
-    type:"State Board",
-    price:149,
-    batches:[
-        ["Class 9","Foundation"],
-        ["Class 10","Matric Board"],
-        ["Class 11","Science"],
-        ["Class 11","Commerce"],
-        ["Class 11","Arts"],
-        ["Class 12","Science"],
-        ["Class 12","Commerce"],
-        ["Class 12","Arts"]
-    ]
-},
-
-{
-    name:"UP Board",
-    type:"State Board",
-    price:149,
-    batches:[
-        ["Class 9","Foundation"],
-        ["Class 10","Board Preparation"],
-        ["Class 11","Science"],
-        ["Class 11","Commerce"],
-        ["Class 11","Humanities"],
-        ["Class 12","Science"],
-        ["Class 12","Commerce"],
-        ["Class 12","Humanities"]
-    ]
-},
-
-{
-    name:"Jharkhand Board",
-    type:"State Board",
-    price:149,
-    batches:[
-        ["Class 9","Foundation"],
-        ["Class 10","Board Preparation"],
-        ["Class 11","Science"],
-        ["Class 11","Commerce"],
-        ["Class 11","Arts"],
-        ["Class 12","Science"],
-        ["Class 12","Commerce"],
-        ["Class 12","Arts"]
-    ]
-},
-
-{
-    name:"West Bengal Board",
-    type:"State Board",
-    price:149,
-    batches:[
-        ["Class 9","Foundation"],
-        ["Class 10","Board Preparation"],
-        ["Class 11","Science"],
-        ["Class 11","Commerce"],
-        ["Class 11","Arts"],
-        ["Class 12","Science"],
-        ["Class 12","Commerce"],
-        ["Class 12","Arts"]
-    ]
-},
-
-{
-    name:"Odisha Board",
-    type:"State Board",
-    price:149,
-    batches:[
-        ["Class 9","Foundation"],
-        ["Class 10","Board Preparation"],
-        ["Class 11","Science"],
-        ["Class 11","Commerce"],
-        ["Class 11","Arts"],
-        ["Class 12","Science"],
-        ["Class 12","Commerce"],
-        ["Class 12","Arts"]
-    ]
-},
-
-{
-    name:"Chhattisgarh Board",
-    type:"State Board",
-    price:149,
-    batches:[
-        ["Class 9","Foundation"],
-        ["Class 10","Board Preparation"],
-        ["Class 11","Science"],
-        ["Class 11","Commerce"],
-        ["Class 11","Arts"],
-        ["Class 12","Science"],
-        ["Class 12","Commerce"],
-        ["Class 12","Arts"]
-    ]
-},
-
-{
-    name:"Madhya Pradesh Board",
-    type:"State Board",
-    price:149,
-    batches:[
-        ["Class 9","Foundation"],
-        ["Class 10","Board Preparation"],
-        ["Class 11","Science"],
-        ["Class 11","Commerce"],
-        ["Class 11","Arts"],
-        ["Class 12","Science"],
-        ["Class 12","Commerce"],
-        ["Class 12","Arts"]
-    ]
-},
-
-{
-    name:"Rajasthan Board",
-    type:"State Board",
-    price:149,
-    batches:[
-        ["Class 9","Foundation"],
-        ["Class 10","Board Preparation"],
-        ["Class 11","Science"],
-        ["Class 11","Commerce"],
-        ["Class 11","Arts"],
-        ["Class 12","Science"],
-        ["Class 12","Commerce"],
-        ["Class 12","Arts"]
-    ]
-},
-
-{
-    name:"Haryana Board",
-    type:"State Board",
-    price:149,
-    batches:[
-        ["Class 9","Foundation"],
-        ["Class 10","Board Preparation"],
-        ["Class 11","Science"],
-        ["Class 11","Commerce"],
-        ["Class 11","Arts"],
-        ["Class 12","Science"],
-        ["Class 12","Commerce"],
-        ["Class 12","Arts"]
-    ]
-},
-
-{
-    name:"Punjab Board",
-    type:"State Board",
-    price:149,
-    batches:[
-        ["Class 9","Foundation"],
-        ["Class 10","Board Preparation"],
-        ["Class 11","Science"],
-        ["Class 11","Commerce"],
-        ["Class 11","Humanities"],
-        ["Class 12","Science"],
-        ["Class 12","Commerce"],
-        ["Class 12","Humanities"]
-    ]
-},
-
-{
-    name:"Himachal Pradesh Board",
-    type:"State Board",
-    price:149,
-    batches:[
-        ["Class 9","Foundation"],
-        ["Class 10","Board Preparation"],
-        ["Class 11","Science"],
-        ["Class 11","Commerce"],
-        ["Class 11","Arts"],
-        ["Class 12","Science"],
-        ["Class 12","Commerce"],
-        ["Class 12","Arts"]
-    ]
-},
-
-{
-    name:"Uttarakhand Board",
-    type:"State Board",
-    price:149,
-    batches:[
-        ["Class 9","Foundation"],
-        ["Class 10","Board Preparation"],
-        ["Class 11","Science"],
-        ["Class 11","Commerce"],
-        ["Class 11","Arts"],
-        ["Class 12","Science"],
-        ["Class 12","Commerce"],
-        ["Class 12","Arts"]
-    ]
-},
-
-{
-    name:"Jammu & Kashmir Board",
-    type:"State Board",
-    price:149,
-    batches:[
-        ["Class 9","Foundation"],
-        ["Class 10","Board Preparation"],
-        ["Class 11","Science"],
-        ["Class 11","Commerce"],
-        ["Class 11","Arts"],
-        ["Class 12","Science"],
-        ["Class 12","Commerce"],
-        ["Class 12","Arts"]
-    ]
-},
-
-{
-    name:"Maharashtra Board",
-    type:"State Board",
-    price:179,
-    batches:[
-        ["Class 9","Foundation"],
-        ["Class 10","SSC Board"],
-        ["Class 11","Science"],
-        ["Class 11","Commerce"],
-        ["Class 11","Arts"],
-        ["Class 12","Science"],
-        ["Class 12","Commerce"],
-        ["Class 12","Arts"]
-    ]
-},
-
-{
-    name:"Gujarat Board",
-    type:"State Board",
-    price:149,
-    batches:[
-        ["Class 9","Foundation"],
-        ["Class 10","Board Preparation"],
-        ["Class 11","Science"],
-        ["Class 11","Commerce"],
-        ["Class 11","Arts"],
-        ["Class 12","Science"],
-        ["Class 12","Commerce"],
-        ["Class 12","Arts"]
-    ]
-},
-
-{
-    name:"Goa Board",
-    type:"State Board",
-    price:149,
-    batches:[
-        ["Class 9","Foundation"],
-        ["Class 10","Board Preparation"],
-        ["Class 11","Science"],
-        ["Class 11","Commerce"],
-        ["Class 11","Arts"],
-        ["Class 12","Science"],
-        ["Class 12","Commerce"],
-        ["Class 12","Arts"]
-    ]
-},
-
-{
-    name:"Karnataka Board",
-    type:"State Board",
-    price:149,
-    batches:[
-        ["Class 9","Foundation"],
-        ["Class 10","SSLC Board"],
-        ["Class 11","Science"],
-        ["Class 11","Commerce"],
-        ["Class 11","Arts"],
-        ["Class 12","Science"],
-        ["Class 12","Commerce"],
-        ["Class 12","Arts"]
-    ]
-},
-
-{
-    name:"Kerala Board",
-    type:"State Board",
-    price:149,
-    batches:[
-        ["Class 9","Foundation"],
-        ["Class 10","SSLC Board"],
-        ["Class 11","Science"],
-        ["Class 11","Commerce"],
-        ["Class 11","Humanities"],
-        ["Class 12","Science"],
-        ["Class 12","Commerce"],
-        ["Class 12","Humanities"]
-    ]
-},
-
-{
-    name:"Tamil Nadu Board",
-    type:"State Board",
-    price:149,
-    batches:[
-        ["Class 9","Foundation"],
-        ["Class 10","SSLC Board"],
-        ["Class 11","Science"],
-        ["Class 11","Commerce"],
-        ["Class 11","Arts"],
-        ["Class 12","Science"],
-        ["Class 12","Commerce"],
-        ["Class 12","Arts"]
-    ]
-},
-
-{
-    name:"Andhra Pradesh Board",
-    type:"State Board",
-    price:149,
-    batches:[
-        ["Class 9","Foundation"],
-        ["Class 10","Board Preparation"],
-        ["Class 11","Science"],
-        ["Class 11","Commerce"],
-        ["Class 11","Arts"],
-        ["Class 12","Science"],
-        ["Class 12","Commerce"],
-        ["Class 12","Arts"]
-    ]
-},
-
-{
-    name:"Telangana Board",
-    type:"State Board",
-    price:149,
-    batches:[
-        ["Class 9","Foundation"],
-        ["Class 10","SSC Board"],
-        ["Class 11","Science"],
-        ["Class 11","Commerce"],
-        ["Class 11","Arts"],
-        ["Class 12","Science"],
-        ["Class 12","Commerce"],
-        ["Class 12","Arts"]
-    ]
-},
-
-{
-    name:"Assam Board",
-    type:"State Board",
-    price:149,
-    batches:[
-        ["Class 9","Foundation"],
-        ["Class 10","Board Preparation"],
-        ["Class 11","Science"],
-        ["Class 11","Commerce"],
-        ["Class 11","Arts"],
-        ["Class 12","Science"],
-        ["Class 12","Commerce"],
-        ["Class 12","Arts"]
-    ]
-},
-
-{
-    name:"Meghalaya Board",
-    type:"State Board",
-    price:149,
-    batches:[
-        ["Class 9","Foundation"],
-        ["Class 10","Board Preparation"],
-        ["Class 11","Science"],
-        ["Class 11","Commerce"],
-        ["Class 11","Arts"],
-        ["Class 12","Science"],
-        ["Class 12","Commerce"],
-        ["Class 12","Arts"]
-    ]
-},
-
-{
-    name:"Mizoram Board",
-    type:"State Board",
-    price:149,
-    batches:[
-        ["Class 9","Foundation"],
-        ["Class 10","Board Preparation"],
-        ["Class 11","Science"],
-        ["Class 11","Commerce"],
-        ["Class 11","Arts"],
-        ["Class 12","Science"],
-        ["Class 12","Commerce"],
-        ["Class 12","Arts"]
-    ]
-},
-
-{
-    name:"Manipur Board",
-    type:"State Board",
-    price:149,
-    batches:[
-        ["Class 9","Foundation"],
-        ["Class 10","Board Preparation"],
-        ["Class 11","Science"],
-        ["Class 11","Commerce"],
-        ["Class 11","Arts"],
-        ["Class 12","Science"],
-        ["Class 12","Commerce"],
-        ["Class 12","Arts"]
-    ]
-},
-
-{
-    name:"Nagaland Board",
-    type:"State Board",
-    price:149,
-    batches:[
-        ["Class 9","Foundation"],
-        ["Class 10","Board Preparation"],
-        ["Class 11","Science"],
-        ["Class 11","Commerce"],
-        ["Class 11","Arts"],
-        ["Class 12","Science"],
-        ["Class 12","Commerce"],
-        ["Class 12","Arts"]
-    ]
-},
-
-{
-    name:"Tripura Board",
-    type:"State Board",
-    price:149,
-    batches:[
-        ["Class 9","Foundation"],
-        ["Class 10","Board Preparation"],
-        ["Class 11","Science"],
-        ["Class 11","Commerce"],
-        ["Class 11","Arts"],
-        ["Class 12","Science"],
-        ["Class 12","Commerce"],
-        ["Class 12","Arts"]
-    ]
-},
-
-{
-    name:"Sikkim Board",
-    type:"State Board",
-    price:149,
-    batches:[
-        ["Class 9","Foundation"],
-        ["Class 10","Board Preparation"],
-        ["Class 11","Science"],
-        ["Class 11","Commerce"],
-        ["Class 11","Arts"],
-        ["Class 12","Science"],
-        ["Class 12","Commerce"],
-        ["Class 12","Arts"]
-    ]
-},
-
-{
-    name:"NIOS",
-    type:"Open Schooling",
-    price:199,
-    batches:[
-        ["Class 9","Secondary Foundation"],
-        ["Class 10","Secondary"],
-        ["Class 11","Senior Secondary Science"],
-        ["Class 11","Senior Secondary Commerce"],
-        ["Class 11","Senior Secondary Humanities"],
-        ["Class 12","Senior Secondary Science"],
-        ["Class 12","Senior Secondary Commerce"],
-        ["Class 12","Senior Secondary Humanities"]
-    ]
-}
-
-];
-
-
-/* =========================================================
-   COMPETITIVE EXAMS
-========================================================= */
-
-const competitive = [
-
-{
-    name:"JEE Main",
-    type:"Engineering",
-    price:399,
-    batches:[
-        "JEE Main Complete",
-        "JEE Main Class 11 Foundation",
-        "JEE Main Class 12",
-        "JEE Main Dropper",
-        "JEE Main Revision",
-        "JEE Main Mock Test"
-    ]
-},
-
-{
-    name:"JEE Advanced",
-    type:"Engineering",
-    price:499,
-    batches:[
-        "JEE Advanced Complete",
-        "JEE Advanced Class 11",
-        "JEE Advanced Class 12",
-        "JEE Advanced Dropper",
-        "JEE Advanced Revision",
-        "JEE Advanced Mock Test"
-    ]
-},
-
-{
-    name:"NEET UG",
-    type:"Medical",
-    price:399,
-    batches:[
-        "NEET Complete",
-        "NEET Class 11",
-        "NEET Class 12",
-        "NEET Dropper",
-        "NEET Revision",
-        "NEET Test Series"
-    ]
-},
-
-{
-    name:"CUET UG",
-    type:"University Entrance",
-    price:349,
-    batches:[
-        "CUET Science",
-        "CUET Commerce",
-        "CUET Humanities",
-        "CUET General Test",
-        "CUET Language",
-        "CUET Complete"
-    ]
-},
-
-{
-    name:"NDA",
-    type:"Defence",
-    price:349,
-    batches:[
-        "NDA Complete",
-        "NDA Mathematics",
-        "NDA GAT",
-        "NDA Foundation",
-        "NDA Revision",
-        "NDA Mock Test"
-    ]
-},
-
-{
-    name:"CLAT UG",
-    type:"Law",
-    price:349,
-    batches:[
-        "CLAT Complete",
-        "CLAT Foundation",
-        "CLAT 1 Year",
-        "CLAT Revision",
-        "CLAT Current Affairs",
-        "CLAT Mock Test"
-    ]
-},
-
-{
-    name:"AILET",
-    type:"Law",
-    price:349,
-    batches:[
-        "AILET Complete",
-        "AILET Foundation",
-        "AILET 1 Year",
-        "AILET Revision",
-        "AILET Mock Test"
-    ]
-},
-
-{
-    name:"BITSAT",
-    type:"Engineering",
-    price:349,
-    batches:[
-        "BITSAT Complete",
-        "BITSAT Class 12",
-        "BITSAT Dropper",
-        "BITSAT Revision",
-        "BITSAT Mock Test"
-    ]
-},
-
-{
-    name:"NATA",
-    type:"Architecture",
-    price:299,
-    batches:[
-        "NATA Complete",
-        "NATA Foundation",
-        "NATA Mathematics",
-        "NATA Aptitude",
-        "NATA Drawing",
-        "NATA Mock Test"
-    ]
-},
-
-{
-    name:"NIFT",
-    type:"Design",
-    price:299,
-    batches:[
-        "NIFT Complete",
-        "NIFT Foundation",
-        "NIFT Creative Ability",
-        "NIFT General Ability",
-        "NIFT Mock Test"
-    ]
-},
-
-{
-    name:"NID DAT",
-    type:"Design",
-    price:299,
-    batches:[
-        "NID DAT Complete",
-        "NID DAT Foundation",
-        "NID DAT Drawing",
-        "NID DAT Design Aptitude",
-        "NID DAT Mock Test"
-    ]
-},
-
-{
-    name:"UCEED",
-    type:"Design",
-    price:299,
-    batches:[
-        "UCEED Complete",
-        "UCEED Foundation",
-        "UCEED Aptitude",
-        "UCEED Visualization",
-        "UCEED Mock Test"
-    ]
-},
-
-{
-    name:"SSC",
-    type:"Government Exams",
-    price:299,
-    batches:[
-        "SSC Complete",
-        "SSC CGL",
-        "SSC CHSL",
-        "SSC MTS",
-        "SSC Foundation",
-        "SSC Mock Test"
-    ]
-},
-
-{
-    name:"Banking",
-    type:"Banking Exams",
-    price:299,
-    batches:[
-        "Bank PO Complete",
-        "Bank Clerk Complete",
-        "Banking Foundation",
-        "Banking Quant",
-        "Banking Reasoning",
-        "Banking Mock Test"
-    ]
-},
-
-{
-    name:"CTET",
-    type:"Teaching",
-    price:299,
-    batches:[
-        "CTET Paper 1",
-        "CTET Paper 2",
-        "CTET Science & Mathematics",
-        "CTET Social Science",
-        "CTET Foundation",
-        "CTET Mock Test"
-    ]
-},
-
-{
-    name:"ICAR",
-    type:"Agriculture",
-    price:299,
-    batches:[
-        "ICAR Complete",
-        "ICAR PCB",
-        "ICAR PCM",
-        "ICAR Agriculture",
-        "ICAR Revision",
-        "ICAR Mock Test"
-    ]
-}
-
-];
-
-
-/* =========================================================
-   STATE
-========================================================= */
-
-let currentCategory = "boards";
-
-
-/* =========================================================
-   CHANGE CATEGORY
-========================================================= */
-
-function changeCategory(category,element){
-
-    currentCategory = category;
-
-    document
-        .querySelectorAll(".tab")
-        .forEach(t => t.classList.remove("active"));
-
-    element.classList.add("active");
-
-    document.getElementById("sectionTitle").innerText =
-        category === "boards"
-        ? "School Boards"
-        : "Competitive Exams";
-
-    document.getElementById("search").value = "";
-
-    renderCards();
-}
-
-
-/* =========================================================
-   RENDER MAIN CARDS
-========================================================= */
-
-function renderCards(){
-
-    const query =
-        document
-        .getElementById("search")
-        .value
-        .toLowerCase()
-        .trim();
-
-    const data =
-        currentCategory === "boards"
-        ? boards
-        : competitive;
-
-    const filtered = data.filter(item => {
-
-        const text =
-            item.name +
-            " " +
-            item.type +
-            " " +
-            JSON.stringify(item.batches);
-
-        return text.toLowerCase().includes(query);
-
-    });
-
-
-    if(filtered.length === 0){
-
-        document.getElementById("cards").innerHTML =
-            `<div class="empty">
-                No board, exam or batch found.
-            </div>`;
-
-        return;
-    }
-
-
-    document.getElementById("cards").innerHTML =
-        filtered.map((item,index)=>`
-
-            <div class="card">
-
-                <span class="badge">
-                    ${item.type}
-                </span>
-
-                <h3>
-                    ${item.name}
-                </h3>
-
-                <p>
-                    ${item.batches.length}
-                    batches available
-                </p>
-
-                <div class="count">
-                    Starting from ₹${item.price}
+    <div class="category-scroll" id="filterContainer">
+        <div class="cat-chip active" onclick="filterBatches('ALL', this)">All Batches</div>
+        <div class="cat-chip" onclick="filterBatches('CBSE', this)">CBSE Board</div>
+        <div class="cat-chip" onclick="filterBatches('ICSE', this)">ICSE/NIOS</div>
+        <div class="cat-chip" onclick="filterBatches('STATE', this)">State Boards</div>
+        <div class="cat-chip" onclick="filterBatches('MEDICAL', this)">NEET (Medical)</div>
+        <div class="cat-chip" onclick="filterBatches('ENGINEERING', this)">JEE (Engg.)</div>
+        <div class="cat-chip" onclick="filterBatches('GOVT', this)">UPSC & Govt.</div>
+    </div>
+
+    <!-- BATCHES LIST -->
+    <div class="batches-container" id="batchesList">
+        <!-- Rendered via JavaScript -->
+    </div>
+
+    <!-- DRAWER MENU -->
+    <div class="drawer-overlay" id="drawerOverlay" onclick="toggleDrawer()"></div>
+    <div class="drawer" id="drawer">
+        <div class="drawer-header">
+            <strong style="font-size:16px;">Menu & Profile</strong>
+            <i class="fa-solid fa-xmark" style="color:var(--text-muted); cursor:pointer; font-size:18px;" onclick="toggleDrawer()"></i>
+        </div>
+        <div class="drawer-item" onclick="window.location.href='dashboard.html'"><i class="fa-solid fa-home" style="color:var(--accent-color); width:20px;"></i> Dashboard Home</div>
+        <div class="drawer-item" onclick="window.location.href='classroom.html'"><i class="fa-solid fa-graduation-cap" style="color:#10b981; width:20px;"></i> My Classroom</div>
+        <div class="drawer-item" onclick="toggleTheme()"><i class="fa-solid fa-circle-half-stroke" style="color:var(--gold-color); width:20px;"></i> <span id="themeToggleText">Switch to Light Mode</span></div>
+    </div>
+
+    <!-- DETAILS MODAL (SUBJECTS & TEACHERS) -->
+    <div class="modal-overlay" id="detailsModal">
+        <div class="modal-card">
+            <i class="fa-solid fa-xmark" style="position:absolute; right:16px; top:16px; color:var(--text-muted); cursor:pointer; font-size:20px;" onclick="document.getElementById('detailsModal').style.display='none';"></i>
+            <h3 style="font-size:18px; color:var(--text-main); margin-bottom:4px;" id="detailsTitle">Batch Name</h3>
+            <p style="font-size:12px; color:var(--text-muted);">Syllabus Subjects & Expert Faculty</p>
+            
+            <div class="sub-list-container" id="detailsSubjectsList">
+                <!-- Subjects mapped here dynamically -->
+            </div>
+            
+            <button class="btn-primary" onclick="openPricingFromDetails()">BUY THIS BATCH</button>
+        </div>
+    </div>
+
+    <!-- PRICING MODAL (BASIC, PRO, MAX) -->
+    <div class="modal-overlay" id="pricingModal">
+        <div class="modal-card" style="max-height: 95vh; overflow-y: auto;">
+            <i class="fa-solid fa-xmark" style="position:absolute; right:16px; top:16px; color:var(--text-muted); cursor:pointer; font-size:20px;" onclick="document.getElementById('pricingModal').style.display='none';"></i>
+            <h3 style="font-size:18px; color:var(--text-main); margin-bottom:4px;"><i class="fa-solid fa-crown" style="color:var(--gold-color);"></i> Select Plan</h3>
+            <p style="font-size:11.5px; color:var(--text-muted); margin-bottom:15px;" id="pricingBatchTitle">Batch Name</p>
+
+            <div class="tier-card" id="tierBasic" onclick="selectTier('Basic')">
+                <div class="tier-title"><span>Basic Pass</span> <span class="tier-price" id="priceBasic">₹499</span></div>
+                <div class="tier-features">
+                    • <strong>20 Doubts / Day</strong><br>
+                    • Complete Syllabus Access<br>
+                    • Chapter Notes & MCQs
                 </div>
-
-                <button
-                    class="btn view-btn"
-                    onclick="openBatches(${index})"
-                >
-                    View Batches
-                </button>
-
             </div>
 
-        `).join("");
-}
+            <div class="tier-card selected" id="tierPro" onclick="selectTier('Pro')">
+                <div class="tier-title"><span>Pro Pass</span> <span class="tier-price" id="pricePro">₹999</span></div>
+                <div class="tier-features">
+                    • <strong>50 Doubts / Day</strong><br>
+                    • High Speed AI Engine<br>
+                    • Priority Teacher Support
+                </div>
+            </div>
 
+            <div class="tier-card" id="tierMax" onclick="selectTier('Max Pro')">
+                <div class="tier-title"><span>Max Pro Pass</span> <span class="tier-price" id="priceMax">₹1499</span></div>
+                <div class="tier-features">
+                    • <strong>80 Doubts / Day</strong><br>
+                    • Unlimited Video Generation<br>
+                    • Mentorship & Career Guidance
+                </div>
+            </div>
 
-/* =========================================================
-   OPEN BATCHES
-========================================================= */
-
-function openBatches(index){
-
-    const data =
-        currentCategory === "boards"
-        ? boards
-        : competitive;
-
-    const item = data[index];
-
-    let html = `
-
-        <h2 class="modal-title">
-            ${item.name}
-        </h2>
-
-        <div class="modal-sub">
-            ${item.type}
+            <button class="btn-primary" onclick="proceedToPayment()">PROCEED TO SECURE PAYMENT <i class="fa-solid fa-lock" style="margin-left:5px; font-size:12px;"></i></button>
         </div>
+    </div>
 
-        <div class="batch-list">
-    `;
-
-
-    if(currentCategory === "boards"){
-
-        item.batches.forEach((batch,i)=>{
-
-            const cls = batch[0];
-            const stream = batch[1];
-
-            let price = getBoardPrice(cls,stream,item.price);
-
-            html += batchHTML(
-                `${cls} — ${stream}`,
-                `Board Batch • ${cls}`,
-                price,
-                i,
-                item.name
-            );
-
+    <script>
+        // ---------------------------------------------------------------------------------
+        // 1. Z+ SECURITY & PERSISTENCE
+        // ---------------------------------------------------------------------------------
+        window.addEventListener('DOMContentLoaded', () => {
+            const savedEmail = localStorage.getItem('ticbull_email');
+            const savedToken = localStorage.getItem('ticbull_token');
+            if(!savedEmail || !savedToken) { if(window.location.hostname !== 'localhost') { window.location.href = "index.html"; return; } }
+            applySavedSettings();
         });
 
-    }else{
-
-        item.batches.forEach((batch,i)=>{
-
-            html += batchHTML(
-                batch,
-                `${item.name} Preparation`,
-                item.price,
-                i,
-                item.name
-            );
-
-        });
-
-    }
-
-
-    html += `</div>`;
-
-    document.getElementById("modalContent").innerHTML = html;
-
-    document.getElementById("modal").style.display = "block";
-}
-
-
-/* =========================================================
-   BOARD PRICE
-========================================================= */
-
-function getBoardPrice(cls,stream,base){
-
-    if(cls === "Class 9")
-        return base;
-
-    if(cls === "Class 10")
-        return base + 30;
-
-    if(cls === "Class 11")
-        return base + 50;
-
-    if(cls === "Class 12")
-        return base + 70;
-
-    return base;
-}
-
-
-/* =========================================================
-   BATCH HTML
-========================================================= */
-
-function batchHTML(title,description,price,index,category){
-
-    const subjects = getSubjects(title);
-
-    return `
-
-        <div class="batch">
-
-            <h4>
-                ${title}
-            </h4>
-
-            <p>
-                ${description}
-            </p>
-
-            <div class="subjects">
-
-                ${subjects.map(s =>
-                    `<span class="subject">${s}</span>`
-                ).join("")}
-
-            </div>
-
-            <div class="batch-price">
-                ₹${price}
-            </div>
-
-            <button
-                class="btn buy-btn"
-                onclick="buyBatch(
-                    '${escapeJS(title)}',
-                    '${escapeJS(category)}',
-                    ${price}
-                )"
-            >
-                🛒 BUY NOW — ₹${price}
-            </button>
-
-        </div>
-    `;
-}
-
-
-/* =========================================================
-   SUBJECTS FOR BATCH
-========================================================= */
-
-function getSubjects(title){
-
-    const t = title.toLowerCase();
-
-    if(t.includes("pcb"))
-        return commonScience.filter(x =>
-            x !== "Mathematics"
-        );
-
-    if(t.includes("pcm"))
-        return commonScience.filter(x =>
-            x !== "Biology"
-        );
-
-    if(t.includes("pcmb"))
-        return commonScience;
-
-    if(
-        t.includes("commerce") ||
-        t.includes("bank")
-    )
-        return commonCommerce;
-
-    if(
-        t.includes("humanities") ||
-        t.includes("arts")
-    )
-        return commonHumanities;
-
-    if(
-        t.includes("neet")
-    )
-        return [
-            "Physics",
-            "Chemistry",
-            "Botany",
-            "Zoology"
-        ];
-
-    if(
-        t.includes("jee") ||
-        t.includes("bitsat")
-    )
-        return [
-            "Physics",
-            "Chemistry",
-            "Mathematics"
-        ];
-
-    if(t.includes("clat") || t.includes("ailet"))
-        return [
-            "English",
-            "Current Affairs",
-            "Legal Reasoning",
-            "Logical Reasoning",
-            "Quantitative Techniques"
-        ];
-
-    if(t.includes("nda"))
-        return [
-            "Mathematics",
-            "English",
-            "General Knowledge",
-            "Science",
-            "History",
-            "Geography"
-        ];
-
-    if(t.includes("cuet"))
-        return [
-            "Language",
-            "Domain Subjects",
-            "General Test"
-        ];
-
-    return [
-        "Physics",
-        "Chemistry",
-        "Biology",
-        "Mathematics",
-        "English"
-    ];
-}
-
-
-/* =========================================================
-   BUY NOW
-========================================================= */
-
-function buyBatch(batchName,category,price){
-
-    const html = `
-
-        <h2 class="modal-title">
-            Confirm Purchase
-        </h2>
-
-        <div class="modal-sub">
-            TicBull Academy
-        </div>
-
-        <div class="selected-box">
-
-            <b>${category}</b>
-
-            <p style="color:#aaa;margin-top:8px">
-                ${batchName}
-            </p>
-
-            <div
-                style="
-                    color:#00ff88;
-                    font-size:25px;
-                    font-weight:bold;
-                    margin-top:12px;
-                "
-            >
-                ₹${price}
-            </div>
-
-        </div>
-
-        <button
-            class="btn buy-btn"
-            onclick="startPayment(
-                '${escapeJS(batchName)}',
-                ${price}
-            )"
-        >
-            💳 Continue to Payment
-        </button>
-
-        <div class="payment-note">
-            Demo checkout. Connect your real payment
-            gateway before accepting payments.
-        </div>
-
-    `;
-
-    document.getElementById("modalContent").innerHTML = html;
-}
-
-
-/* =========================================================
-   PAYMENT PLACEHOLDER
-========================================================= */
-
-function startPayment(batch,price){
-
-    document.getElementById("modalContent").innerHTML = `
-
-        <h2>
-            Payment Gateway
-        </h2>
-
-        <div class="selected-box">
-
-            <p style="color:#aaa">
-                Selected Batch
-            </p>
-
-            <b>${batch}</b>
-
-            <div
-                style="
-                    color:#00ff88;
-                    font-size:26px;
-                    font-weight:bold;
-                    margin-top:12px;
-                "
-            >
-                ₹${price}
-            </div>
-
-        </div>
-
-        <button
-            class="btn buy-btn"
-            onclick="paymentDemo()"
-        >
-            Pay ₹${price}
-        </button>
-
-        <div class="payment-note">
-            Demo only — no real payment is processed.
-        </div>
-
-    `;
-}
-
-
-/* =========================================================
-   DEMO PAYMENT
-========================================================= */
-
-function paymentDemo(){
-
-    document.getElementById("modalContent").innerHTML = `
-
-        <div style="text-align:center;padding:25px 5px">
-
-            <div style="font-size:50px">
-                ✓
-            </div>
-
-            <h2>
-                Demo Purchase Successful
-            </h2>
-
-            <p style="
-                color:#999;
-                margin:12px 0 20px;
-            ">
-                This is a demo checkout.
-                Connect a real payment gateway
-                for live purchases.
-            </p>
-
-            <button
-                class="btn buy-btn"
-                onclick="closeModal()"
-            >
-                Continue
-            </button>
-
-        </div>
-
-    `;
-}
-
-
-/* =========================================================
-   ESCAPE
-========================================================= */
-
-function escapeJS(value){
-
-    return value
-        .replace(/\\/g,"\\\\")
-        .replace(/'/g,"\\'");
-}
-
-
-/* =========================================================
-   CLOSE
-========================================================= */
-
-function closeModal(){
-
-    document.getElementById("modal").style.display = "none";
-}
-
-
-/* =========================================================
-   CLOSE ON BACKDROP
-========================================================= */
-
-document.getElementById("modal")
-.addEventListener("click",function(e){
-
-    if(e.target === this){
-        closeModal();
-    }
-
-});
-
-
-/* =========================================================
-   START
-========================================================= */
-
-renderCards();
-
-</script>
-
+        function applySavedSettings() {
+            const isLight = localStorage.getItem('ticbull_theme') === 'light';
+            if(isLight) { document.body.classList.add('light-theme'); document.getElementById('themeToggleText').innerText = 'Switch to Dark Mode'; }
+            const savedColor = localStorage.getItem('ticbull_theme_color');
+            if(savedColor) document.documentElement.style.setProperty('--accent-color', savedColor);
+        }
+        function toggleDrawer() { document.getElementById('drawer').classList.toggle('open'); document.getElementById('drawerOverlay').style.display = document.getElementById('drawer').classList.contains('open') ? 'block' : 'none'; }
+        function toggleTheme() { document.body.classList.toggle('light-theme'); const isLight = document.body.classList.contains('light-theme'); localStorage.setItem('ticbull_theme', isLight ? 'light' : 'dark'); document.getElementById('themeToggleText').innerText = isLight ? 'Switch to Dark Mode' : 'Switch to Light Mode'; }
+
+        // ---------------------------------------------------------------------------------
+        // 2. THE 300+ BATCHES SMART ENGINE (INDIA WIDE CURRICULUM & SUBJECTS)
+        // ---------------------------------------------------------------------------------
+        let generatedBatchesCache = [];
+        let selectedBatchObj = null;
+        let selectedTier = 'Pro';
+
+        const subjectMapping = {
+            'Foundation': [
+                { name: 'Mathematics', teacher: 'Mr. HC Verma', icon: 'fa-calculator' },
+                { name: 'Science', teacher: 'Ms. Anjali', icon: 'fa-flask' },
+                { name: 'Social Science', teacher: 'Mr. Bipin', icon: 'fa-earth-americas' },
+                { name: 'English', teacher: 'Ms. Riya', icon: 'fa-book-open' }
+            ],
+            'Science': [
+                { name: 'Physics', teacher: 'Mr. HC Verma', icon: 'fa-atom' },
+                { name: 'Chemistry', teacher: 'Mr. Das', icon: 'fa-vial' },
+                { name: 'Mathematics/Biology', teacher: 'Mr. Sharma / Ms. Kavita', icon: 'fa-dna' },
+                { name: 'English', teacher: 'Ms. Riya', icon: 'fa-book-open' }
+            ],
+            'Commerce': [
+                { name: 'Accountancy', teacher: 'Mr. Bansal', icon: 'fa-file-invoice-dollar' },
+                { name: 'Business Studies', teacher: 'Ms. Pooja', icon: 'fa-briefcase' },
+                { name: 'Economics', teacher: 'Mr. Jain', icon: 'fa-chart-line' },
+                { name: 'English', teacher: 'Ms. Riya', icon: 'fa-book-open' }
+            ],
+            'Humanities': [
+                { name: 'History', teacher: 'Mr. Bipin', icon: 'fa-landmark' },
+                { name: 'Geography', teacher: 'Ms. Majid', icon: 'fa-map' },
+                { name: 'Political Science', teacher: 'Mr. Laxmikanth', icon: 'fa-scale-balanced' },
+                { name: 'English', teacher: 'Ms. Riya', icon: 'fa-book-open' }
+            ]
+        };
+
+        function engineGenerateAllBatches() {
+            let list = [];
+            
+            // A. SCHOOL BOARDS (30+ Boards)
+            const allBoards = [
+                "CBSE", "CISCE/ICSE", "NIOS", "Bihar Board (BSEB)", "UP Board (UPMSP)", 
+                "Jharkhand Board (JAC)", "West Bengal Board (WBBSE)", "Odisha Board", 
+                "Chhattisgarh Board", "Madhya Pradesh Board", "Rajasthan Board", 
+                "Haryana Board", "Punjab Board", "Himachal Pradesh Board", 
+                "Uttarakhand Board", "J&K Board", "Maharashtra Board", 
+                "Gujarat Board", "Goa Board", "Karnataka Board", 
+                "Kerala Board", "Tamil Nadu Board", "Andhra Pradesh Board", 
+                "Telangana Board", "Assam Board", "Meghalaya Board", 
+                "Mizoram Board", "Manipur Board", "Nagaland Board", 
+                "Tripura Board", "Sikkim Board"
+            ];
+
+            allBoards.forEach((board, idx) => {
+                let cat = board.includes('CBSE') ? 'CBSE' : (board.includes('ICSE') || board.includes('NIOS') ? 'ICSE' : 'STATE');
+                let shortName = board.split(' ')[0];
+
+                // Found (9-10) -> Student Friendly Prices
+                list.push({ id: `b_${idx}_10`, cat: cat, tag: `${shortName} Board`, title: `${board} Class 9 & 10`, type: 'Foundation', desc: `Complete Foundation Syllabus for ${shortName}.`, p_basic: 499, p_pro: 999, p_max: 1499 });
+                
+                // Sci (11-12)
+                list.push({ id: `b_${idx}_sci`, cat: cat, tag: `${shortName} Board`, title: `${board} Class 11 & 12 Science`, type: 'Science', desc: `Physics, Chemistry, Maths/Bio for ${shortName}.`, p_basic: 799, p_pro: 1499, p_max: 1999 });
+                
+                // Com (11-12)
+                list.push({ id: `b_${idx}_com`, cat: cat, tag: `${shortName} Board`, title: `${board} Class 11 & 12 Commerce`, type: 'Commerce', desc: `Accountancy, BST, Economics for ${shortName}.`, p_basic: 799, p_pro: 1499, p_max: 1999 });
+                
+                // Arts (11-12)
+                list.push({ id: `b_${idx}_art`, cat: cat, tag: `${shortName} Board`, title: `${board} Class 11 & 12 Humanities`, type: 'Humanities', desc: `History, Geography, Polity for ${shortName}.`, p_basic: 799, p_pro: 1499, p_max: 1999 });
+            });
+
+            // B. COMPETITIVE EXAMS (Higher Tier)
+            const comps = [
+                { cat: 'ENGINEERING', tag: 'IIT-JEE', title: 'JEE Main & Advanced 2027/28', type: 'Science', desc: 'Advanced Physics, Chemistry, Maths.', p_basic: 999, p_pro: 1999, p_max: 2999 },
+                { cat: 'MEDICAL', tag: 'NEET Target', title: 'NEET-UG 2027/28 Preparation', type: 'Science', desc: 'Physical/Organic Chem, Botany, Zoology.', p_basic: 999, p_pro: 1999, p_max: 2999 },
+                { cat: 'GOVT', tag: 'UPSC Goal', title: 'UPSC Civil Services Foundation', type: 'Humanities', desc: 'Polity, Geography, History, Economics.', p_basic: 999, p_pro: 1999, p_max: 2999 },
+                { cat: 'LAW_COMMERCE', tag: 'NLU Goal', title: 'CLAT & Law Entrance', type: 'Humanities', desc: 'Legal Reasoning, GK, English.', p_basic: 899, p_pro: 1799, p_max: 2499 }
+            ];
+
+            comps.forEach((c, i) => { list.push({ id: `c_${i}`, cat: c.cat, tag: c.tag, title: c.title, type: c.type, desc: c.desc, p_basic: c.p_basic, p_pro: c.p_pro, p_max: c.p_max }); });
+
+            return list;
+        }
+
+        generatedBatchesCache = engineGenerateAllBatches();
+
+        // ---------------------------------------------------------------------------------
+        // 3. UI RENDERING & MODALS
+        // ---------------------------------------------------------------------------------
+        function renderBatches(arr) {
+            const container = document.getElementById('batchesList');
+            container.innerHTML = '';
+            
+            if(arr.length === 0) {
+                container.innerHTML = '<div style="text-align:center; padding:40px 20px; color:var(--text-muted);">No batches found.</div>'; return;
+            }
+
+            arr.forEach(b => {
+                container.innerHTML += `
+                    <div class="batch-card">
+                        <span class="batch-tag">${b.tag}</span>
+                        <div class="batch-title">${b.title}</div>
+                        <div class="batch-desc">${b.desc}</div>
+                        
+                        <div class="batch-footer">
+                            <div>
+                                <span class="batch-price-sub">Starting From</span>
+                                <span class="batch-price">₹${b.p_basic}/yr</span>
+                            </div>
+                            <div class="btn-row">
+                                <button class="btn-details" onclick="openDetails('${b.id}')">Details</button>
+                                <button class="btn-buy" onclick="openPricing('${b.id}')">Buy Pass</button>
+                            </div>
+                        </div>
+                    </div>`;
+            });
+        }
+
+        function filterBatches(cat, el) {
+            document.querySelectorAll('.cat-chip').forEach(c => c.classList.remove('active'));
+            if(el) el.classList.add('active');
+            if(cat === 'ALL') renderBatches(generatedBatchesCache);
+            else renderBatches(generatedBatchesCache.filter(b => b.cat === cat));
+        }
+
+        function handleSearch() {
+            const q = document.getElementById('searchInput').value.toLowerCase();
+            const filtered = generatedBatchesCache.filter(b => b.title.toLowerCase().includes(q) || b.desc.toLowerCase().includes(q));
+            document.querySelectorAll('.cat-chip').forEach(c => c.classList.remove('active'));
+            renderBatches(filtered);
+        }
+
+        // VIEW DETAILS MODAL
+        function openDetails(id) {
+            selectedBatchObj = generatedBatchesCache.find(b => b.id === id);
+            document.getElementById('detailsTitle').innerText = selectedBatchObj.title;
+            
+            const subs = subjectMapping[selectedBatchObj.type] || subjectMapping['Foundation'];
+            const listContainer = document.getElementById('detailsSubjectsList');
+            listContainer.innerHTML = '';
+            
+            subs.forEach(s => {
+                listContainer.innerHTML += `
+                    <div class="sub-card">
+                        <div class="sub-icon"><i class="fa-solid ${s.icon}"></i></div>
+                        <div class="sub-info">
+                            <h4>${s.name}</h4>
+                            <p><i class="fa-solid fa-chalkboard-user"></i> Faculty: ${s.teacher}</p>
+                        </div>
+                    </div>`;
+            });
+            
+            document.getElementById('detailsModal').style.display = 'flex';
+        }
+
+        function openPricingFromDetails() {
+            document.getElementById('detailsModal').style.display = 'none';
+            openPricing(selectedBatchObj.id);
+        }
+
+        // PRICING MODAL
+        function openPricing(id) {
+            selectedBatchObj = generatedBatchesCache.find(b => b.id === id);
+            document.getElementById('pricingBatchTitle').innerText = selectedBatchObj.title;
+            
+            document.getElementById('priceBasic').innerText = `₹${selectedBatchObj.p_basic}/yr`;
+            document.getElementById('pricePro').innerText = `₹${selectedBatchObj.p_pro}/yr`;
+            document.getElementById('priceMax').innerText = `₹${selectedBatchObj.p_max}/yr`;
+
+            selectTier('Pro'); // Default selection
+            document.getElementById('pricingModal').style.display = 'flex';
+        }
+
+        function selectTier(tier) {
+            selectedTier = tier;
+            document.getElementById('tierBasic').classList.remove('selected');
+            document.getElementById('tierPro').classList.remove('selected');
+            document.getElementById('tierMax').classList.remove('selected');
+            
+            if(tier === 'Basic') document.getElementById('tierBasic').classList.add('selected');
+            if(tier === 'Pro') document.getElementById('tierPro').classList.add('selected');
+            if(tier === 'Max Pro') document.getElementById('tierMax').classList.add('selected');
+        }
+
+        function proceedToPayment() {
+            let finalPrice = selectedBatchObj.p_pro;
+            let doubts = 50;
+            if(selectedTier === 'Basic') { finalPrice = selectedBatchObj.p_basic; doubts = 20; }
+            if(selectedTier === 'Max Pro') { finalPrice = selectedBatchObj.p_max; doubts = 80; }
+
+            // Save details for Payment page (File 4)
+            sessionStorage.setItem('tb_checkout_id', selectedBatchObj.id);
+            sessionStorage.setItem('tb_checkout_title', selectedBatchObj.title);
+            sessionStorage.setItem('tb_checkout_tier', selectedTier);
+            sessionStorage.setItem('tb_checkout_price', finalPrice);
+            sessionStorage.setItem('tb_checkout_doubts', doubts);
+            
+            window.location.href = 'payment.html';
+        }
+
+        // Initialize
+        renderBatches(generatedBatchesCache);
+    </script>
 </body>
 </html>
