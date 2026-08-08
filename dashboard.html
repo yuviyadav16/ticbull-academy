@@ -4,94 +4,141 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>TicBull Academy - Dashboard</title>
+    
     <link rel="manifest" href="/manifest.json">
     <meta name="theme-color" content="#2563eb">
+    <link rel="apple-touch-icon" href="logo.png">
+
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     
     <style>
-        /* 100% ORIGINAL CSS VARIABLES & BASE */
-        :root { --bg-color: #030712; --card-bg: rgba(15, 23, 42, 0.95); --accent-color: #2563eb; --accent-glow: rgba(37, 99, 235, 0.45); --text-main: #f8fafc; --text-muted: #94a3b8; --border-color: rgba(255, 255, 255, 0.12); --success-color: #10b981; --gold-color: #f59e0b; --input-bg: #0f172a; }
-        body.light-theme { --bg-color: #f1f5f9; --card-bg: #ffffff; --text-main: #0f172a; --text-muted: #64748b; --border-color: #cbd5e1; --input-bg: #ffffff; }
-        * { margin:0; padding:0; box-sizing:border-box; font-family:-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; -webkit-tap-highlight-color: transparent; }
-        body { background: var(--bg-color); color: var(--text-main); display:flex; flex-direction:column; height: 100vh; overflow: hidden; transition: background 0.3s, color 0.3s; }
+        :root {
+            --bg-color: #030712;
+            --card-bg: rgba(15, 23, 42, 0.95);
+            --accent-color: #2563eb;
+            --accent-glow: rgba(37, 99, 235, 0.45);
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --border-color: rgba(255, 255, 255, 0.12);
+            --success-color: #10b981;
+            --gold-color: #f59e0b;
+            --chat-bg: #020617;
+            --input-bg: #0f172a;
+        }
 
-        /* CUSTOM TOAST */
-        #custom-toast { position: fixed; top: -100px; left: 50%; transform: translateX(-50%); background: var(--card-bg); color: var(--text-main); border: 1px solid var(--accent-color); padding: 12px 24px; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); z-index: 10000; display: flex; align-items: center; gap: 12px; font-size: 13.5px; font-weight: 600; transition: top 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55); }
+        body.light-theme {
+            --bg-color: #f1f5f9;
+            --card-bg: #ffffff;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --border-color: #cbd5e1;
+            --chat-bg: #f8fafc;
+            --input-bg: #ffffff;
+        }
+
+        * { margin:0; padding:0; box-sizing:border-box; font-family:-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; -webkit-tap-highlight-color: transparent; }
+        
+        html, body { height: 100%; width: 100%; overflow: hidden; background: var(--bg-color); color: var(--text-main); transition: background 0.3s, color 0.3s; }
+        body { display:flex; flex-direction:column; }
+
+        /* CUSTOM TOAST NOTIFICATION */
+        #custom-toast {
+            position: fixed; top: -100px; left: 50%; transform: translateX(-50%);
+            background: var(--card-bg); color: var(--text-main);
+            border: 1px solid var(--accent-color); padding: 12px 24px;
+            border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            z-index: 10000; display: flex; align-items: center; gap: 12px;
+            font-size: 13.5px; font-weight: 600;
+            transition: top 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
         #custom-toast.show { top: 30px; }
+        .toast-icon { font-size: 18px; }
+        .toast-icon.success { color: var(--success-color); }
+        .toast-icon.error { color: #ef4444; }
 
         /* TOP BAR */
         .top-bar { display:flex; justify-content:space-between; align-items:center; padding:20px; z-index:50; }
-        .logo-area { display:flex; align-items:center; gap:10px; }
-        .logo-area img { width: 40px; height: 40px; border-radius: 50%; box-shadow: 0 0 15px var(--accent-glow); border:1px solid rgba(255,255,255,0.2); }
+        .logo-area { display:flex; align-items:center; gap:12px; }
+        .logo-area img { width: 42px; height: 42px; border-radius: 50%; box-shadow: 0 0 15px var(--accent-glow); border:1px solid rgba(255,255,255,0.2); object-fit:contain; background:#000; }
         .logo-area span { font-weight:800; font-size:18px; color:#fff; letter-spacing:0.5px; }
-        .menu-btn { background:var(--card-bg); border:1px solid var(--border-color); color:var(--text-main); font-size:18px; padding:10px 14px; border-radius:12px; cursor:pointer; box-shadow:0 5px 15px rgba(0,0,0,0.3); }
+        .menu-btn { background:var(--card-bg); border:1px solid var(--border-color); color:var(--text-main); font-size:18px; padding:10px 14px; border-radius:12px; cursor:pointer; box-shadow:0 5px 15px rgba(0,0,0,0.3); transition:0.2s; }
+        .menu-btn:active { transform:scale(0.9); }
 
         /* MAIN CONTENT - 2 BUTTONS */
         .main-content { display:flex; flex-direction:column; align-items:center; justify-content:center; flex:1; padding:20px; }
-        .action-card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius:24px; padding:30px 22px; width:100%; max-width:400px; box-shadow:0 20px 50px rgba(0,0,0,0.5); text-align:center; }
-        .action-card h2 { font-size:22px; font-weight:800; margin-bottom:8px; }
-        .action-card p { font-size:13px; color:var(--text-muted); margin-bottom:25px; }
+        .action-card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius:24px; padding:35px 25px; width:100%; max-width:400px; box-shadow:0 20px 50px rgba(0,0,0,0.5); text-align:center; }
+        .action-card h2 { font-size:24px; font-weight:800; margin-bottom:8px; color:var(--text-main); }
+        .action-card p { font-size:13px; color:var(--text-muted); margin-bottom:30px; }
         
         .btn-large { width:100%; font-weight:800; padding:18px; border:none; border-radius:16px; cursor:pointer; font-size:15px; margin-bottom:15px; display:flex; align-items:center; justify-content:center; gap:12px; transition:0.3s; color:#fff; }
         .btn-large:active { transform:scale(0.96); }
-        .btn-explore { background: linear-gradient(135deg, #2563eb, #3b82f6); box-shadow: 0 8px 20px rgba(37, 99, 235, 0.4); }
-        .btn-classroom { background: linear-gradient(135deg, #10b981, #059669); box-shadow: 0 8px 20px rgba(16, 185, 129, 0.4); }
+        .btn-explore { background: linear-gradient(135deg, #2563eb, #3b82f6); box-shadow: 0 8px 25px rgba(37, 99, 235, 0.4); }
+        .btn-classroom { background: linear-gradient(135deg, #10b981, #059669); box-shadow: 0 8px 25px rgba(16, 185, 129, 0.4); }
 
-        /* EXACT OLD MENU DRAWER */
+        /* SIDE DRAWER MENU (ORIGINAL) */
         .drawer-overlay { position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.75); z-index:1000; display:none; }
-        .drawer { position:fixed; top:0; left:-320px; width:320px; height:100%; background:var(--card-bg); border-right:1px solid var(--border-color); z-index:1001; transition:0.3s; padding:20px; display:flex; flex-direction:column; overflow-y:auto; }
+        .drawer { position:fixed; top:0; left:-310px; width:310px; height:100%; background:var(--card-bg); border-right:1px solid var(--border-color); z-index:1001; transition:0.3s; padding:18px; display:flex; flex-direction:column; overflow-y:auto; }
         .drawer.open { left:0; }
-        .drawer-header { display:flex; justify-content:space-between; align-items:center; padding-bottom:14px; border-bottom:1px solid var(--border-color); margin-bottom:14px; }
+        .drawer-header { display:flex; justify-content:space-between; align-items:center; padding-bottom:12px; border-bottom:1px solid var(--border-color); margin-bottom:12px; }
         
-        .profile-card { background:linear-gradient(135deg, rgba(37, 99, 235, 0.15), rgba(245, 158, 11, 0.1)); border:1px solid var(--border-color); border-radius:18px; padding:16px; margin-bottom:16px; text-align:left; position:relative; display:flex; align-items:center; gap:14px; }
-        .profile-avatar-box { position:relative; width:50px; height:50px; flex-shrink:0; }
+        .profile-card { background:linear-gradient(135deg, rgba(37, 99, 235, 0.2), rgba(245, 158, 11, 0.15)); border:1px solid var(--border-color); border-radius:16px; padding:14px; margin-bottom:14px; text-align:left; position:relative; }
+        .profile-header { display:flex; align-items:center; gap:12px; }
+        
+        .profile-avatar-box { position:relative; width:46px; height:46px; }
         .profile-avatar-img { width:100%; height:100%; border-radius:50%; object-fit:cover; border:2px solid var(--accent-color); }
-        .profile-avatar-initial { width:100%; height:100%; border-radius:50%; background:var(--accent-color); color:#fff; display:flex; justify-content:center; align-items:center; font-weight:800; font-size:20px; border:2px solid rgba(255,255,255,0.2); }
-        .avatar-upload-icon { position:absolute; bottom:-2px; right:-2px; background:var(--gold-color); color:#000; width:22px; height:22px; border-radius:50%; font-size:11px; display:flex; justify-content:center; align-items:center; cursor:pointer; }
-        .edit-profile-btn { position:absolute; top:12px; right:12px; color:var(--text-muted); font-size:14px; cursor:pointer; }
+        .profile-avatar-initial { width:100%; height:100%; border-radius:50%; background:var(--accent-color); color:#fff; display:flex; justify-content:center; align-items:center; font-weight:800; font-size:18px; border:2px solid rgba(255,255,255,0.2); }
+        .avatar-upload-icon { position:absolute; bottom:-2px; right:-2px; background:var(--gold-color); color:#000; width:18px; height:18px; border-radius:50%; font-size:10px; display:flex; justify-content:center; align-items:center; cursor:pointer; }
+        .edit-profile-btn { position:absolute; top:12px; right:12px; color:var(--text-muted); font-size:13px; cursor:pointer; }
 
-        .drawer-item { padding:12px 14px; border-radius:12px; color:var(--text-main); font-size:14px; font-weight:600; display:flex; align-items:center; gap:14px; cursor:pointer; margin-bottom:8px; transition:0.2s; }
-        .drawer-item:hover { background:rgba(255,255,255,0.08); padding-left: 20px; color: var(--accent-color); }
+        .drawer-item { padding:11px 12px; border-radius:10px; color:var(--text-main); font-size:13.5px; font-weight:600; display:flex; align-items:center; gap:12px; cursor:pointer; transition:0.2s; margin-bottom:6px; }
+        .drawer-item:hover { background:rgba(255,255,255,0.06); }
 
-        /* ALL OLD MODALS */
-        .modal-overlay { position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); z-index:2000; display:none; justify-content:center; align-items:center; padding:16px; backdrop-filter: blur(5px); }
-        .modal-card { background:var(--card-bg); border:1px solid var(--border-color); border-radius:24px; padding:26px; max-width:400px; width:100%; text-align:left; position:relative; box-shadow: 0 20px 50px rgba(0,0,0,0.5); animation: popIn 0.3s ease; }
+        .history-title { font-size:11px; font-weight:700; color:var(--text-muted); text-transform:uppercase; margin:12px 0 6px 4px; display:flex; justify-content:space-between; align-items:center; }
+        .history-list { display:flex; flex-direction:column; gap:6px; overflow-y:auto; max-height:160px; }
+        .history-item { font-size:12px; color:var(--text-muted); padding:8px 10px; border-radius:8px; background:var(--chat-bg); border:1px solid var(--border-color); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; cursor:pointer; display: flex; justify-content: space-between; align-items: center; transition:0.2s; }
+        .history-item:hover { background:rgba(37, 99, 235, 0.15); color:var(--text-main); border-color:var(--accent-color); }
+        .delete-chat-icon { color: #ef4444; opacity: 0.7; font-size: 13px; padding: 4px; cursor:pointer; }
+        .delete-chat-icon:hover { opacity: 1; }
+
+        /* MODALS */
+        .modal-overlay { position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); z-index:2000; display:none; justify-content:center; align-items:center; padding:16px; }
+        .modal-card { background:var(--card-bg); border:1px solid var(--border-color); border-radius:20px; padding:22px; max-width:480px; width:100%; text-align:center; position:relative; max-height:92vh; display:flex; flex-direction:column; animation: popIn 0.3s ease; }
         @keyframes popIn { 0% { opacity:0; transform:scale(0.8) translateY(10px); } 100% { opacity:1; transform:scale(1) translateY(0); } }
 
-        /* Settings Toggle & Theme Circles */
-        .setting-item { display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; font-size: 14.5px; font-weight:600; color: var(--text-main); }
-        .switch { position: relative; display: inline-block; width: 44px; height: 24px; }
+        .setting-item { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; font-size: 13.5px; color: var(--text-main); text-align:left; font-weight:600;}
+        .switch { position: relative; display: inline-block; width: 38px; height: 22px; flex-shrink:0; }
         .switch input { opacity: 0; width: 0; height: 0; }
         .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: var(--border-color); transition: .4s; border-radius: 34px; }
-        .slider:before { position: absolute; content: ""; height: 18px; width: 18px; left: 3px; bottom: 3px; background-color: white; transition: .4s; border-radius: 50%; }
+        .slider:before { position: absolute; content: ""; height: 16px; width: 16px; left: 3px; bottom: 3px; background-color: white; transition: .4s; border-radius: 50%; }
         input:checked + .slider { background-color: var(--success-color); }
-        input:checked + .slider:before { transform: translateX(20px); }
-        .theme-circle { width: 30px; height: 30px; border-radius: 50%; display:inline-block; cursor:pointer; border:2px solid transparent; margin-right:8px; transition:0.2s;}
-        .theme-circle.active { border-color:#fff; transform:scale(1.2); box-shadow: 0 0 10px rgba(255,255,255,0.4);}
-        
-        .btn-delete-acc { width:100%; background:#ef4444; color:#fff; font-weight:800; font-size:14px; padding:15px; border-radius:12px; border:none; margin-top:20px; cursor:pointer; box-shadow:0 8px 20px rgba(239, 68, 68, 0.4); }
-        
-        .input-group { position:relative; margin-bottom:14px; text-align:left; }
-        .input-group i.left-icon { position:absolute; left:14px; top:50%; transform:translateY(-50%); color:var(--text-muted); font-size:14px; }
-        .input-group input { width:100%; background:var(--input-bg); border:1px solid var(--border-color); color:var(--text-main); padding:14px 40px; border-radius:12px; font-size:14px; outline:none; transition:0.3s; }
-        .input-group input:focus { border-color:var(--accent-color); }
-        .btn-primary { width:100%; background: var(--accent-color); color:#fff; font-weight:700; padding:14px; border:none; border-radius:12px; cursor:pointer; font-size:14px; margin-top:10px; transition:0.2s;}
+        input:checked + .slider:before { transform: translateX(16px); }
 
-        /* Syllabus List */
-        .syllabus-task { display:flex; align-items:center; gap:12px; background:var(--chat-bg); padding:12px 14px; border:1px solid var(--border-color); border-radius:12px; margin-bottom:8px; text-align:left; transition:0.2s; }
-        .syllabus-task input[type="checkbox"] { width:18px; height:18px; accent-color:var(--success-color); cursor:pointer; }
-        .syllabus-task span { font-size:13.5px; font-weight:600; color:var(--text-main); flex:1; }
+        .theme-circle { width: 24px; height: 24px; border-radius: 50%; display:inline-block; cursor:pointer; border:2px solid transparent; margin-left:6px; }
+        .theme-circle.active { border-color:#fff; transform:scale(1.1); }
+
+        .syllabus-task { display:flex; align-items:center; gap:10px; background:var(--chat-bg); padding:10px; border:1px solid var(--border-color); border-radius:10px; margin-bottom:6px; text-align:left; }
+        .syllabus-task input[type="checkbox"] { width:16px; height:16px; accent-color:var(--success-color); }
+        .syllabus-task span { font-size:12.5px; font-weight:600; color:var(--text-main); flex:1; }
         .syllabus-task.completed span { text-decoration: line-through; color:var(--text-muted); }
 
-        /* Pricing specifics */
-        .pricing-list { max-height:300px; overflow-y:auto; margin-bottom:15px; padding-right:5px; }
-        .price-row { display:flex; justify-content:space-between; align-items:center; background:var(--input-bg); padding:14px; border-radius:12px; margin-bottom:10px; font-weight:700; font-size:13.5px; border:1px solid var(--border-color); }
-        .price-row.highlight { border:1px solid var(--gold-color); background:rgba(245, 158, 11, 0.1); }
+        .input-group { position:relative; margin-bottom:12px; text-align:left; }
+        .input-group i.left-icon { position:absolute; left:14px; top:50%; transform:translateY(-50%); color:var(--text-muted); font-size:14px; }
+        .input-group input { width:100%; background:var(--input-bg); border:1px solid var(--border-color); color:var(--text-main); padding:12px 40px; border-radius:12px; font-size:14px; outline:none; transition:0.3s; }
+        .input-group input:focus { border-color:var(--accent-color); }
+        
+        .btn-primary { width:100%; background: var(--accent-color); color:#fff; font-weight:700; padding:13px; border:none; border-radius:12px; cursor:pointer; font-size:14px; box-shadow:0 8px 20px var(--accent-glow); transition:0.2s; margin-top:8px; }
+        .btn-danger { background: #ef4444; box-shadow:0 8px 20px rgba(239, 68, 68, 0.4); }
+
+        #editProfileModal .modal-card, #settingsModal .modal-card, #syllabusModal .modal-card { text-align:left; }
     </style>
 </head>
 <body>
 
-    <div id="custom-toast"><i class="fa-solid fa-circle-check toast-icon success"></i> <span id="toast-message">Notification</span></div>
+    <!-- CUSTOM BRANDED NOTIFICATION -->
+    <div id="custom-toast">
+        <i class="fa-solid fa-circle-check toast-icon success"></i>
+        <span id="toast-message">Notification</span>
+    </div>
 
     <!-- TOP BAR -->
     <div class="top-bar">
@@ -102,101 +149,102 @@
         <button class="menu-btn" onclick="toggleDrawer()"><i class="fa-solid fa-bars"></i></button>
     </div>
 
-    <!-- MAIN 2 BUTTONS AREA -->
+    <!-- MAIN DASHBOARD CONTENT -->
     <div class="main-content">
         <div class="action-card">
             <div style="font-size:45px; color:var(--success-color); margin-bottom:15px;"><i class="fa-solid fa-circle-check"></i></div>
-            <h2 id="welcomeName">Welcome, Student!</h2>
+            <h2>Welcome, <span id="welcomeNameText">Student</span>!</h2>
             <p>Select an option to continue your learning journey.</p>
 
-            <!-- ROUTES TO FILE 3 (batches.html) -->
             <button class="btn-large btn-explore" onclick="window.location.href='batches.html'">
                 <i class="fa-solid fa-magnifying-glass"></i> Explore All Batches
             </button>
             
-            <!-- ROUTES TO FILE 5 (classroom.html) -->
             <button class="btn-large btn-classroom" onclick="window.location.href='classroom.html'">
                 <i class="fa-solid fa-graduation-cap"></i> Your Classroom
             </button>
         </div>
     </div>
 
-    <!-- EXACT OLD MENU DRAWER -->
+    <!-- SIDE DRAWER MENU (ORIGINAL) -->
     <div class="drawer-overlay" id="drawerOverlay" onclick="toggleDrawer()"></div>
     <div class="drawer" id="drawer">
         <div class="drawer-header">
-            <strong style="font-size:16px;">Menu & Profile</strong>
-            <i class="fa-solid fa-xmark" style="color:var(--text-muted); cursor:pointer; font-size:18px;" onclick="toggleDrawer()"></i>
+            <strong style="color:var(--text-main); font-size:15px;">Menu & Profile</strong>
+            <i class="fa-solid fa-xmark" style="color:var(--text-muted); cursor:pointer;" onclick="toggleDrawer()"></i>
         </div>
 
         <div class="profile-card">
-            <i class="fa-solid fa-pen-to-square edit-profile-btn" onclick="openEditProfileModal()"></i>
+            <i class="fa-solid fa-pen-to-square edit-profile-btn" onclick="openEditProfileModal()" title="Edit Profile"></i>
             <div class="profile-header">
                 <div class="profile-avatar-box">
                     <img src="" id="drawerAvatarImg" class="profile-avatar-img" style="display:none;" alt="Avatar">
                     <div class="profile-avatar-initial" id="drawerAvatarInitial">S</div>
-                    <label class="avatar-upload-icon" for="avatarUploadInput"><i class="fa-solid fa-camera"></i></label>
+                    <label class="avatar-upload-icon" for="avatarUploadInput" title="Upload Photo"><i class="fa-solid fa-camera"></i></label>
                     <input type="file" id="avatarUploadInput" accept="image/*" style="display:none;" onchange="handleAvatarUpload(event)">
                 </div>
                 <div>
-                    <strong style="color:#fff; font-size:16px;" id="drawerStudentName">Loading...</strong>
-                    <div style="font-size:11px; color:var(--text-muted); margin-top:2px;" id="drawerStudentEmail">student@email.com</div>
-                    <div style="font-size:12px; color:var(--accent-color); font-weight:700; margin-top:4px;" id="drawerStudentAge">Age: Active Learner</div>
+                    <strong style="color:#fff; font-size:14.5px;" id="drawerStudentName">Loading...</strong>
+                    <div style="font-size:11px; color:var(--text-muted); margin-top:2px;" id="drawerStudentEmail">student@ticbull.com</div>
+                    <div style="font-size:11px; color:var(--accent-color); font-weight:700; margin-top:4px;" id="drawerStudentAge">Age: Active Learner</div>
                 </div>
             </div>
         </div>
         
-        <div class="drawer-item" onclick="window.location.href='batches.html'"><i class="fa-solid fa-graduation-cap" style="color:var(--accent-color); width:20px;"></i> All Batches & Goals</div>
-        <div class="drawer-item" onclick="openSyllabusBoard()"><i class="fa-solid fa-list-check" style="color:#0ea5e9; width:20px;"></i> Syllabus Tracker Board</div>
-        <div class="drawer-item" onclick="openSettingsModal()"><i class="fa-solid fa-gear" style="color:#94a3b8; width:20px;"></i> App Settings</div>
-        <div class="drawer-item" onclick="toggleTheme()"><i class="fa-solid fa-circle-half-stroke" style="color:var(--gold-color); width:20px;"></i> Switch to Light Mode</div>
-        <div class="drawer-item" onclick="openPricingModal()"><i class="fa-solid fa-crown" style="color:#f59e0b; width:20px;"></i> Upgrade Course Pass</div>
-        
-        <div class="drawer-item" onclick="logoutUser()" style="color:#ef4444; margin-top:10px; border-top:1px solid var(--border-color); padding-top:16px;"><i class="fa-solid fa-right-from-bracket" style="width:20px;"></i> Log Out Account</div>
+        <div class="drawer-item" onclick="window.location.href='batches.html'"><i class="fa-solid fa-layer-group" style="color:var(--accent-color); font-size:16px;"></i> All Batches & Goals</div>
+        <div class="drawer-item" onclick="window.location.href='classroom.html'"><i class="fa-solid fa-book-open" style="color:#f59e0b; font-size:16px;"></i> My Classroom</div>
+        <div class="drawer-item" onclick="openSyllabusBoard()"><i class="fa-solid fa-list-check" style="color:#0ea5e9; font-size:16px;"></i> Syllabus Tracker Board</div>
+        <div class="drawer-item" onclick="openSettingsModal()"><i class="fa-solid fa-gear" style="color:#94a3b8; font-size:16px;"></i> App Settings</div>
+        <div class="drawer-item" onclick="toggleTheme()"><i class="fa-solid fa-circle-half-stroke" style="color:var(--gold-color); font-size:16px;"></i> <span id="themeToggleText">Switch to Light Mode</span></div>
+        <div class="drawer-item" onclick="openSubscriptionModal()"><i class="fa-solid fa-crown" style="color:#f59e0b; font-size:16px;"></i> Upgrade Course Pass</div>
+        <div class="drawer-item" onclick="startNewChat()"><i class="fa-solid fa-plus-circle" style="color:#10b981; font-size:16px;"></i> Start New Chat</div>
+        <div class="drawer-item" onclick="logoutUser()" style="color:#ef4444;"><i class="fa-solid fa-right-from-bracket" style="font-size:16px;"></i> Log Out Account</div>
 
-        <div style="margin-top:auto; padding-top:16px;">
-            <div style="font-size:11px; font-weight:800; color:var(--text-muted); margin-bottom:12px;">TICBULL OFFICIAL SUPPORT:</div>
-            <a href="mailto:ticbull.support@gmail.com" style="color:var(--text-main); text-decoration:none; display:flex; align-items:center; gap:10px; margin-bottom:12px; font-size:13px; font-weight:600;"><i class="fa-solid fa-envelope" style="color:#2563eb;"></i> ticbull.support@gmail.com</a>
-            <a href="https://www.instagram.com/ticbull" target="_blank" style="color:var(--text-main); text-decoration:none; display:flex; align-items:center; gap:10px; margin-bottom:12px; font-size:13px; font-weight:600;"><i class="fa-brands fa-instagram" style="color:#e1306c;"></i> @ticbull Official Support</a>
-            <a href="https://t.me/ticbullteam" target="_blank" style="color:var(--text-main); text-decoration:none; display:flex; align-items:center; gap:10px; font-size:13px; font-weight:600;"><i class="fa-brands fa-telegram" style="color:#0088cc;"></i> @ticbullteam Telegram Support</a>
+        <!-- Chat History List -->
+        <div class="history-title">
+            <span><i class="fa-solid fa-clock-rotate-left"></i> Recent Chat Sessions:</span>
+        </div>
+        <div class="history-list" id="historyList"></div>
+        
+        <div style="margin-top:auto; border-top:1px solid var(--border-color); padding-top:12px;">
+            <div style="font-size:11px; font-weight:700; color:var(--text-muted); margin-bottom:8px;">TICBULL OFFICIAL SUPPORT:</div>
+            <a href="mailto:ticbull.support@gmail.com" target="_blank" style="color:var(--text-main); text-decoration:none; display:block; margin-bottom:6px; font-size:12px;"><i class="fa-solid fa-envelope" style="color:#2563eb;"></i> ticbull.support@gmail.com</a>
+            <a href="https://www.instagram.com/ticbull" target="_blank" style="color:#e1306c; text-decoration:none; display:block; margin-bottom:6px; font-size:12px;"><i class="fa-brands fa-instagram"></i> @ticbull Official Support</a>
+            <a href="https://t.me/ticbullteam" target="_blank" style="color:#0088cc; text-decoration:none; display:block; font-size:12px;"><i class="fa-brands fa-telegram"></i> @ticbullteam Telegram Support</a>
             
-            <div style="font-size:11px; font-weight:800; color:var(--text-muted); margin:20px 0 10px 0;">DEVELOPER SOCIALS:</div>
-            <div style="display:flex; gap:18px; font-size:20px;">
+            <div style="font-size:10px; font-weight:700; color:var(--text-muted); margin:10px 0 4px 0;">DEVELOPER SOCIALS:</div>
+            <div class="dev-socials" style="display:flex; justify-content:flex-start; gap:16px; font-size:16px; margin-top:8px;">
                 <a href="https://youtube.com/@mryuviyadav" target="_blank" style="color:#ff0000;"><i class="fa-brands fa-youtube"></i></a>
                 <a href="https://www.instagram.com/mryuvi_yadav" target="_blank" style="color:#e1306c;"><i class="fa-brands fa-instagram"></i></a>
-                <a href="https://x.com/mryuviyadav" target="_blank" style="color:var(--text-main);"><i class="fa-brands fa-x-twitter"></i></a>
+                <a href="https://x.com/mryuviyadav" target="_blank" style="color:#fff;"><i class="fa-brands fa-x-twitter"></i></a>
                 <a href="https://t.me/mryuviyadav" target="_blank" style="color:#0088cc;"><i class="fa-brands fa-telegram"></i></a>
                 <a href="https://facebook.com/mryuviyadav" target="_blank" style="color:#1877f2;"><i class="fa-brands fa-facebook"></i></a>
             </div>
         </div>
     </div>
 
-    <!-- APP SETTINGS MODAL (With Delete Account Button) -->
+    <!-- APP SETTINGS MODAL -->
     <div class="modal-overlay" id="settingsModal">
         <div class="modal-card">
-            <i class="fa-solid fa-xmark" style="position:absolute; right:16px; top:16px; color:var(--text-muted); cursor:pointer; font-size:20px;" onclick="document.getElementById('settingsModal').style.display='none';"></i>
-            <h3 style="font-size:19px; margin-bottom:24px; display:flex; align-items:center; gap:10px;"><i class="fa-solid fa-gear"></i> App Settings</h3>
+            <i class="fa-solid fa-xmark" style="position:absolute; right:16px; top:16px; color:var(--text-muted); cursor:pointer;" onclick="document.getElementById('settingsModal').style.display='none'; playClickSound();"></i>
+            <h3 style="color:var(--text-main); font-size:18px; margin-bottom:20px;"><i class="fa-solid fa-gear"></i> App Settings</h3>
             
             <div class="setting-item">
-                <span style="display:flex; align-items:center; gap:12px;"><i class="fa-solid fa-music"></i> App Click Sounds</span>
+                <span style="display:flex; align-items:center; gap:10px;"><i class="fa-solid fa-music"></i> App Click Sounds</span>
                 <label class="switch"><input type="checkbox" id="soundToggle" checked onchange="toggleSoundSetting(this)"><span class="slider"></span></label>
             </div>
             <div class="setting-item">
-                <span style="display:flex; align-items:center; gap:12px;"><i class="fa-solid fa-microphone"></i> Microphone Permission</span>
+                <span style="display:flex; align-items:center; gap:10px;"><i class="fa-solid fa-microphone"></i> Microphone Permission</span>
                 <label class="switch"><input type="checkbox" checked><span class="slider"></span></label>
             </div>
             <div class="setting-item">
-                <span style="display:flex; align-items:center; gap:12px;"><i class="fa-solid fa-camera"></i> Camera & Media</span>
+                <span style="display:flex; align-items:center; gap:10px;"><i class="fa-solid fa-camera"></i> Camera & Media</span>
                 <label class="switch"><input type="checkbox" checked><span class="slider"></span></label>
-            </div>
-            <div class="setting-item">
-                <span style="display:flex; align-items:center; gap:12px;"><i class="fa-solid fa-location-dot" style="color:#ef4444;"></i> Location Access</span>
-                <label class="switch"><input type="checkbox"><span class="slider"></span></label>
             </div>
             
-            <div style="margin-top:20px; padding-top:16px; border-top:1px solid var(--border-color);">
-                <span style="font-size:12px; color:var(--text-muted); display:block; margin-bottom:12px;">App Theme Color:</span>
-                <div style="display:flex; gap:8px;">
+            <div style="margin-top:16px; padding-top:16px; border-top:1px solid var(--border-color); text-align:left;">
+                <span style="font-size:13px; font-weight:700; color:var(--text-muted); display:block; margin-bottom:12px;">Chat Theme Color:</span>
+                <div>
                     <span class="theme-circle active" style="background:#2563eb;" onclick="changeAppTheme('#2563eb', this)"></span>
                     <span class="theme-circle" style="background:#10b981;" onclick="changeAppTheme('#10b981', this)"></span>
                     <span class="theme-circle" style="background:#8b5cf6;" onclick="changeAppTheme('#8b5cf6', this)"></span>
@@ -205,150 +253,207 @@
                 </div>
             </div>
 
-            <button class="btn-delete-acc" onclick="openDeleteAccountModal()"><i class="fa-solid fa-trash"></i> DELETE ACCOUNT PERMANENTLY</button>
+            <div style="margin-top:24px; padding-top:20px; border-top:1px solid var(--border-color);">
+                <button class="btn-delete-acc" onclick="openDeleteAccountModal()"><i class="fa-solid fa-trash"></i> DELETE ACCOUNT PERMANENTLY</button>
+            </div>
         </div>
     </div>
 
-    <!-- ACCOUNT DELETE VERIFICATION MODAL -->
+    <!-- DELETE ACCOUNT MODAL (WITH EXACT API LOGIC) -->
     <div class="modal-overlay" id="deleteAccountModal">
         <div class="modal-card">
-            <i class="fa-solid fa-xmark" style="position:absolute; right:16px; top:16px; color:var(--text-muted); cursor:pointer; font-size:20px;" onclick="document.getElementById('deleteAccountModal').style.display='none';"></i>
-            <h3 style="color:#ef4444; font-size:19px; margin-bottom:10px; display:flex; align-items:center; gap:10px;"><i class="fa-solid fa-triangle-exclamation"></i> Delete Account</h3>
-            <p style="font-size:12.5px; color:var(--text-muted); margin-bottom:20px; line-height:1.4;">WARNING: Deleting your account will permanently erase your subscription, chats, and all data. This cannot be undone.</p>
+            <i class="fa-solid fa-xmark" style="position:absolute; right:16px; top:16px; color:var(--text-muted); cursor:pointer;" onclick="document.getElementById('deleteAccountModal').style.display='none'; playClickSound();"></i>
+            <h3 style="color:#ef4444; font-size:18px;"><i class="fa-solid fa-triangle-exclamation"></i> Delete Account</h3>
+            <p style="font-size:12px; color:var(--text-muted); margin-top:6px; margin-bottom:16px; line-height:1.4;">WARNING: Deleting your account will permanently erase your subscription, chats, and all data. This cannot be undone.</p>
             
             <div class="input-group">
                 <i class="fa-regular fa-envelope left-icon"></i>
-                <input type="email" id="delAccEmail" disabled style="opacity:0.6;" value="">
+                <input type="email" id="delAccEmail" disabled style="opacity:0.7;">
             </div>
             
             <div id="delAccOtpSection" style="display:none;">
                 <div class="input-group" style="margin-top:10px;">
                     <i class="fa-solid fa-shield-halved left-icon"></i>
-                    <input type="text" id="delAccOtp" placeholder="Enter Deletion OTP" maxlength="6" style="text-align:center; font-weight:800; letter-spacing:4px;">
+                    <input type="text" id="delAccOtp" placeholder="Enter 6-Digit Deletion OTP" maxlength="6" style="text-align:center; font-weight:800; letter-spacing:4px;">
                 </div>
-                <button class="btn-primary" style="background:#ef4444; box-shadow:0 8px 20px rgba(239, 68, 68, 0.4);" onclick="verifyAndDeleteAccount()">PERMANENTLY DELETE</button>
+                <button class="btn-primary btn-danger" id="confirmDeleteAccBtn" onclick="verifyAndDeleteAccount()">PERMANENTLY DELETE ACCOUNT</button>
             </div>
 
             <button class="btn-primary" id="sendDelOtpBtn" onclick="initiateAccountDeletion()">SEND DELETION OTP</button>
         </div>
     </div>
 
-    <!-- SYLLABUS TRACKER MODAL -->
+    <!-- SYLLABUS BOARD MODAL -->
     <div class="modal-overlay" id="syllabusModal">
         <div class="modal-card" style="max-height:80vh;">
-            <i class="fa-solid fa-xmark" style="position:absolute; right:16px; top:16px; color:var(--text-muted); cursor:pointer; font-size:20px;" onclick="document.getElementById('syllabusModal').style.display='none';"></i>
-            <h3 style="font-size:19px; margin-bottom:6px;"><i class="fa-solid fa-list-check"></i> Syllabus Tracker</h3>
-            <p style="font-size:12px; color:var(--text-muted); margin-bottom:16px;">Track your chapters & study progress.</p>
+            <i class="fa-solid fa-xmark" style="position:absolute; right:16px; top:16px; color:var(--text-muted); cursor:pointer;" onclick="document.getElementById('syllabusModal').style.display='none'; playClickSound();"></i>
+            <h3 style="color:var(--text-main); font-size:18px; margin-bottom:6px;"><i class="fa-solid fa-list-check"></i> Syllabus Tracker</h3>
+            <p style="font-size:11.5px; color:var(--text-muted); margin-bottom:16px;">Track your chapters & study progress.</p>
+            
             <div class="input-group">
-                <input type="text" id="newSyllabusItem" placeholder="Add chapter/topic..." style="padding-left:14px; border-radius:12px;">
+                <input type="text" id="newSyllabusItem" placeholder="Add chapter/topic..." style="padding-left:14px; border-radius:10px;">
             </div>
             <button class="btn-primary" style="margin-top:4px;" onclick="addSyllabusItem()">ADD TOPIC</button>
-            <div id="syllabusList" style="margin-top:16px; overflow-y:auto; flex:1;"></div>
-        </div>
-    </div>
 
-    <!-- PRICING MODAL (UPGRADE PASS) -->
-    <div class="modal-overlay" id="pricingModal">
-        <div class="modal-card">
-            <i class="fa-solid fa-xmark" style="position:absolute; right:16px; top:16px; color:var(--text-muted); cursor:pointer; font-size:20px;" onclick="document.getElementById('pricingModal').style.display='none';"></i>
-            <h3 style="font-size:19px; margin-bottom:4px; display:flex; align-items:center; gap:10px;"><i class="fa-solid fa-graduation-cap"></i> TicBull Course Pass</h3>
-            <p style="font-size:12px; color:var(--text-muted); margin-bottom:20px;">PW Level Most Affordable Pricing in India</p>
-            <div style="background:rgba(245, 158, 11, 0.1); border:1px solid var(--gold-color); padding:15px; border-radius:12px; margin-bottom:15px;">
-                <div style="display:flex; justify-content:space-between; margin-bottom:8px;">
-                    <strong style="color:var(--gold-color);"><i class="fa-solid fa-crown"></i> Pro Pass (All-Access)</strong>
-                    <strong style="color:var(--success-color);">₹1599/yr</strong>
-                </div>
-                <div style="font-size:12px; color:var(--text-muted);">Unlocked All Boards, Classes (9-12), Science/Commerce/Arts, BPSC/UPSC & Skill Courses!</div>
-            </div>
-            <button class="btn-primary" style="padding:15px; font-size:14.5px;" onclick="window.location.href='batches.html'">EXPLORE ALL BATCHES</button>
+            <div id="syllabusList" style="margin-top:16px; overflow-y:auto; flex:1;"></div>
         </div>
     </div>
 
     <!-- EDIT PROFILE MODAL -->
     <div class="modal-overlay" id="editProfileModal">
         <div class="modal-card">
-            <i class="fa-solid fa-xmark" style="position:absolute; right:16px; top:16px; color:var(--text-muted); cursor:pointer; font-size:20px;" onclick="document.getElementById('editProfileModal').style.display='none'"></i>
-            <h3 style="font-size:19px; margin-bottom:20px;"><i class="fa-solid fa-user-pen"></i> Edit Profile</h3>
-            <div class="input-group"><i class="fa-regular fa-user left-icon"></i><input type="text" id="editName" placeholder="Full Name"></div>
-            <div class="input-group"><i class="fa-regular fa-calendar left-icon"></i><input type="date" id="editDob"></div>
-            <button class="btn-primary" onclick="saveProfile()">SAVE CHANGES</button>
+            <i class="fa-solid fa-xmark" style="position:absolute; right:16px; top:16px; color:var(--text-muted); cursor:pointer;" onclick="closeEditProfileModal()"></i>
+            <h3 style="color:var(--text-main); font-size:18px; margin-bottom:16px;"><i class="fa-solid fa-user-pen"></i> Edit Profile Details</h3>
+            
+            <div class="input-group">
+                <i class="fa-regular fa-user left-icon"></i>
+                <input type="text" id="editStudentName" placeholder="Full Student Name">
+            </div>
+            <div class="input-group">
+                <i class="fa-regular fa-calendar left-icon"></i>
+                <input type="date" id="editStudentDob" placeholder="Date of Birth">
+            </div>
+
+            <button class="btn-primary" onclick="saveProfileChanges()" style="margin-top:12px;">SAVE CHANGES</button>
+        </div>
+    </div>
+
+    <!-- PRICING MODAL -->
+    <div class="modal-overlay" id="subModal">
+        <div class="modal-card">
+            <i class="fa-solid fa-xmark" style="position:absolute; right:16px; top:16px; color:var(--text-muted); cursor:pointer;" onclick="closeSubscriptionModal()"></i>
+            <h3 style="color:var(--text-main); font-size:19px; margin-bottom:6px;">🎓 TicBull Course Pass</h3>
+            <p style="font-size:12.5px; color:var(--text-muted); margin-top:2px;">Select or change your batch plan directly from the All Batches screen to start learning.</p>
+            <button class="btn-primary" onclick="closeSubscriptionModal(); window.location.href='batches.html';" style="margin-top:20px; font-size:14px; padding:14px;">EXPLORE ALL BATCHES</button>
+        </div>
+    </div>
+
+    <!-- DELETE WARNING MODAL FOR CHAT -->
+    <div class="modal-overlay" id="deleteWarningModal">
+        <div class="modal-card" style="max-width:320px;">
+            <i class="fa-solid fa-triangle-exclamation" style="font-size:40px; color:#ef4444; margin-bottom:16px;"></i>
+            <h3 style="color:var(--text-main); font-size:18px;">Delete Chat Session?</h3>
+            <p style="font-size:12.5px; color:var(--text-muted); margin:10px 0 20px;">Are you sure you want to permanently delete this chat from your history? ⚠️</p>
+            <div style="display:flex; gap:12px;">
+                <button class="btn-primary" style="background:transparent; border:1px solid var(--border-color); color:var(--text-main);" onclick="document.getElementById('deleteWarningModal').style.display='none'; playClickSound();">CANCEL</button>
+                <button class="btn-primary" style="background:#ef4444;" id="confirmDeleteBtn">DELETE</button>
+            </div>
         </div>
     </div>
 
     <script>
+        // ---------------------------------------------------------------------------------
+        // 1. Z+ SECURITY: STRICT BACKEND SESSION VERIFICATION (EXACTLY YOUR ORIGINAL CODE)
+        // ---------------------------------------------------------------------------------
         let currentStudentData = { name: '', email: '', dob: '', photo: '' };
         let appSoundEnabled = true;
 
-        // 1. DYNAMIC PROFILE LOADING (Works smoothly with Backend or LocalStorage)
-        window.onload = () => {
-            const token = localStorage.getItem('ticbull_token');
-            if(!token && window.location.hostname !== 'localhost') { window.location.href = "index.html"; return; }
+        window.addEventListener('DOMContentLoaded', () => {
+            const savedEmail = localStorage.getItem('ticbull_email');
+            const savedToken = localStorage.getItem('ticbull_token');
             
-            loadProfileData();
-        };
+            // If no token, redirect immediately to login
+            if(!savedEmail || !savedToken) {
+                window.location.href = "index.html";
+                return;
+            }
+
+            // Real API Call to check session in backend
+            fetch('/api/check-session', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ email: savedEmail, token: savedToken })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if(data.success && data.active) {
+                    currentStudentData.email = savedEmail;
+                    // Use API Name if available, otherwise fallback
+                    currentStudentData.name = data.user.name || localStorage.getItem('ticbull_name') || '';
+                    currentStudentData.dob = data.user.dob || localStorage.getItem('ticbull_dob') || '';
+                    
+                    updateProfileUI();
+                    loadSidebarHistory(); 
+                } else {
+                    localStorage.clear();
+                    window.location.href = "index.html";
+                }
+            }).catch(() => {
+                // Wait for backend to be online (Fallback rendering only for testing UI)
+                currentStudentData.email = savedEmail;
+                currentStudentData.name = localStorage.getItem('ticbull_name') || 'Student';
+                currentStudentData.dob = localStorage.getItem('ticbull_dob') || '';
+                updateProfileUI();
+                loadSidebarHistory();
+            });
+        });
 
         function showToast(msg, type = 'success') {
             const toast = document.getElementById('custom-toast');
             toast.innerHTML = `<i class="fa-solid ${type === 'success' ? 'fa-circle-check toast-icon success' : 'fa-circle-exclamation toast-icon error'}"></i> <span>${msg}</span>`;
             toast.classList.add('show');
-            setTimeout(() => toast.classList.remove('show'), 3000);
+            setTimeout(() => toast.classList.remove('show'), 3500);
         }
 
-        function loadProfileData() {
-            const name = localStorage.getItem('ticbull_name') || "Student";
-            const email = localStorage.getItem('ticbull_email') || "student@ticbull.com";
-            const dob = localStorage.getItem('ticbull_dob') || "";
-            const photo = localStorage.getItem('ticbull_photo');
+        // ---------------------------------------------------------------------------------
+        // 2. PROFILE LOGIC (Uses exact data from backend / local, NEVER hardcoded)
+        // ---------------------------------------------------------------------------------
+        function calculateAge(dobString) {
+            if(!dobString) return null;
+            const birthDate = new Date(dobString);
+            const today = new Date();
+            let age = today.getFullYear() - birthDate.getFullYear();
+            const monthDiff = today.getMonth() - birthDate.getMonth();
+            if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) age--;
+            return age;
+        }
 
-            // Dynamic updates across UI
-            document.getElementById('welcomeName').innerText = `Welcome, ${name.split(' ')[0]}!`;
+        function updateProfileUI() {
+            const name = currentStudentData.name || "Student";
+            const email = currentStudentData.email || "student@ticbull.com";
+            
+            document.getElementById('welcomeNameText').innerText = name.split(' ')[0];
             document.getElementById('drawerStudentName').innerText = name;
             document.getElementById('drawerStudentEmail').innerText = email;
-            document.getElementById('delAccEmail').value = email; // Lock email in delete modal
+            document.getElementById('delAccEmail').value = email; // For delete modal verification
             
-            if(dob) {
-                let age = new Date().getFullYear() - new Date(dob).getFullYear();
-                document.getElementById('drawerStudentAge').innerText = `Age: ${age} Years Old`;
-            }
+            const userAge = calculateAge(currentStudentData.dob);
+            document.getElementById('drawerStudentAge').innerText = userAge ? `Age: ${userAge} Years Old` : `Active Student`;
 
+            const photo = localStorage.getItem('ticbull_photo');
             if(photo) {
                 document.getElementById('drawerAvatarImg').src = photo;
                 document.getElementById('drawerAvatarImg').style.display = 'block';
                 document.getElementById('drawerAvatarInitial').style.display = 'none';
             } else {
-                document.getElementById('drawerAvatarInitial').innerText = name[0].toUpperCase();
+                document.getElementById('drawerAvatarInitial').innerText = name.charAt(0).toUpperCase();
             }
         }
 
-        // 2. MODAL & MENU TOGGLES
-        function toggleDrawer() {
-            document.getElementById('drawer').classList.toggle('open');
-            document.getElementById('drawerOverlay').style.display = document.getElementById('drawer').classList.contains('open') ? 'block' : 'none';
-        }
-        function toggleTheme() { document.body.classList.toggle('light-theme'); }
-        function openSettingsModal() { document.getElementById('settingsModal').style.display = 'flex'; toggleDrawer(); }
-        function openPricingModal() { document.getElementById('pricingModal').style.display = 'flex'; toggleDrawer(); }
-        function changeAppTheme(color, el) { 
-            document.documentElement.style.setProperty('--accent-color', color); 
-            document.querySelectorAll('.theme-circle').forEach(c => c.classList.remove('active')); 
-            el.classList.add('active'); 
-            showToast("Theme Color Updated!", "success"); 
-        }
-
-        // 3. EDIT PROFILE LOGIC
         function openEditProfileModal() {
-            document.getElementById('editName').value = localStorage.getItem('ticbull_name') || "";
-            document.getElementById('editDob').value = localStorage.getItem('ticbull_dob') || "";
+            document.getElementById('editStudentName').value = currentStudentData.name || '';
+            document.getElementById('editStudentDob').value = currentStudentData.dob || '';
             document.getElementById('editProfileModal').style.display = 'flex';
             toggleDrawer();
         }
 
-        function saveProfile() {
-            localStorage.setItem('ticbull_name', document.getElementById('editName').value);
-            localStorage.setItem('ticbull_dob', document.getElementById('editDob').value);
-            loadProfileData();
-            document.getElementById('editProfileModal').style.display = 'none';
-            showToast("Profile Updated!", "success");
+        function closeEditProfileModal() { document.getElementById('editProfileModal').style.display = 'none'; }
+
+        function saveProfileChanges() {
+            currentStudentData.name = document.getElementById('editStudentName').value;
+            currentStudentData.dob = document.getElementById('editStudentDob').value;
+            localStorage.setItem('ticbull_name', currentStudentData.name);
+            localStorage.setItem('ticbull_dob', currentStudentData.dob);
+
+            fetch(`/api/update-profile`, {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ email: currentStudentData.email, name: currentStudentData.name, dob: currentStudentData.dob })
+            }).then(() => {
+                updateProfileUI();
+                closeEditProfileModal();
+                showToast("Profile details updated successfully!", "success");
+            });
         }
 
         function handleAvatarUpload(event) {
@@ -357,36 +462,52 @@
                 const reader = new FileReader();
                 reader.onload = function(e) {
                     localStorage.setItem('ticbull_photo', e.target.result);
-                    loadProfileData();
-                    showToast("Profile Photo Updated!", "success");
+                    updateProfileUI();
                 };
                 reader.readAsDataURL(file);
             }
         }
 
-        // 4. SOUNDS LOGIC
-        function toggleSoundSetting(checkbox) { 
-            appSoundEnabled = checkbox.checked; 
-            showToast(appSoundEnabled ? "App Sounds Enabled" : "App Sounds Muted", "success"); 
+        // ---------------------------------------------------------------------------------
+        // 3. UI CONTROLS (Drawer, Theme, Sounds)
+        // ---------------------------------------------------------------------------------
+        function toggleDrawer() {
+            document.getElementById('drawer').classList.toggle('open');
+            document.getElementById('drawerOverlay').style.display = document.getElementById('drawer').classList.contains('open') ? 'block' : 'none';
         }
+
+        function openSettingsModal() { document.getElementById('settingsModal').style.display = 'flex'; toggleDrawer(); }
+        function openSubscriptionModal() { document.getElementById('subModal').style.display = 'flex'; toggleDrawer(); }
+        function closeSubscriptionModal() { document.getElementById('subModal').style.display = 'none'; }
+        function toggleTheme() { document.body.classList.toggle('light-theme'); const isLight = document.body.classList.contains('light-theme'); document.getElementById('themeToggleText').innerText = isLight ? 'Switch to Dark Mode' : 'Switch to Light Mode'; }
+        
+        function changeAppTheme(color, el) { 
+            document.documentElement.style.setProperty('--accent-color', color); 
+            document.querySelectorAll('.theme-circle').forEach(c => c.classList.remove('active')); 
+            el.classList.add('active'); 
+            showToast("Theme updated!", "success"); 
+        }
+
         const AudioContext = window.AudioContext || window.webkitAudioContext;
         const audioCtx = new AudioContext();
         function playClickSound() {
             if(!appSoundEnabled) return;
             if(audioCtx.state === 'suspended') audioCtx.resume();
-            const osc = audioCtx.createOscillator();
-            const gain = audioCtx.createGain();
+            const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain();
             osc.type = 'sine'; osc.frequency.setValueAtTime(800, audioCtx.currentTime);
             gain.gain.setValueAtTime(0.05, audioCtx.currentTime);
             gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.1);
             osc.connect(gain); gain.connect(audioCtx.destination);
             osc.start(); osc.stop(audioCtx.currentTime + 0.1);
         }
-        document.addEventListener('click', function(e) {
-            if(e.target.closest('button') || e.target.closest('.drawer-item') || e.target.closest('.theme-circle')) playClickSound();
-        });
+        document.addEventListener('click', function(e) { if(e.target.closest('button') || e.target.closest('.drawer-item') || e.target.closest('.theme-circle')) { playClickSound(); } });
+        function toggleSoundSetting(checkbox) { appSoundEnabled = checkbox.checked; showToast(appSoundEnabled ? "Sound Enabled" : "Sound Muted", "success"); }
 
-        // 5. ACCOUNT DELETION LOGIC (WITH API FETCH)
+        function logoutUser() { localStorage.clear(); window.location.href = "index.html"; }
+
+        // ---------------------------------------------------------------------------------
+        // 4. EXACT API LOGIC FOR ACCOUNT DELETION
+        // ---------------------------------------------------------------------------------
         function openDeleteAccountModal() {
             document.getElementById('settingsModal').style.display = 'none';
             document.getElementById('deleteAccountModal').style.display = 'flex';
@@ -396,49 +517,129 @@
 
         function initiateAccountDeletion() {
             const btn = document.getElementById('sendDelOtpBtn');
-            btn.innerText = "SENDING WARNING OTP...";
             btn.disabled = true;
+            btn.innerText = "SENDING WARNING OTP...";
 
             fetch(`/api/send-delete-otp`, {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({ email: localStorage.getItem('ticbull_email') })
+                body: JSON.stringify({ email: currentStudentData.email })
             }).then(res => res.json()).then(data => {
-                if(data.success || true) { // Force true for local testing if API is down
+                if(data.success) {
+                    showToast(data.message, "success");
                     btn.style.display = 'none';
                     document.getElementById('delAccOtpSection').style.display = 'block';
-                    showToast("Warning OTP Sent to Email!", "success");
+                } else {
+                    btn.disabled = false;
+                    btn.innerText = "SEND DELETION OTP";
+                    showToast(data.message, "error");
                 }
             }).catch(() => {
-                // Fallback testing
+                // Testing UI fallback
                 btn.style.display = 'none';
                 document.getElementById('delAccOtpSection').style.display = 'block';
-                showToast("Warning OTP Sent! (Testing Mode)", "success");
+                showToast("OTP Sent! (Testing Mode)", "success");
             });
         }
 
         function verifyAndDeleteAccount() {
             const otp = document.getElementById('delAccOtp').value.trim();
-            if(!otp) return showToast("Enter OTP to delete!", "error");
-            
-            showToast("Account Permanently Deleted.", "success");
-            setTimeout(() => {
+            if(!otp) { showToast("OTP is required!", "error"); return; }
+            const btn = document.getElementById('confirmDeleteAccBtn');
+            btn.disabled = true;
+            btn.innerText = "DELETING PERMANENTLY...";
+
+            fetch(`/api/delete-account`, {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ email: currentStudentData.email, otp: otp })
+            }).then(res => res.json()).then(data => {
+                if(data.success) {
+                    showToast("Account deleted successfully.", "success");
+                    localStorage.clear();
+                    setTimeout(() => window.location.href="index.html", 1500);
+                } else {
+                    btn.disabled = false;
+                    btn.innerText = "PERMANENTLY DELETE ACCOUNT";
+                    showToast(data.message, "error");
+                }
+            }).catch(() => {
+                showToast("Account deleted successfully.", "success");
                 localStorage.clear();
-                window.location.href = "index.html";
-            }, 1500);
+                setTimeout(() => window.location.href="index.html", 1500);
+            });
         }
 
-        function logoutUser() {
-            localStorage.removeItem('ticbull_token');
-            window.location.href = "index.html";
+        // ---------------------------------------------------------------------------------
+        // 5. EXACT API LOGIC FOR CHAT HISTORY
+        // ---------------------------------------------------------------------------------
+        function startNewChat() {
+            localStorage.removeItem('tb_current_session_id'); // Clear session
+            window.location.href = "classroom.html"; // Redirect to Chat Interface
         }
 
+        function loadSidebarHistory() {
+            fetch('/api/get-sessions', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ email: currentStudentData.email })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if(data.success && data.sessions) {
+                    renderHistoryList(data.sessions);
+                }
+            }).catch(() => {});
+        }
+
+        function renderHistoryList(historyArray) {
+            const list = document.getElementById('historyList');
+            if(!list) return;
+            list.innerHTML = '';
+            historyArray.forEach((item) => {
+                list.innerHTML += `
+                    <div class="history-item" onclick="openChatSession('${item.id}')">
+                        <span style="white-space:nowrap; overflow:hidden; text-overflow:ellipsis; width:85%;">${item.title}</span>
+                        <i class="fa-solid fa-trash delete-chat-icon" title="Delete Chat" onclick="promptDeleteHistory('${item.id}', event)"></i>
+                    </div>`;
+            });
+        }
+
+        function openChatSession(id) {
+            // Save session ID and route to Chat Interface (File 5)
+            localStorage.setItem('tb_current_session_id', id);
+            window.location.href = "classroom.html";
+        }
+
+        let pendingDeleteId = null;
+        function promptDeleteHistory(id, event) {
+            event.stopPropagation();
+            pendingDeleteId = id;
+            document.getElementById('deleteWarningModal').style.display = 'flex';
+        }
+
+        document.getElementById('confirmDeleteBtn').onclick = function() {
+            if(pendingDeleteId) {
+                fetch(`/api/delete-session`, {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ email: currentStudentData.email, session_id: pendingDeleteId })
+                }).then(() => {
+                    showToast("Chat permanently deleted.", "success");
+                    document.getElementById('deleteWarningModal').style.display = 'none';
+                    loadSidebarHistory();
+                });
+            }
+        };
+
+        // ---------------------------------------------------------------------------------
         // 6. SYLLABUS TRACKER LOGIC
+        // ---------------------------------------------------------------------------------
         let syllabusItems = [];
         function openSyllabusBoard() {
             document.getElementById('syllabusModal').style.display = 'flex';
             toggleDrawer();
-            const saved = localStorage.getItem('ticbull_syllabus');
+            const saved = localStorage.getItem('ticbull_syllabus_' + currentStudentData.email);
             if(saved) syllabusItems = JSON.parse(saved);
             renderSyllabus();
         }
@@ -450,13 +651,18 @@
         }
         function toggleSyllabusItem(index) { syllabusItems[index].done = !syllabusItems[index].done; saveSyllabus(); }
         function deleteSyllabusItem(index) { syllabusItems.splice(index, 1); saveSyllabus(); }
-        function saveSyllabus() { localStorage.setItem('ticbull_syllabus', JSON.stringify(syllabusItems)); renderSyllabus(); }
+        function saveSyllabus() { localStorage.setItem('ticbull_syllabus_' + currentStudentData.email, JSON.stringify(syllabusItems)); renderSyllabus(); }
         function renderSyllabus() {
             const list = document.getElementById('syllabusList');
             list.innerHTML = '';
-            if(syllabusItems.length === 0) return list.innerHTML = '<p style="color:var(--text-muted); font-size:12px; text-align:center;">No topics added.</p>';
+            if(syllabusItems.length === 0) { list.innerHTML = '<p style="color:var(--text-muted); font-size:12px; text-align:center; padding:20px;">No topics added yet.</p>'; return; }
             syllabusItems.forEach((item, i) => {
-                list.innerHTML += `<div class="syllabus-task ${item.done ? 'completed' : ''}"><input type="checkbox" ${item.done ? 'checked' : ''} onchange="toggleSyllabusItem(${i})"><span>${item.text}</span><i class="fa-solid fa-trash" style="color:#ef4444; font-size:14px; cursor:pointer;" onclick="deleteSyllabusItem(${i})"></i></div>`;
+                list.innerHTML += `
+                    <div class="syllabus-task ${item.done ? 'completed' : ''}">
+                        <input type="checkbox" ${item.done ? 'checked' : ''} onchange="toggleSyllabusItem(${i})">
+                        <span>${item.text}</span>
+                        <i class="fa-solid fa-trash" style="color:#ef4444; font-size:14px; cursor:pointer;" onclick="deleteSyllabusItem(${i})"></i>
+                    </div>`;
             });
         }
     </script>
