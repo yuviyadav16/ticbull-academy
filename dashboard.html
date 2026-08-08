@@ -30,11 +30,21 @@
         .menu-btn { background:var(--card-bg); border:1px solid var(--border-color); color:var(--text-main); font-size:18px; padding:10px 14px; border-radius:12px; cursor:pointer; box-shadow:0 5px 15px rgba(0,0,0,0.3); transition: 0.2s; }
         .menu-btn:active { transform: scale(0.9); }
 
-        /* MAIN CONTENT - ANIMATION VIDEO & 2 BUTTONS */
+        /* MAIN CONTENT */
         .main-content { display:flex; flex-direction:column; align-items:center; justify-content:center; flex:1; padding:20px; position:relative; }
         
+        /* 🚀 SOCIAL MEDIA BAR (ABOVE VIDEO) */
+        .dashboard-socials { display: flex; gap: 15px; margin-bottom: 20px; justify-content: center; width: 100%; max-width: 400px; z-index: 10; }
+        .dashboard-socials a { color: var(--text-main); font-size: 20px; background: var(--card-bg); border: 1px solid var(--border-color); width: 45px; height: 45px; display: flex; align-items: center; justify-content: center; border-radius: 50%; transition: 0.3s; box-shadow: 0 4px 15px rgba(0,0,0,0.3); text-decoration: none; }
+        .dashboard-socials a:hover { transform: translateY(-4px); background: rgba(255,255,255,0.1); box-shadow: 0 8px 25px rgba(255,255,255,0.2); }
+        .icon-yt { color: #ff0000 !important; }
+        .icon-ig { color: #e1306c !important; }
+        .icon-x { color: #ffffff !important; }
+        .icon-tg { color: #0088cc !important; }
+        .icon-fb { color: #1877f2 !important; }
+
         /* 🚀 BACKGROUND ANIMATION VIDEO PLACEHOLDER */
-        .video-container { width: 100%; max-width: 400px; height: 180px; margin-bottom: 20px; border-radius: 20px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.5); border: 1px solid var(--border-color); background: #000; display:flex; justify-content:center; align-items:center; }
+        .video-container { width: 100%; max-width: 400px; height: 180px; margin-bottom: 20px; border-radius: 20px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.5); border: 1px solid var(--border-color); background: #000; display:flex; justify-content:center; align-items:center; z-index: 10; }
         .video-container video { width: 100%; height: 100%; object-fit: cover; }
         
         .action-card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius:24px; padding:30px 22px; width:100%; max-width:400px; box-shadow:0 20px 50px rgba(0,0,0,0.5); text-align:center; z-index: 10; }
@@ -110,16 +120,27 @@
         <button class="menu-btn" onclick="toggleDrawer()"><i class="fa-solid fa-bars"></i></button>
     </div>
 
-    <!-- MAIN CONTENT - ANIMATION & 2 BUTTONS -->
+    <!-- MAIN CONTENT -->
     <div class="main-content">
+        
+        <!-- 🚀 NEW: SOCIAL MEDIA LINKS -->
+        <div class="dashboard-socials">
+            <a href="https://www.instagram.com/mryuvi_yadav" target="_blank" class="icon-ig"><i class="fa-brands fa-instagram"></i></a>
+            <a href="https://youtube.com/@mryuviyadav" target="_blank" class="icon-yt"><i class="fa-brands fa-youtube"></i></a>
+            <a href="https://t.me/mryuviyadav" target="_blank" class="icon-tg"><i class="fa-brands fa-telegram"></i></a>
+            <a href="https://x.com/mryuviyadav" target="_blank" class="icon-x"><i class="fa-brands fa-x-twitter"></i></a>
+            <a href="https://facebook.com/mryuviyadav" target="_blank" class="icon-fb"><i class="fa-brands fa-facebook"></i></a>
+        </div>
+
         <!-- 🚀 VIDEO ANIMATION PLACEHOLDER -->
         <div class="video-container">
             <video autoplay loop muted playsinline id="bg-video">
                 <source src="animation.mp4" type="video/mp4">
-                <p style="color:var(--text-muted); font-size:12px; text-align:center;">Upload 'animation.mp4' on GitHub to see video here.</p>
+                <p style="color:var(--text-muted); font-size:12px; text-align:center;">Upload 'animation.mp4' on GitHub.</p>
             </video>
         </div>
 
+        <!-- ACTION CARD -->
         <div class="action-card">
             <h2 style="color:var(--success-color);"><i class="fa-solid fa-circle-check"></i> Welcome, <span id="welcomeNameText" style="color:var(--text-main); margin-left:8px;">Student</span>!</h2>
             <p>Select an option to continue your learning journey.</p>
@@ -169,7 +190,7 @@
 
         <div style="margin-top:auto; padding-top:16px;">
             <div style="font-size:11px; font-weight:800; color:var(--text-muted); margin-bottom:12px;">TICBULL OFFICIAL SUPPORT:</div>
-            <a href="mailto:ticbull.support@gmail.com" style="color:var(--text-main); text-decoration:none; display:flex; align-items:center; gap:10px; margin-bottom:12px; font-size:13px; font-weight:600;"><i class="fa-solid fa-envelope" style="color:#2563eb;"></i> ticbull.support@gmail.com</a>
+            <a href="mailto:ticbull.support@gmail.com" target="_blank" style="color:var(--text-main); text-decoration:none; display:flex; align-items:center; gap:10px; margin-bottom:12px; font-size:13px; font-weight:600;"><i class="fa-solid fa-envelope" style="color:#2563eb;"></i> ticbull.support@gmail.com</a>
             <a href="https://www.instagram.com/ticbull" target="_blank" style="color:var(--text-main); text-decoration:none; display:flex; align-items:center; gap:10px; margin-bottom:12px; font-size:13px; font-weight:600;"><i class="fa-brands fa-instagram" style="color:#e1306c;"></i> @ticbull Official Support</a>
             <a href="https://t.me/ticbullteam" target="_blank" style="color:var(--text-main); text-decoration:none; display:flex; align-items:center; gap:10px; font-size:13px; font-weight:600;"><i class="fa-brands fa-telegram" style="color:#0088cc;"></i> @ticbullteam Telegram Support</a>
             
@@ -215,7 +236,7 @@
         </div>
     </div>
 
-    <!-- ACCOUNT DELETE VERIFICATION MODAL (EXACT AS IMAGE 12442.jpg) -->
+    <!-- ACCOUNT DELETE VERIFICATION MODAL -->
     <div class="modal-overlay" id="deleteAccountModal">
         <div class="modal-card">
             <i class="fa-solid fa-xmark" style="position:absolute; right:16px; top:16px; color:var(--text-muted); cursor:pointer; font-size:20px;" onclick="document.getElementById('deleteAccountModal').style.display='none';"></i>
@@ -232,7 +253,8 @@
                     <i class="fa-solid fa-shield-halved left-icon"></i>
                     <input type="text" id="delAccOtp" placeholder="Enter Deletion OTP" maxlength="6" style="text-align:center; font-weight:800; letter-spacing:4px;">
                 </div>
-                <button class="btn-primary" style="background:#ef4444; box-shadow:0 8px 20px rgba(239, 68, 68, 0.4);" onclick="verifyAndDeleteAccount()">PERMANENTLY DELETE</button>
+                <!-- NO BYPASS HERE. STRICT CHECK. -->
+                <button class="btn-primary" id="confirmDeleteAccBtn" style="background:#ef4444; box-shadow:0 8px 20px rgba(239, 68, 68, 0.4);" onclick="verifyAndDeleteAccount()">PERMANENTLY DELETE</button>
             </div>
 
             <button class="btn-primary" id="sendDelOtpBtn" onclick="initiateAccountDeletion()">SEND DELETION OTP</button>
@@ -288,17 +310,15 @@
         let appSoundEnabled = true;
 
         // ---------------------------------------------------------------------------------
-        // 1. DYNAMIC PROFILE LOADING (WITH REAL API FETCH & LOCAL SYNC)
+        // 1. DYNAMIC PROFILE LOADING
         // ---------------------------------------------------------------------------------
         window.addEventListener('DOMContentLoaded', () => {
             const savedEmail = localStorage.getItem('ticbull_email');
             const savedToken = localStorage.getItem('ticbull_token');
             
-            // Generate 40 Theme Colors
             generateThemeColors();
 
             if(!savedEmail || !savedToken) {
-                // Not logged in, secure route back to index
                 if(window.location.hostname !== 'localhost') { window.location.href = "index.html"; return; }
             }
 
@@ -312,12 +332,10 @@
             .then(data => {
                 if(data.success && data.active) {
                     currentStudentData.email = savedEmail;
-                    // Database se data lo, warna local storage se, warna default
                     currentStudentData.name = data.user?.name || localStorage.getItem('ticbull_name') || 'Student';
                     currentStudentData.dob = data.user?.dob || localStorage.getItem('ticbull_dob') || '';
                     currentStudentData.photo = data.user?.photo || localStorage.getItem('ticbull_photo') || '';
                     
-                    // Ek baar sync karlo taaki turant UI fast load ho
                     localStorage.setItem('ticbull_name', currentStudentData.name);
                     if(currentStudentData.dob) localStorage.setItem('ticbull_dob', currentStudentData.dob);
                     if(currentStudentData.photo) localStorage.setItem('ticbull_photo', currentStudentData.photo);
@@ -329,7 +347,7 @@
                 }
             })
             .catch(() => {
-                // Agar backend slow hai toh local data se UI chalne do
+                // If backend is offline, rely on localStorage
                 currentStudentData.email = savedEmail;
                 currentStudentData.name = localStorage.getItem('ticbull_name') || 'Student';
                 currentStudentData.dob = localStorage.getItem('ticbull_dob') || '';
@@ -354,7 +372,7 @@
             document.getElementById('welcomeNameText').innerText = name.split(' ')[0];
             document.getElementById('drawerStudentName').innerText = name;
             document.getElementById('drawerStudentEmail').innerText = email;
-            document.getElementById('delAccEmail').value = email; // For delete modal
+            document.getElementById('delAccEmail').value = email; 
             
             if(dob) {
                 let age = new Date().getFullYear() - new Date(dob).getFullYear();
@@ -375,7 +393,7 @@
         }
 
         // ---------------------------------------------------------------------------------
-        // 2. MODAL, THEME & UPLOAD CONTROLS (With Backend Sync)
+        // 2. MODAL, THEME & UPLOAD CONTROLS
         // ---------------------------------------------------------------------------------
         function toggleDrawer() {
             document.getElementById('drawer').classList.toggle('open');
@@ -401,7 +419,6 @@
             showToast("Theme Color Updated!", "success"); 
         }
 
-        // Profile Edits
         function openEditProfileModal() {
             document.getElementById('editName').value = currentStudentData.name;
             document.getElementById('editDob').value = currentStudentData.dob;
@@ -415,7 +432,6 @@
             localStorage.setItem('ticbull_name', currentStudentData.name);
             localStorage.setItem('ticbull_dob', currentStudentData.dob);
             
-            // BACKEND SYNC SO IT SURVIVES LOGOUT
             fetch(`/api/update-profile`, {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
@@ -437,7 +453,6 @@
                     loadProfileData();
                     showToast("Profile Photo Updated!", "success");
 
-                    // BACKEND SYNC SO IT SURVIVES LOGOUT
                     fetch(`/api/update-profile`, {
                         method: 'POST',
                         headers: {'Content-Type': 'application/json'},
@@ -466,11 +481,11 @@
             osc.start(); osc.stop(audioCtx.currentTime + 0.1);
         }
         document.addEventListener('click', function(e) {
-            if(e.target.closest('button') || e.target.closest('.drawer-item') || e.target.closest('.theme-circle')) playClickSound();
+            if(e.target.closest('button') || e.target.closest('.drawer-item') || e.target.closest('.theme-circle') || e.target.closest('.dashboard-socials a')) playClickSound();
         });
 
         // ---------------------------------------------------------------------------------
-        // 3. ACCOUNT DELETION LOGIC (WITH REAL API FETCH & EXACT UI)
+        // 3. ACCOUNT DELETION LOGIC (NO BYPASS! STRICT BACKEND VALIDATION)
         // ---------------------------------------------------------------------------------
         function openDeleteAccountModal() {
             document.getElementById('settingsModal').style.display = 'none';
@@ -496,13 +511,12 @@
                 } else {
                     btn.innerText = "SEND DELETION OTP";
                     btn.disabled = false;
-                    showToast(data.message, "error");
+                    showToast(data.message || "Failed to send OTP", "error");
                 }
             }).catch(() => {
-                // Testing UI fallback (agar server band ho)
-                btn.style.display = 'none';
-                document.getElementById('delAccOtpSection').style.display = 'block';
-                showToast("Warning OTP Sent! (Testing Mode)", "success");
+                btn.innerText = "SEND DELETION OTP";
+                btn.disabled = false;
+                showToast("Server Error! Check Backend.", "error"); // BYPASS REMOVED
             });
         }
 
@@ -525,13 +539,13 @@
                 } else {
                     btn.disabled = false;
                     btn.innerText = "PERMANENTLY DELETE";
-                    showToast(data.message, "error");
+                    // THIS WILL NOW SHOW IF OTP IS WRONG
+                    showToast(data.message || "Invalid OTP!", "error"); 
                 }
             }).catch(() => {
-                // Testing UI fallback
-                showToast("Account Permanently Deleted.", "success");
-                localStorage.clear();
-                setTimeout(() => window.location.href="index.html", 1500);
+                btn.disabled = false;
+                btn.innerText = "PERMANENTLY DELETE";
+                showToast("Server Error. Could not delete.", "error"); // BYPASS REMOVED
             });
         }
 
