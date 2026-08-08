@@ -50,7 +50,8 @@
         .batch-title { font-size: 18px; font-weight: 800; color: var(--text-main); margin-bottom: 8px; line-height: 1.3; }
         .batch-desc { font-size: 13px; color: var(--text-muted); margin-bottom: 20px; line-height: 1.5; }
         
-        .batch-footer { display: flex; justify-content: space-between; align-items: center; border-top: 1px dashed var(--border-color); padding-top: 15px; margin-top: auto; }
+        /* Removed dashed line, made it a clean solid line */
+        .batch-footer { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border-color); padding-top: 15px; margin-top: auto; }
         .batch-price { font-size: 18px; font-weight: 800; color: var(--success-color); }
         .batch-price-sub { font-size: 10px; color: var(--text-muted); display: block; font-weight: 800; text-transform: uppercase; margin-bottom: 2px; }
         
@@ -197,9 +198,7 @@
     </div>
 
     <script>
-        // ---------------------------------------------------------------------------------
         // 1. PERSISTENCE
-        // ---------------------------------------------------------------------------------
         window.addEventListener('DOMContentLoaded', () => {
             const savedEmail = localStorage.getItem('ticbull_email');
             const savedToken = localStorage.getItem('ticbull_token');
@@ -225,10 +224,7 @@
         }
         document.addEventListener('click', function(e) { if(e.target.closest('button') || e.target.closest('.drawer-item') || e.target.closest('.cat-chip') || e.target.closest('.tier-card')) playClickSound(); });
 
-
-        // ---------------------------------------------------------------------------------
-        // 2. STRICT SYLLABUS MAPPING (NO MIXUPS)
-        // ---------------------------------------------------------------------------------
+        // 2. STRICT SYLLABUS MAPPING 
         let generatedBatchesCache = [];
         let selectedBatchObj = null;
         let selectedTier = 'Pro';
@@ -237,9 +233,8 @@
             'Foundation': [
                 { name: 'Mathematics', teacher: 'Mr. HC Verma', icon: 'fa-calculator' },
                 { name: 'Science (Phy/Chem/Bio)', teacher: 'Ms. Anjali', icon: 'fa-flask' },
-                { name: 'Social Science (His/Geo/Pol/Eco)', teacher: 'Mr. Bipin', icon: 'fa-earth-americas' },
-                { name: 'English', teacher: 'Ms. Riya', icon: 'fa-book-open' },
-                { name: 'Hindi', teacher: 'Mr. Tiwari', icon: 'fa-language' }
+                { name: 'Social Science', teacher: 'Mr. Bipin', icon: 'fa-earth-americas' },
+                { name: 'English', teacher: 'Ms. Riya', icon: 'fa-book-open' }
             ],
             'PCM': [ 
                 { name: 'Physics', teacher: 'Mr. HC Verma', icon: 'fa-atom' },
@@ -250,8 +245,7 @@
             'PCB': [ 
                 { name: 'Physics', teacher: 'Mr. HC Verma', icon: 'fa-atom' },
                 { name: 'Chemistry', teacher: 'Mr. Das', icon: 'fa-vial' },
-                { name: 'Botany', teacher: 'Ms. Kavita', icon: 'fa-leaf' },
-                { name: 'Zoology', teacher: 'Ms. Priya', icon: 'fa-frog' },
+                { name: 'Botany & Zoology', teacher: 'Ms. Priya', icon: 'fa-dna' },
                 { name: 'English', teacher: 'Ms. Riya', icon: 'fa-book-open' }
             ],
             'Commerce': [
@@ -296,7 +290,7 @@
                 { name: 'Quantitative Aptitude', teacher: 'Mr. Sharma', icon: 'fa-calculator' },
                 { name: 'Reasoning Ability', teacher: 'Mr. Kumar', icon: 'fa-brain' },
                 { name: 'English Language', teacher: 'Ms. Riya', icon: 'fa-book-open' },
-                { name: 'General/Banking Awareness', teacher: 'Mr. Jain', icon: 'fa-money-bill-trend-up' }
+                { name: 'General Awareness', teacher: 'Mr. Jain', icon: 'fa-money-bill-trend-up' }
             ],
             'Defense': [
                 { name: 'NDA Mathematics', teacher: 'Mr. Sharma', icon: 'fa-square-root-variable' },
@@ -306,10 +300,10 @@
             ]
         };
 
+        // FIXED MOBILE PARSING BUG: Used standard string concatenation (+) instead of backticks (`).
         function engineGenerateAllBatches() {
             let list = [];
             
-            // A. SCHOOL BOARDS
             const allBoards = [
                 "CBSE", "CISCE/ICSE", "NIOS", "Bihar Board (BSEB)", "UP Board (UPMSP)", 
                 "Jharkhand Board (JAC)", "West Bengal Board (WBBSE)", "Odisha Board", 
@@ -323,25 +317,25 @@
                 "Tripura Board", "Sikkim Board"
             ];
 
-            allBoards.forEach((board, idx) => {
+            allBoards.forEach(function(board, idx) {
                 let cat = board.includes('CBSE') ? 'CBSE' : (board.includes('ICSE') || board.includes('NIOS') ? 'ICSE' : 'STATE');
                 let shortName = board.split(' ')[0];
 
-                list.push({ id: `b_${idx}_9`, cat: cat, tag: `${shortName} Board`, title: `${board} Class 9`, type: 'Foundation', desc: `Complete Foundation Syllabus for Class 9.`, p_basic: 199, p_pro: 399, p_max: 799 });
-                list.push({ id: `b_${idx}_10`, cat: cat, tag: `${shortName} Board`, title: `${board} Class 10`, type: 'Foundation', desc: `Board Target Syllabus for Class 10.`, p_basic: 199, p_pro: 399, p_max: 799 });
+                list.push({ id: 'b_' + idx + '_9', cat: cat, tag: shortName + ' Board', title: board + ' Class 9', type: 'Foundation', desc: 'Complete Foundation Syllabus for Class 9.', p_basic: 199, p_pro: 399, p_max: 799 });
+                list.push({ id: 'b_' + idx + '_10', cat: cat, tag: shortName + ' Board', title: board + ' Class 10', type: 'Foundation', desc: 'Board Target Syllabus for Class 10.', p_basic: 199, p_pro: 399, p_max: 799 });
                 
-                list.push({ id: `b_${idx}_11pcm`, cat: cat, tag: `${shortName} Board`, title: `${board} Class 11 Science (PCM)`, type: 'PCM', desc: `Physics, Chemistry, Maths for Class 11.`, p_basic: 299, p_pro: 599, p_max: 999 });
-                list.push({ id: `b_${idx}_11pcb`, cat: cat, tag: `${shortName} Board`, title: `${board} Class 11 Science (PCB)`, type: 'PCB', desc: `Physics, Chemistry, Biology for Class 11.`, p_basic: 299, p_pro: 599, p_max: 999 });
-                list.push({ id: `b_${idx}_11com`, cat: cat, tag: `${shortName} Board`, title: `${board} Class 11 Commerce`, type: 'Commerce', desc: `Accountancy, BST, Economics for Class 11.`, p_basic: 299, p_pro: 599, p_max: 999 });
-                list.push({ id: `b_${idx}_11art`, cat: cat, tag: `${shortName} Board`, title: `${board} Class 11 Humanities`, type: 'Arts', desc: `History, Geography, Polity for Class 11.`, p_basic: 299, p_pro: 599, p_max: 999 });
+                list.push({ id: 'b_' + idx + '_11pcm', cat: cat, tag: shortName + ' Board', title: board + ' Class 11 Science (PCM)', type: 'PCM', desc: 'Physics, Chemistry, Maths for Class 11.', p_basic: 299, p_pro: 599, p_max: 999 });
+                list.push({ id: 'b_' + idx + '_11pcb', cat: cat, tag: shortName + ' Board', title: board + ' Class 11 Science (PCB)', type: 'PCB', desc: 'Physics, Chemistry, Biology for Class 11.', p_basic: 299, p_pro: 599, p_max: 999 });
+                list.push({ id: 'b_' + idx + '_11com', cat: cat, tag: shortName + ' Board', title: board + ' Class 11 Commerce', type: 'Commerce', desc: 'Accountancy, BST, Economics for Class 11.', p_basic: 299, p_pro: 599, p_max: 999 });
+                list.push({ id: 'b_' + idx + '_11art', cat: cat, tag: shortName + ' Board', title: board + ' Class 11 Humanities', type: 'Arts', desc: 'History, Geography, Polity for Class 11.', p_basic: 299, p_pro: 599, p_max: 999 });
 
-                list.push({ id: `b_${idx}_12pcm`, cat: cat, tag: `${shortName} Board`, title: `${board} Class 12 Science (PCM)`, type: 'PCM', desc: `Physics, Chemistry, Maths for Class 12 Boards.`, p_basic: 299, p_pro: 599, p_max: 999 });
-                list.push({ id: `b_${idx}_12pcb`, cat: cat, tag: `${shortName} Board`, title: `${board} Class 12 Science (PCB)`, type: 'PCB', desc: `Physics, Chemistry, Biology for Class 12 Boards.`, p_basic: 299, p_pro: 599, p_max: 999 });
-                list.push({ id: `b_${idx}_12com`, cat: cat, tag: `${shortName} Board`, title: `${board} Class 12 Commerce`, type: 'Commerce', desc: `Accountancy, BST, Economics for Class 12 Boards.`, p_basic: 299, p_pro: 599, p_max: 999 });
-                list.push({ id: `b_${idx}_12art`, cat: cat, tag: `${shortName} Board`, title: `${board} Class 12 Humanities`, type: 'Arts', desc: `History, Geography, Polity for Class 12 Boards.`, p_basic: 299, p_pro: 599, p_max: 999 });
+                list.push({ id: 'b_' + idx + '_12pcm', cat: cat, tag: shortName + ' Board', title: board + ' Class 12 Science (PCM)', type: 'PCM', desc: 'Physics, Chemistry, Maths for Class 12 Boards.', p_basic: 299, p_pro: 599, p_max: 999 });
+                list.push({ id: 'b_' + idx + '_12pcb', cat: cat, tag: shortName + ' Board', title: board + ' Class 12 Science (PCB)', type: 'PCB', desc: 'Physics, Chemistry, Biology for Class 12 Boards.', p_basic: 299, p_pro: 599, p_max: 999 });
+                list.push({ id: 'b_' + idx + '_12com', cat: cat, tag: shortName + ' Board', title: board + ' Class 12 Commerce', type: 'Commerce', desc: 'Accountancy, BST, Economics for Class 12 Boards.', p_basic: 299, p_pro: 599, p_max: 999 });
+                list.push({ id: 'b_' + idx + '_12art', cat: cat, tag: shortName + ' Board', title: board + ' Class 12 Humanities', type: 'Arts', desc: 'History, Geography, Polity for Class 12 Boards.', p_basic: 299, p_pro: 599, p_max: 999 });
             });
 
-            // B. COMPETITIVE EXAMS
+            // COMPETITIVE EXAMS
             list.push({ id: 'c_jee', cat: 'JEE', tag: 'IIT-JEE', title: 'JEE Main & Advanced 2027/28', type: 'JEE', desc: 'Advanced Physics, Chemistry, Maths (No Biology).', p_basic: 499, p_pro: 999, p_max: 1499 });
             list.push({ id: 'c_neet', cat: 'NEET', tag: 'NEET Target', title: 'NEET-UG 2027/28 Preparation', type: 'NEET', desc: 'Physical/Organic Chem, Botany, Zoology (No Maths).', p_basic: 499, p_pro: 999, p_max: 1499 });
             list.push({ id: 'c_upsc', cat: 'UPSC', tag: 'UPSC Goal', title: 'UPSC Civil Services Foundation', type: 'UPSC', desc: 'Polity, Geography, History, Economics, CSAT.', p_basic: 399, p_pro: 799, p_max: 1199 });
@@ -354,9 +348,7 @@
 
         generatedBatchesCache = engineGenerateAllBatches();
 
-        // ---------------------------------------------------------------------------------
-        // 3. UI RENDERING & ROUTING
-        // ---------------------------------------------------------------------------------
+        // 3. UI RENDERING 
         function renderBatches(arr) {
             const container = document.getElementById('batchesList');
             let htmlContent = '';
@@ -366,8 +358,7 @@
                 return;
             }
 
-            arr.forEach(b => {
-                // Ensure all variables exist inside the loop so the HTML doesn't break
+            arr.forEach(function(b) {
                 htmlContent += `
                     <div class="batch-card">
                         <span class="batch-tag">${b.tag}</span>
