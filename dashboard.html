@@ -43,9 +43,13 @@
         .icon-tg { color: #0088cc !important; }
         .icon-fb { color: #1877f2 !important; }
 
-        /* 🚀 BACKGROUND ANIMATION VIDEO PLACEHOLDER */
-        .video-container { width: 100%; max-width: 400px; height: 180px; margin-bottom: 20px; border-radius: 20px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.5); border: 1px solid var(--border-color); background: #000; display:flex; justify-content:center; align-items:center; z-index: 10; }
-        .video-container video { width: 100%; height: 100%; object-fit: cover; }
+        /* 🚀 BACKGROUND ANIMATION VIDEO PLACEHOLDER WITH SOUND BUTTON */
+        .video-container { width: 100%; max-width: 400px; height: 180px; margin-bottom: 20px; border-radius: 20px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.5); border: 1px solid var(--border-color); background: #000; display:flex; justify-content:center; align-items:center; z-index: 10; position: relative; }
+        /* Pointer events none for video to allow button clicks */
+        .video-container video { width: 100%; height: 100%; object-fit: cover; pointer-events: none; }
+        
+        /* Professional Mute/Unmute Button */
+        .sound-toggle-btn { position: absolute; bottom: 15px; right: 15px; background: rgba(0,0,0,0.8); color: #fff; border: 2px solid rgba(255,255,255,0.4); border-radius: 50%; width: 45px; height: 45px; cursor: pointer; display: flex; align-items: center; justify-content: center; z-index: 9999; transition: 0.3s; box-shadow: 0 4px 15px rgba(0,0,0,0.8); pointer-events: auto; }
         
         .action-card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius:24px; padding:30px 22px; width:100%; max-width:400px; box-shadow:0 20px 50px rgba(0,0,0,0.5); text-align:center; z-index: 10; }
         .action-card h2 { font-size:24px; font-weight:800; margin-bottom:8px; display:flex; justify-content:center; align-items:center; gap:10px; }
@@ -133,19 +137,17 @@
         </div>
         
         <!-- 🚀 VIDEO ANIMATION PLACEHOLDER WITH SOUND BUTTON -->
-        <div class="video-container" style="position: relative;">
+        <div class="video-container">
             <video autoplay loop muted playsinline id="bg-video">
                 <source src="/animation.mp4" type="video/mp4">
                 <source src="https://raw.githubusercontent.com/yuviyadav16/ticbull-academy/main/animation.mp4" type="video/mp4">
             </video>
             
             <!-- Professional Mute/Unmute Button -->
-            <button id="videoSoundBtn" onclick="toggleVideoSound()" style="position: absolute; bottom: 12px; right: 12px; background: rgba(0,0,0,0.6); color: #fff; border: 1px solid rgba(255,255,255,0.2); border-radius: 50%; width: 35px; height: 35px; cursor: pointer; display: flex; align-items: center; justify-content: center; z-index: 20; transition: 0.3s; box-shadow: 0 4px 10px rgba(0,0,0,0.5);">
-                <i class="fa-solid fa-volume-xmark"></i>
+            <button id="videoSoundBtn" class="sound-toggle-btn" onclick="toggleVideoSound(event)">
+                <i class="fa-solid fa-volume-xmark" style="font-size: 18px;"></i>
             </button>
         </div>
-
-        
 
         <!-- ACTION CARD -->
         <div class="action-card">
@@ -491,6 +493,25 @@
             if(e.target.closest('button') || e.target.closest('.drawer-item') || e.target.closest('.theme-circle') || e.target.closest('.dashboard-socials a')) playClickSound();
         });
 
+        // 🚀 VIDEO SOUND TOGGLE LOGIC (Fixed for Mobile Clicks)
+        function toggleVideoSound(event) {
+            event.preventDefault(); 
+            event.stopPropagation(); 
+            
+            const vid = document.getElementById('bg-video');
+            const btn = document.getElementById('videoSoundBtn');
+            
+            if (vid.muted) {
+                vid.muted = false;
+                btn.innerHTML = '<i class="fa-solid fa-volume-high" style="color:var(--success-color); font-size:18px;"></i>';
+                showToast("Video Sound On", "success");
+            } else {
+                vid.muted = true;
+                btn.innerHTML = '<i class="fa-solid fa-volume-xmark" style="font-size:18px;"></i>';
+                showToast("Video Muted", "success");
+            }
+        }
+
         // ---------------------------------------------------------------------------------
         // 3. ACCOUNT DELETION LOGIC (NO BYPASS! STRICT BACKEND VALIDATION)
         // ---------------------------------------------------------------------------------
@@ -587,29 +608,8 @@
             if(syllabusItems.length === 0) return list.innerHTML = '<p style="color:var(--text-muted); font-size:12px; text-align:center;">No topics added.</p>';
             syllabusItems.forEach((item, i) => {
                 list.innerHTML += `<div class="syllabus-task ${item.done ? 'completed' : ''}"><input type="checkbox" ${item.done ? 'checked' : ''} onchange="toggleSyllabusItem(${i})"><span>${item.text}</span><i class="fa-solid fa-trash" style="color:#ef4444; font-size:14px; cursor:pointer;" onclick="deleteSyllabusItem(${i})"></i></div>`;
-               
-                // 🚀 VIDEO SOUND TOGGLE LOGIC (Fixed for Mobile Clicks)
-        function toggleVideoSound(event) {
-            // Click ko video me leak hone se rokega
-            event.preventDefault(); 
-            event.stopPropagation(); 
-            
-            const vid = document.getElementById('bg-video');
-            const btn = document.getElementById('videoSoundBtn');
-            
-            if (vid.muted) {
-                vid.muted = false;
-                // Volume ON icon
-                btn.innerHTML = '<i class="fa-solid fa-volume-high" style="color:var(--success-color); font-size:18px;"></i>';
-                showToast("Video Sound On", "success");
-            } else {
-                vid.muted = true;
-                // Volume OFF icon
-                btn.innerHTML = '<i class="fa-solid fa-volume-xmark" style="font-size:18px;"></i>';
-                showToast("Video Muted", "success");
-            }
+            });
         }
-         
     </script>
 </body>
 </html>
