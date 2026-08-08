@@ -587,23 +587,29 @@
             if(syllabusItems.length === 0) return list.innerHTML = '<p style="color:var(--text-muted); font-size:12px; text-align:center;">No topics added.</p>';
             syllabusItems.forEach((item, i) => {
                 list.innerHTML += `<div class="syllabus-task ${item.done ? 'completed' : ''}"><input type="checkbox" ${item.done ? 'checked' : ''} onchange="toggleSyllabusItem(${i})"><span>${item.text}</span><i class="fa-solid fa-trash" style="color:#ef4444; font-size:14px; cursor:pointer;" onclick="deleteSyllabusItem(${i})"></i></div>`;
-        // 🚀 VIDEO SOUND TOGGLE LOGIC
-        function toggleVideoSound() {
+               
+                // 🚀 VIDEO SOUND TOGGLE LOGIC (Fixed for Mobile Clicks)
+        function toggleVideoSound(event) {
+            // Click ko video me leak hone se rokega
+            event.preventDefault(); 
+            event.stopPropagation(); 
+            
             const vid = document.getElementById('bg-video');
             const btn = document.getElementById('videoSoundBtn');
             
             if (vid.muted) {
                 vid.muted = false;
-                btn.innerHTML = '<i class="fa-solid fa-volume-high" style="color:var(--success-color);"></i>';
+                // Volume ON icon
+                btn.innerHTML = '<i class="fa-solid fa-volume-high" style="color:var(--success-color); font-size:18px;"></i>';
                 showToast("Video Sound On", "success");
             } else {
                 vid.muted = true;
-                btn.innerHTML = '<i class="fa-solid fa-volume-xmark"></i>';
+                // Volume OFF icon
+                btn.innerHTML = '<i class="fa-solid fa-volume-xmark" style="font-size:18px;"></i>';
                 showToast("Video Muted", "success");
             }
         }
-
-                
+         
     </script>
 </body>
 </html>
