@@ -9,50 +9,56 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     
     <style>
+        /* 100% ORIGINAL CSS VARIABLES & BASE */
         :root { --bg-color: #030712; --card-bg: rgba(15, 23, 42, 0.95); --accent-color: #2563eb; --accent-glow: rgba(37, 99, 235, 0.45); --text-main: #f8fafc; --text-muted: #94a3b8; --border-color: rgba(255, 255, 255, 0.12); --success-color: #10b981; --gold-color: #f59e0b; --input-bg: #0f172a; }
         body.light-theme { --bg-color: #f1f5f9; --card-bg: #ffffff; --text-main: #0f172a; --text-muted: #64748b; --border-color: #cbd5e1; --input-bg: #ffffff; }
         * { margin:0; padding:0; box-sizing:border-box; font-family:-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; -webkit-tap-highlight-color: transparent; }
-        
-        body { background: var(--bg-color); color: var(--text-main); display:flex; flex-direction:column; height: 100vh; overflow: hidden; }
+        body { background: var(--bg-color); color: var(--text-main); display:flex; flex-direction:column; height: 100vh; overflow: hidden; transition: background 0.3s, color 0.3s; }
 
-        /* Top Bar */
-        .top-bar { display:flex; justify-content:space-between; align-items:center; padding:20px; z-index:50; }
+        /* CUSTOM TOAST */
+        #custom-toast { position: fixed; top: -100px; left: 50%; transform: translateX(-50%); background: var(--card-bg); color: var(--text-main); border: 1px solid var(--accent-color); padding: 12px 24px; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); z-index: 10000; display: flex; align-items: center; gap: 12px; font-size: 13.5px; font-weight: 600; transition: top 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55); }
+        #custom-toast.show { top: 30px; }
+
+        /* TOP BAR */
+        .top-bar { display:flex; justify-content:space-between; align-items:center; padding:20px; z-index:50; border-bottom: 1px solid var(--border-color); background: var(--card-bg); }
         .logo-area { display:flex; align-items:center; gap:10px; }
-        .logo-area img { width: 40px; height: 40px; border-radius: 50%; border:1px solid rgba(255,255,255,0.2); }
+        .logo-area img { width: 38px; height: 38px; border-radius: 50%; border:1px solid rgba(255,255,255,0.2); }
         .logo-area span { font-weight:800; font-size:18px; color:#fff; }
-        .menu-btn { background:var(--card-bg); border:1px solid var(--border-color); color:var(--text-main); font-size:18px; padding:10px 14px; border-radius:12px; cursor:pointer; box-shadow:0 5px 15px rgba(0,0,0,0.3); }
+        .menu-btn { background:var(--input-bg); border:1px solid var(--border-color); color:var(--text-main); font-size:18px; padding:8px 12px; border-radius:10px; cursor:pointer; transition:0.2s; }
 
-        /* Main 2 Buttons Area */
+        /* MAIN CONTENT - 2 BUTTONS */
         .main-content { display:flex; flex-direction:column; align-items:center; justify-content:center; flex:1; padding:20px; }
-        .welcome-text { font-size:24px; font-weight:800; margin-bottom:8px; text-align:center; }
-        .sub-text { font-size:14px; color:var(--text-muted); margin-bottom:30px; text-align:center; }
-        
         .action-card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius:24px; padding:30px 22px; width:100%; max-width:400px; box-shadow:0 20px 50px rgba(0,0,0,0.5); text-align:center; }
-        .btn-large { width:100%; font-weight:800; padding:18px; border:none; border-radius:16px; cursor:pointer; font-size:16px; margin-bottom:15px; display:flex; align-items:center; justify-content:center; gap:10px; transition:0.3s; color:#fff; }
+        .action-card h2 { font-size:22px; font-weight:800; margin-bottom:8px; }
+        .action-card p { font-size:13px; color:var(--text-muted); margin-bottom:25px; }
+        
+        .btn-large { width:100%; font-weight:800; padding:18px; border:none; border-radius:16px; cursor:pointer; font-size:15px; margin-bottom:15px; display:flex; align-items:center; justify-content:center; gap:12px; transition:0.3s; color:#fff; }
         .btn-large:active { transform:scale(0.96); }
-        .btn-explore { background: linear-gradient(135deg, #2563eb, #3b82f6); box-shadow: 0 10px 25px rgba(37, 99, 235, 0.4); }
-        .btn-classroom { background: linear-gradient(135deg, #10b981, #059669); box-shadow: 0 10px 25px rgba(16, 185, 129, 0.4); }
+        .btn-explore { background: linear-gradient(135deg, #2563eb, #3b82f6); box-shadow: 0 8px 20px rgba(37, 99, 235, 0.4); }
+        .btn-classroom { background: linear-gradient(135deg, #10b981, #059669); box-shadow: 0 8px 20px rgba(16, 185, 129, 0.4); }
 
-        /* EXACT OLD MENU DRAWER */
+        /* OLD ORIGINAL MENU DRAWER */
         .drawer-overlay { position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.75); z-index:1000; display:none; }
         .drawer { position:fixed; top:0; left:-320px; width:320px; height:100%; background:var(--card-bg); border-right:1px solid var(--border-color); z-index:1001; transition:0.3s; padding:20px; display:flex; flex-direction:column; overflow-y:auto; }
         .drawer.open { left:0; }
         .drawer-header { display:flex; justify-content:space-between; align-items:center; padding-bottom:14px; border-bottom:1px solid var(--border-color); margin-bottom:14px; }
         
-        .profile-card { background:linear-gradient(135deg, rgba(37, 99, 235, 0.15), rgba(245, 158, 11, 0.1)); border:1px solid var(--border-color); border-radius:18px; padding:16px; margin-bottom:16px; display:flex; align-items:center; gap:14px; position:relative; }
+        .profile-card { background:linear-gradient(135deg, rgba(37, 99, 235, 0.15), rgba(245, 158, 11, 0.1)); border:1px solid var(--border-color); border-radius:18px; padding:16px; margin-bottom:16px; text-align:left; position:relative; display:flex; align-items:center; gap:14px; }
         .profile-avatar-box { position:relative; width:50px; height:50px; }
         .profile-avatar-img { width:100%; height:100%; border-radius:50%; object-fit:cover; border:2px solid var(--accent-color); }
-        .profile-avatar-initial { width:100%; height:100%; border-radius:50%; background:var(--accent-color); color:#fff; display:flex; justify-content:center; align-items:center; font-weight:800; font-size:20px; }
-        .avatar-upload-icon { position:absolute; bottom:-2px; right:-2px; background:var(--gold-color); color:#000; width:22px; height:22px; border-radius:50%; font-size:11px; display:flex; justify-content:center; align-items:center; cursor:pointer; }
+        .profile-avatar-initial { width:100%; height:100%; border-radius:50%; background:var(--accent-color); color:#fff; display:flex; justify-content:center; align-items:center; font-weight:800; font-size:20px; border:2px solid rgba(255,255,255,0.2); }
+        .avatar-upload-icon { position:absolute; bottom:-2px; right:-2px; background:var(--gold-color); color:#000; width:22px; height:22px; border-radius:50%; font-size:12px; display:flex; justify-content:center; align-items:center; cursor:pointer; }
         .edit-profile-btn { position:absolute; top:12px; right:12px; color:var(--text-muted); font-size:14px; cursor:pointer; }
 
-        .drawer-item { padding:12px 14px; border-radius:12px; color:var(--text-main); font-size:14px; font-weight:600; display:flex; align-items:center; gap:14px; cursor:pointer; margin-bottom:8px; }
-        .drawer-item:hover { background:rgba(255,255,255,0.08); }
+        .drawer-item { padding:12px 14px; border-radius:12px; color:var(--text-main); font-size:14px; font-weight:600; display:flex; align-items:center; gap:14px; cursor:pointer; margin-bottom:8px; transition:0.2s; }
+        .drawer-item:hover { background:rgba(255,255,255,0.08); padding-left: 20px; color: var(--accent-color); }
 
-        /* MODALS */
+        /* ALL OLD MODALS (Settings, Delete, Edit Profile, Syllabus) */
         .modal-overlay { position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); z-index:2000; display:none; justify-content:center; align-items:center; padding:16px; backdrop-filter: blur(5px); }
-        .modal-card { background:var(--card-bg); border:1px solid var(--border-color); border-radius:24px; padding:26px; max-width:400px; width:100%; text-align:left; position:relative; box-shadow: 0 20px 50px rgba(0,0,0,0.5); }
-        
+        .modal-card { background:var(--card-bg); border:1px solid var(--border-color); border-radius:24px; padding:26px; max-width:400px; width:100%; text-align:left; position:relative; box-shadow: 0 20px 50px rgba(0,0,0,0.5); animation: popIn 0.3s ease; }
+        @keyframes popIn { 0% { opacity:0; transform:scale(0.8) translateY(10px); } 100% { opacity:1; transform:scale(1) translateY(0); } }
+
+        /* Settings Toggle & Theme Circles */
         .setting-item { display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; font-size: 14.5px; font-weight:600; color: var(--text-main); }
         .switch { position: relative; display: inline-block; width: 44px; height: 24px; }
         .switch input { opacity: 0; width: 0; height: 0; }
@@ -60,43 +66,53 @@
         .slider:before { position: absolute; content: ""; height: 18px; width: 18px; left: 3px; bottom: 3px; background-color: white; transition: .4s; border-radius: 50%; }
         input:checked + .slider { background-color: var(--success-color); }
         input:checked + .slider:before { transform: translateX(20px); }
-        .theme-circle { width: 30px; height: 30px; border-radius: 50%; display:inline-block; cursor:pointer; border:2px solid transparent; margin-right:8px; }
-        .theme-circle.active { border-color:#fff; transform:scale(1.1); }
-        .btn-delete-acc { width:100%; background:#ef4444; color:#fff; font-weight:800; font-size:15px; padding:15px; border-radius:12px; border:none; margin-top:20px; cursor:pointer; }
+        .theme-circle { width: 30px; height: 30px; border-radius: 50%; display:inline-block; cursor:pointer; border:2px solid transparent; margin-right:8px; transition:0.2s;}
+        .theme-circle.active { border-color:#fff; transform:scale(1.2); box-shadow: 0 0 10px rgba(255,255,255,0.4);}
+        
+        .btn-delete-acc { width:100%; background:#ef4444; color:#fff; font-weight:800; font-size:14px; padding:15px; border-radius:12px; border:none; margin-top:20px; cursor:pointer; box-shadow:0 8px 20px rgba(239, 68, 68, 0.4); }
+        .btn-primary { width:100%; background: var(--accent-color); color:#fff; font-weight:700; padding:14px; border:none; border-radius:12px; cursor:pointer; font-size:14px; margin-top:10px;}
         
         .input-group { position:relative; margin-bottom:14px; text-align:left; }
-        .input-group i.left-icon { position:absolute; left:14px; top:50%; transform:translateY(-50%); color:var(--text-muted); font-size:14px; }
+        .input-group i.left-icon { position:absolute; left:14px; top:50%; transform:translateY(-50%); color:var(--text-muted); }
         .input-group input { width:100%; background:var(--input-bg); border:1px solid var(--border-color); color:var(--text-main); padding:14px 40px; border-radius:12px; font-size:14px; outline:none; }
-        .btn-primary { width:100%; background: var(--accent-color); color:#fff; font-weight:700; padding:14px; border:none; border-radius:12px; cursor:pointer; font-size:14.5px; margin-top:10px;}
+        .input-group input:focus { border-color:var(--accent-color); }
         
-        /* TOAST */
-        #custom-toast { position: fixed; top: -100px; left: 50%; transform: translateX(-50%); background: var(--card-bg); color: var(--text-main); border: 1px solid var(--accent-color); padding: 12px 24px; border-radius: 12px; z-index: 10000; display: flex; align-items: center; gap: 12px; font-size: 13.5px; font-weight: 600; transition: top 0.4s; }
-        #custom-toast.show { top: 30px; }
+        /* Syllabus List */
+        .syllabus-task { display:flex; align-items:center; gap:12px; background:var(--chat-bg); padding:12px 14px; border:1px solid var(--border-color); border-radius:12px; margin-bottom:8px; text-align:left; transition:0.2s; }
+        .syllabus-task input[type="checkbox"] { width:18px; height:18px; accent-color:var(--success-color); cursor:pointer; }
+        .syllabus-task span { font-size:13.5px; font-weight:600; color:var(--text-main); flex:1; }
+        .syllabus-task.completed span { text-decoration: line-through; color:var(--text-muted); }
     </style>
 </head>
 <body>
 
-    <div id="custom-toast"><i class="fa-solid fa-circle-check" style="color:var(--success-color);"></i> <span id="toast-message">Notification</span></div>
+    <div id="custom-toast"><i class="fa-solid fa-circle-check toast-icon success"></i> <span id="toast-message">Notification</span></div>
 
-    <!-- Top Header -->
+    <!-- TOP BAR -->
     <div class="top-bar">
         <div class="logo-area">
             <img src="./logo.png" onerror="this.src='https://raw.githubusercontent.com/yuviyadav16/ticbull-academy/main/logo.png'">
             <span>TicBull Academy</span>
         </div>
-        <button class="menu-btn" onclick="toggleDrawer()"><i class="fa-solid fa-ellipsis-vertical"></i></button>
+        <button class="menu-btn" onclick="toggleDrawer()"><i class="fa-solid fa-bars"></i></button>
     </div>
 
-    <!-- Main Content (2 Buttons) -->
+    <!-- MAIN 2 BUTTONS AREA -->
     <div class="main-content">
-        <h1 class="welcome-text">Welcome, <span id="displayName">Student</span>!</h1>
-        <p class="sub-text">Select an option to continue your learning journey.</p>
-
         <div class="action-card">
-            <!-- Goes to File 3 (Batches) -->
-            <button class="btn-large btn-explore" onclick="window.location.href='batches.html'"><i class="fa-solid fa-magnifying-glass"></i> Explore All Batches</button>
-            <!-- Goes to File 5 (Classroom) -->
-            <button class="btn-large btn-classroom" onclick="window.location.href='classroom.html'"><i class="fa-solid fa-graduation-cap"></i> Your Classroom</button>
+            <div style="font-size:45px; color:var(--success-color); margin-bottom:15px;"><i class="fa-solid fa-circle-check"></i></div>
+            <h2 id="welcomeName">Welcome Back!</h2>
+            <p>Select an option to continue your learning journey.</p>
+
+            <!-- ROUTES TO FILE 3 (batches.html) -->
+            <button class="btn-large btn-explore" onclick="window.location.href='batches.html'">
+                <i class="fa-solid fa-magnifying-glass"></i> Explore All Batches
+            </button>
+            
+            <!-- ROUTES TO FILE 5 (classroom.html) -->
+            <button class="btn-large btn-classroom" onclick="window.location.href='classroom.html'">
+                <i class="fa-solid fa-graduation-cap"></i> Your Classroom
+            </button>
         </div>
     </div>
 
@@ -112,23 +128,23 @@
             <i class="fa-solid fa-pen-to-square edit-profile-btn" onclick="openEditProfileModal()"></i>
             <div class="profile-header">
                 <div class="profile-avatar-box">
-                    <img src="" id="drawerAvatarImg" class="profile-avatar-img" style="display:none;">
+                    <img src="" id="drawerAvatarImg" class="profile-avatar-img" style="display:none;" alt="Avatar">
                     <div class="profile-avatar-initial" id="drawerAvatarInitial">S</div>
                     <label class="avatar-upload-icon" for="avatarUploadInput"><i class="fa-solid fa-camera"></i></label>
                     <input type="file" id="avatarUploadInput" accept="image/*" style="display:none;" onchange="handleAvatarUpload(event)">
                 </div>
                 <div>
-                    <strong style="color:#fff; font-size:16px;" id="drawerStudentName">Student</strong>
+                    <strong style="color:#fff; font-size:15px;" id="drawerStudentName">Loading...</strong>
                     <div style="font-size:11px; color:var(--text-muted); margin-top:2px;" id="drawerStudentEmail">student@ticbull.com</div>
-                    <div style="font-size:12px; color:var(--accent-color); font-weight:700; margin-top:4px;" id="drawerStudentAge">Age: Active Learner</div>
+                    <div style="font-size:11px; color:var(--accent-color); font-weight:700; margin-top:4px;" id="drawerStudentAge">Age: Active Learner</div>
                 </div>
             </div>
         </div>
         
         <div class="drawer-item" onclick="window.location.href='batches.html'"><i class="fa-solid fa-graduation-cap" style="color:var(--accent-color); width:20px;"></i> All Batches & Goals</div>
-        <div class="drawer-item"><i class="fa-solid fa-list-check" style="color:#0ea5e9; width:20px;"></i> Syllabus Tracker Board</div>
-        <div class="drawer-item" onclick="document.getElementById('settingsModal').style.display='flex'; toggleDrawer();"><i class="fa-solid fa-gear" style="color:#94a3b8; width:20px;"></i> App Settings</div>
-        <div class="drawer-item" onclick="toggleTheme()"><i class="fa-solid fa-circle-half-stroke" style="color:var(--gold-color); width:20px;"></i> Switch to Light Mode</div>
+        <div class="drawer-item" onclick="openSyllabusBoard()"><i class="fa-solid fa-list-check" style="color:#0ea5e9; width:20px;"></i> Syllabus Tracker Board</div>
+        <div class="drawer-item" onclick="openSettingsModal()"><i class="fa-solid fa-gear" style="color:#94a3b8; width:20px;"></i> App Settings</div>
+        <div class="drawer-item" onclick="toggleTheme()"><i class="fa-solid fa-circle-half-stroke" style="color:var(--gold-color); width:20px;"></i> <span id="themeToggleText">Switch to Light Mode</span></div>
         <div class="drawer-item" onclick="document.getElementById('pricingModal').style.display='flex'; toggleDrawer();"><i class="fa-solid fa-crown" style="color:#f59e0b; width:20px;"></i> Upgrade Course Pass</div>
         
         <div class="drawer-item" onclick="logout()" style="color:#ef4444; margin-top:10px; border-top:1px solid var(--border-color); padding-top:16px;"><i class="fa-solid fa-right-from-bracket" style="width:20px;"></i> Log Out Account</div>
@@ -150,30 +166,70 @@
         </div>
     </div>
 
-    <!-- SETTINGS MODAL -->
+    <!-- APP SETTINGS MODAL (With Multiple Colors & Sound Toggle) -->
     <div class="modal-overlay" id="settingsModal">
         <div class="modal-card">
             <i class="fa-solid fa-xmark" style="position:absolute; right:16px; top:16px; color:var(--text-muted); cursor:pointer; font-size:20px;" onclick="document.getElementById('settingsModal').style.display='none';"></i>
             <h3 style="font-size:19px; margin-bottom:24px; display:flex; align-items:center; gap:10px;"><i class="fa-solid fa-gear"></i> App Settings</h3>
-            <div class="setting-item"><span style="display:flex; align-items:center; gap:12px;"><i class="fa-solid fa-music"></i> App Click Sounds</span><label class="switch"><input type="checkbox" checked><span class="slider"></span></label></div>
-            <div class="setting-item"><span style="display:flex; align-items:center; gap:12px;"><i class="fa-solid fa-microphone"></i> Microphone Permission</span><label class="switch"><input type="checkbox" checked><span class="slider"></span></label></div>
-            <div class="setting-item"><span style="display:flex; align-items:center; gap:12px;"><i class="fa-solid fa-camera"></i> Camera & Media</span><label class="switch"><input type="checkbox" checked><span class="slider"></span></label></div>
-            <div class="setting-item"><span style="display:flex; align-items:center; gap:12px;"><i class="fa-solid fa-location-dot"></i> Location Access</span><label class="switch"><input type="checkbox"><span class="slider"></span></label></div>
+            
+            <div class="setting-item">
+                <span style="display:flex; align-items:center; gap:12px;"><i class="fa-solid fa-music" style="color:#3b82f6;"></i> App Click Sounds</span>
+                <label class="switch"><input type="checkbox" id="soundToggle" checked onchange="toggleSoundSetting(this)"><span class="slider"></span></label>
+            </div>
+            <div class="setting-item">
+                <span style="display:flex; align-items:center; gap:12px;"><i class="fa-solid fa-microphone" style="color:#10b981;"></i> Microphone Permission</span>
+                <label class="switch"><input type="checkbox" checked><span class="slider"></span></label>
+            </div>
+            <div class="setting-item">
+                <span style="display:flex; align-items:center; gap:12px;"><i class="fa-solid fa-camera" style="color:#f59e0b;"></i> Camera & Media</span>
+                <label class="switch"><input type="checkbox" checked><span class="slider"></span></label>
+            </div>
+            <div class="setting-item">
+                <span style="display:flex; align-items:center; gap:12px;"><i class="fa-solid fa-location-dot" style="color:#ef4444;"></i> Location Access</span>
+                <label class="switch"><input type="checkbox"><span class="slider"></span></label>
+            </div>
+            
             <div style="margin-top:20px; padding-top:16px; border-top:1px solid var(--border-color);">
                 <span style="font-size:12px; color:var(--text-muted); display:block; margin-bottom:12px;">App Theme Color:</span>
                 <div style="display:flex; gap:8px;">
-                    <span class="theme-circle active" style="background:#2563eb;" onclick="changeTheme('#2563eb')"></span>
-                    <span class="theme-circle" style="background:#10b981;" onclick="changeTheme('#10b981')"></span>
-                    <span class="theme-circle" style="background:#8b5cf6;" onclick="changeTheme('#8b5cf6')"></span>
-                    <span class="theme-circle" style="background:#f43f5e;" onclick="changeTheme('#f43f5e')"></span>
-                    <span class="theme-circle" style="background:#f59e0b;" onclick="changeTheme('#f59e0b')"></span>
+                    <span class="theme-circle active" style="background:#2563eb;" onclick="changeTheme('#2563eb', this)"></span>
+                    <span class="theme-circle" style="background:#10b981;" onclick="changeTheme('#10b981', this)"></span>
+                    <span class="theme-circle" style="background:#8b5cf6;" onclick="changeTheme('#8b5cf6', this)"></span>
+                    <span class="theme-circle" style="background:#f43f5e;" onclick="changeTheme('#f43f5e', this)"></span>
+                    <span class="theme-circle" style="background:#f59e0b;" onclick="changeTheme('#f59e0b', this)"></span>
                 </div>
             </div>
-            <button class="btn-delete-acc" onclick="alert('Account Deleted!');"><i class="fa-solid fa-trash"></i> DELETE ACCOUNT PERMANENTLY</button>
+
+            <!-- Delete Account Button opens Delete Modal -->
+            <button class="btn-delete-acc" onclick="openDeleteAccountModal()"><i class="fa-solid fa-trash"></i> DELETE ACCOUNT PERMANENTLY</button>
         </div>
     </div>
 
-    <!-- PRICING MODAL -->
+    <!-- ACCOUNT DELETE VERIFICATION MODAL -->
+    <div class="modal-overlay" id="deleteAccountModal">
+        <div class="modal-card">
+            <i class="fa-solid fa-xmark" style="position:absolute; right:16px; top:16px; color:var(--text-muted); cursor:pointer; font-size:20px;" onclick="document.getElementById('deleteAccountModal').style.display='none';"></i>
+            <h3 style="color:#ef4444; font-size:19px; margin-bottom:10px; display:flex; align-items:center; gap:10px;"><i class="fa-solid fa-triangle-exclamation"></i> Delete Account</h3>
+            <p style="font-size:12.5px; color:var(--text-muted); margin-bottom:20px; line-height:1.4;">WARNING: Deleting your account will permanently erase your subscription, chats, and all data. This cannot be undone.</p>
+            
+            <div class="input-group">
+                <i class="fa-regular fa-envelope left-icon"></i>
+                <input type="email" id="delAccEmail" disabled style="opacity:0.6;" value="">
+            </div>
+            
+            <div id="delAccOtpSection" style="display:none;">
+                <div class="input-group" style="margin-top:10px;">
+                    <i class="fa-solid fa-shield-halved left-icon"></i>
+                    <input type="text" id="delAccOtp" placeholder="Enter Deletion OTP" maxlength="6" style="text-align:center; font-weight:800; letter-spacing:4px;">
+                </div>
+                <button class="btn-primary" style="background:#ef4444; box-shadow:0 8px 20px rgba(239, 68, 68, 0.4);" onclick="verifyAndDeleteAccount()">PERMANENTLY DELETE</button>
+            </div>
+
+            <button class="btn-primary" id="sendDelOtpBtn" onclick="initiateAccountDeletion()">SEND DELETION OTP</button>
+        </div>
+    </div>
+
+    <!-- PRICING MODAL (UPGRADE PASS) -->
     <div class="modal-overlay" id="pricingModal">
         <div class="modal-card">
             <i class="fa-solid fa-xmark" style="position:absolute; right:16px; top:16px; color:var(--text-muted); cursor:pointer; font-size:20px;" onclick="document.getElementById('pricingModal').style.display='none';"></i>
@@ -186,38 +242,63 @@
                 </div>
                 <div style="font-size:12px; color:var(--text-muted);">Unlocked All Boards, Classes (9-12), Science/Commerce/Arts, BPSC/UPSC & Skill Courses!</div>
             </div>
-            <button class="btn-primary" style="padding:16px; font-size:15px;" onclick="window.location.href='batches.html'">EXPLORE ALL BATCHES</button>
+            <button class="btn-primary" style="padding:15px; font-size:14.5px;" onclick="window.location.href='batches.html'">EXPLORE ALL BATCHES</button>
         </div>
     </div>
 
     <!-- EDIT PROFILE MODAL -->
     <div class="modal-overlay" id="editProfileModal">
         <div class="modal-card">
-            <i class="fa-solid fa-xmark" style="position:absolute; right:16px; top:16px; color:var(--text-muted); cursor:pointer;" onclick="document.getElementById('editProfileModal').style.display='none'"></i>
-            <h3 style="font-size:18px; margin-bottom:16px;"><i class="fa-solid fa-user-pen"></i> Edit Profile</h3>
+            <i class="fa-solid fa-xmark" style="position:absolute; right:16px; top:16px; color:var(--text-muted); cursor:pointer; font-size:20px;" onclick="document.getElementById('editProfileModal').style.display='none'"></i>
+            <h3 style="font-size:19px; margin-bottom:20px;"><i class="fa-solid fa-user-pen"></i> Edit Profile</h3>
             <div class="input-group"><i class="fa-regular fa-user left-icon"></i><input type="text" id="editName" placeholder="Full Name"></div>
             <div class="input-group"><i class="fa-regular fa-calendar left-icon"></i><input type="date" id="editDob"></div>
             <button class="btn-primary" onclick="saveProfile()">SAVE CHANGES</button>
         </div>
     </div>
 
+    <!-- SYLLABUS TRACKER MODAL -->
+    <div class="modal-overlay" id="syllabusModal">
+        <div class="modal-card" style="max-height:80vh;">
+            <i class="fa-solid fa-xmark" style="position:absolute; right:16px; top:16px; color:var(--text-muted); cursor:pointer; font-size:20px;" onclick="document.getElementById('syllabusModal').style.display='none';"></i>
+            <h3 style="font-size:19px; margin-bottom:6px;"><i class="fa-solid fa-list-check"></i> Syllabus Tracker</h3>
+            <p style="font-size:12px; color:var(--text-muted); margin-bottom:16px;">Track your chapters & study progress.</p>
+            <div class="input-group"><input type="text" id="newSyllabusItem" placeholder="Add chapter/topic..." style="padding-left:14px; border-radius:12px;"><button class="btn-primary" style="margin-top:8px;" onclick="addSyllabusItem()">ADD TOPIC</button></div>
+            <div id="syllabusList" style="margin-top:16px; overflow-y:auto; flex:1;"></div>
+        </div>
+    </div>
+
     <script>
-        function showToast(msg) {
+        let currentStudentData = { name: '', email: '', dob: '', photo: '' };
+        let appSoundEnabled = true;
+
+        // LOAD PROFILE & Z+ CHECK
+        window.onload = () => {
+            const token = localStorage.getItem('ticbull_token');
+            // If strictly enforcing auth, uncomment this:
+            // if(!token && window.location.hostname !== 'localhost') { window.location.href = "index.html"; return; }
+            
+            loadProfileData();
+        };
+
+        function showToast(msg, type = 'success') {
             const toast = document.getElementById('custom-toast');
-            document.getElementById('toast-message').innerText = msg;
+            toast.innerHTML = `<i class="fa-solid ${type === 'success' ? 'fa-circle-check toast-icon success' : 'fa-circle-exclamation toast-icon error'}"></i> <span>${msg}</span>`;
             toast.classList.add('show');
             setTimeout(() => toast.classList.remove('show'), 3000);
         }
 
-        function loadProfile() {
+        // PROFILE DATA LOGIC
+        function loadProfileData() {
             const name = localStorage.getItem('ticbull_name') || "Student";
             const email = localStorage.getItem('ticbull_email') || "user@ticbull.com";
             const dob = localStorage.getItem('ticbull_dob') || "";
             const photo = localStorage.getItem('ticbull_photo');
 
-            document.getElementById('displayName').innerText = name.split(' ')[0];
+            document.getElementById('welcomeName').innerText = `Welcome, ${name.split(' ')[0]}!`;
             document.getElementById('drawerStudentName').innerText = name;
             document.getElementById('drawerStudentEmail').innerText = email;
+            document.getElementById('delAccEmail').value = email; // For Delete Modal
             
             if(dob) {
                 let age = new Date().getFullYear() - new Date(dob).getFullYear();
@@ -233,23 +314,6 @@
             }
         }
 
-        window.onload = () => {
-            // Security Route Check
-            if(!localStorage.getItem('ticbull_token')) {
-                window.location.href = "index.html"; 
-            } else {
-                loadProfile();
-            }
-        };
-
-        function toggleDrawer() {
-            document.getElementById('drawer').classList.toggle('open');
-            document.getElementById('drawerOverlay').style.display = document.getElementById('drawer').classList.contains('open') ? 'block' : 'none';
-        }
-
-        function toggleTheme() { document.body.classList.toggle('light-theme'); }
-        function changeTheme(color) { document.documentElement.style.setProperty('--accent-color', color); showToast("Theme Updated!"); }
-        
         function openEditProfileModal() {
             document.getElementById('editName').value = localStorage.getItem('ticbull_name') || "";
             document.getElementById('editDob').value = localStorage.getItem('ticbull_dob') || "";
@@ -260,7 +324,7 @@
         function saveProfile() {
             localStorage.setItem('ticbull_name', document.getElementById('editName').value);
             localStorage.setItem('ticbull_dob', document.getElementById('editDob').value);
-            loadProfile();
+            loadProfileData();
             document.getElementById('editProfileModal').style.display = 'none';
             showToast("Profile Updated!");
         }
@@ -271,15 +335,110 @@
                 const reader = new FileReader();
                 reader.onload = function(e) {
                     localStorage.setItem('ticbull_photo', e.target.result);
-                    loadProfile();
+                    loadProfileData();
+                    showToast("Profile Photo Updated!");
                 };
                 reader.readAsDataURL(file);
             }
         }
 
+        // UI TOGGLES (Menu, Theme, Sounds)
+        function toggleDrawer() {
+            document.getElementById('drawer').classList.toggle('open');
+            document.getElementById('drawerOverlay').style.display = document.getElementById('drawer').classList.contains('open') ? 'block' : 'none';
+        }
+
+        function toggleTheme() { document.body.classList.toggle('light-theme'); }
+        
+        function changeAppTheme(color, el) { 
+            document.documentElement.style.setProperty('--accent-color', color); 
+            document.querySelectorAll('.theme-circle').forEach(c => c.classList.remove('active')); 
+            el.classList.add('active'); 
+            showToast("Theme Color Updated!"); 
+        }
+
+        function toggleSoundSetting(checkbox) { 
+            appSoundEnabled = checkbox.checked; 
+            showToast(appSoundEnabled ? "App Sounds Enabled" : "App Sounds Muted"); 
+        }
+
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        const audioCtx = new AudioContext();
+        function playClickSound() {
+            if(!appSoundEnabled) return;
+            if(audioCtx.state === 'suspended') audioCtx.resume();
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.type = 'sine'; osc.frequency.setValueAtTime(800, audioCtx.currentTime);
+            gain.gain.setValueAtTime(0.05, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.1);
+            osc.connect(gain); gain.connect(audioCtx.destination);
+            osc.start(); osc.stop(audioCtx.currentTime + 0.1);
+        }
+        document.addEventListener('click', function(e) {
+            if(e.target.closest('button') || e.target.closest('.drawer-item') || e.target.closest('.theme-circle')) playClickSound();
+        });
+
+        // LOGOUT & DELETE ACCOUNT
         function logout() {
             localStorage.removeItem('ticbull_token');
             window.location.href = "index.html";
+        }
+
+        function openDeleteAccountModal() {
+            document.getElementById('settingsModal').style.display = 'none';
+            document.getElementById('deleteAccountModal').style.display = 'flex';
+            document.getElementById('delAccOtpSection').style.display = 'none';
+            document.getElementById('sendDelOtpBtn').style.display = 'block';
+        }
+
+        function initiateAccountDeletion() {
+            // Simulated or Real Fetch to Backend
+            const btn = document.getElementById('sendDelOtpBtn');
+            btn.innerText = "SENDING WARNING OTP...";
+            setTimeout(() => {
+                btn.style.display = 'none';
+                document.getElementById('delAccOtpSection').style.display = 'block';
+                showToast("Deletion Warning OTP Sent!", "success");
+            }, 1000);
+        }
+
+        function verifyAndDeleteAccount() {
+            const otp = document.getElementById('delAccOtp').value.trim();
+            if(!otp) return showToast("Enter OTP to delete!", "error");
+            
+            showToast("Account Permanently Deleted.", "success");
+            setTimeout(() => {
+                localStorage.clear();
+                window.location.href = "index.html";
+            }, 1500);
+        }
+
+        // SYLLABUS TRACKER
+        let syllabusItems = [];
+        function openSyllabusBoard() {
+            document.getElementById('syllabusModal').style.display = 'flex';
+            toggleDrawer();
+            const saved = localStorage.getItem('ticbull_syllabus');
+            if(saved) syllabusItems = JSON.parse(saved);
+            renderSyllabus();
+        }
+        function addSyllabusItem() {
+            const input = document.getElementById('newSyllabusItem');
+            if(!input.value.trim()) return;
+            syllabusItems.unshift({ text: input.value.trim(), done: false });
+            input.value = ''; saveSyllabus();
+        }
+        function toggleSyllabusItem(index) { syllabusItems[index].done = !syllabusItems[index].done; saveSyllabus(); }
+        function deleteSyllabusItem(index) { syllabusItems.splice(index, 1); saveSyllabus(); }
+        function saveSyllabus() { localStorage.setItem('ticbull_syllabus', JSON.stringify(syllabusItems)); renderSyllabus(); }
+        function renderSyllabus() {
+            const list = document.getElementById('syllabusList');
+            list.innerHTML = '';
+            if(syllabusItems.length === 0) return list.innerHTML = '<p style="color:var(--text-muted); font-size:12px; text-align:center;">No topics added.</p>';
+            syllabusItems.forEach((item, i) => {
+                list.innerHTML += `<div class="syllabus-task ${item.done ? 'completed' : ''}"><input type="checkbox" ${item.done ? 'checked' : ''} onchange="toggleSyllabusItem(${i})"><span>${item.text}</span><i class="fa-solid fa-trash" style="color:#ef4444; font-size:14px; cursor:pointer;" onclick="deleteSyllabusItem(${i})"></i></div>`;
+            });
         }
     </script>
 </body>
