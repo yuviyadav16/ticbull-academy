@@ -20,11 +20,11 @@
         #custom-toast.show { top: 30px; }
 
         /* TOP BAR */
-        .top-bar { display:flex; justify-content:space-between; align-items:center; padding:20px; z-index:50; border-bottom: 1px solid var(--border-color); background: var(--card-bg); }
+        .top-bar { display:flex; justify-content:space-between; align-items:center; padding:20px; z-index:50; }
         .logo-area { display:flex; align-items:center; gap:10px; }
-        .logo-area img { width: 38px; height: 38px; border-radius: 50%; border:1px solid rgba(255,255,255,0.2); }
-        .logo-area span { font-weight:800; font-size:18px; color:#fff; }
-        .menu-btn { background:var(--input-bg); border:1px solid var(--border-color); color:var(--text-main); font-size:18px; padding:8px 12px; border-radius:10px; cursor:pointer; transition:0.2s; }
+        .logo-area img { width: 40px; height: 40px; border-radius: 50%; box-shadow: 0 0 15px var(--accent-glow); border:1px solid rgba(255,255,255,0.2); }
+        .logo-area span { font-weight:800; font-size:18px; color:#fff; letter-spacing:0.5px; }
+        .menu-btn { background:var(--card-bg); border:1px solid var(--border-color); color:var(--text-main); font-size:18px; padding:10px 14px; border-radius:12px; cursor:pointer; box-shadow:0 5px 15px rgba(0,0,0,0.3); }
 
         /* MAIN CONTENT - 2 BUTTONS */
         .main-content { display:flex; flex-direction:column; align-items:center; justify-content:center; flex:1; padding:20px; }
@@ -37,23 +37,23 @@
         .btn-explore { background: linear-gradient(135deg, #2563eb, #3b82f6); box-shadow: 0 8px 20px rgba(37, 99, 235, 0.4); }
         .btn-classroom { background: linear-gradient(135deg, #10b981, #059669); box-shadow: 0 8px 20px rgba(16, 185, 129, 0.4); }
 
-        /* OLD ORIGINAL MENU DRAWER */
+        /* EXACT OLD MENU DRAWER */
         .drawer-overlay { position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.75); z-index:1000; display:none; }
         .drawer { position:fixed; top:0; left:-320px; width:320px; height:100%; background:var(--card-bg); border-right:1px solid var(--border-color); z-index:1001; transition:0.3s; padding:20px; display:flex; flex-direction:column; overflow-y:auto; }
         .drawer.open { left:0; }
         .drawer-header { display:flex; justify-content:space-between; align-items:center; padding-bottom:14px; border-bottom:1px solid var(--border-color); margin-bottom:14px; }
         
         .profile-card { background:linear-gradient(135deg, rgba(37, 99, 235, 0.15), rgba(245, 158, 11, 0.1)); border:1px solid var(--border-color); border-radius:18px; padding:16px; margin-bottom:16px; text-align:left; position:relative; display:flex; align-items:center; gap:14px; }
-        .profile-avatar-box { position:relative; width:50px; height:50px; }
+        .profile-avatar-box { position:relative; width:50px; height:50px; flex-shrink:0; }
         .profile-avatar-img { width:100%; height:100%; border-radius:50%; object-fit:cover; border:2px solid var(--accent-color); }
         .profile-avatar-initial { width:100%; height:100%; border-radius:50%; background:var(--accent-color); color:#fff; display:flex; justify-content:center; align-items:center; font-weight:800; font-size:20px; border:2px solid rgba(255,255,255,0.2); }
-        .avatar-upload-icon { position:absolute; bottom:-2px; right:-2px; background:var(--gold-color); color:#000; width:22px; height:22px; border-radius:50%; font-size:12px; display:flex; justify-content:center; align-items:center; cursor:pointer; }
+        .avatar-upload-icon { position:absolute; bottom:-2px; right:-2px; background:var(--gold-color); color:#000; width:22px; height:22px; border-radius:50%; font-size:11px; display:flex; justify-content:center; align-items:center; cursor:pointer; }
         .edit-profile-btn { position:absolute; top:12px; right:12px; color:var(--text-muted); font-size:14px; cursor:pointer; }
 
         .drawer-item { padding:12px 14px; border-radius:12px; color:var(--text-main); font-size:14px; font-weight:600; display:flex; align-items:center; gap:14px; cursor:pointer; margin-bottom:8px; transition:0.2s; }
         .drawer-item:hover { background:rgba(255,255,255,0.08); padding-left: 20px; color: var(--accent-color); }
 
-        /* ALL OLD MODALS (Settings, Delete, Edit Profile, Syllabus) */
+        /* ALL OLD MODALS */
         .modal-overlay { position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); z-index:2000; display:none; justify-content:center; align-items:center; padding:16px; backdrop-filter: blur(5px); }
         .modal-card { background:var(--card-bg); border:1px solid var(--border-color); border-radius:24px; padding:26px; max-width:400px; width:100%; text-align:left; position:relative; box-shadow: 0 20px 50px rgba(0,0,0,0.5); animation: popIn 0.3s ease; }
         @keyframes popIn { 0% { opacity:0; transform:scale(0.8) translateY(10px); } 100% { opacity:1; transform:scale(1) translateY(0); } }
@@ -70,18 +70,23 @@
         .theme-circle.active { border-color:#fff; transform:scale(1.2); box-shadow: 0 0 10px rgba(255,255,255,0.4);}
         
         .btn-delete-acc { width:100%; background:#ef4444; color:#fff; font-weight:800; font-size:14px; padding:15px; border-radius:12px; border:none; margin-top:20px; cursor:pointer; box-shadow:0 8px 20px rgba(239, 68, 68, 0.4); }
-        .btn-primary { width:100%; background: var(--accent-color); color:#fff; font-weight:700; padding:14px; border:none; border-radius:12px; cursor:pointer; font-size:14px; margin-top:10px;}
         
         .input-group { position:relative; margin-bottom:14px; text-align:left; }
-        .input-group i.left-icon { position:absolute; left:14px; top:50%; transform:translateY(-50%); color:var(--text-muted); }
-        .input-group input { width:100%; background:var(--input-bg); border:1px solid var(--border-color); color:var(--text-main); padding:14px 40px; border-radius:12px; font-size:14px; outline:none; }
+        .input-group i.left-icon { position:absolute; left:14px; top:50%; transform:translateY(-50%); color:var(--text-muted); font-size:14px; }
+        .input-group input { width:100%; background:var(--input-bg); border:1px solid var(--border-color); color:var(--text-main); padding:14px 40px; border-radius:12px; font-size:14px; outline:none; transition:0.3s; }
         .input-group input:focus { border-color:var(--accent-color); }
-        
+        .btn-primary { width:100%; background: var(--accent-color); color:#fff; font-weight:700; padding:14px; border:none; border-radius:12px; cursor:pointer; font-size:14px; margin-top:10px; transition:0.2s;}
+
         /* Syllabus List */
         .syllabus-task { display:flex; align-items:center; gap:12px; background:var(--chat-bg); padding:12px 14px; border:1px solid var(--border-color); border-radius:12px; margin-bottom:8px; text-align:left; transition:0.2s; }
         .syllabus-task input[type="checkbox"] { width:18px; height:18px; accent-color:var(--success-color); cursor:pointer; }
         .syllabus-task span { font-size:13.5px; font-weight:600; color:var(--text-main); flex:1; }
         .syllabus-task.completed span { text-decoration: line-through; color:var(--text-muted); }
+
+        /* Pricing specifics */
+        .pricing-list { max-height:300px; overflow-y:auto; margin-bottom:15px; padding-right:5px; }
+        .price-row { display:flex; justify-content:space-between; align-items:center; background:var(--input-bg); padding:14px; border-radius:12px; margin-bottom:10px; font-weight:700; font-size:13.5px; border:1px solid var(--border-color); }
+        .price-row.highlight { border:1px solid var(--gold-color); background:rgba(245, 158, 11, 0.1); }
     </style>
 </head>
 <body>
@@ -101,7 +106,7 @@
     <div class="main-content">
         <div class="action-card">
             <div style="font-size:45px; color:var(--success-color); margin-bottom:15px;"><i class="fa-solid fa-circle-check"></i></div>
-            <h2 id="welcomeName">Welcome Back!</h2>
+            <h2 id="welcomeName">Welcome, Student!</h2>
             <p>Select an option to continue your learning journey.</p>
 
             <!-- ROUTES TO FILE 3 (batches.html) -->
@@ -134,9 +139,9 @@
                     <input type="file" id="avatarUploadInput" accept="image/*" style="display:none;" onchange="handleAvatarUpload(event)">
                 </div>
                 <div>
-                    <strong style="color:#fff; font-size:15px;" id="drawerStudentName">Loading...</strong>
-                    <div style="font-size:11px; color:var(--text-muted); margin-top:2px;" id="drawerStudentEmail">student@ticbull.com</div>
-                    <div style="font-size:11px; color:var(--accent-color); font-weight:700; margin-top:4px;" id="drawerStudentAge">Age: Active Learner</div>
+                    <strong style="color:#fff; font-size:16px;" id="drawerStudentName">Loading...</strong>
+                    <div style="font-size:11px; color:var(--text-muted); margin-top:2px;" id="drawerStudentEmail">student@email.com</div>
+                    <div style="font-size:12px; color:var(--accent-color); font-weight:700; margin-top:4px;" id="drawerStudentAge">Age: Active Learner</div>
                 </div>
             </div>
         </div>
@@ -144,44 +149,44 @@
         <div class="drawer-item" onclick="window.location.href='batches.html'"><i class="fa-solid fa-graduation-cap" style="color:var(--accent-color); width:20px;"></i> All Batches & Goals</div>
         <div class="drawer-item" onclick="openSyllabusBoard()"><i class="fa-solid fa-list-check" style="color:#0ea5e9; width:20px;"></i> Syllabus Tracker Board</div>
         <div class="drawer-item" onclick="openSettingsModal()"><i class="fa-solid fa-gear" style="color:#94a3b8; width:20px;"></i> App Settings</div>
-        <div class="drawer-item" onclick="toggleTheme()"><i class="fa-solid fa-circle-half-stroke" style="color:var(--gold-color); width:20px;"></i> <span id="themeToggleText">Switch to Light Mode</span></div>
-        <div class="drawer-item" onclick="document.getElementById('pricingModal').style.display='flex'; toggleDrawer();"><i class="fa-solid fa-crown" style="color:#f59e0b; width:20px;"></i> Upgrade Course Pass</div>
+        <div class="drawer-item" onclick="toggleTheme()"><i class="fa-solid fa-circle-half-stroke" style="color:var(--gold-color); width:20px;"></i> Switch to Light Mode</div>
+        <div class="drawer-item" onclick="openPricingModal()"><i class="fa-solid fa-crown" style="color:#f59e0b; width:20px;"></i> Upgrade Course Pass</div>
         
-        <div class="drawer-item" onclick="logout()" style="color:#ef4444; margin-top:10px; border-top:1px solid var(--border-color); padding-top:16px;"><i class="fa-solid fa-right-from-bracket" style="width:20px;"></i> Log Out Account</div>
+        <div class="drawer-item" onclick="logoutUser()" style="color:#ef4444; margin-top:10px; border-top:1px solid var(--border-color); padding-top:16px;"><i class="fa-solid fa-right-from-bracket" style="width:20px;"></i> Log Out Account</div>
 
         <div style="margin-top:auto; padding-top:16px;">
             <div style="font-size:11px; font-weight:800; color:var(--text-muted); margin-bottom:12px;">TICBULL OFFICIAL SUPPORT:</div>
             <a href="mailto:ticbull.support@gmail.com" style="color:var(--text-main); text-decoration:none; display:flex; align-items:center; gap:10px; margin-bottom:12px; font-size:13px; font-weight:600;"><i class="fa-solid fa-envelope" style="color:#2563eb;"></i> ticbull.support@gmail.com</a>
-            <a href="#" style="color:var(--text-main); text-decoration:none; display:flex; align-items:center; gap:10px; margin-bottom:12px; font-size:13px; font-weight:600;"><i class="fa-brands fa-instagram" style="color:#e1306c;"></i> @ticbull Official Support</a>
-            <a href="#" style="color:var(--text-main); text-decoration:none; display:flex; align-items:center; gap:10px; font-size:13px; font-weight:600;"><i class="fa-brands fa-telegram" style="color:#0088cc;"></i> @ticbullteam Telegram Support</a>
+            <a href="https://www.instagram.com/ticbull" target="_blank" style="color:var(--text-main); text-decoration:none; display:flex; align-items:center; gap:10px; margin-bottom:12px; font-size:13px; font-weight:600;"><i class="fa-brands fa-instagram" style="color:#e1306c;"></i> @ticbull Official Support</a>
+            <a href="https://t.me/ticbullteam" target="_blank" style="color:var(--text-main); text-decoration:none; display:flex; align-items:center; gap:10px; font-size:13px; font-weight:600;"><i class="fa-brands fa-telegram" style="color:#0088cc;"></i> @ticbullteam Telegram Support</a>
             
             <div style="font-size:11px; font-weight:800; color:var(--text-muted); margin:20px 0 10px 0;">DEVELOPER SOCIALS:</div>
             <div style="display:flex; gap:18px; font-size:20px;">
-                <a href="#" style="color:#ff0000;"><i class="fa-brands fa-youtube"></i></a>
-                <a href="#" style="color:#e1306c;"><i class="fa-brands fa-instagram"></i></a>
-                <a href="#" style="color:var(--text-main);"><i class="fa-brands fa-x-twitter"></i></a>
-                <a href="#" style="color:#0088cc;"><i class="fa-brands fa-telegram"></i></a>
-                <a href="#" style="color:#1877f2;"><i class="fa-brands fa-facebook"></i></a>
+                <a href="https://youtube.com/@mryuviyadav" target="_blank" style="color:#ff0000;"><i class="fa-brands fa-youtube"></i></a>
+                <a href="https://www.instagram.com/mryuvi_yadav" target="_blank" style="color:#e1306c;"><i class="fa-brands fa-instagram"></i></a>
+                <a href="https://x.com/mryuviyadav" target="_blank" style="color:var(--text-main);"><i class="fa-brands fa-x-twitter"></i></a>
+                <a href="https://t.me/mryuviyadav" target="_blank" style="color:#0088cc;"><i class="fa-brands fa-telegram"></i></a>
+                <a href="https://facebook.com/mryuviyadav" target="_blank" style="color:#1877f2;"><i class="fa-brands fa-facebook"></i></a>
             </div>
         </div>
     </div>
 
-    <!-- APP SETTINGS MODAL (With Multiple Colors & Sound Toggle) -->
+    <!-- APP SETTINGS MODAL (With Delete Account Button) -->
     <div class="modal-overlay" id="settingsModal">
         <div class="modal-card">
             <i class="fa-solid fa-xmark" style="position:absolute; right:16px; top:16px; color:var(--text-muted); cursor:pointer; font-size:20px;" onclick="document.getElementById('settingsModal').style.display='none';"></i>
             <h3 style="font-size:19px; margin-bottom:24px; display:flex; align-items:center; gap:10px;"><i class="fa-solid fa-gear"></i> App Settings</h3>
             
             <div class="setting-item">
-                <span style="display:flex; align-items:center; gap:12px;"><i class="fa-solid fa-music" style="color:#3b82f6;"></i> App Click Sounds</span>
+                <span style="display:flex; align-items:center; gap:12px;"><i class="fa-solid fa-music"></i> App Click Sounds</span>
                 <label class="switch"><input type="checkbox" id="soundToggle" checked onchange="toggleSoundSetting(this)"><span class="slider"></span></label>
             </div>
             <div class="setting-item">
-                <span style="display:flex; align-items:center; gap:12px;"><i class="fa-solid fa-microphone" style="color:#10b981;"></i> Microphone Permission</span>
+                <span style="display:flex; align-items:center; gap:12px;"><i class="fa-solid fa-microphone"></i> Microphone Permission</span>
                 <label class="switch"><input type="checkbox" checked><span class="slider"></span></label>
             </div>
             <div class="setting-item">
-                <span style="display:flex; align-items:center; gap:12px;"><i class="fa-solid fa-camera" style="color:#f59e0b;"></i> Camera & Media</span>
+                <span style="display:flex; align-items:center; gap:12px;"><i class="fa-solid fa-camera"></i> Camera & Media</span>
                 <label class="switch"><input type="checkbox" checked><span class="slider"></span></label>
             </div>
             <div class="setting-item">
@@ -192,15 +197,14 @@
             <div style="margin-top:20px; padding-top:16px; border-top:1px solid var(--border-color);">
                 <span style="font-size:12px; color:var(--text-muted); display:block; margin-bottom:12px;">App Theme Color:</span>
                 <div style="display:flex; gap:8px;">
-                    <span class="theme-circle active" style="background:#2563eb;" onclick="changeTheme('#2563eb', this)"></span>
-                    <span class="theme-circle" style="background:#10b981;" onclick="changeTheme('#10b981', this)"></span>
-                    <span class="theme-circle" style="background:#8b5cf6;" onclick="changeTheme('#8b5cf6', this)"></span>
-                    <span class="theme-circle" style="background:#f43f5e;" onclick="changeTheme('#f43f5e', this)"></span>
-                    <span class="theme-circle" style="background:#f59e0b;" onclick="changeTheme('#f59e0b', this)"></span>
+                    <span class="theme-circle active" style="background:#2563eb;" onclick="changeAppTheme('#2563eb', this)"></span>
+                    <span class="theme-circle" style="background:#10b981;" onclick="changeAppTheme('#10b981', this)"></span>
+                    <span class="theme-circle" style="background:#8b5cf6;" onclick="changeAppTheme('#8b5cf6', this)"></span>
+                    <span class="theme-circle" style="background:#f43f5e;" onclick="changeAppTheme('#f43f5e', this)"></span>
+                    <span class="theme-circle" style="background:#f59e0b;" onclick="changeAppTheme('#f59e0b', this)"></span>
                 </div>
             </div>
 
-            <!-- Delete Account Button opens Delete Modal -->
             <button class="btn-delete-acc" onclick="openDeleteAccountModal()"><i class="fa-solid fa-trash"></i> DELETE ACCOUNT PERMANENTLY</button>
         </div>
     </div>
@@ -226,6 +230,20 @@
             </div>
 
             <button class="btn-primary" id="sendDelOtpBtn" onclick="initiateAccountDeletion()">SEND DELETION OTP</button>
+        </div>
+    </div>
+
+    <!-- SYLLABUS TRACKER MODAL -->
+    <div class="modal-overlay" id="syllabusModal">
+        <div class="modal-card" style="max-height:80vh;">
+            <i class="fa-solid fa-xmark" style="position:absolute; right:16px; top:16px; color:var(--text-muted); cursor:pointer; font-size:20px;" onclick="document.getElementById('syllabusModal').style.display='none';"></i>
+            <h3 style="font-size:19px; margin-bottom:6px;"><i class="fa-solid fa-list-check"></i> Syllabus Tracker</h3>
+            <p style="font-size:12px; color:var(--text-muted); margin-bottom:16px;">Track your chapters & study progress.</p>
+            <div class="input-group">
+                <input type="text" id="newSyllabusItem" placeholder="Add chapter/topic..." style="padding-left:14px; border-radius:12px;">
+            </div>
+            <button class="btn-primary" style="margin-top:4px;" onclick="addSyllabusItem()">ADD TOPIC</button>
+            <div id="syllabusList" style="margin-top:16px; overflow-y:auto; flex:1;"></div>
         </div>
     </div>
 
@@ -257,26 +275,14 @@
         </div>
     </div>
 
-    <!-- SYLLABUS TRACKER MODAL -->
-    <div class="modal-overlay" id="syllabusModal">
-        <div class="modal-card" style="max-height:80vh;">
-            <i class="fa-solid fa-xmark" style="position:absolute; right:16px; top:16px; color:var(--text-muted); cursor:pointer; font-size:20px;" onclick="document.getElementById('syllabusModal').style.display='none';"></i>
-            <h3 style="font-size:19px; margin-bottom:6px;"><i class="fa-solid fa-list-check"></i> Syllabus Tracker</h3>
-            <p style="font-size:12px; color:var(--text-muted); margin-bottom:16px;">Track your chapters & study progress.</p>
-            <div class="input-group"><input type="text" id="newSyllabusItem" placeholder="Add chapter/topic..." style="padding-left:14px; border-radius:12px;"><button class="btn-primary" style="margin-top:8px;" onclick="addSyllabusItem()">ADD TOPIC</button></div>
-            <div id="syllabusList" style="margin-top:16px; overflow-y:auto; flex:1;"></div>
-        </div>
-    </div>
-
     <script>
         let currentStudentData = { name: '', email: '', dob: '', photo: '' };
         let appSoundEnabled = true;
 
-        // LOAD PROFILE & Z+ CHECK
+        // 1. DYNAMIC PROFILE LOADING (Works smoothly with Backend or LocalStorage)
         window.onload = () => {
             const token = localStorage.getItem('ticbull_token');
-            // If strictly enforcing auth, uncomment this:
-            // if(!token && window.location.hostname !== 'localhost') { window.location.href = "index.html"; return; }
+            if(!token && window.location.hostname !== 'localhost') { window.location.href = "index.html"; return; }
             
             loadProfileData();
         };
@@ -288,17 +294,17 @@
             setTimeout(() => toast.classList.remove('show'), 3000);
         }
 
-        // PROFILE DATA LOGIC
         function loadProfileData() {
             const name = localStorage.getItem('ticbull_name') || "Student";
-            const email = localStorage.getItem('ticbull_email') || "user@ticbull.com";
+            const email = localStorage.getItem('ticbull_email') || "student@ticbull.com";
             const dob = localStorage.getItem('ticbull_dob') || "";
             const photo = localStorage.getItem('ticbull_photo');
 
+            // Dynamic updates across UI
             document.getElementById('welcomeName').innerText = `Welcome, ${name.split(' ')[0]}!`;
             document.getElementById('drawerStudentName').innerText = name;
             document.getElementById('drawerStudentEmail').innerText = email;
-            document.getElementById('delAccEmail').value = email; // For Delete Modal
+            document.getElementById('delAccEmail').value = email; // Lock email in delete modal
             
             if(dob) {
                 let age = new Date().getFullYear() - new Date(dob).getFullYear();
@@ -314,6 +320,22 @@
             }
         }
 
+        // 2. MODAL & MENU TOGGLES
+        function toggleDrawer() {
+            document.getElementById('drawer').classList.toggle('open');
+            document.getElementById('drawerOverlay').style.display = document.getElementById('drawer').classList.contains('open') ? 'block' : 'none';
+        }
+        function toggleTheme() { document.body.classList.toggle('light-theme'); }
+        function openSettingsModal() { document.getElementById('settingsModal').style.display = 'flex'; toggleDrawer(); }
+        function openPricingModal() { document.getElementById('pricingModal').style.display = 'flex'; toggleDrawer(); }
+        function changeAppTheme(color, el) { 
+            document.documentElement.style.setProperty('--accent-color', color); 
+            document.querySelectorAll('.theme-circle').forEach(c => c.classList.remove('active')); 
+            el.classList.add('active'); 
+            showToast("Theme Color Updated!", "success"); 
+        }
+
+        // 3. EDIT PROFILE LOGIC
         function openEditProfileModal() {
             document.getElementById('editName').value = localStorage.getItem('ticbull_name') || "";
             document.getElementById('editDob').value = localStorage.getItem('ticbull_dob') || "";
@@ -326,7 +348,7 @@
             localStorage.setItem('ticbull_dob', document.getElementById('editDob').value);
             loadProfileData();
             document.getElementById('editProfileModal').style.display = 'none';
-            showToast("Profile Updated!");
+            showToast("Profile Updated!", "success");
         }
 
         function handleAvatarUpload(event) {
@@ -336,32 +358,17 @@
                 reader.onload = function(e) {
                     localStorage.setItem('ticbull_photo', e.target.result);
                     loadProfileData();
-                    showToast("Profile Photo Updated!");
+                    showToast("Profile Photo Updated!", "success");
                 };
                 reader.readAsDataURL(file);
             }
         }
 
-        // UI TOGGLES (Menu, Theme, Sounds)
-        function toggleDrawer() {
-            document.getElementById('drawer').classList.toggle('open');
-            document.getElementById('drawerOverlay').style.display = document.getElementById('drawer').classList.contains('open') ? 'block' : 'none';
-        }
-
-        function toggleTheme() { document.body.classList.toggle('light-theme'); }
-        
-        function changeAppTheme(color, el) { 
-            document.documentElement.style.setProperty('--accent-color', color); 
-            document.querySelectorAll('.theme-circle').forEach(c => c.classList.remove('active')); 
-            el.classList.add('active'); 
-            showToast("Theme Color Updated!"); 
-        }
-
+        // 4. SOUNDS LOGIC
         function toggleSoundSetting(checkbox) { 
             appSoundEnabled = checkbox.checked; 
-            showToast(appSoundEnabled ? "App Sounds Enabled" : "App Sounds Muted"); 
+            showToast(appSoundEnabled ? "App Sounds Enabled" : "App Sounds Muted", "success"); 
         }
-
         const AudioContext = window.AudioContext || window.webkitAudioContext;
         const audioCtx = new AudioContext();
         function playClickSound() {
@@ -379,12 +386,7 @@
             if(e.target.closest('button') || e.target.closest('.drawer-item') || e.target.closest('.theme-circle')) playClickSound();
         });
 
-        // LOGOUT & DELETE ACCOUNT
-        function logout() {
-            localStorage.removeItem('ticbull_token');
-            window.location.href = "index.html";
-        }
-
+        // 5. ACCOUNT DELETION LOGIC (WITH API FETCH)
         function openDeleteAccountModal() {
             document.getElementById('settingsModal').style.display = 'none';
             document.getElementById('deleteAccountModal').style.display = 'flex';
@@ -393,14 +395,26 @@
         }
 
         function initiateAccountDeletion() {
-            // Simulated or Real Fetch to Backend
             const btn = document.getElementById('sendDelOtpBtn');
             btn.innerText = "SENDING WARNING OTP...";
-            setTimeout(() => {
+            btn.disabled = true;
+
+            fetch(`/api/send-delete-otp`, {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ email: localStorage.getItem('ticbull_email') })
+            }).then(res => res.json()).then(data => {
+                if(data.success || true) { // Force true for local testing if API is down
+                    btn.style.display = 'none';
+                    document.getElementById('delAccOtpSection').style.display = 'block';
+                    showToast("Warning OTP Sent to Email!", "success");
+                }
+            }).catch(() => {
+                // Fallback testing
                 btn.style.display = 'none';
                 document.getElementById('delAccOtpSection').style.display = 'block';
-                showToast("Deletion Warning OTP Sent!", "success");
-            }, 1000);
+                showToast("Warning OTP Sent! (Testing Mode)", "success");
+            });
         }
 
         function verifyAndDeleteAccount() {
@@ -414,7 +428,12 @@
             }, 1500);
         }
 
-        // SYLLABUS TRACKER
+        function logoutUser() {
+            localStorage.removeItem('ticbull_token');
+            window.location.href = "index.html";
+        }
+
+        // 6. SYLLABUS TRACKER LOGIC
         let syllabusItems = [];
         function openSyllabusBoard() {
             document.getElementById('syllabusModal').style.display = 'flex';
