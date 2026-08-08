@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>TicBull Academy - Secure Login</title>
+    <title>TicBull Academy - India's #1 AI Education Engine</title>
     
     <!-- PWA APP INSTALL LINKS -->
     <link rel="manifest" href="/manifest.json">
@@ -12,12 +12,18 @@
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     
-    <!-- Firebase SDK Setup (For Z+ Security Backend Later) -->
-    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
-    
+    <!-- SERVICE WORKER REGISTRATION -->
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('/sw.js')
+            .then(() => console.log('TicBull PWA Service Worker Registered!'))
+            .catch((err) => console.log('SW registration failed: ', err));
+        });
+      }
+    </script>
+
     <style>
-        /* --- 100% ORIGINAL CSS VARIABLES & STYLES --- */
         :root {
             --bg-color: #030712;
             --card-bg: rgba(15, 23, 42, 0.95);
@@ -28,6 +34,7 @@
             --border-color: rgba(255, 255, 255, 0.12);
             --success-color: #10b981;
             --gold-color: #f59e0b;
+            --chat-bg: #020617;
             --input-bg: #0f172a;
         }
 
@@ -37,38 +44,71 @@
             --text-main: #0f172a;
             --text-muted: #64748b;
             --border-color: #cbd5e1;
+            --chat-bg: #f8fafc;
             --input-bg: #ffffff;
         }
 
         * { margin:0; padding:0; box-sizing:border-box; font-family:-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; -webkit-tap-highlight-color: transparent; }
         
-        html, body { height: 100%; width: 100%; overflow: hidden; background: var(--bg-color); color: var(--text-main); transition: background 0.3s, color 0.3s; display:flex; flex-direction:column; }
+        html, body { height: 100%; width: 100%; overflow: hidden; background: var(--bg-color); color: var(--text-main); transition: background 0.3s, color 0.3s; }
+        body { display:flex; flex-direction:column; }
 
         /* CUSTOM TOAST NOTIFICATION */
-        #custom-toast { position: fixed; top: -100px; left: 50%; transform: translateX(-50%); background: var(--card-bg); color: var(--text-main); border: 1px solid var(--accent-color); padding: 12px 24px; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); z-index: 10000; display: flex; align-items: center; gap: 12px; font-size: 13.5px; font-weight: 600; transition: top 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55); }
+        #custom-toast {
+            position: fixed; top: -100px; left: 50%; transform: translateX(-50%);
+            background: var(--card-bg); color: var(--text-main);
+            border: 1px solid var(--accent-color); padding: 12px 24px;
+            border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            z-index: 10000; display: flex; align-items: center; gap: 12px;
+            font-size: 13.5px; font-weight: 600;
+            transition: top 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
         #custom-toast.show { top: 30px; }
         .toast-icon { font-size: 18px; }
         .toast-icon.success { color: var(--success-color); }
         .toast-icon.error { color: #ef4444; }
 
         /* CINEMATIC SPLASH ANIMATION */
-        #splash-screen { position: fixed; top:0; left:0; width:100%; height:100%; background: radial-gradient(circle at center, #0b1329 0%, #020617 100%); display:flex; flex-direction:column; justify-content:center; align-items:center; z-index:9999; transition: opacity 0.8s ease, visibility 0.8s ease; padding: 20px; }
+        #splash-screen {
+            position: fixed; top:0; left:0; width:100%; height:100%;
+            background: radial-gradient(circle at center, #0b1329 0%, #020617 100%);
+            display:flex; flex-direction:column; justify-content:center; align-items:center; z-index:9999;
+            transition: opacity 0.8s ease, visibility 0.8s ease; padding: 20px;
+        }
         .splash-logo-container { position: relative; width: 130px; height: 110px; display:flex; justify-content:center; align-items:center; }
-        .splash-logo-glow { position: absolute; width: 100%; height: 100%; border-radius: 50%; background: radial-gradient(circle, rgba(37, 99, 235, 0.9) 0%, rgba(0,0,0,0) 70%); filter: blur(20px); animation: pulseGlow 2.5s infinite alternate ease-in-out; }
-        .splash-logo { position: relative; width: 105px; height: 105px; border-radius: 50%; background: #000; border: 2px solid rgba(37, 99, 235, 0.5); display:flex; justify-content:center; align-items:center; overflow:hidden; box-shadow: 0 0 35px var(--accent-glow); }
+        .splash-logo-glow {
+            position: absolute; width: 100%; height: 100%; border-radius: 50%;
+            background: radial-gradient(circle, rgba(37, 99, 235, 0.9) 0%, rgba(0,0,0,0) 70%);
+            filter: blur(20px); animation: pulseGlow 2.5s infinite alternate ease-in-out;
+        }
+        .splash-logo {
+            position: relative; width: 105px; height: 105px; border-radius: 50%;
+            background: #000; border: 2px solid rgba(37, 99, 235, 0.5);
+            display:flex; justify-content:center; align-items:center; overflow:hidden;
+            box-shadow: 0 0 35px var(--accent-glow);
+        }
         .splash-logo img { width:90%; height:90%; object-fit:contain; }
         .splash-title { margin-top:20px; font-size:26px; font-weight:800; letter-spacing:1px; color:#fff; text-shadow:0 0 15px rgba(255,255,255,0.3); }
-        .developer-tag { margin-top:6px; font-size:13px; color: var(--accent-color); font-weight:700; }
+        .developer-tag { margin-top:6px; font-size:13px; color: var(--accent-color); font-weight:700; letter-spacing:0.5px; }
+
+        .splash-socials { display:flex; gap:18px; margin-top:20px; }
+        .splash-socials a { color:var(--text-muted); font-size:22px; transition:0.3s; animation: floatIcon 3s ease-in-out infinite; }
+        .splash-socials a:hover { color:#fff; transform:scale(1.2); }
+        
+        .support-info-splash { margin-top: 25px; font-size: 11px; color: var(--text-muted); font-weight: 600; display: flex; align-items: center; gap: 6px; background: rgba(255,255,255,0.05); padding: 8px 16px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.1); }
+
         .progress-bar-container { width: 180px; height: 4px; background: rgba(255,255,255,0.1); border-radius: 10px; margin-top: 25px; overflow: hidden; }
         .progress-bar { width: 0%; height: 100%; background: linear-gradient(90deg, var(--accent-color), #f59e0b); animation: loadProgress 3.5s linear forwards; }
+
         @keyframes pulseGlow { 0% { transform: scale(0.85); opacity: 0.5; } 100% { transform: scale(1.2); opacity: 0.95; } }
         @keyframes loadProgress { 0% { width: 0%; } 100% { width: 100%; } }
+        @keyframes floatIcon { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); color: var(--accent-color); } }
 
-        /* AUTH CARD (NO FAKE BUTTONS) */
-        .auth-container { display:flex; flex-direction:column; align-items:center; justify-content:center; flex:1; padding:20px; width:100%; overflow-y:auto; position: relative; }
+        /* AUTH CARD */
+        .auth-container { display:flex; flex-direction:column; align-items:center; justify-content:center; flex:1; padding:20px; width:100%; overflow-y:auto; position:relative;}
         .top-menu-btn { position:absolute; top:20px; right:20px; background:rgba(255,255,255,0.05); border:1px solid var(--border-color); color:var(--text-main); font-size:18px; padding:10px 14px; border-radius:12px; cursor:pointer; z-index:50; transition:0.2s; }
         .top-menu-btn:hover { background:rgba(255,255,255,0.1); }
-        
+
         .auth-card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius:24px; padding:28px 22px; width:100%; max-width:420px; box-shadow:0 20px 50px rgba(0,0,0,0.5); text-align:center; position: relative; }
         .brand-header { display:flex; flex-direction:column; align-items:center; margin-bottom:18px; }
         .brand-icon-box { width:80px; height:80px; border-radius:50%; background:#000; border:2px solid rgba(37, 99, 235, 0.4); display:flex; justify-content:center; align-items:center; margin-bottom:12px; box-shadow: 0 8px 25px rgba(0,0,0,0.6); overflow:hidden; }
@@ -84,11 +124,12 @@
         .input-group input:focus { border-color:var(--accent-color); box-shadow: 0 0 12px var(--accent-glow); }
         .pwd-toggle { position:absolute; right:14px; top:50%; transform:translateY(-50%); color:var(--text-muted); cursor:pointer; font-size:14px; }
 
-        .signup-extra-fields { display:none; flex-direction:column; }
+        .signup-extra-fields { display:none; flex-direction:column; gap:0px; }
         .forgot-link { font-size:11.5px; color:var(--accent-color); text-decoration:none; display:block; text-align:right; margin:-6px 0 12px 0; cursor:pointer; }
 
         .btn-primary { width:100%; background: var(--accent-color); color:#fff; font-weight:700; padding:13px; border:none; border-radius:12px; cursor:pointer; font-size:14px; letter-spacing:0.5px; box-shadow:0 8px 20px var(--accent-glow); transition:0.2s; margin-top:8px; }
         .btn-primary:active { transform:scale(0.98); }
+        .btn-primary:disabled { opacity: 0.6; cursor: not-allowed; }
         .btn-danger { background: #ef4444; box-shadow:0 8px 20px rgba(239, 68, 68, 0.4); }
 
         .auth-footer-support { margin-top: 24px; border-top: 1px solid var(--border-color); padding-top: 16px; display: flex; flex-direction: column; align-items: center; gap: 8px; }
@@ -97,7 +138,106 @@
         .auth-footer-socials a { color: var(--text-muted); font-size: 16px; transition: 0.2s; }
         .auth-footer-socials a:hover { color: var(--accent-color); transform: scale(1.1); }
 
-        /* ORIGINAL SIDE DRAWER MENU */
+        /* 🚀 BATCHES DASHBOARD SCREEN */
+        #batches-screen { display:none; flex-direction:column; height:100%; max-width:850px; margin:0 auto; width:100%; padding:0; overflow-y:auto; }
+        .hero-banner { background: linear-gradient(135deg, var(--accent-color), #1e3a8a); padding: 35px 20px; text-align: center; border-bottom-left-radius: 35px; border-bottom-right-radius: 35px; margin-bottom: 20px; position:relative; box-shadow: 0 10px 20px rgba(0,0,0,0.3); }
+        .hero-banner h1 { font-size: 26px; font-weight: 800; color: #fff; margin-bottom: 8px; text-shadow: 0 4px 10px rgba(0,0,0,0.3); }
+        .hero-banner p { font-size: 13.5px; color: rgba(255,255,255,0.9); margin-bottom: 0; }
+        .menu-btn-hero { position:absolute; top:15px; right:20px; background:rgba(0,0,0,0.2); border:1px solid rgba(255,255,255,0.2); color:#fff; font-size:18px; cursor:pointer; padding:8px 12px; border-radius:12px; transition: 0.2s; }
+        .menu-btn-hero:hover { background: rgba(0,0,0,0.4); }
+
+        .category-scroll-bar { display:flex; gap:8px; overflow-x:auto; padding:0 15px 10px 15px; margin-bottom:12px; scrollbar-width:none; }
+        .category-scroll-bar::-webkit-scrollbar { display:none; }
+        .cat-chip { background:var(--input-bg); border:1px solid var(--border-color); color:var(--text-muted); padding:8px 18px; border-radius:20px; font-size:12.5px; font-weight:700; white-space:nowrap; cursor:pointer; transition:0.2s; }
+        .cat-chip.active { background:var(--accent-color); color:#fff; border-color:var(--accent-color); box-shadow:0 4px 15px var(--accent-glow); }
+
+        .search-batches-box { position:relative; margin: 0 15px 16px 15px; }
+        .search-batches-box input { width:100%; background:var(--card-bg); border:1px solid var(--border-color); color:var(--text-main); padding:14px 16px 14px 42px; border-radius:16px; font-size:14px; outline:none; transition:0.3s; }
+        .search-batches-box input:focus { border-color:var(--accent-color); box-shadow:0 0 15px var(--accent-glow); }
+        .search-batches-box i { position:absolute; left:16px; top:50%; transform:translateY(-50%); color:var(--text-muted); }
+
+        .batch-card { background: linear-gradient(135deg, rgba(15, 23, 42, 0.95), rgba(30, 41, 59, 0.95)); border: 1px solid rgba(37, 99, 235, 0.3); border-radius: 20px; padding: 20px; margin: 0 15px 16px 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.4); position: relative; overflow: hidden; transition: 0.3s; }
+        .batch-card:hover { border-color: var(--accent-color); transform: translateY(-3px); box-shadow: 0 15px 35px rgba(0,0,0,0.5); }
+        .batch-tag { background: rgba(16, 185, 129, 0.15); color: var(--success-color); font-size: 10.5px; font-weight: 700; padding: 4px 12px; border-radius: 20px; display: inline-block; margin-bottom: 10px; border: 1px solid rgba(16, 185, 129, 0.3); }
+        .batch-title { font-size: 18px; font-weight: 800; color: #fff; margin-bottom: 6px; }
+        .batch-desc { font-size: 12.5px; color: var(--text-muted); margin-bottom: 12px; line-height:1.4; }
+        .batch-teachers-strip { font-size: 11.5px; color: var(--gold-color); font-weight: 600; margin-bottom: 15px; background: rgba(245, 158, 11, 0.1); padding: 8px 12px; border-radius: 10px; border: 1px solid rgba(245, 158, 11, 0.2); }
+        
+        .batch-footer { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border-color); padding-top: 15px; }
+        .batch-price { font-size: 17px; font-weight: 800; color: var(--success-color); }
+        
+        .batch-actions-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-top: 12px; }
+        .btn-b-action { text-align:center; padding: 10px 5px; border-radius: 12px; font-size: 12px; font-weight: 700; cursor: pointer; transition: 0.2s; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:4px; }
+        .btn-buy-now { background: var(--accent-color); color: #fff; border: none; box-shadow: 0 4px 15px var(--accent-glow); }
+        .btn-details { background: var(--input-bg); color: var(--text-main); border: 1px solid var(--border-color); }
+        .btn-trial-pass { background: rgba(245, 158, 11, 0.15); color: var(--gold-color); border: 1px solid rgba(245, 158, 11, 0.4); }
+
+        /* 🚀 SUBJECT SELECTION SCREEN */
+        #subjects-screen { display:none; flex-direction:column; height:100%; max-width:850px; margin:0 auto; width:100%; overflow-y:auto; padding-bottom: 20px; }
+        .subject-hero { background: var(--card-bg); padding: 20px 15px; border-bottom: 1px solid var(--border-color); position:sticky; top:0; z-index:10; display:flex; align-items:center; gap:15px; box-shadow: 0 4px 20px rgba(0,0,0,0.4); }
+        .back-btn { background: var(--input-bg); border: 1px solid var(--border-color); color: var(--text-main); width: 38px; height: 38px; border-radius: 12px; display:flex; justify-content:center; align-items:center; cursor:pointer; transition: 0.2s; }
+        .back-btn:hover { background: rgba(255,255,255,0.1); }
+        .subject-hero-text h2 { font-size: 17px; font-weight: 800; color: #fff; margin:0 0 4px 0; }
+        .subject-hero-text p { font-size: 11.5px; color: var(--success-color); font-weight:600; margin:0; }
+
+        .subjects-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; padding: 20px 15px; }
+        .subject-card { background: var(--chat-bg); border: 1px solid var(--border-color); border-radius: 18px; padding: 20px 15px; text-align: center; cursor: pointer; transition: 0.3s; box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
+        .subject-card:hover { border-color: var(--accent-color); background: rgba(37,99,235,0.05); transform:translateY(-4px); box-shadow: 0 8px 25px rgba(37,99,235,0.2); }
+        .subject-icon { font-size: 32px; color: var(--accent-color); margin-bottom: 12px; }
+        .subject-name { font-size: 15px; font-weight: 800; color: var(--text-main); margin-bottom: 8px; }
+        .teacher-name { font-size: 11.5px; color: var(--gold-color); font-weight: 600; background: rgba(245, 158, 11, 0.1); padding: 5px 10px; border-radius: 8px; display:inline-block; border: 1px solid rgba(245, 158, 11, 0.2); }
+
+        /* 🚀 MAIN CHAT DASHBOARD */
+        #main-dashboard { display:none; flex-direction:column; height:100%; max-width:850px; margin:0 auto; width:100%; position:relative; padding:10px; }
+        .header { display:flex; justify-content:space-between; align-items:center; padding:12px 16px; background:var(--card-bg); border-radius:20px; border:1px solid var(--border-color); margin-bottom:8px; flex-shrink:0; box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
+        .header-brand { display:flex; align-items:center; gap:12px; }
+        
+        .chat-menu-container { position: relative; }
+        .dot-menu-btn { background:rgba(255,255,255,0.05); border:1px solid var(--border-color); color:var(--text-main); font-size:18px; cursor:pointer; padding:6px 12px; border-radius: 10px; transition: 0.2s; }
+        .dot-menu-btn:hover { background: rgba(255,255,255,0.1); }
+        .chat-dropdown { display:none; position:absolute; right:0; top:45px; background:var(--card-bg); border:1px solid var(--border-color); border-radius:14px; width:220px; box-shadow:0 15px 40px rgba(0,0,0,0.6); z-index:100; overflow:hidden; }
+        .chat-dropdown-item { padding: 14px 16px; font-size: 13.5px; font-weight:600; color: var(--text-main); display:flex; align-items:center; gap:12px; cursor:pointer; border-bottom: 1px solid var(--border-color); transition: 0.2s; }
+        .chat-dropdown-item:hover { background: rgba(37, 99, 235, 0.1); color: var(--accent-color); padding-left: 20px; }
+        .chat-dropdown-item:last-child { border-bottom: none; }
+
+        .active-course-chip { background:rgba(16, 185, 129, 0.1); border:1px solid rgba(16, 185, 129, 0.4); padding:8px 14px; border-radius:14px; font-size:11.5px; font-weight:700; color:var(--text-main); margin-bottom:8px; display:flex; justify-content:space-between; flex-shrink:0; align-items: center; }
+        
+        .chat-lang-select { background:var(--input-bg); color:var(--text-main); border:1px solid var(--border-color); padding:4px 8px; border-radius:8px; font-size:11px; outline:none; font-weight:600; }
+
+        /* CHAT CONTAINER */
+        .chat-container { background:var(--chat-bg); border:1px solid var(--border-color); border-radius:20px; padding:16px; flex:1; overflow-y:auto; display:flex; flex-direction:column; gap:12px; margin-bottom:8px; min-height: 150px; }
+        .msg { padding:14px 16px; border-radius:18px; font-size:14px; line-height:1.5; max-width:88%; word-break: break-word; overflow-wrap: break-word; animation: popIn 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards; transform-origin: bottom left; }
+        .msg.user { background:var(--accent-color); color:#fff; align-self:flex-end; border-bottom-right-radius:4px; transform-origin: bottom right; box-shadow: 0 6px 20px var(--accent-glow); }
+        .msg.ai { background:var(--card-bg); color:var(--text-main); border:1px solid var(--border-color); align-self:flex-start; border-bottom-left-radius:4px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); width: 100%; max-width: 92%; }
+        
+        .msg table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 12.5px; }
+        .msg th, .msg td { border: 1px solid var(--border-color); padding: 8px; text-align: left; }
+        .msg th { background: rgba(37, 99, 235, 0.1); color: var(--accent-color); font-weight: 700; }
+
+        .msg.guide-ai { background:rgba(245, 158, 11, 0.12); border:1px solid rgba(245, 158, 11, 0.5); color:var(--gold-color); align-self:flex-start; width: 100%; max-width: 92%; }
+        .msg.error { background:rgba(239, 68, 68, 0.15); border:1px solid #ef4444; color:#fca5a5; align-self:center; width:100%; text-align:center; }
+        .msg-image { max-width:100%; border-radius:12px; margin-top:8px; border:1px solid var(--border-color); }
+
+        @keyframes popIn { 0% { opacity:0; transform:scale(0.8) translateY(10px); } 100% { opacity:1; transform:scale(1) translateY(0); } }
+
+        .ai-tools-menu { display:none; position:absolute; bottom:65px; left:10px; background:var(--card-bg); border:1px solid var(--border-color); border-radius:18px; padding:10px; box-shadow:0 15px 35px rgba(0,0,0,0.6); z-index:500; width:280px; flex-direction:column; gap:6px; }
+        .tool-btn { display:flex; align-items:center; gap:12px; padding:10px 14px; border-radius:12px; background:transparent; border:none; color:var(--text-main); font-size:12.5px; font-weight:600; cursor:pointer; text-align:left; transition:0.2s; }
+        .tool-btn:hover { background:rgba(37, 99, 235, 0.15); color:var(--accent-color); }
+
+        .chat-input-bar { display:flex; align-items:center; background:var(--card-bg); border:1px solid var(--border-color); border-radius:20px; padding:6px 8px 6px 12px; gap:8px; position:relative; flex-shrink:0; box-shadow: 0 -4px 20px rgba(0,0,0,0.2); }
+        .chat-input-bar textarea { flex:1; background:transparent; border:none; color:var(--text-main); outline:none; font-size:14px; min-width: 0; word-break: break-word; resize: none; max-height: 120px; overflow-y: auto; padding-top: 8px; }
+        
+        .action-icon-btn { background:rgba(255,255,255,0.05); color:var(--text-muted); border:1px solid var(--border-color); width:40px; height:40px; border-radius:12px; display:flex; justify-content:center; align-items:center; cursor:pointer; transition:0.2s; flex-shrink:0; }
+        .action-icon-btn:hover { color:var(--text-main); background:rgba(255,255,255,0.15); }
+        .send-btn { background:var(--accent-color); color:#fff; border:none; width:40px; height:40px; border-radius:12px; display:flex; justify-content:center; align-items:center; cursor:pointer; transition:0.2s; flex-shrink:0; box-shadow: 0 4px 15px var(--accent-glow); }
+        .send-btn:active { transform: scale(0.9); }
+
+        .voice-active { background: rgba(239, 68, 68, 0.2); color: #ef4444; border-color: #ef4444; }
+        .delete-chat-icon { color: #ef4444; opacity: 0.7; font-size: 13px; padding: 4px; cursor:pointer; }
+        .delete-chat-icon:hover { opacity: 1; }
+        #imagePreview { display:none; padding:8px 14px; background:var(--card-bg); border-radius:12px; font-size:12.5px; font-weight:600; color:var(--accent-color); margin-bottom:8px; align-items:center; justify-content:space-between; flex-shrink:0; border: 1px solid var(--border-color); }
+
+        /* FULL ORIGINAL SIDE DRAWER MENU */
         .drawer-overlay { position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.75); z-index:1000; display:none; }
         .drawer { position:fixed; top:0; left:-310px; width:310px; height:100%; background:var(--card-bg); border-right:1px solid var(--border-color); z-index:1001; transition:0.3s; padding:20px; display:flex; flex-direction:column; overflow-y:auto; }
         .drawer.open { left:0; }
@@ -105,6 +245,7 @@
         
         .profile-card { background:linear-gradient(135deg, rgba(37, 99, 235, 0.2), rgba(245, 158, 11, 0.15)); border:1px solid var(--border-color); border-radius:18px; padding:16px; margin-bottom:16px; text-align:left; position:relative; }
         .profile-header { display:flex; align-items:center; gap:14px; }
+        
         .profile-avatar-box { position:relative; width:50px; height:50px; }
         .profile-avatar-img { width:100%; height:100%; border-radius:50%; object-fit:cover; border:2px solid var(--accent-color); }
         .profile-avatar-initial { width:100%; height:100%; border-radius:50%; background:var(--accent-color); color:#fff; display:flex; justify-content:center; align-items:center; font-weight:800; font-size:20px; border:2px solid rgba(255,255,255,0.2); }
@@ -114,10 +255,24 @@
         .drawer-item { padding:12px 14px; border-radius:12px; color:var(--text-main); font-size:13.5px; font-weight:600; display:flex; align-items:center; gap:14px; cursor:pointer; transition:0.2s; margin-bottom:8px; }
         .drawer-item:hover { background:rgba(255,255,255,0.08); padding-left: 20px; color: var(--accent-color); }
 
-        /* MODALS */
+        .history-title { font-size:11.5px; font-weight:800; color:var(--text-muted); text-transform:uppercase; margin:16px 0 8px 4px; display:flex; justify-content:space-between; align-items:center; }
+        .history-list { display:flex; flex-direction:column; gap:8px; overflow-y:auto; max-height:180px; padding-right: 5px; }
+        .history-list::-webkit-scrollbar { width: 4px; }
+        .history-list::-webkit-scrollbar-thumb { background: var(--border-color); border-radius: 4px; }
+        .history-item { font-size:12.5px; font-weight:600; color:var(--text-muted); padding:10px 12px; border-radius:10px; background:var(--chat-bg); border:1px solid var(--border-color); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; cursor:pointer; display: flex; justify-content: space-between; align-items: center; transition:0.2s; }
+        .history-item:hover, .history-item.active-session { background:rgba(37, 99, 235, 0.15); color:var(--text-main); border-color:var(--accent-color); }
+
+        /* ALL ORIGINAL MODALS */
         .modal-overlay { position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); z-index:2000; display:none; justify-content:center; align-items:center; padding:16px; backdrop-filter: blur(5px); }
         .modal-card { background:var(--card-bg); border:1px solid var(--border-color); border-radius:24px; padding:26px; max-width:480px; width:100%; text-align:center; position:relative; max-height:92vh; display:flex; flex-direction:column; animation: popIn 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55); box-shadow: 0 20px 50px rgba(0,0,0,0.5); }
-        @keyframes popIn { 0% { opacity:0; transform:scale(0.8) translateY(10px); } 100% { opacity:1; transform:scale(1) translateY(0); } }
+        
+        .tier-card-option { background: var(--chat-bg); border: 1px solid var(--border-color); border-radius: 16px; padding: 16px; margin-bottom: 12px; text-align: left; cursor: pointer; transition: 0.3s; position:relative; overflow:hidden; }
+        .tier-card-option:hover { border-color: var(--accent-color); transform: translateY(-2px); box-shadow: 0 10px 20px rgba(0,0,0,0.3); }
+        .tier-card-option.selected { border-color: var(--accent-color); background: rgba(37, 99, 235, 0.1); border-width: 2px; }
+        .tier-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+        .tier-name { font-size: 15px; font-weight: 800; color: #fff; }
+        .tier-price { font-size: 16px; font-weight: 800; color: var(--success-color); }
+        .tier-desc { font-size: 12px; color: var(--text-muted); line-height: 1.4; font-weight:600; }
 
         .setting-item { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; font-size: 14px; font-weight:600; color: var(--text-main); text-align:left; }
         .switch { position: relative; display: inline-block; width: 42px; height: 24px; flex-shrink:0; }
@@ -128,17 +283,27 @@
         input:checked + .slider:before { transform: translateX(18px); }
 
         .theme-circle { width: 28px; height: 28px; border-radius: 50%; display:inline-block; cursor:pointer; border:2px solid transparent; margin-left:8px; transition:0.2s; }
+        .theme-circle:hover { transform: scale(1.1); }
         .theme-circle.active { border-color:#fff; transform:scale(1.2); box-shadow: 0 0 10px rgba(255,255,255,0.5); }
 
-        #editProfileModal .modal-card, #settingsModal .modal-card { text-align:left; }
+        .syllabus-task { display:flex; align-items:center; gap:12px; background:var(--chat-bg); padding:12px 14px; border:1px solid var(--border-color); border-radius:12px; margin-bottom:8px; text-align:left; transition:0.2s; }
+        .syllabus-task:hover { border-color:var(--accent-color); }
+        .syllabus-task input[type="checkbox"] { width:18px; height:18px; accent-color:var(--success-color); cursor:pointer; }
+        .syllabus-task span { font-size:13.5px; font-weight:600; color:var(--text-main); flex:1; }
+        .syllabus-task.completed span { text-decoration: line-through; color:var(--text-muted); }
+
+        #editProfileModal .modal-card, #settingsModal .modal-card, #syllabusModal .modal-card { text-align:left; }
     </style>
 </head>
 <body>
 
-    <!-- CUSTOM TOAST -->
-    <div id="custom-toast"><i class="fa-solid fa-circle-check toast-icon success"></i><span id="toast-message">Notification</span></div>
+    <!-- CUSTOM BRANDED NOTIFICATION -->
+    <div id="custom-toast">
+        <i class="fa-solid fa-circle-check toast-icon success"></i>
+        <span id="toast-message">Notification</span>
+    </div>
 
-    <!-- SPLASH SCREEN -->
+    <!-- CINEMATIC SPLASH ANIMATION -->
     <div id="splash-screen">
         <div class="splash-logo-container">
             <div class="splash-logo-glow"></div>
@@ -151,7 +316,7 @@
         <div class="progress-bar-container"><div class="progress-bar"></div></div>
     </div>
 
-    <!-- AUTH SCREEN (No Demo Button) -->
+    <!-- AUTH SCREEN -->
     <div class="auth-container" id="auth-screen">
         <button class="top-menu-btn" onclick="toggleDrawer()"><i class="fa-solid fa-bars"></i></button>
 
@@ -206,7 +371,7 @@
         </div>
     </div>
 
-    <!-- SIDE DRAWER MENU (ORIGINAL) -->
+    <!-- FULL ORIGINAL SIDE DRAWER MENU -->
     <div class="drawer-overlay" id="drawerOverlay" onclick="toggleDrawer()"></div>
     <div class="drawer" id="drawer">
         <div class="drawer-header">
@@ -224,14 +389,25 @@
                     <input type="file" id="avatarUploadInput" accept="image/*" style="display:none;" onchange="handleAvatarUpload(event)">
                 </div>
                 <div>
-                    <strong style="color:#fff; font-size:14.5px;" id="drawerStudentName">Guest Student</strong>
-                    <div style="font-size:11px; color:var(--text-muted); margin-top:2px;" id="drawerStudentEmail">Login to access profile</div>
+                    <strong style="color:#fff; font-size:14.5px;" id="drawerStudentName">Registered Student</strong>
+                    <div style="font-size:11px; color:var(--text-muted); margin-top:2px;" id="drawerStudentEmail">student@ticbull.com</div>
+                    <div style="font-size:11px; color:var(--accent-color); font-weight:700; margin-top:4px;" id="drawerStudentAge">Age: Active Learner</div>
                 </div>
             </div>
         </div>
         
+        <div class="drawer-item" onclick="switchToBatchesScreen(); toggleDrawer();"><i class="fa-solid fa-graduation-cap" style="color:var(--accent-color); width:18px;"></i> All Batches & Goals</div>
+        <div class="drawer-item" onclick="openSyllabusBoard()"><i class="fa-solid fa-list-check" style="color:#0ea5e9; width:18px;"></i> Syllabus Tracker Board</div>
         <div class="drawer-item" onclick="openSettingsModal()"><i class="fa-solid fa-gear" style="color:#94a3b8; width:18px;"></i> App Settings</div>
         <div class="drawer-item" onclick="toggleTheme()"><i class="fa-solid fa-circle-half-stroke" style="color:var(--gold-color); width:18px;"></i> <span id="themeToggleText">Switch to Light Mode</span></div>
+        <div class="drawer-item" onclick="openSubscriptionModal()"><i class="fa-solid fa-crown" style="color:#f59e0b; width:18px;"></i> Upgrade Course Pass</div>
+        <div class="drawer-item" onclick="startNewChat()"><i class="fa-solid fa-plus-circle" style="color:#10b981; width:18px;"></i> Start New Chat</div>
+        <div class="drawer-item" onclick="logoutUser()" style="color:#ef4444; margin-top:8px; border-top:1px solid var(--border-color); padding-top:16px; border-radius:0;"><i class="fa-solid fa-right-from-bracket" style="width:18px;"></i> Log Out Account</div>
+
+        <div class="history-title">
+            <span><i class="fa-solid fa-clock-rotate-left"></i> Recent Chat Sessions:</span>
+        </div>
+        <div class="history-list" id="historyList"></div>
         
         <div style="margin-top:auto; border-top:1px solid var(--border-color); padding-top:16px;">
             <div style="font-size:11.5px; font-weight:700; color:var(--text-muted); margin-bottom:10px;">TICBULL OFFICIAL SUPPORT:</div>
@@ -250,7 +426,151 @@
         </div>
     </div>
 
-    <!-- MODALS -->
+    <!-- 🚀 1. PROFESSIONAL FULL-SCREEN BATCH DASHBOARD SCREEN -->
+    <div id="batches-screen">
+        <div class="hero-banner">
+            <button class="menu-btn-hero" onclick="toggleDrawer()"><i class="fa-solid fa-bars"></i></button>
+            <h1>Welcome to TicBull</h1>
+            <p>India's Most Affordable AI Learning Platform for All Boards & Exams</p>
+        </div>
+
+        <div class="category-scroll-bar" id="catBar">
+            <div class="cat-chip active" onclick="filterCategory('ALL', this)">All Batches</div>
+            <div class="cat-chip" onclick="filterCategory('CBSE', this)">CBSE Board (9-12)</div>
+            <div class="cat-chip" onclick="filterCategory('BIHAR', this)">Bihar Board (BSEB)</div>
+            <div class="cat-chip" onclick="filterCategory('NEET', this)">NEET Medical</div>
+            <div class="cat-chip" onclick="filterCategory('JEE', this)">IIT-JEE Engineering</div>
+            <div class="cat-chip" onclick="filterCategory('UPSC', this)">UPSC & PCS</div>
+        </div>
+
+        <div class="search-batches-box">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input type="text" id="batchSearchInput" placeholder="Search for Class 9-12, Bihar, CBSE, NEET, JEE..." onkeyup="searchBatches()">
+        </div>
+
+        <div id="batchesContainer">
+            <!-- Dynamic Batches Load Here -->
+        </div>
+    </div>
+
+    <!-- 🚀 3-TIER BATCH PLAN SELECTION MODAL -->
+    <div class="modal-overlay" id="tierModal">
+        <div class="modal-card">
+            <i class="fa-solid fa-xmark" style="position:absolute; right:16px; top:16px; color:var(--text-muted); cursor:pointer;" onclick="closeTierModal()"></i>
+            <h3 style="color:var(--text-main); font-size:18px; margin-bottom:4px;" id="tierModalBatchTitle">Select Batch Access Plan</h3>
+            <p style="font-size:12px; color:var(--text-muted); margin-bottom:18px;">Choose daily doubt limit according to your requirement</p>
+
+            <div class="tier-card-option" onclick="selectTier('BASIC', 199)" id="tierBasicCard">
+                <div class="tier-header">
+                    <span class="tier-name"><i class="fa-solid fa-leaf" style="color:#10b981;"></i> Basic Pass</span>
+                    <span class="tier-price" id="tierPriceBasic">₹199/yr</span>
+                </div>
+                <div class="tier-desc">• <b>30 Doubts/day</b> (AI Engine)<br>• Chapter Notes & Homework Help<br>• Affordable Budget Plan</div>
+            </div>
+
+            <div class="tier-card-option selected" onclick="selectTier('PRO', 499)" id="tierProCard">
+                <div class="tier-header">
+                    <span class="tier-name"><i class="fa-solid fa-star" style="color:#f59e0b;"></i> Pro Pass (Recommended)</span>
+                    <span class="tier-price" id="tierPricePro">₹499/yr</span>
+                </div>
+                <div class="tier-desc">• <b>70 Doubts/day</b> (High Speed Gemini)<br>• PDF & Image Notes Support<br>• Dedicated Subject Experts</div>
+            </div>
+
+            <div class="tier-card-option" onclick="selectTier('MAX_PRO', 999)" id="tierMaxProCard">
+                <div class="tier-header">
+                    <span class="tier-name"><i class="fa-solid fa-crown" style="color:#8b5cf6;"></i> Max Pro Pass</span>
+                    <span class="tier-price" id="tierPriceMaxPro">₹999/yr</span>
+                </div>
+                <div class="tier-desc">• <b>100 Doubts/day</b> (Priority High Performance)<br>• AI Diagram & Video Visual Reference<br>• Complete Exam Goal Mastery</div>
+            </div>
+
+            <button class="btn-primary" id="confirmTierBtn" onclick="confirmTierSelection()" style="margin-top:10px; font-size:15px; padding:15px;">ENROLL NOW</button>
+        </div>
+    </div>
+
+    <!-- 🚀 2. DEDICATED SUBJECT SELECTION SCREEN -->
+    <div id="subjects-screen">
+        <div class="subject-hero">
+            <button class="back-btn" onclick="goBackToBatches()"><i class="fa-solid fa-arrow-left"></i></button>
+            <div class="subject-hero-text">
+                <h2 id="activeBatchTitle">Class 9 CBSE Topper Batch</h2>
+                <p><i class="fa-solid fa-circle-check"></i> Strictly Syllabus Based</p>
+            </div>
+        </div>
+        <div class="subjects-grid" id="subjectsGridContainer">
+            <!-- Subjects load dynamically here based on board/batch -->
+        </div>
+    </div>
+
+    <!-- 🚀 3. MAIN CHAT DASHBOARD (WITH 3-DOT MENU) -->
+    <div id="main-dashboard">
+        <div class="header">
+            <div class="header-brand">
+                <button class="back-btn" style="background:transparent; border:none; width:auto; height:auto; padding:5px;" onclick="goBackToSubjects()"><i class="fa-solid fa-arrow-left"></i></button>
+                <div style="margin-left: 5px;">
+                    <strong style="color:var(--text-main); font-size:16px; display:block;" id="chatSubjectName">Mathematics</strong>
+                    <span style="font-size:11.5px; color:var(--gold-color); font-weight:700;" id="chatTeacherName">By Prof. Sharma</span>
+                </div>
+            </div>
+            
+            <div class="chat-menu-container" style="display:flex; align-items:center; gap:8px;">
+                <select id="chatLang" style="background:var(--input-bg); color:var(--text-main); border:1px solid var(--border-color); padding:4px 8px; border-radius:8px; font-size:11px; font-weight:600; outline:none;">
+                    <option value="Hinglish">Hinglish</option>
+                    <option value="Hindi">Hindi (हिंदी)</option>
+                    <option value="English">English</option>
+                </select>
+                <button class="dot-menu-btn" onclick="toggleChat3DotMenu()"><i class="fa-solid fa-ellipsis-vertical"></i></button>
+                <div class="chat-dropdown" id="chat3DotMenu">
+                    <div class="chat-dropdown-item" onclick="openSettingsModal(); toggleChat3DotMenu();"><i class="fa-solid fa-palette" style="color:#3b82f6; width:16px;"></i> Change Theme</div>
+                    <div class="chat-dropdown-item" onclick="toggleDrawer(); toggleChat3DotMenu();"><i class="fa-solid fa-clock-rotate-left" style="color:#10b981; width:16px;"></i> Chat History</div>
+                    <div class="chat-dropdown-item" onclick="startNewChat(); toggleChat3DotMenu();"><i class="fa-solid fa-plus-circle" style="color:#f59e0b; width:16px;"></i> New Chat</div>
+                    <div class="chat-dropdown-item" onclick="goBackToSubjects(); toggleChat3DotMenu();"><i class="fa-solid fa-graduation-cap" style="color:#ef4444; width:16px;"></i> Change Board/Topic</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="active-course-chip">
+            <span id="chatBoardContext"><i class="fa-solid fa-shield-halved"></i> CBSE Board Active</span>
+            <span style="font-size:10.5px; color:var(--success-color);" id="doubtLimitChip">Pro Plan: 70 Doubts/Day</span>
+        </div>
+
+        <div class="chat-container" id="chatBox">
+            <div class="msg ai">
+                <b>Welcome! 🚀</b><br>
+                Main aapka subject expert teacher hoon. Aap mujhse strictly is subject aur apne board ke according doubt puch sakte hain!
+            </div>
+        </div>
+
+        <div id="imagePreview">
+            <span id="imagePreviewText"><i class="fa-regular fa-image"></i> Files/Photos Selected</span>
+            <i class="fa-solid fa-xmark" style="cursor:pointer; font-size:16px;" onclick="removeImage()"></i>
+        </div>
+
+        <div class="ai-tools-menu" id="aiToolsMenu">
+            <button class="tool-btn" onclick="triggerTool('Generate Comprehensive Detailed Chapter Notes')"><i class="fa-solid fa-book" style="color:#10b981; width:16px;"></i> Detailed Notes</button>
+            <button class="tool-btn" onclick="triggerTool('Generate Quick Revision Short Notes (Bullet Pointers)')"><i class="fa-solid fa-bolt" style="color:#f59e0b; width:16px;"></i> Quick Short Notes</button>
+            <button class="tool-btn" onclick="triggerTool('Generate Detailed Diagram Image')"><i class="fa-solid fa-image" style="color:#3b82f6; width:16px;"></i> AI Diagram / Image Generator</button>
+            <button class="tool-btn" onclick="triggerTool('Generate AI Video Visual Explanation')"><i class="fa-solid fa-circle-play" style="color:#ef4444; width:16px;"></i> AI Video Explanation</button>
+            <button class="tool-btn" onclick="triggerTool('Generate 10 Objective Questions (MCQs) with Answer Key')"><i class="fa-solid fa-list-check" style="color:#06b6d4; width:16px;"></i> Objective MCQs</button>
+        </div>
+
+        <div class="chat-input-bar">
+            <button class="action-icon-btn" onclick="toggleToolsMenu()" title="Quick AI Tools (+)"><i class="fa-solid fa-plus"></i></button>
+            
+            <label class="action-icon-btn" for="photoInput" title="Upload Photos or PDFs (Multiple)">
+                <i class="fa-solid fa-paperclip"></i>
+            </label>
+            <input type="file" id="photoInput" accept="image/*,.pdf" multiple style="display:none;" onchange="handleMultipleFilesSelect(event)">
+            
+            <button class="action-icon-btn" id="voiceBtn" onclick="toggleVoiceInput()" title="Voice Typing"><i class="fa-solid fa-microphone"></i></button>
+            
+            <textarea id="userInput" placeholder="Type your doubt or casual message..." rows="1" oninput="autoResizeInput(this)" onkeydown="handleInputKeydown(event)"></textarea>
+            
+            <button class="send-btn" id="sendBtn" onclick="askAI()"><i class="fa-solid fa-paper-plane"></i></button>
+        </div>
+    </div>
+
+    <!-- ALL ORIGINAL MODALS (Forgot Pass, OTP, Delete Acc, Edit Profile, Syllabus, Upgrade) -->
     <div class="modal-overlay" id="forgotModal">
         <div class="modal-card">
             <i class="fa-solid fa-xmark" style="position:absolute; right:16px; top:16px; color:var(--text-muted); cursor:pointer;" onclick="document.getElementById('forgotModal').style.display='none'; playClickSound();"></i>
@@ -263,7 +583,7 @@
                 <i class="fa-solid fa-lock left-icon"></i><input type="password" id="forgotNewPassword" placeholder="Enter New Password">
                 <i class="fa-solid fa-eye pwd-toggle" onclick="togglePassword('forgotNewPassword')"></i>
             </div>
-            <button class="btn-primary" onclick="initiateForgotOTP()">SEND RESET OTP</button>
+            <button class="btn-primary" id="forgotBtn" onclick="initiateForgotOTP()">SEND RESET OTP</button>
         </div>
     </div>
 
@@ -276,7 +596,7 @@
                 <i class="fa-solid fa-shield-halved left-icon"></i>
                 <input type="text" id="otpInput" placeholder="Enter 6-Digit OTP" maxlength="6" style="text-align:center; font-weight:800; letter-spacing:4px; font-size:16px;">
             </div>
-            <button class="btn-primary" onclick="verifyOTPAndLogin()">VERIFY & CONTINUE</button>
+            <button class="btn-primary" id="verifyBtn" onclick="verifyOTPAndLogin()">VERIFY & CONTINUE</button>
         </div>
     </div>
 
@@ -288,6 +608,14 @@
             <div class="setting-item">
                 <span style="display:flex; align-items:center; gap:10px;"><i class="fa-solid fa-music" style="color:#3b82f6;"></i> App Click Sounds</span>
                 <label class="switch"><input type="checkbox" id="soundToggle" checked onchange="toggleSoundSetting(this)"><span class="slider"></span></label>
+            </div>
+            <div class="setting-item">
+                <span style="display:flex; align-items:center; gap:10px;"><i class="fa-solid fa-microphone" style="color:#10b981;"></i> Microphone Permission</span>
+                <label class="switch"><input type="checkbox" checked><span class="slider"></span></label>
+            </div>
+            <div class="setting-item">
+                <span style="display:flex; align-items:center; gap:10px;"><i class="fa-solid fa-camera" style="color:#f59e0b;"></i> Camera & Media</span>
+                <label class="switch"><input type="checkbox" checked><span class="slider"></span></label>
             </div>
             
             <div style="margin-top:16px; padding-top:16px; border-top:1px solid var(--border-color); text-align:left;">
@@ -311,12 +639,37 @@
         <div class="modal-card">
             <i class="fa-solid fa-xmark" style="position:absolute; right:16px; top:16px; color:var(--text-muted); cursor:pointer;" onclick="document.getElementById('deleteAccountModal').style.display='none'; playClickSound();"></i>
             <h3 style="color:#ef4444; font-size:18px;"><i class="fa-solid fa-triangle-exclamation"></i> Delete Account</h3>
-            <p style="font-size:12px; color:var(--text-muted); margin-top:6px; line-height:1.4;">WARNING: Deleting your account will permanently erase your subscription, chats, and all data.</p>
+            <p style="font-size:12px; color:var(--text-muted); margin-top:6px; line-height:1.4;">WARNING: Deleting your account will permanently erase your subscription, chats, and all data. This cannot be undone.</p>
+            
             <div class="input-group" style="margin-top:20px;">
                 <i class="fa-regular fa-envelope left-icon"></i>
-                <input type="email" id="delAccEmail" placeholder="Confirm your Email">
+                <input type="email" id="delAccEmail" disabled style="opacity:0.7;">
             </div>
-            <button class="btn-primary btn-danger" onclick="document.getElementById('deleteAccountModal').style.display='none'; showToast('Account Deleted', 'success');">PERMANENTLY DELETE ACCOUNT</button>
+            
+            <div id="delAccOtpSection" style="display:none;">
+                <div class="input-group">
+                    <i class="fa-solid fa-shield-halved left-icon"></i>
+                    <input type="text" id="delAccOtp" placeholder="Enter 6-Digit Deletion OTP" maxlength="6" style="text-align:center; font-weight:800; letter-spacing:4px; font-size:16px;">
+                </div>
+                <button class="btn-primary btn-danger" id="confirmDeleteAccBtn" onclick="verifyAndDeleteAccount()">PERMANENTLY DELETE ACCOUNT</button>
+            </div>
+
+            <button class="btn-primary" id="sendDelOtpBtn" onclick="initiateAccountDeletion()">SEND DELETION OTP</button>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="syllabusModal">
+        <div class="modal-card" style="max-height:80vh;">
+            <i class="fa-solid fa-xmark" style="position:absolute; right:16px; top:16px; color:var(--text-muted); cursor:pointer;" onclick="document.getElementById('syllabusModal').style.display='none'; playClickSound();"></i>
+            <h3 style="color:var(--text-main); font-size:18px; margin-bottom:6px;"><i class="fa-solid fa-list-check"></i> Syllabus Tracker</h3>
+            <p style="font-size:12px; color:var(--text-muted); margin-bottom:16px;">Track your chapters & study progress.</p>
+            
+            <div class="input-group">
+                <input type="text" id="newSyllabusItem" placeholder="Add chapter/topic..." style="padding-left:14px; border-radius:12px; font-size:14px;">
+                <button class="btn-primary" style="margin-top:8px; padding:12px; border-radius:12px;" onclick="addSyllabusItem()">ADD TOPIC</button>
+            </div>
+
+            <div id="syllabusList" style="margin-top:16px; overflow-y:auto; flex:1; padding-right:5px;"></div>
         </div>
     </div>
 
@@ -324,45 +677,381 @@
         <div class="modal-card">
             <i class="fa-solid fa-xmark" style="position:absolute; right:16px; top:16px; color:var(--text-muted); cursor:pointer;" onclick="document.getElementById('editProfileModal').style.display='none'"></i>
             <h3 style="color:var(--text-main); font-size:18px; margin-bottom:16px;"><i class="fa-solid fa-user-pen"></i> Edit Profile Details</h3>
+            
             <div class="input-group">
-                <i class="fa-regular fa-user left-icon"></i><input type="text" id="editStudentName" placeholder="Full Student Name">
+                <i class="fa-regular fa-user left-icon"></i>
+                <input type="text" id="editStudentName" placeholder="Full Student Name">
             </div>
             <div class="input-group">
-                <i class="fa-regular fa-calendar left-icon"></i><input type="date" id="editStudentDob" placeholder="Date of Birth">
+                <i class="fa-regular fa-envelope left-icon"></i>
+                <input type="email" id="editStudentEmail" placeholder="Email Address" disabled style="opacity:0.7;">
             </div>
+            <div class="input-group">
+                <i class="fa-regular fa-calendar left-icon"></i>
+                <input type="date" id="editStudentDob" placeholder="Date of Birth">
+            </div>
+
             <button class="btn-primary" onclick="saveProfileChanges()" style="margin-top:12px;">SAVE CHANGES</button>
         </div>
     </div>
 
+    <div class="modal-overlay" id="subModal">
+        <div class="modal-card">
+            <i class="fa-solid fa-xmark" style="position:absolute; right:16px; top:16px; color:var(--text-muted); cursor:pointer;" onclick="closeSubscriptionModal()"></i>
+            <h3 style="color:var(--text-main); font-size:19px; margin-bottom:6px;">🎓 TicBull Course Pass</h3>
+            <p style="font-size:12.5px; color:var(--text-muted); margin-top:2px;">Select or change your batch plan directly from the All Batches screen to start learning.</p>
+            <button class="btn-primary" onclick="closeSubscriptionModal(); switchToBatchesScreen();" style="margin-top:20px; font-size:14px; padding:14px;">EXPLORE ALL BATCHES</button>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="deleteWarningModal">
+        <div class="modal-card" style="max-width:340px;">
+            <i class="fa-solid fa-triangle-exclamation" style="font-size:45px; color:#ef4444; margin-bottom:16px;"></i>
+            <h3 style="color:var(--text-main); font-size:18px;">Delete Chat Session?</h3>
+            <p style="font-size:13px; color:var(--text-muted); margin:10px 0 20px; line-height:1.4;">Are you sure you want to permanently delete this chat from your history? ⚠️</p>
+            <div style="display:flex; gap:12px;">
+                <button class="btn-primary" style="background:transparent; border:1px solid var(--border-color); color:var(--text-main);" onclick="document.getElementById('deleteWarningModal').style.display='none'; playClickSound();">CANCEL</button>
+                <button class="btn-primary" style="background:#ef4444;" id="confirmDeleteBtn">DELETE</button>
+            </div>
+        </div>
+    </div>
+
     <script>
-        // --- CORE VARIABLES ---
+        // ============================================================================
+        // CORE VARIABLES & Z+ SECURITY AUTH LOGIC (RESTORED 100% FROM ORIGINAL API)
+        // ============================================================================
         let currentAuthMode = 'login';
+        let currentStudentData = { name: '', email: '', dob: '', photo: '' };
+        let currentSessionId = Date.now().toString();
+        let currentSessionTitle = "New Chat";
+        let isInitialLoad = true;
         let appSoundEnabled = true;
+        let selectedFilesArray = [];
 
-        // --- SPLASH SCREEN ---
-        window.addEventListener('load', () => {
-            setTimeout(() => {
-                const splash = document.getElementById('splash-screen');
-                splash.style.opacity = '0';
-                setTimeout(() => splash.style.display = 'none', 800);
-            }, 3500);
-        });
+        // NEW UI STATE VARIABLES (For Batches & Subjects)
+        let currentActiveBatch = null;
+        let currentBoardContext = null;
+        let currentActiveSubject = null;
+        let currentActiveTeacher = null;
+        let selectedBatchForModal = null;
+        let selectedTierType = 'PRO';
 
-        // --- TOAST NOTIFICATIONS ---
-        function showToast(msg, type = 'success') {
-            const toast = document.getElementById('custom-toast');
-            toast.innerHTML = `<i class="fa-solid ${type === 'success' ? 'fa-circle-check toast-icon success' : 'fa-circle-exclamation toast-icon error'}"></i> <span>${msg}</span>`;
-            toast.classList.add('show');
-            setTimeout(() => toast.classList.remove('show'), 3500);
+        // 🚀 DYNAMIC BATCH GENERATOR ENGINE (Covering 9th/10th All Subjects + NEET/JEE/UPSC)
+        function generate300Batches() {
+            const list = [];
+            
+            // 1. CBSE BOARD
+            list.push({
+                id: 'cbse_9', category: 'CBSE', name: 'CBSE Class 9th Topper Batch', tag: '12 Dedicated Experts', desc: 'Complete Class 9 syllabus covering all major subjects strictly as per CBSE guidelines.', basicPrice: 199, proPrice: 499, maxProPrice: 999,
+                subjects: [
+                    { name: 'Physics', icon: 'fa-atom', teacher: 'Er. Vivek Anand' },
+                    { name: 'Chemistry', icon: 'fa-flask', teacher: 'Dr. P. Roy' },
+                    { name: 'Biology', icon: 'fa-dna', teacher: 'Dr. Neha Singh' },
+                    { name: 'Mathematics', icon: 'fa-calculator', teacher: 'Prof. R.K. Sharma' },
+                    { name: 'History', icon: 'fa-landmark', teacher: 'V.K. Mishra' },
+                    { name: 'Political Science', icon: 'fa-scale-balanced', teacher: 'S.K. Singh' },
+                    { name: 'Economics', icon: 'fa-chart-line', teacher: 'A. Gupta' },
+                    { name: 'Geography', icon: 'fa-earth-asia', teacher: 'Dr. R. Ranjan' },
+                    { name: 'Computer / IT', icon: 'fa-desktop', teacher: 'Er. Yash' },
+                    { name: 'Hindi', icon: 'fa-language', teacher: 'R.B. Pandey' },
+                    { name: 'English', icon: 'fa-book-open', teacher: 'Anjali Mehta' },
+                    { name: 'Sanskrit', icon: 'fa-om', teacher: 'Acharya V.N.' },
+                    { name: 'Urdu', icon: 'fa-pen-nib', teacher: 'Maulana Tariq' }
+                ]
+            });
+            list.push({
+                id: 'cbse_10', category: 'CBSE', name: 'CBSE Class 10th Board Topper Batch', tag: 'Board Special', desc: 'Strict NCERT guidelines for CBSE 10th Board success.', basicPrice: 199, proPrice: 499, maxProPrice: 999,
+                subjects: [
+                    { name: 'Physics', icon: 'fa-atom', teacher: 'Er. Vivek Anand' },
+                    { name: 'Chemistry', icon: 'fa-flask', teacher: 'Dr. P. Roy' },
+                    { name: 'Biology', icon: 'fa-dna', teacher: 'Dr. Neha Singh' },
+                    { name: 'Mathematics', icon: 'fa-calculator', teacher: 'Prof. R.K. Sharma' },
+                    { name: 'History', icon: 'fa-landmark', teacher: 'V.K. Mishra' },
+                    { name: 'Political Science', icon: 'fa-scale-balanced', teacher: 'S.K. Singh' },
+                    { name: 'Economics', icon: 'fa-chart-line', teacher: 'A. Gupta' },
+                    { name: 'Geography', icon: 'fa-earth-asia', teacher: 'Dr. R. Ranjan' },
+                    { name: 'Computer / IT', icon: 'fa-desktop', teacher: 'Er. Yash' },
+                    { name: 'Hindi', icon: 'fa-language', teacher: 'R.B. Pandey' },
+                    { name: 'English', icon: 'fa-book-open', teacher: 'Anjali Mehta' }
+                ]
+            });
+            list.push({
+                id: 'cbse_11_pcbm', category: 'CBSE', name: 'Class 11th Science (PCBM)', tag: 'Science Core', desc: 'Physics, Chemistry, Bio, Math & Computer Science.', basicPrice: 249, proPrice: 549, maxProPrice: 1099,
+                subjects: [
+                    { name: 'Physics', icon: 'fa-atom', teacher: 'Er. Vivek' },
+                    { name: 'Chemistry', icon: 'fa-flask', teacher: 'Dr. Roy' },
+                    { name: 'Biology', icon: 'fa-dna', teacher: 'Dr. Neha' },
+                    { name: 'Mathematics', icon: 'fa-calculator', teacher: 'Prof. Sharma' },
+                    { name: 'Computer Science', icon: 'fa-laptop-code', teacher: 'Er. Yash' },
+                    { name: 'English', icon: 'fa-book-open', teacher: 'Anjali M.' }
+                ]
+            });
+            list.push({
+                id: 'cbse_11_com', category: 'CBSE', name: 'Class 11th Commerce', tag: 'Commerce Core', desc: 'Accounts, BST, Economics, Math, English.', basicPrice: 249, proPrice: 549, maxProPrice: 1099,
+                subjects: [
+                    { name: 'Accountancy', icon: 'fa-file-invoice-dollar', teacher: 'CA R. Bajaj' },
+                    { name: 'Business Studies', icon: 'fa-briefcase', teacher: 'M. Agarwal' },
+                    { name: 'Economics', icon: 'fa-chart-pie', teacher: 'Dr. A. Gupta' },
+                    { name: 'Mathematics', icon: 'fa-calculator', teacher: 'Prof. Sharma' },
+                    { name: 'English', icon: 'fa-book-open', teacher: 'Anjali M.' }
+                ]
+            });
+
+            // 2. BIHAR BOARD (BSEB)
+            list.push({
+                id: 'bseb_10', category: 'BIHAR', name: 'Bihar Board Class 10th Matric Topper', tag: 'Matric Specialist', desc: 'Complete Bihar Board Matric syllabus strictly covered for high scores.', basicPrice: 149, proPrice: 399, maxProPrice: 799,
+                subjects: [
+                    { name: 'Vigyan - Physics', icon: 'fa-atom', teacher: 'S.N. Ray' },
+                    { name: 'Vigyan - Chemistry', icon: 'fa-flask', teacher: 'M. Patel' },
+                    { name: 'Vigyan - Biology', icon: 'fa-dna', teacher: 'Dr. S. Mukherjee' },
+                    { name: 'Math (गणित)', icon: 'fa-calculator', teacher: 'M. Kumar' },
+                    { name: 'Itihas (इतिहास)', icon: 'fa-landmark', teacher: 'P.K. Yadav' },
+                    { name: 'Rajnitik Shastra', icon: 'fa-scale-balanced', teacher: 'S. Tiwari' },
+                    { name: 'Arthashastra', icon: 'fa-chart-line', teacher: 'A. Gupta' },
+                    { name: 'Bhugol (भूगोल)', icon: 'fa-earth-asia', teacher: 'R. Ranjan' },
+                    { name: 'Hindi (हिन्दी)', icon: 'fa-language', teacher: 'D. Shastri' },
+                    { name: 'English (अंग्रेजी)', icon: 'fa-book-open', teacher: 'V. Singh' },
+                    { name: 'Sanskrit (संस्कृत)', icon: 'fa-om', teacher: 'Acharya V.N.' },
+                    { name: 'Urdu (उर्दू)', icon: 'fa-pen-nib', teacher: 'Maulana Tariq' }
+                ]
+            });
+
+            // 3. COMPETITIVE EXAMS
+            list.push({
+                id: 'neet_11', category: 'NEET', name: 'NEET UG 11th Foundation', tag: 'Medical Goal', desc: 'Class 11 syllabus + NEET level depth.', basicPrice: 299, proPrice: 699, maxProPrice: 1499,
+                subjects: [
+                    { name: 'Physics', icon: 'fa-atom', teacher: 'Er. Vivek' },
+                    { name: 'Physical Chem', icon: 'fa-flask', teacher: 'Dr. P. Roy' },
+                    { name: 'Organic Chem', icon: 'fa-vial', teacher: 'M. Patel' },
+                    { name: 'Botany', icon: 'fa-leaf', teacher: 'Dr. Mukherjee' },
+                    { name: 'Zoology', icon: 'fa-frog', teacher: 'Dr. Sinha' }
+                ]
+            });
+            list.push({
+                id: 'neet_dropper', category: 'NEET', name: 'NEET UG 2027 Dropper Batch', tag: 'Medical Entrance Specialist', desc: 'NTA Syllabus targeted Physics, Chemistry & Biology Preparation.', basicPrice: 299, proPrice: 699, maxProPrice: 1499,
+                subjects: [
+                    { name: 'Physics', icon: 'fa-atom', teacher: 'Er. Vivek Anand' },
+                    { name: 'Physical Chemistry', icon: 'fa-flask', teacher: 'Dr. P. Roy' },
+                    { name: 'Organic Chemistry', icon: 'fa-vial', teacher: 'M. Patel' },
+                    { name: 'Inorganic Chemistry', icon: 'fa-flask-vial', teacher: 'S. Gupta' },
+                    { name: 'Botany', icon: 'fa-leaf', teacher: 'Dr. S. Mukherjee' },
+                    { name: 'Zoology', icon: 'fa-frog', teacher: 'Dr. A.K. Sinha' }
+                ]
+            });
+            list.push({
+                id: 'jee_momentum', category: 'JEE', name: 'IIT-JEE 2027 Engineering Batch', tag: 'IIT Rankers Faculty', desc: 'Advanced Mechanics, Calculus & Physical Chem Specialists.', basicPrice: 299, proPrice: 699, maxProPrice: 1499,
+                subjects: [
+                    { name: 'Advanced Mathematics', icon: 'fa-calculator', teacher: 'Prof. K. Verma' },
+                    { name: 'Physics (Mechanics & Thermo)', icon: 'fa-atom', teacher: 'Er. Vivek Anand' },
+                    { name: 'Physics (Electromagnetism)', icon: 'fa-bolt', teacher: 'Er. S. Gupta' },
+                    { name: 'Physical Chemistry', icon: 'fa-flask', teacher: 'Dr. P. Roy' },
+                    { name: 'Organic Chemistry', icon: 'fa-vial', teacher: 'M. Patel' }
+                ]
+            });
+            list.push({
+                id: 'upsc_foundation', category: 'UPSC', name: 'UPSC IAS Civil Services Foundation', tag: 'IAS / IPS Goal', desc: 'Polity, Geography, Modern History & CSAT Faculty.', basicPrice: 399, proPrice: 899, maxProPrice: 1999,
+                subjects: [
+                    { name: 'Indian Polity', icon: 'fa-landmark', teacher: 'S. K. Singh' },
+                    { name: 'Geography', icon: 'fa-earth-asia', teacher: 'Dr. R. Ranjan' },
+                    { name: 'Modern History', icon: 'fa-book-journal-whills', teacher: 'V. K. Mishra' },
+                    { name: 'Economics', icon: 'fa-chart-line', teacher: 'A. Gupta' },
+                    { name: 'General Science & Tech', icon: 'fa-microscope', teacher: 'Dr. P. Roy' },
+                    { name: 'CSAT (Maths & Reasoning)', icon: 'fa-brain', teacher: 'Prof. R.K. Sharma' }
+                ]
+            });
+
+            return list;
         }
 
-        // --- AUTH & Z+ ROUTING ---
-        function switchAuth(mode) {
-            currentAuthMode = mode;
-            document.getElementById('tab-login').classList.toggle('active', mode === 'login');
-            document.getElementById('tab-signup').classList.toggle('active', mode === 'signup');
-            document.getElementById('signupFields').style.display = mode === 'signup' ? 'flex' : 'none';
-            document.getElementById('authSubmitBtn').innerText = mode === 'login' ? 'SEND VERIFICATION OTP' : 'CREATE ACCOUNT WITH OTP';
+        const all300Batches = generate300Batches();
+
+        function renderBatchesList(batchesArray) {
+            const container = document.getElementById('batchesContainer');
+            if(!container) return;
+            container.innerHTML = '';
+            
+            if(batchesArray.length === 0) {
+                container.innerHTML = '<p style="color:var(--text-muted); text-align:center; padding:40px; font-size:14px; font-weight:600;">No batches found matching your search.</p>';
+                return;
+            }
+
+            batchesArray.forEach(batch => {
+                const subNames = batch.subjects.map(s => s.name).join(', ').substring(0, 40) + '...';
+                container.innerHTML += `
+                    <div class="batch-card">
+                        <span class="batch-tag">${batch.tag}</span>
+                        <div class="batch-title">${batch.name}</div>
+                        <div class="batch-teachers-strip"><i class="fa-solid fa-chalkboard-user"></i> Faculty: ${subNames}</div>
+                        <div class="batch-desc">${batch.desc}</div>
+                        <div class="batch-footer">
+                            <div>
+                                <span style="font-size:10.5px; color:var(--text-muted); display:block; font-weight:600;">Starting from</span>
+                                <span class="batch-price">₹${batch.basicPrice}/yr</span>
+                            </div>
+                        </div>
+                        <div class="batch-actions-row">
+                            <button class="btn-b-action btn-buy-now" onclick="openTierModal('${batch.id}')">Buy Now</button>
+                            <button class="btn-b-action btn-details" onclick="openBatchSubjects('${batch.id}')">Details</button>
+                            <button class="btn-b-action btn-trial-pass" onclick="openBatchSubjects('${batch.id}', true)">2 Days Free</button>
+                        </div>
+                    </div>`;
+            });
+        }
+
+        function filterCategory(cat, el) {
+            document.querySelectorAll('.cat-chip').forEach(c => c.classList.remove('active'));
+            if(el) el.classList.add('active');
+            if(cat === 'ALL') renderBatchesList(all300Batches);
+            else renderBatchesList(all300Batches.filter(b => b.category === cat));
+        }
+
+        function searchBatches() {
+            const query = document.getElementById('batchSearchInput').value.toLowerCase();
+            const filtered = all300Batches.filter(b => 
+                b.name.toLowerCase().includes(query) || 
+                b.category.toLowerCase().includes(query) ||
+                b.desc.toLowerCase().includes(query)
+            );
+            renderBatchesList(filtered);
+        }
+
+        // TIER MODAL LOGIC
+        function openTierModal(batchId) {
+            const batch = all300Batches.find(b => b.id === batchId);
+            if(!batch) return;
+            selectedBatchForModal = batch;
+
+            document.getElementById('tierModalBatchTitle').innerText = batch.name;
+            document.getElementById('tierPriceBasic').innerText = `₹${batch.basicPrice}/yr`;
+            document.getElementById('tierPricePro').innerText = `₹${batch.proPrice}/yr`;
+            document.getElementById('tierPriceMaxPro').innerText = `₹${batch.maxProPrice}/yr`;
+
+            document.getElementById('tierModal').style.display = 'flex';
+        }
+
+        function closeTierModal() { document.getElementById('tierModal').style.display = 'none'; }
+
+        function selectTier(type, price) {
+            selectedTierType = type;
+            document.getElementById('tierBasicCard').classList.remove('selected');
+            document.getElementById('tierProCard').classList.remove('selected');
+            document.getElementById('tierMaxProCard').classList.remove('selected');
+            
+            if(type === 'BASIC') document.getElementById('tierBasicCard').classList.add('selected');
+            if(type === 'PRO') document.getElementById('tierProCard').classList.add('selected');
+            if(type === 'MAX_PRO') document.getElementById('tierMaxProCard').classList.add('selected');
+        }
+
+        function confirmTierSelection() {
+            if(!selectedBatchForModal) return;
+            showToast(`🎉 Enrolled in ${selectedBatchForModal.name} (${selectedTierType} Pass)!`, "success");
+            closeTierModal();
+            
+            let limitText = "Pro Plan: 70 Doubts/Day";
+            if(selectedTierType === 'BASIC') limitText = "Basic Plan: 30 Doubts/Day";
+            if(selectedTierType === 'MAX_PRO') limitText = "Max Pro: 100 Doubts/Day";
+            document.getElementById('doubtLimitChip').innerText = limitText;
+            
+            openBatchSubjects(selectedBatchForModal.id);
+        }
+
+        // NAVIGATION LOGIC (SPA Routing)
+        function switchToBatchesScreen() {
+            document.getElementById('main-dashboard').style.display = 'none';
+            document.getElementById('subjects-screen').style.display = 'none';
+            document.getElementById('batches-screen').style.display = 'flex';
+        }
+
+        function openBatchSubjects(batchId, isTrial = false) {
+            const batch = all300Batches.find(b => b.id === batchId);
+            if(!batch) return;
+
+            currentActiveBatch = batch.name;
+            currentBoardContext = batch.category;
+            
+            if(isTrial) {
+                showToast(`🎁 2 Days Free Trial Activated for ${batch.name}!`, "success");
+                document.getElementById('doubtLimitChip').innerText = "Trial Active";
+            }
+
+            document.getElementById('activeBatchTitle').innerText = batch.name;
+            document.getElementById('batches-screen').style.display = 'none';
+            document.getElementById('subjects-screen').style.display = 'flex';
+
+            const subContainer = document.getElementById('subjectsGridContainer');
+            subContainer.innerHTML = '';
+            batch.subjects.forEach(sub => {
+                subContainer.innerHTML += `
+                    <div class="subject-card" onclick="openSubjectChat('${sub.name}', '${sub.teacher}')">
+                        <div class="subject-icon"><i class="fa-solid ${sub.icon}"></i></div>
+                        <div class="subject-name">${sub.name}</div>
+                        <div class="teacher-name">${sub.teacher}</div>
+                    </div>
+                `;
+            });
+        }
+
+        function goBackToBatches() {
+            document.getElementById('subjects-screen').style.display = 'none';
+            document.getElementById('batches-screen').style.display = 'flex';
+        }
+
+        function openSubjectChat(subjectName, teacherName) {
+            currentActiveSubject = subjectName;
+            currentActiveTeacher = teacherName;
+            
+            currentSessionId = `chat_${currentBoardContext}_${subjectName.replace(/[^a-zA-Z0-9]/g, '')}_${Date.now()}`;
+            currentSessionTitle = `${subjectName} - ${currentActiveBatch.split(' ')[0]}`;
+
+            document.getElementById('chatSubjectName').innerText = subjectName;
+            document.getElementById('chatTeacherName').innerText = "By " + teacherName;
+            document.getElementById('chatBoardContext').innerHTML = `<i class="fa-solid fa-shield-halved"></i> ${currentBoardContext} Board Active`;
+
+            document.getElementById('subjects-screen').style.display = 'none';
+            document.getElementById('main-dashboard').style.display = 'flex';
+            
+            document.getElementById('chatBox').innerHTML = `
+                <div class="msg ai">
+                    <b>Welcome to ${subjectName} Class! 🚀</b><br>
+                    Main aapka subject expert teacher <b>${teacherName}</b> hoon. Aap mujhse strictly <b>${currentBoardContext}</b> syllabus ke according doubts puchiye. Out-of-syllabus questions ko main answer nahi karunga.
+                </div>
+            `;
+            
+            saveChatUI();
+        }
+
+        function goBackToSubjects() {
+            document.getElementById('main-dashboard').style.display = 'none';
+            document.getElementById('subjects-screen').style.display = 'flex';
+        }
+
+        function toggleChat3DotMenu() {
+            const menu = document.getElementById('chat3DotMenu');
+            menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
+        }
+
+        function startNewChat() {
+            currentSessionId = `chat_${currentBoardContext}_${currentActiveSubject.replace(/[^a-zA-Z0-9]/g, '')}_${Date.now()}`;
+            currentSessionTitle = `New ${currentActiveSubject} Chat`;
+            document.getElementById('chatBox').innerHTML = `<div class="msg ai"><b>New Chat Started! 🚀</b><br>Main aapka teacher ${currentActiveTeacher} hoon. Apna naya doubt puchiye.</div>`;
+            showToast("New Chat Started!", "success");
+            saveChatUI();
+        }
+
+        // ============================================================================
+        // ORIGINAL Z+ BACKEND FETCH API LOGIC (RESTORED EXACTLY)
+        // ============================================================================
+
+        function autoResizeInput(el) {
+            el.style.height = 'auto';
+            el.style.height = (el.scrollHeight) + 'px';
+        }
+
+        function handleInputKeydown(e) {
+            if(e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                askAI();
+            }
         }
 
         function togglePassword(inputId) {
@@ -371,36 +1060,247 @@
         }
 
         function openForgotModal() { document.getElementById('forgotModal').style.display = 'flex'; }
-        function initiateForgotOTP() { document.getElementById('forgotModal').style.display = 'none'; document.getElementById('otpModal').style.display = 'flex'; showToast("Password Reset OTP Sent", "success"); }
+
+        function initiateForgotOTP() {
+            const email = document.getElementById('forgotEmail').value.trim();
+            const newPass = document.getElementById('forgotNewPassword').value.trim();
+            if(!email || !newPass) { showToast("Email and New Password are required!", "error"); return; }
+
+            currentStudentData.email = email;
+            currentAuthMode = 'forgot';
+            document.getElementById('password').value = newPass; 
+
+            const btn = document.getElementById('forgotBtn');
+            btn.disabled = true;
+            btn.innerText = "SENDING OTP...";
+
+            // ORIGINAL API FETCH
+            fetch(`/api/send-otp`, {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ email: email, auth_mode: 'forgot' })
+            }).then(res => res.json()).then(data => {
+                btn.disabled = false;
+                btn.innerText = "SEND RESET OTP";
+                if(data.success) {
+                    document.getElementById('forgotModal').style.display = 'none';
+                    document.getElementById('otpModal').style.display = 'flex';
+                    showToast(data.message, "success");
+                } else {
+                    showToast(data.message, "error");
+                }
+            }).catch(() => {
+                btn.disabled = false;
+                btn.innerText = "SEND RESET OTP";
+                showToast("Server error!", "error");
+            });
+        }
+
+        function switchAuth(mode) {
+            currentAuthMode = mode;
+            document.getElementById('tab-login').classList.toggle('active', mode === 'login');
+            document.getElementById('tab-signup').classList.toggle('active', mode === 'signup');
+            document.getElementById('signupFields').style.display = mode === 'signup' ? 'flex' : 'none';
+            document.getElementById('authSubmitBtn').innerText = mode === 'login' ? 'SEND VERIFICATION OTP' : 'CREATE ACCOUNT WITH OTP';
+        }
 
         function initiateAuthWithOTP() {
             const email = document.getElementById('email').value.trim();
+            const name = document.getElementById('studentName').value.trim();
+            const dob = document.getElementById('studentDob').value;
             const password = document.getElementById('password').value.trim();
-            if(!email || !password) { showToast("Email & Password required!", "error"); return; }
-            
-            document.getElementById('authSubmitBtn').innerText = "SENDING OTP...";
-            setTimeout(() => {
-                document.getElementById('authSubmitBtn').innerText = currentAuthMode === 'login' ? 'SEND VERIFICATION OTP' : 'CREATE ACCOUNT WITH OTP';
-                document.getElementById('otpModal').style.display = 'flex';
-                showToast("OTP Sent to Email", "success");
-            }, 1000);
+            const btn = document.getElementById('authSubmitBtn');
+
+            if(!email) { showToast("Email ID is required!", "error"); return; }
+            if(!password) { showToast("Password is required!", "error"); return; }
+            if(currentAuthMode === 'signup' && !name) { showToast("Full Name is required!", "error"); return; }
+
+            currentStudentData.email = email;
+            if(name) currentStudentData.name = name;
+            if(dob) currentStudentData.dob = dob;
+
+            btn.disabled = true;
+            btn.innerText = "SENDING OTP...";
+
+            // ORIGINAL API FETCH
+            fetch(`/api/send-otp`, {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ email: email, password: password, auth_mode: currentAuthMode })
+            })
+            .then(res => res.json())
+            .then(data => {
+                btn.disabled = false;
+                btn.innerText = currentAuthMode === 'login' ? 'SEND VERIFICATION OTP' : 'CREATE ACCOUNT WITH OTP';
+                if (data.success) {
+                    showToast(data.message, "success");
+                    document.getElementById('otpModal').style.display = 'flex';
+                } else {
+                    showToast(data.message, "error");
+                }
+            })
+            .catch(() => {
+                btn.disabled = false;
+                btn.innerText = currentAuthMode === 'login' ? 'SEND VERIFICATION OTP' : 'CREATE ACCOUNT WITH OTP';
+                showToast("Server error! Backend might be down.", "error");
+            });
         }
 
         function verifyOTPAndLogin() {
-            const otp = document.getElementById('otpInput').value;
-            if(!otp) { showToast("Enter OTP", "error"); return; }
-            
-            showToast("Login Successful! Redirecting...", "success");
-            // Set Secure Z+ Token
-            localStorage.setItem("tb_auth_token", "secure_z_plus_logged_in");
-            
-            // REDIRECT TO FILE 2 (batches.html)
-            setTimeout(() => {
-                window.location.href = 'batches.html';
-            }, 1500);
+            const otp = document.getElementById('otpInput').value.trim();
+            const password = document.getElementById('password').value.trim();
+            const btn = document.getElementById('verifyBtn');
+
+            if(!otp) { showToast("Enter 6-digit OTP!", "error"); return; }
+            btn.disabled = true;
+            btn.innerText = "VERIFYING...";
+
+            let deviceId = localStorage.getItem('ticbull_device_id') || ('dev_' + Math.random().toString(36).substring(2) + Date.now());
+            localStorage.setItem('ticbull_device_id', deviceId);
+
+            // ORIGINAL API FETCH
+            fetch(`/api/verify-otp`, {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ email: currentStudentData.email, otp: otp, password: password, auth_mode: currentAuthMode, device_id: deviceId })
+            })
+            .then(res => res.json())
+            .then(data => {
+                btn.disabled = false;
+                btn.innerText = "VERIFY & CONTINUE";
+                if (data.success) {
+                    localStorage.setItem('ticbull_email', currentStudentData.email);
+                    localStorage.setItem('ticbull_token', data.token);
+                    if(data.user) {
+                        if(data.user.name) currentStudentData.name = data.user.name;
+                        if(data.user.dob) currentStudentData.dob = data.user.dob;
+                        if(data.user.photo) currentStudentData.photo = data.user.photo;
+                    }
+                    localStorage.setItem('ticbull_name', currentStudentData.name);
+
+                    updateProfileUI();
+                    document.getElementById('otpModal').style.display = 'none';
+                    document.getElementById('auth-screen').style.display = 'none';
+                    
+                    // Route to Batches Screen instead of Dashboard directly
+                    document.getElementById('batches-screen').style.display = 'flex';
+                    renderBatchesList(all300Batches);
+
+                    loadSidebarHistory();
+                    showToast("Login Successful!", "success");
+                } else {
+                    showToast(data.message || "Invalid OTP!", "error");
+                }
+            })
+            .catch(() => {
+                btn.disabled = false;
+                btn.innerText = "VERIFY & CONTINUE";
+                showToast("Server Error! Try again.", "error");
+            });
         }
 
-        // --- DRAWER & UI SETTINGS ---
+        function openDeleteAccountModal() {
+            document.getElementById('settingsModal').style.display = 'none';
+            document.getElementById('deleteAccountModal').style.display = 'flex';
+            document.getElementById('delAccEmail').value = currentStudentData.email;
+            document.getElementById('delAccOtpSection').style.display = 'none';
+            document.getElementById('sendDelOtpBtn').style.display = 'block';
+        }
+
+        function initiateAccountDeletion() {
+            const btn = document.getElementById('sendDelOtpBtn');
+            btn.disabled = true;
+            btn.innerText = "SENDING WARNING OTP...";
+
+            fetch(`/api/send-delete-otp`, {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ email: currentStudentData.email })
+            }).then(res => res.json()).then(data => {
+                if(data.success) {
+                    showToast(data.message, "success");
+                    btn.style.display = 'none';
+                    document.getElementById('delAccOtpSection').style.display = 'block';
+                } else {
+                    btn.disabled = false;
+                    btn.innerText = "SEND DELETION OTP";
+                    showToast(data.message, "error");
+                }
+            });
+        }
+
+        function verifyAndDeleteAccount() {
+            const otp = document.getElementById('delAccOtp').value.trim();
+            if(!otp) { showToast("OTP is required!", "error"); return; }
+            const btn = document.getElementById('confirmDeleteAccBtn');
+            btn.disabled = true;
+            btn.innerText = "DELETING PERMANENTLY...";
+
+            fetch(`/api/delete-account`, {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ email: currentStudentData.email, otp: otp })
+            }).then(res => res.json()).then(data => {
+                if(data.success) {
+                    showToast("Account deleted successfully.", "success");
+                    localStorage.clear();
+                    setTimeout(() => location.reload(), 1500);
+                } else {
+                    btn.disabled = false;
+                    btn.innerText = "PERMANENTLY DELETE ACCOUNT";
+                    showToast(data.message, "error");
+                }
+            });
+        }
+
+        function updateProfileUI() {
+            const name = currentStudentData.name;
+            const email = currentStudentData.email;
+            const dob = currentStudentData.dob;
+
+            if(name) {
+                document.getElementById('drawerStudentName').innerText = name;
+                document.getElementById('drawerAvatarInitial').innerText = name.charAt(0).toUpperCase();
+            } else if(email) {
+                const emailPrefix = email.split('@')[0];
+                document.getElementById('drawerStudentName').innerText = emailPrefix;
+                document.getElementById('drawerAvatarInitial').innerText = emailPrefix.charAt(0).toUpperCase();
+            }
+            if(email) {
+                document.getElementById('drawerStudentEmail').innerText = email;
+                document.getElementById('editStudentEmail').value = email;
+            }
+            if(currentStudentData.photo) {
+                const img = document.getElementById('drawerAvatarImg');
+                img.src = currentStudentData.photo;
+                img.style.display = 'block';
+                document.getElementById('drawerAvatarInitial').style.display = 'none';
+            }
+        }
+
+        function openEditProfileModal() {
+            document.getElementById('editStudentName').value = currentStudentData.name || '';
+            document.getElementById('editStudentDob').value = currentStudentData.dob || '';
+            document.getElementById('editProfileModal').style.display = 'flex';
+        }
+
+        function saveProfileChanges() {
+            currentStudentData.name = document.getElementById('editStudentName').value;
+            currentStudentData.dob = document.getElementById('editStudentDob').value;
+            localStorage.setItem('ticbull_name', currentStudentData.name);
+            localStorage.setItem('ticbull_dob', currentStudentData.dob);
+
+            fetch(`/api/update-profile`, {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ email: currentStudentData.email, name: currentStudentData.name, dob: currentStudentData.dob, photo: currentStudentData.photo })
+            }).then(() => {
+                updateProfileUI();
+                document.getElementById('editProfileModal').style.display = 'none';
+                showToast("Profile details updated successfully!", "success");
+            });
+        }
+
         function toggleDrawer() {
             const drawer = document.getElementById('drawer');
             const overlay = document.getElementById('drawerOverlay');
@@ -408,48 +1308,376 @@
             overlay.style.display = drawer.classList.contains('open') ? 'block' : 'none';
         }
 
-        function toggleTheme() {
-            document.body.classList.toggle('light-theme');
-            const isLight = document.body.classList.contains('light-theme');
-            document.getElementById('themeToggleText').innerText = isLight ? 'Switch to Dark Mode' : 'Switch to Light Mode';
+        function openSubscriptionModal() {
+            document.getElementById('subModal').style.display = 'flex';
+            if(document.getElementById('drawer').classList.contains('open')) toggleDrawer();
         }
 
-        function changeAppTheme(color, el) {
-            document.documentElement.style.setProperty('--accent-color', color);
-            document.querySelectorAll('.theme-circle').forEach(c => c.classList.remove('active'));
-            el.classList.add('active');
-            showToast("Theme updated!", "success");
+        function closeSubscriptionModal() { document.getElementById('subModal').style.display = 'none'; }
+
+        function toggleToolsMenu() {
+            const menu = document.getElementById('aiToolsMenu');
+            menu.style.display = (menu.style.display === 'flex') ? 'none' : 'flex';
         }
 
-        // --- MODALS ---
-        function openSettingsModal() { document.getElementById('settingsModal').style.display = 'flex'; toggleDrawer(); }
-        function openEditProfileModal() { document.getElementById('editProfileModal').style.display = 'flex'; toggleDrawer(); }
-        function saveProfileChanges() { document.getElementById('editProfileModal').style.display = 'none'; showToast("Profile Updated!", "success"); }
-        function openDeleteAccountModal() { document.getElementById('settingsModal').style.display = 'none'; document.getElementById('deleteAccountModal').style.display = 'flex'; }
-
-        // --- SOUND EFFECTS ---
-        const AudioContext = window.AudioContext || window.webkitAudioContext;
-        const audioCtx = new AudioContext();
-        function playClickSound() {
-            if(!appSoundEnabled) return;
-            if(audioCtx.state === 'suspended') audioCtx.resume();
-            const osc = audioCtx.createOscillator();
-            const gain = audioCtx.createGain();
-            osc.type = 'sine';
-            osc.frequency.setValueAtTime(800, audioCtx.currentTime);
-            gain.gain.setValueAtTime(0.05, audioCtx.currentTime);
-            gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.1);
-            osc.connect(gain);
-            gain.connect(audioCtx.destination);
-            osc.start();
-            osc.stop(audioCtx.currentTime + 0.1);
+        function triggerTool(promptAction) {
+            document.getElementById('aiToolsMenu').style.display = 'none';
+            document.getElementById('userInput').value = promptAction;
+            askAI();
         }
-        document.addEventListener('click', function(e) {
-            if(e.target.closest('button') || e.target.closest('.drawer-item') || e.target.closest('.auth-tab') || e.target.closest('.theme-circle')) {
-                playClickSound();
+
+        // ORIGINAL CHAT HISTORY FETCH API
+        function loadSidebarHistory() {
+            fetch('/api/get-sessions', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ email: currentStudentData.email })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if(data.success && data.sessions) {
+                    renderHistoryList(data.sessions);
+                }
+            }).catch(() => {});
+        }
+
+        function renderHistoryList(historyArray) {
+            const list = document.getElementById('historyList');
+            if(!list) return;
+            list.innerHTML = '';
+            historyArray.forEach((item) => {
+                const isActive = (item.id === currentSessionId) ? 'active-session' : '';
+                list.innerHTML += `
+                    <div class="history-item ${isActive}" onclick="loadSession('${item.id}', '${item.title.replace(/'/g, "\\'")}')">
+                        <span style="white-space:nowrap; overflow:hidden; text-overflow:ellipsis; width:85%;">${item.title}</span>
+                        <i class="fa-solid fa-trash delete-chat-icon" title="Delete Chat" onclick="promptDeleteHistory('${item.id}', event)"></i>
+                    </div>`;
+            });
+        }
+
+        function loadSession(id, title) {
+            currentSessionId = id;
+            currentSessionTitle = title;
+            fetch('/api/get-session-html', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ email: currentStudentData.email, session_id: id })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if(data.success && data.html) {
+                    document.getElementById('chatBox').innerHTML = data.html;
+                    scrollToBottom();
+                    if(document.getElementById('drawer').classList.contains('open')) toggleDrawer();
+                }
+            });
+        }
+
+        function promptDeleteHistory(id, event) {
+            event.stopPropagation();
+            pendingDeleteId = id;
+            document.getElementById('deleteWarningModal').style.display = 'flex';
+        }
+
+        document.getElementById('confirmDeleteBtn').onclick = function() {
+            if(pendingDeleteId) {
+                fetch(`/api/delete-session`, {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ email: currentStudentData.email, session_id: pendingDeleteId })
+                }).then(() => {
+                    showToast("Chat permanently deleted.", "success");
+                    document.getElementById('deleteWarningModal').style.display = 'none';
+                    loadSidebarHistory();
+                });
+            }
+        };
+
+        function saveChatUI() {
+            const chatHtml = document.getElementById('chatBox').innerHTML;
+            fetch('/api/sync-session', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ 
+                    email: currentStudentData.email, 
+                    session_id: currentSessionId, 
+                    title: currentSessionTitle, 
+                    html: chatHtml 
+                })
+            }).then(() => loadSidebarHistory());
+        }
+
+        // ORIGINAL AI FETCH API WITH 100% ACCURACY COMMAND
+        function isCasualGreeting(text) {
+            const casualWords = ['hi', 'hello', 'good morning', 'motivate', 'bore', 'thanks'];
+            return casualWords.some(word => text.toLowerCase().includes(word));
+        }
+
+        function askAI() {
+            const inputEl = document.getElementById('userInput');
+            const chatBox = document.getElementById('chatBox');
+            
+            if(!inputEl.value.trim() && selectedFilesArray.length === 0) return;
+
+            const userText = inputEl.value.trim();
+            let userMsgContent = '';
+            
+            selectedFilesArray.forEach(file => {
+                if(file.includes('pdf')) userMsgContent += `<i class="fa-solid fa-file-pdf" style="font-size:24px; color:red;"></i> <b>[PDF Attached]</b><br>`;
+                else userMsgContent += `<img src="${file}" class="msg-image"><br>`;
+            });
+            if(userText) userMsgContent += userText;
+
+            chatBox.innerHTML += `<div class="msg user">${userMsgContent}</div>`;
+            inputEl.value = '';
+            inputEl.style.height = 'auto';
+            
+            const filesToSend = [...selectedFilesArray];
+            removeImage();
+            document.getElementById('aiToolsMenu').style.display = 'none';
+            scrollToBottom();
+
+            const selectedLang = document.getElementById('chatLang').value;
+
+            // 🚀 THIS IS THE DUAL PAYLOAD FOR YOUR BACKEND
+            const payload = {
+                email: currentStudentData.email,
+                token: localStorage.getItem('ticbull_token'),
+                prompt: userText,
+                language: selectedLang,
+                images: filesToSend,
+                is_casual_chat: isCasualGreeting(userText), // Hooks to Meta API if true, Gemini if false
+                subject_context: currentActiveSubject,
+                batch_context: currentActiveBatch,
+                board_context: currentBoardContext,
+                teacher_name: currentActiveTeacher,
+                tier_type: selectedTierType,
+                // System Instruction to force Gemini into 100% accuracy and remove watermark
+                system_instruction: `You are TicBull AI, a 100% accurate, highly professional subject expert teacher named ${currentActiveTeacher}. You teach ${currentActiveSubject} strictly according to the ${currentBoardContext} syllabus. Never hallucinate. Never give wrong answers. Do not mention you are an AI model by Google. Answer completely in ${selectedLang} language in a clear, educational tone.`
+            };
+
+            const sendBtn = document.getElementById('sendBtn');
+            sendBtn.disabled = true;
+            
+            const loadingId = 'load-' + Date.now();
+            chatBox.innerHTML += `<div class="msg ai" id="${loadingId}">
+                <div style="display:flex; align-items:center; gap:10px; margin-bottom:8px;">
+                    <i class="fa-solid fa-chalkboard-user" style="color:var(--accent-color); font-size:18px;"></i>
+                    <i>${currentActiveTeacher} is thinking...</i>
+                </div>
+            </div>`;
+            scrollToBottom();
+
+            // 🔴 YOUR FETCH REQUEST (Restored exactly for your backend)
+            fetch(`/api/chat`, {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify(payload)
+            })
+            .then(res => res.json())
+            .then(data => {
+                sendBtn.disabled = false;
+                const loadElem = document.getElementById(loadingId);
+                
+                if(data.session_expired) {
+                    loadElem.classList.replace('ai', 'error');
+                    loadElem.innerHTML = `<b>❌ Security Alert:</b> ${data.message}`;
+                    showToast(data.message, "error");
+                    setTimeout(() => logoutUser(), 3000);
+                    return;
+                }
+
+                if (data.success) {
+                    let formattedReply = data.reply.replace(/\*\*(.*?)\*\*/g, '<b>$1</b>');
+                    formattedReply = formattedReply.replace(/\n/g, '<br>');
+
+                    // Add dynamic diagrams/video if requested via tools
+                    if (userText.toLowerCase().includes('image') || userText.toLowerCase().includes('diagram')) {
+                        let topicSafe = encodeURIComponent(userText.replace('Generate Detailed Diagram Image', '').trim() || 'Education');
+                        formattedReply += `<br><br><b>🖼️ Visual Reference:</b><br><img src="https://image.pollinations.ai/prompt/${topicSafe}%20educational%20diagram?width=600&height=350&nologo=true" class="msg-image" alt="AI Generated Image" style="border-radius:12px; margin-top:8px; border:1px solid #333;">`;
+                    }
+                    if (userText.toLowerCase().includes('video')) {
+                        let topicSafe = encodeURIComponent(userText.replace('Generate AI Video Visual Explanation', '').trim() || 'Study Concept');
+                        formattedReply += `<br><br><b>🎥 Video Concept Reference:</b><br><iframe style="width:100%; height:200px; border-radius:12px; margin-top:8px; border:none;" src="https://www.youtube.com/embed?listType=search&list=${topicSafe}+${currentActiveSubject}" allowfullscreen></iframe>`;
+                    }
+
+                    loadElem.innerHTML = `<div style="display:flex; align-items:center; gap:10px; margin-bottom:10px; border-bottom: 1px solid var(--border-color); padding-bottom: 8px;">
+                        <i class="fa-solid fa-chalkboard-user" style="color:var(--gold-color); font-size:20px;"></i>
+                        <b style="color:var(--gold-color);">${currentActiveTeacher} (${payload.subject_context} Expert)</b>
+                    </div>
+                    <div style="width:100%; line-height: 1.6; overflow-x: auto; word-break: break-word; overflow-wrap: break-word;">${formattedReply}</div>`;
+                    
+                    saveChatUI(); 
+                } else {
+                    loadElem.classList.replace('ai', 'error');
+                    loadElem.innerHTML = `<b>❌ AI Limit / Error:</b> ${data.message}`;
+                    showToast(data.message, "error");
+                }
+                scrollToBottom();
+            })
+            .catch(() => {
+                sendBtn.disabled = false;
+                const loadElem = document.getElementById(loadingId);
+                // Fallback simulation if backend is not running yet
+                loadElem.innerHTML = `<div style="display:flex; align-items:center; gap:10px; margin-bottom:10px; border-bottom: 1px solid var(--border-color); padding-bottom: 8px;">
+                    <i class="fa-solid fa-chalkboard-user" style="color:var(--gold-color); font-size:20px;"></i>
+                    <b style="color:var(--gold-color);">${currentActiveTeacher} (${payload.subject_context} Expert)</b>
+                </div>
+                <div style="width:100%; line-height: 1.6;">${payload.is_casual_chat ? "Hello! Main strictly syllabus cover karunga, jaldi se question puchiye. <br><small style='color:var(--success-color);'>[0 Doubts Deducted - Hook AI]</small>" : "Server is currently offline. Is question ka answer backend API setup hone par aayega. <br><small style='color:#ef4444;'>[-1 Doubt Deducted]</small>"}</div>`;
+                scrollToBottom();
+                saveChatUI();
+            });
+        }
+
+        // ORIGINAL UTILITIES
+        function logoutUser() { localStorage.clear(); location.reload(); }
+
+        let syllabusItems = [];
+        function openSyllabusBoard() {
+            document.getElementById('syllabusModal').style.display = 'flex';
+            if(document.getElementById('drawer').classList.contains('open')) toggleDrawer();
+            const saved = localStorage.getItem('ticbull_syllabus_' + currentStudentData.email);
+            if(saved) syllabusItems = JSON.parse(saved);
+            renderSyllabus();
+        }
+        function addSyllabusItem() {
+            const input = document.getElementById('newSyllabusItem');
+            if(!input.value.trim()) return;
+            syllabusItems.unshift({ text: input.value.trim(), done: false });
+            input.value = '';
+            saveSyllabus();
+        }
+        function toggleSyllabusItem(index) {
+            syllabusItems[index].done = !syllabusItems[index].done;
+            saveSyllabus();
+        }
+        function deleteSyllabusItem(index) {
+            syllabusItems.splice(index, 1);
+            saveSyllabus();
+        }
+        function saveSyllabus() {
+            localStorage.setItem('ticbull_syllabus_' + currentStudentData.email, JSON.stringify(syllabusItems));
+            renderSyllabus();
+        }
+        function renderSyllabus() {
+            const list = document.getElementById('syllabusList');
+            list.innerHTML = '';
+            if(syllabusItems.length === 0) { list.innerHTML = '<p style="color:var(--text-muted); font-size:12px; text-align:center; padding:20px;">No topics added yet.</p>'; return; }
+            syllabusItems.forEach((item, i) => {
+                list.innerHTML += `
+                    <div class="syllabus-task ${item.done ? 'completed' : ''}">
+                        <input type="checkbox" ${item.done ? 'checked' : ''} onchange="toggleSyllabusItem(${i})">
+                        <span>${item.text}</span>
+                        <i class="fa-solid fa-trash" style="color:#ef4444; font-size:14px; cursor:pointer;" onclick="deleteSyllabusItem(${i})"></i>
+                    </div>`;
+            });
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            // Original Check Session Logic restored
+            const savedEmail = localStorage.getItem('ticbull_email');
+            const savedToken = localStorage.getItem('ticbull_token');
+            if(savedEmail && savedToken) {
+                fetch('/api/check-session', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ email: savedEmail, token: savedToken })
+                })
+                .then(res => res.json())
+                .then(data => {
+                    if(data.success && data.active) {
+                        currentStudentData.email = savedEmail;
+                        currentStudentData.name = data.user.name || localStorage.getItem('ticbull_name') || '';
+                        currentStudentData.dob = data.user.dob || localStorage.getItem('ticbull_dob') || '';
+                        currentStudentData.photo = data.user.photo || localStorage.getItem('ticbull_photo') || '';
+                        
+                        document.getElementById('auth-screen').style.display = 'none';
+                        document.getElementById('batches-screen').style.display = 'flex';
+                        renderBatchesList(all300Batches);
+                        updateProfileUI();
+                        loadSidebarHistory();
+                    } else {
+                        localStorage.clear();
+                        showToast("Session Expired! Logged in from another device.", "error");
+                    }
+                }).catch(() => {
+                    currentStudentData.email = savedEmail;
+                    currentStudentData.name = localStorage.getItem('ticbull_name') || '';
+                    document.getElementById('auth-screen').style.display = 'none';
+                    document.getElementById('batches-screen').style.display = 'flex';
+                    renderBatchesList(all300Batches);
+                    updateProfileUI();
+                    loadSidebarHistory();
+                });
             }
         });
-        function toggleSoundSetting(checkbox) { appSoundEnabled = checkbox.checked; showToast(appSoundEnabled ? "Sound Enabled" : "Sound Muted", "success"); }
+
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                const splash = document.getElementById('splash-screen');
+                splash.style.opacity = '0';
+                setTimeout(() => splash.style.display = 'none', 500);
+            }, 3000);
+        });
+
+        window.addEventListener('resize', () => scrollToBottom());
+        
+        let recognition;
+        if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            recognition = new SpeechRecognition();
+            recognition.continuous = false;
+            recognition.interimResults = false;
+            recognition.onresult = function(event) {
+                const text = event.results[0][0].transcript;
+                const inputEl = document.getElementById('userInput');
+                inputEl.value += " " + text;
+                autoResizeInput(inputEl);
+                document.getElementById('voiceBtn').classList.remove('voice-active');
+            };
+            recognition.onerror = function() { document.getElementById('voiceBtn').classList.remove('voice-active'); };
+            recognition.onend = function() { document.getElementById('voiceBtn').classList.remove('voice-active'); };
+        }
+
+        function toggleVoiceInput() {
+            const voiceBtn = document.getElementById('voiceBtn');
+            if(voiceBtn.classList.contains('voice-active')) {
+                if(recognition) recognition.stop();
+                voiceBtn.classList.remove('voice-active');
+            } else {
+                if(recognition) {
+                    recognition.start();
+                    voiceBtn.classList.add('voice-active');
+                } else {
+                    showToast("Voice typing not supported in this browser.", "error");
+                }
+            }
+        }
+
+        function handleMultipleFilesSelect(event) {
+            const files = event.target.files;
+            if(files && files.length > 0) {
+                selectedFilesArray = [];
+                for(let i=0; i<files.length; i++) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) { selectedFilesArray.push(e.target.result); };
+                    reader.readAsDataURL(files[i]);
+                }
+                document.getElementById('imagePreviewText').innerHTML = `<i class="fa-solid fa-paperclip"></i> ${files.length} File(s) Selected`;
+                document.getElementById('imagePreview').style.display = 'flex';
+            }
+        }
+
+        function removeImage() {
+            selectedFilesArray = [];
+            document.getElementById('photoInput').value = '';
+            document.getElementById('imagePreview').style.display = 'none';
+        }
+
+        function openSettingsModal() { document.getElementById('settingsModal').style.display = 'flex'; if(document.getElementById('drawer').classList.contains('open')) toggleDrawer(); }
+        function changeAppTheme(color, el) { document.documentElement.style.setProperty('--accent-color', color); document.querySelectorAll('.theme-circle').forEach(c => c.classList.remove('active')); el.classList.add('active'); showToast("Theme updated!", "success"); }
+        function toggleTheme() { document.body.classList.toggle('light-theme'); const isLight = document.body.classList.contains('light-theme'); document.getElementById('themeToggleText').innerText = isLight ? 'Switch to Dark Mode' : 'Switch to Light Mode'; }
+        const AudioContext = window.AudioContext || window.webkitAudioContext; const audioCtx = new AudioContext(); function playClickSound() { if(!appSoundEnabled) return; if(audioCtx.state === 'suspended') audioCtx.resume(); const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain(); osc.type = 'sine'; osc.frequency.setValueAtTime(800, audioCtx.currentTime); gain.gain.setValueAtTime(0.05, audioCtx.currentTime); gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.1); osc.connect(gain); gain.connect(audioCtx.destination); osc.start(); osc.stop(audioCtx.currentTime + 0.1); } document.addEventListener('click', function(e) { if(e.target.closest('button') || e.target.closest('.action-icon-btn') || e.target.closest('.drawer-item') || e.target.closest('.cat-chip') || e.target.closest('.theme-circle')) { playClickSound(); } }); function toggleSoundSetting(checkbox) { appSoundEnabled = checkbox.checked; showToast(appSoundEnabled ? "Sound Enabled" : "Sound Muted", "success"); }
     </script>
 </body>
 </html>
