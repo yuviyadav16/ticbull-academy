@@ -13,8 +13,8 @@
     
     <style>
         /* 100% ORIGINAL CSS VARIABLES & BASE */
-        :root { --bg-color: #030712; --card-bg: rgba(15, 23, 42, 0.95); --accent-color: #2563eb; --accent-glow: rgba(37, 99, 235, 0.45); --text-main: #f8fafc; --text-muted: #94a3b8; --border-color: rgba(255, 255, 255, 0.12); --success-color: #10b981; --gold-color: #f59e0b; --input-bg: #0f172a; --chat-bg: #020617; }
-        body.light-theme { --bg-color: #f1f5f9; --card-bg: #ffffff; --text-main: #0f172a; --text-muted: #64748b; --border-color: #cbd5e1; --input-bg: #ffffff; --chat-bg: #f8fafc; }
+        :root { --bg-color: #030712; --card-bg: #0f172a; --accent-color: #2563eb; --accent-glow: rgba(37, 99, 235, 0.45); --text-main: #f8fafc; --text-muted: #94a3b8; --border-color: rgba(255, 255, 255, 0.12); --success-color: #10b981; --gold-color: #f59e0b; --input-bg: #1e293b; --chat-bg: #020617; }
+        body.light-theme { --bg-color: #f1f5f9; --card-bg: #ffffff; --text-main: #0f172a; --text-muted: #64748b; --border-color: #cbd5e1; --input-bg: #f8fafc; --chat-bg: #f1f5f9; }
         * { margin:0; padding:0; box-sizing:border-box; font-family:-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; -webkit-tap-highlight-color: transparent; }
         body { background: var(--bg-color); color: var(--text-main); display:flex; flex-direction:column; height: 100vh; overflow: hidden; transition: background 0.3s, color 0.3s; }
 
@@ -24,73 +24,74 @@
 
         /* TOP BAR */
         .top-bar { display:flex; justify-content:space-between; align-items:center; padding:15px 20px; z-index:50; background: var(--card-bg); border-bottom: 1px solid var(--border-color); }
-        .back-btn { background:transparent; border:none; color:var(--text-main); font-size:18px; cursor:pointer; display:flex; align-items:center; gap:10px; font-weight:800; }
+        .back-btn { background:transparent; border:none; color:var(--text-main); font-size:18px; cursor:pointer; display:flex; align-items:center; gap:12px; font-weight:800; }
         .menu-btn { background:var(--input-bg); border:1px solid var(--border-color); color:var(--text-main); font-size:16px; padding:8px 12px; border-radius:10px; cursor:pointer; transition: 0.2s; }
         
         /* SEARCH & FILTER AREA */
-        .search-area { padding: 15px 20px 5px; }
+        .search-area { padding: 15px 20px 5px; background: var(--bg-color); z-index: 40; }
         .search-box { position: relative; width: 100%; }
-        .search-box input { width: 100%; background: var(--input-bg); border: 1px solid var(--border-color); color: var(--text-main); padding: 14px 20px 14px 45px; border-radius: 16px; font-size: 14px; outline: none; transition: 0.3s; }
+        .search-box input { width: 100%; background: var(--card-bg); border: 1px solid var(--border-color); color: var(--text-main); padding: 14px 20px 14px 45px; border-radius: 16px; font-size: 14px; outline: none; transition: 0.3s; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
         .search-box input:focus { border-color: var(--accent-color); box-shadow: 0 0 10px var(--accent-glow); }
         .search-box i { position: absolute; left: 18px; top: 50%; transform: translateY(-50%); color: var(--text-muted); font-size: 15px; }
 
         /* HORIZONTAL SCROLL CHIPS */
-        .category-scroll { display: flex; gap: 10px; overflow-x: auto; padding: 10px 20px 15px; scrollbar-width: none; }
+        .category-scroll { display: flex; gap: 10px; overflow-x: auto; padding: 10px 20px 15px; scrollbar-width: none; background: var(--bg-color); z-index: 40; }
         .category-scroll::-webkit-scrollbar { display: none; }
-        .cat-chip { background: var(--card-bg); border: 1px solid var(--border-color); color: var(--text-muted); padding: 8px 16px; border-radius: 20px; font-size: 12.5px; font-weight: 700; white-space: nowrap; cursor: pointer; transition: 0.2s; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
-        .cat-chip.active { background: var(--accent-color); color: #fff; border-color: var(--accent-color); box-shadow: 0 4px 15px var(--accent-glow); }
+        .cat-chip { background: var(--card-bg); border: 1px solid var(--border-color); color: var(--text-muted); padding: 8px 18px; border-radius: 20px; font-size: 13px; font-weight: 700; white-space: nowrap; cursor: pointer; transition: 0.2s; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        .cat-chip.active { background: #9f1239; color: #fff; border-color: #9f1239; box-shadow: 0 4px 15px rgba(159, 18, 57, 0.4); } /* Premium Red Active Color matching image */
 
         /* BATCHES LIST AREA */
-        .batches-container { flex: 1; overflow-y: auto; padding: 0 20px 20px; display: flex; flex-direction: column; gap: 15px; }
+        .batches-container { flex: 1; overflow-y: auto; padding: 5px 20px 20px; display: flex; flex-direction: column; gap: 16px; }
         
-        /* FIXED: PREMIUM BATCH CARD (Color Bug Resolved) */
-        .batch-card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 18px; padding: 18px; box-shadow: 0 8px 25px rgba(0,0,0,0.1); transition: 0.3s; position: relative; overflow: hidden; }
-        .batch-card::before { content:''; position:absolute; top:0; left:0; width:4px; height:100%; background: var(--accent-color); border-radius: 18px 0 0 18px; }
-        .batch-tag { background: rgba(16, 185, 129, 0.15); color: var(--success-color); padding: 4px 10px; border-radius: 8px; font-size: 10px; font-weight: 800; display: inline-block; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 0.5px; border: 1px solid rgba(16, 185, 129, 0.3); }
-        .batch-title { font-size: 17px; font-weight: 800; color: var(--text-main); margin-bottom: 6px; line-height: 1.3; }
-        .batch-desc { font-size: 12px; color: var(--text-muted); margin-bottom: 15px; line-height: 1.5; }
+        /* CLEAN PROFESSIONAL BATCH CARD */
+        .batch-card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 20px; padding: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); transition: 0.3s; position: relative; overflow: hidden; display: flex; flex-direction: column; }
+        .batch-card::before { content:''; position:absolute; top:0; left:0; width:5px; height:100%; background: #9f1239; border-radius: 20px 0 0 20px; }
+        .batch-tag { background: rgba(16, 185, 129, 0.15); color: var(--success-color); padding: 4px 10px; border-radius: 8px; font-size: 10px; font-weight: 800; display: inline-block; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.5px; border: 1px solid rgba(16, 185, 129, 0.3); align-self: flex-start; }
+        .batch-title { font-size: 18px; font-weight: 800; color: var(--text-main); margin-bottom: 8px; line-height: 1.3; }
+        .batch-desc { font-size: 13px; color: var(--text-muted); margin-bottom: 20px; line-height: 1.5; }
         
-        .batch-footer { display: flex; justify-content: space-between; align-items: center; border-top: 1px dashed var(--border-color); padding-top: 15px; }
-        .batch-price { font-size: 16px; font-weight: 800; color: var(--success-color); }
-        .batch-price-sub { font-size: 9.5px; color: var(--text-muted); display: block; font-weight: 700; text-transform: uppercase; }
+        .batch-footer { display: flex; justify-content: space-between; align-items: center; border-top: 1px dashed var(--border-color); padding-top: 15px; margin-top: auto; }
+        .batch-price { font-size: 18px; font-weight: 800; color: var(--success-color); }
+        .batch-price-sub { font-size: 10px; color: var(--text-muted); display: block; font-weight: 800; text-transform: uppercase; margin-bottom: 2px; }
         
-        .btn-row { display: flex; gap: 8px; }
-        .btn-details { background: var(--chat-bg); color: var(--text-main); font-weight: 700; padding: 8px 14px; border: 1px solid var(--border-color); border-radius: 10px; cursor: pointer; font-size: 12px; transition: 0.2s; }
-        .btn-buy { background: var(--accent-color); color: #fff; font-weight: 700; padding: 8px 14px; border: none; border-radius: 10px; cursor: pointer; font-size: 12px; box-shadow: 0 4px 15px var(--accent-glow); transition: 0.2s; }
-        
-        /* DRAWER MENU */
-        .drawer-overlay { position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.75); z-index:1000; display:none; }
-        .drawer { position:fixed; top:0; left:-320px; width:320px; height:100%; background:var(--card-bg); border-right:1px solid var(--border-color); z-index:1001; transition:0.3s; padding:20px; display:flex; flex-direction:column; overflow-y:auto; }
-        .drawer.open { left:0; }
-        .drawer-header { display:flex; justify-content:space-between; align-items:center; padding-bottom:14px; border-bottom:1px solid var(--border-color); margin-bottom:14px; }
-        
-        .drawer-item { padding:12px 14px; border-radius:12px; color:var(--text-main); font-size:14px; font-weight:600; display:flex; align-items:center; gap:14px; cursor:pointer; margin-bottom:8px; transition:0.2s; }
-        .drawer-item:hover { background:rgba(255,255,255,0.08); padding-left: 20px; color: var(--accent-color); }
+        .btn-row { display: flex; gap: 10px; }
+        .btn-details { background: transparent; color: var(--text-main); font-weight: 700; padding: 10px 16px; border: 1px solid var(--border-color); border-radius: 12px; cursor: pointer; font-size: 13px; transition: 0.2s; }
+        .btn-details:hover { background: var(--input-bg); }
+        .btn-buy { background: #9f1239; color: #fff; font-weight: 700; padding: 10px 16px; border: none; border-radius: 12px; cursor: pointer; font-size: 13px; box-shadow: 0 4px 15px rgba(159, 18, 57, 0.4); transition: 0.2s; }
+        .btn-buy:active { transform: scale(0.95); }
 
-        /* MODALS */
+        /* MODALS & OVERLAYS */
         .modal-overlay { position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); z-index:2000; display:none; justify-content:center; align-items:center; padding:16px; backdrop-filter: blur(5px); }
         .modal-card { background:var(--card-bg); border:1px solid var(--border-color); border-radius:24px; padding:26px; max-width:420px; width:100%; text-align:left; position:relative; box-shadow: 0 20px 50px rgba(0,0,0,0.5); animation: popIn 0.3s ease; max-height: 90vh; display: flex; flex-direction: column; }
         @keyframes popIn { 0% { opacity:0; transform:scale(0.8) translateY(10px); } 100% { opacity:1; transform:scale(1) translateY(0); } }
 
         /* DETAILS MODAL LIST */
-        .sub-list-container { overflow-y: auto; margin-top: 15px; padding-right: 5px; flex: 1; }
-        .sub-card { display: flex; align-items: center; gap: 12px; background: var(--input-bg); padding: 12px; border-radius: 12px; border: 1px solid var(--border-color); margin-bottom: 10px; }
-        .sub-icon { width: 40px; height: 40px; border-radius: 10px; background: rgba(37, 99, 235, 0.1); color: var(--accent-color); display: flex; justify-content: center; align-items: center; font-size: 18px; }
-        .sub-info h4 { font-size: 13.5px; color: var(--text-main); margin-bottom: 2px; }
-        .sub-info p { font-size: 11px; color: var(--gold-color); font-weight: 600; }
+        .sub-list-container { overflow-y: auto; margin-top: 15px; padding-right: 5px; flex: 1; display:flex; flex-direction:column; gap:10px; }
+        .sub-card { display: flex; align-items: center; gap: 14px; background: var(--input-bg); padding: 14px; border-radius: 14px; border: 1px solid var(--border-color); }
+        .sub-icon { width: 44px; height: 44px; border-radius: 12px; background: var(--card-bg); color: #9f1239; display: flex; justify-content: center; align-items: center; font-size: 20px; border: 1px solid var(--border-color); box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+        .sub-info h4 { font-size: 15px; color: var(--text-main); margin-bottom: 4px; font-weight:800; }
+        .sub-info p { font-size: 11.5px; color: var(--gold-color); font-weight: 700; }
 
         /* PRICING MODAL TIERS */
-        .tier-card { border: 1px solid var(--border-color); border-radius: 16px; padding: 15px; margin-bottom: 12px; cursor: pointer; transition: 0.2s; background: var(--input-bg); position: relative; overflow: hidden; }
-        .tier-card:hover, .tier-card.selected { border-color: var(--accent-color); background: rgba(37, 99, 235, 0.05); }
-        .tier-card.selected::after { content: '\f058'; font-family: "Font Awesome 6 Free"; font-weight: 900; position: absolute; right: 15px; top: 50%; transform: translateY(-50%); color: var(--success-color); font-size: 20px; }
+        .tier-card { border: 2px solid var(--border-color); border-radius: 16px; padding: 16px; margin-bottom: 12px; cursor: pointer; transition: 0.2s; background: var(--input-bg); position: relative; overflow: hidden; }
+        .tier-card:hover, .tier-card.selected { border-color: #9f1239; background: rgba(159, 18, 57, 0.05); }
+        .tier-card.selected::after { content: '\f058'; font-family: "Font Awesome 6 Free"; font-weight: 900; position: absolute; right: 16px; top: 50%; transform: translateY(-50%); color: var(--success-color); font-size: 22px; }
         
-        .tier-title { font-size: 15px; font-weight: 800; color: var(--text-main); margin-bottom: 4px; display: flex; justify-content: space-between; }
-        .tier-price { color: var(--success-color); font-size: 16px; }
-        .tier-features { font-size: 11.5px; color: var(--text-muted); line-height: 1.4; }
+        .tier-title { font-size: 16px; font-weight: 800; color: var(--text-main); margin-bottom: 6px; display: flex; justify-content: space-between; }
+        .tier-price { color: var(--success-color); font-size: 17px; }
+        .tier-features { font-size: 12px; color: var(--text-muted); line-height: 1.5; }
         .tier-features strong { color: var(--gold-color); }
         
-        .btn-primary { width:100%; background: var(--accent-color); color:#fff; font-weight:800; padding:15px; border:none; border-radius:14px; cursor:pointer; font-size:14px; margin-top:15px; transition:0.2s; box-shadow:0 8px 20px var(--accent-glow); }
+        .btn-primary { width:100%; background: #9f1239; color:#fff; font-weight:800; padding:16px; border:none; border-radius:14px; cursor:pointer; font-size:15px; margin-top:15px; transition:0.2s; box-shadow:0 8px 20px rgba(159, 18, 57, 0.4); }
         .btn-primary:active { transform: scale(0.97); }
+
+        /* DRAWER MENU (Minimal as requested) */
+        .drawer-overlay { position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.75); z-index:3000; display:none; }
+        .drawer { position:fixed; top:0; left:-320px; width:320px; height:100%; background:var(--card-bg); border-right:1px solid var(--border-color); z-index:3001; transition:0.3s; padding:20px; display:flex; flex-direction:column; overflow-y:auto; }
+        .drawer.open { left:0; }
+        .drawer-header { display:flex; justify-content:space-between; align-items:center; padding-bottom:14px; border-bottom:1px solid var(--border-color); margin-bottom:14px; }
+        .drawer-item { padding:14px 16px; border-radius:12px; color:var(--text-main); font-size:14.5px; font-weight:600; display:flex; align-items:center; gap:14px; cursor:pointer; margin-bottom:8px; transition:0.2s; }
+        .drawer-item:hover { background:var(--input-bg); }
     </style>
 </head>
 <body>
@@ -112,13 +113,15 @@
     </div>
 
     <div class="category-scroll" id="filterContainer">
-        <div class="cat-chip active" onclick="filterBatches('ALL', this)">All Batches</div>
-        <div class="cat-chip" onclick="filterBatches('CBSE', this)">CBSE Board</div>
+        <div class="cat-chip active" onclick="filterBatches('ALL', this)">All</div>
+        <div class="cat-chip" onclick="filterBatches('CBSE', this)">CBSE</div>
         <div class="cat-chip" onclick="filterBatches('ICSE', this)">ICSE/NIOS</div>
         <div class="cat-chip" onclick="filterBatches('STATE', this)">State Boards</div>
-        <div class="cat-chip" onclick="filterBatches('MEDICAL', this)">NEET (Medical)</div>
-        <div class="cat-chip" onclick="filterBatches('ENGINEERING', this)">JEE (Engg.)</div>
-        <div class="cat-chip" onclick="filterBatches('GOVT', this)">UPSC & Govt.</div>
+        <div class="cat-chip" onclick="filterBatches('NEET', this)">NEET (Medical)</div>
+        <div class="cat-chip" onclick="filterBatches('JEE', this)">JEE (Engg.)</div>
+        <div class="cat-chip" onclick="filterBatches('UPSC', this)">UPSC & Govt.</div>
+        <div class="cat-chip" onclick="filterBatches('LAW_COMM', this)">Law/Commerce</div>
+        <div class="cat-chip" onclick="filterBatches('DEFENSE', this)">Defense</div>
     </div>
 
     <!-- BATCHES LIST -->
@@ -130,35 +133,36 @@
     <div class="drawer-overlay" id="drawerOverlay" onclick="toggleDrawer()"></div>
     <div class="drawer" id="drawer">
         <div class="drawer-header">
-            <strong style="font-size:16px;">Menu & Profile</strong>
-            <i class="fa-solid fa-xmark" style="color:var(--text-muted); cursor:pointer; font-size:18px;" onclick="toggleDrawer()"></i>
+            <strong style="font-size:18px;">Menu</strong>
+            <i class="fa-solid fa-xmark" style="color:var(--text-muted); cursor:pointer; font-size:22px;" onclick="toggleDrawer()"></i>
         </div>
         <div class="drawer-item" onclick="window.location.href='dashboard.html'"><i class="fa-solid fa-home" style="color:var(--accent-color); width:20px;"></i> Dashboard Home</div>
         <div class="drawer-item" onclick="window.location.href='classroom.html'"><i class="fa-solid fa-graduation-cap" style="color:#10b981; width:20px;"></i> My Classroom</div>
         <div class="drawer-item" onclick="toggleTheme()"><i class="fa-solid fa-circle-half-stroke" style="color:var(--gold-color); width:20px;"></i> <span id="themeToggleText">Switch to Light Mode</span></div>
+        <div class="drawer-item" onclick="logoutUser()" style="color:#ef4444; margin-top:20px; border-top:1px solid var(--border-color); padding-top:20px;"><i class="fa-solid fa-right-from-bracket" style="width:20px;"></i> Log Out</div>
     </div>
 
-    <!-- DETAILS MODAL (SUBJECTS & TEACHERS) -->
+    <!-- STRICT SYLLABUS DETAILS MODAL -->
     <div class="modal-overlay" id="detailsModal">
         <div class="modal-card">
-            <i class="fa-solid fa-xmark" style="position:absolute; right:16px; top:16px; color:var(--text-muted); cursor:pointer; font-size:20px;" onclick="document.getElementById('detailsModal').style.display='none';"></i>
-            <h3 style="font-size:18px; color:var(--text-main); margin-bottom:4px;" id="detailsTitle">Batch Name</h3>
+            <i class="fa-solid fa-xmark" style="position:absolute; right:20px; top:20px; color:var(--text-muted); cursor:pointer; font-size:22px;" onclick="document.getElementById('detailsModal').style.display='none';"></i>
+            <h3 style="font-size:20px; color:var(--text-main); margin-bottom:4px; margin-right: 20px;" id="detailsTitle">Batch Name</h3>
             <p style="font-size:12px; color:var(--text-muted);">Syllabus Subjects & Expert Faculty</p>
             
             <div class="sub-list-container" id="detailsSubjectsList">
-                <!-- Subjects mapped here dynamically -->
+                <!-- Subjects strictly mapped here -->
             </div>
             
             <button class="btn-primary" onclick="openPricingFromDetails()">BUY THIS BATCH</button>
         </div>
     </div>
 
-    <!-- PRICING MODAL (BASIC, PRO, MAX) -->
+    <!-- PRICING MODAL -->
     <div class="modal-overlay" id="pricingModal">
-        <div class="modal-card" style="max-height: 95vh; overflow-y: auto;">
-            <i class="fa-solid fa-xmark" style="position:absolute; right:16px; top:16px; color:var(--text-muted); cursor:pointer; font-size:20px;" onclick="document.getElementById('pricingModal').style.display='none';"></i>
-            <h3 style="font-size:18px; color:var(--text-main); margin-bottom:4px;"><i class="fa-solid fa-crown" style="color:var(--gold-color);"></i> Select Plan</h3>
-            <p style="font-size:11.5px; color:var(--text-muted); margin-bottom:15px;" id="pricingBatchTitle">Batch Name</p>
+        <div class="modal-card">
+            <i class="fa-solid fa-xmark" style="position:absolute; right:20px; top:20px; color:var(--text-muted); cursor:pointer; font-size:22px;" onclick="document.getElementById('pricingModal').style.display='none';"></i>
+            <h3 style="font-size:20px; color:var(--text-main); margin-bottom:6px;"><i class="fa-solid fa-crown" style="color:var(--gold-color);"></i> Select Plan</h3>
+            <p style="font-size:13px; color:var(--text-muted); margin-bottom:20px;" id="pricingBatchTitle">Batch Name</p>
 
             <div class="tier-card" id="tierBasic" onclick="selectTier('Basic')">
                 <div class="tier-title"><span>Basic Pass</span> <span class="tier-price" id="priceBasic">₹499</span></div>
@@ -187,13 +191,13 @@
                 </div>
             </div>
 
-            <button class="btn-primary" onclick="proceedToPayment()">PROCEED TO SECURE PAYMENT <i class="fa-solid fa-lock" style="margin-left:5px; font-size:12px;"></i></button>
+            <button class="btn-primary" onclick="proceedToPayment()">PROCEED TO SECURE PAYMENT <i class="fa-solid fa-lock" style="margin-left:5px;"></i></button>
         </div>
     </div>
 
     <script>
         // ---------------------------------------------------------------------------------
-        // 1. Z+ SECURITY & PERSISTENCE
+        // 1. PERSISTENCE & SECURITY
         // ---------------------------------------------------------------------------------
         window.addEventListener('DOMContentLoaded', () => {
             const savedEmail = localStorage.getItem('ticbull_email');
@@ -205,14 +209,27 @@
         function applySavedSettings() {
             const isLight = localStorage.getItem('ticbull_theme') === 'light';
             if(isLight) { document.body.classList.add('light-theme'); document.getElementById('themeToggleText').innerText = 'Switch to Dark Mode'; }
-            const savedColor = localStorage.getItem('ticbull_theme_color');
-            if(savedColor) document.documentElement.style.setProperty('--accent-color', savedColor);
         }
         function toggleDrawer() { document.getElementById('drawer').classList.toggle('open'); document.getElementById('drawerOverlay').style.display = document.getElementById('drawer').classList.contains('open') ? 'block' : 'none'; }
         function toggleTheme() { document.body.classList.toggle('light-theme'); const isLight = document.body.classList.contains('light-theme'); localStorage.setItem('ticbull_theme', isLight ? 'light' : 'dark'); document.getElementById('themeToggleText').innerText = isLight ? 'Switch to Dark Mode' : 'Switch to Light Mode'; }
+        function logoutUser() { localStorage.removeItem('ticbull_token'); window.location.href = "index.html"; }
+
+        // Audio Engine
+        function playClickSound() {
+            if(localStorage.getItem('ticbull_sound') === 'false') return;
+            const AudioContext = window.AudioContext || window.webkitAudioContext;
+            const audioCtx = new AudioContext();
+            if(audioCtx.state === 'suspended') audioCtx.resume();
+            const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain();
+            osc.type = 'sine'; osc.frequency.setValueAtTime(800, audioCtx.currentTime);
+            gain.gain.setValueAtTime(0.05, audioCtx.currentTime); gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.1);
+            osc.connect(gain); gain.connect(audioCtx.destination); osc.start(); osc.stop(audioCtx.currentTime + 0.1);
+        }
+        document.addEventListener('click', function(e) { if(e.target.closest('button') || e.target.closest('.drawer-item') || e.target.closest('.cat-chip') || e.target.closest('.tier-card')) playClickSound(); });
+
 
         // ---------------------------------------------------------------------------------
-        // 2. THE 300+ BATCHES SMART ENGINE (INDIA WIDE CURRICULUM & SUBJECTS)
+        // 2. 100% STRICT SYLLABUS MAPPING (NO SHORTCUTS - ZERO ERRORS)
         // ---------------------------------------------------------------------------------
         let generatedBatchesCache = [];
         let selectedBatchObj = null;
@@ -221,34 +238,67 @@
         const subjectMapping = {
             'Foundation': [
                 { name: 'Mathematics', teacher: 'Mr. HC Verma', icon: 'fa-calculator' },
-                { name: 'Science', teacher: 'Ms. Anjali', icon: 'fa-flask' },
-                { name: 'Social Science', teacher: 'Mr. Bipin', icon: 'fa-earth-americas' },
-                { name: 'English', teacher: 'Ms. Riya', icon: 'fa-book-open' }
+                { name: 'Science (Phy/Chem/Bio)', teacher: 'Ms. Anjali', icon: 'fa-flask' },
+                { name: 'Social Science (His/Geo/Pol/Eco)', teacher: 'Mr. Bipin', icon: 'fa-earth-americas' },
+                { name: 'English & Hindi', teacher: 'Ms. Riya & Mr. Tiwari', icon: 'fa-book-open' }
             ],
-            'Science': [
+            'PCM': [ // STRICTLY FOR JEE & 11-12 SCIENCE (NO BIOLOGY)
                 { name: 'Physics', teacher: 'Mr. HC Verma', icon: 'fa-atom' },
                 { name: 'Chemistry', teacher: 'Mr. Das', icon: 'fa-vial' },
-                { name: 'Mathematics/Biology', teacher: 'Mr. Sharma / Ms. Kavita', icon: 'fa-dna' },
+                { name: 'Mathematics', teacher: 'Mr. Sharma', icon: 'fa-square-root-variable' },
+                { name: 'English', teacher: 'Ms. Riya', icon: 'fa-book-open' }
+            ],
+            'PCB': [ // STRICTLY FOR NEET & 11-12 MEDICAL (NO MATHS)
+                { name: 'Physics', teacher: 'Mr. HC Verma', icon: 'fa-atom' },
+                { name: 'Chemistry', teacher: 'Mr. Das', icon: 'fa-vial' },
+                { name: 'Biology (Botany & Zoology)', teacher: 'Ms. Priya', icon: 'fa-dna' },
                 { name: 'English', teacher: 'Ms. Riya', icon: 'fa-book-open' }
             ],
             'Commerce': [
                 { name: 'Accountancy', teacher: 'Mr. Bansal', icon: 'fa-file-invoice-dollar' },
                 { name: 'Business Studies', teacher: 'Ms. Pooja', icon: 'fa-briefcase' },
                 { name: 'Economics', teacher: 'Mr. Jain', icon: 'fa-chart-line' },
+                { name: 'Mathematics / Applied Maths', teacher: 'Mr. Sharma', icon: 'fa-calculator' },
                 { name: 'English', teacher: 'Ms. Riya', icon: 'fa-book-open' }
             ],
-            'Humanities': [
+            'Arts': [
                 { name: 'History', teacher: 'Mr. Bipin', icon: 'fa-landmark' },
                 { name: 'Geography', teacher: 'Ms. Majid', icon: 'fa-map' },
                 { name: 'Political Science', teacher: 'Mr. Laxmikanth', icon: 'fa-scale-balanced' },
+                { name: 'Economics / Sociology', teacher: 'Ms. Neha', icon: 'fa-users' },
                 { name: 'English', teacher: 'Ms. Riya', icon: 'fa-book-open' }
+            ],
+            'UPSC': [
+                { name: 'Polity & Governance', teacher: 'Mr. Laxmikanth', icon: 'fa-scale-balanced' },
+                { name: 'History & Culture', teacher: 'Mr. Bipin', icon: 'fa-landmark' },
+                { name: 'Geography & Environment', teacher: 'Ms. Majid', icon: 'fa-earth-asia' },
+                { name: 'Economy', teacher: 'Mr. Jain', icon: 'fa-chart-line' },
+                { name: 'CSAT', teacher: 'Mr. Sharma', icon: 'fa-brain' }
+            ],
+            'Law': [
+                { name: 'Legal Reasoning', teacher: 'Mr. Advocate', icon: 'fa-gavel' },
+                { name: 'Logical Reasoning', teacher: 'Mr. Kumar', icon: 'fa-brain' },
+                { name: 'General Knowledge', teacher: 'Mr. Bipin', icon: 'fa-globe' },
+                { name: 'English', teacher: 'Ms. Riya', icon: 'fa-book-open' }
+            ],
+            'Banking': [
+                { name: 'Quantitative Aptitude', teacher: 'Mr. Sharma', icon: 'fa-calculator' },
+                { name: 'Reasoning Ability', teacher: 'Mr. Kumar', icon: 'fa-brain' },
+                { name: 'English Language', teacher: 'Ms. Riya', icon: 'fa-book-open' },
+                { name: 'General Awareness', teacher: 'Mr. Jain', icon: 'fa-money-bill-trend-up' }
+            ],
+            'Defense': [
+                { name: 'NDA Mathematics', teacher: 'Mr. Sharma', icon: 'fa-square-root-variable' },
+                { name: 'Physics & Chemistry', teacher: 'Mr. HC Verma', icon: 'fa-atom' },
+                { name: 'English', teacher: 'Ms. Riya', icon: 'fa-book-open' },
+                { name: 'General Studies', teacher: 'Mr. Bipin', icon: 'fa-globe' }
             ]
         };
 
         function engineGenerateAllBatches() {
             let list = [];
             
-            // A. SCHOOL BOARDS (30+ Boards)
+            // A. SCHOOL BOARDS (31 Boards mapped precisely)
             const allBoards = [
                 "CBSE", "CISCE/ICSE", "NIOS", "Bihar Board (BSEB)", "UP Board (UPMSP)", 
                 "Jharkhand Board (JAC)", "West Bengal Board (WBBSE)", "Odisha Board", 
@@ -266,25 +316,31 @@
                 let cat = board.includes('CBSE') ? 'CBSE' : (board.includes('ICSE') || board.includes('NIOS') ? 'ICSE' : 'STATE');
                 let shortName = board.split(' ')[0];
 
-                // Found (9-10) -> Student Friendly Prices
-                list.push({ id: `b_${idx}_10`, cat: cat, tag: `${shortName} Board`, title: `${board} Class 9 & 10`, type: 'Foundation', desc: `Complete Foundation Syllabus for ${shortName}.`, p_basic: 499, p_pro: 999, p_max: 1499 });
+                // Found (9-10) -> Uses 'Foundation'
+                list.push({ id: `b_${idx}_10`, cat: cat, tag: `${shortName} Board`, title: `${board} Class 9 & 10`, type: 'Foundation', desc: `Complete Foundation Syllabus for ${shortName} Board.`, p_basic: 499, p_pro: 999, p_max: 1499 });
                 
-                // Sci (11-12)
-                list.push({ id: `b_${idx}_sci`, cat: cat, tag: `${shortName} Board`, title: `${board} Class 11 & 12 Science`, type: 'Science', desc: `Physics, Chemistry, Maths/Bio for ${shortName}.`, p_basic: 799, p_pro: 1499, p_max: 1999 });
+                // Sci PCM (11-12) -> Uses 'PCM'
+                list.push({ id: `b_${idx}_pcm`, cat: cat, tag: `${shortName} Board`, title: `${board} Class 11 & 12 Science (PCM)`, type: 'PCM', desc: `Physics, Chemistry, Maths for ${shortName} Board.`, p_basic: 799, p_pro: 1499, p_max: 1999 });
                 
-                // Com (11-12)
-                list.push({ id: `b_${idx}_com`, cat: cat, tag: `${shortName} Board`, title: `${board} Class 11 & 12 Commerce`, type: 'Commerce', desc: `Accountancy, BST, Economics for ${shortName}.`, p_basic: 799, p_pro: 1499, p_max: 1999 });
+                // Sci PCB (11-12) -> Uses 'PCB'
+                list.push({ id: `b_${idx}_pcb`, cat: cat, tag: `${shortName} Board`, title: `${board} Class 11 & 12 Science (PCB)`, type: 'PCB', desc: `Physics, Chemistry, Biology for ${shortName} Board.`, p_basic: 799, p_pro: 1499, p_max: 1999 });
+
+                // Com (11-12) -> Uses 'Commerce'
+                list.push({ id: `b_${idx}_com`, cat: cat, tag: `${shortName} Board`, title: `${board} Class 11 & 12 Commerce`, type: 'Commerce', desc: `Accountancy, BST, Economics for ${shortName} Board.`, p_basic: 799, p_pro: 1499, p_max: 1999 });
                 
-                // Arts (11-12)
-                list.push({ id: `b_${idx}_art`, cat: cat, tag: `${shortName} Board`, title: `${board} Class 11 & 12 Humanities`, type: 'Humanities', desc: `History, Geography, Polity for ${shortName}.`, p_basic: 799, p_pro: 1499, p_max: 1999 });
+                // Arts (11-12) -> Uses 'Arts'
+                list.push({ id: `b_${idx}_art`, cat: cat, tag: `${shortName} Board`, title: `${board} Class 11 & 12 Humanities`, type: 'Arts', desc: `History, Geography, Polity for ${shortName} Board.`, p_basic: 799, p_pro: 1499, p_max: 1999 });
             });
 
             // B. COMPETITIVE EXAMS (Higher Tier)
             const comps = [
-                { cat: 'ENGINEERING', tag: 'IIT-JEE', title: 'JEE Main & Advanced 2027/28', type: 'Science', desc: 'Advanced Physics, Chemistry, Maths.', p_basic: 999, p_pro: 1999, p_max: 2999 },
-                { cat: 'MEDICAL', tag: 'NEET Target', title: 'NEET-UG 2027/28 Preparation', type: 'Science', desc: 'Physical/Organic Chem, Botany, Zoology.', p_basic: 999, p_pro: 1999, p_max: 2999 },
-                { cat: 'GOVT', tag: 'UPSC Goal', title: 'UPSC Civil Services Foundation', type: 'Humanities', desc: 'Polity, Geography, History, Economics.', p_basic: 999, p_pro: 1999, p_max: 2999 },
-                { cat: 'LAW_COMMERCE', tag: 'NLU Goal', title: 'CLAT & Law Entrance', type: 'Humanities', desc: 'Legal Reasoning, GK, English.', p_basic: 899, p_pro: 1799, p_max: 2499 }
+                { cat: 'ENGINEERING', tag: 'IIT-JEE', title: 'JEE Main & Advanced 2027/28', type: 'PCM', desc: 'Advanced Physics, Chemistry, Maths (No Biology).', p_basic: 999, p_pro: 1999, p_max: 2999 },
+                { cat: 'MEDICAL', tag: 'NEET Target', title: 'NEET-UG 2027/28 Preparation', type: 'PCB', desc: 'Physical/Organic Chem, Botany, Zoology (No Maths).', p_basic: 999, p_pro: 1999, p_max: 2999 },
+                { cat: 'GOVT', tag: 'UPSC Goal', title: 'UPSC Civil Services Foundation', type: 'UPSC', desc: 'Polity, Geography, History, Economics, CSAT.', p_basic: 999, p_pro: 1999, p_max: 2999 },
+                { cat: 'LAW_COMM', tag: 'NLU Goal', title: 'CLAT & Law Entrance', type: 'Law', desc: 'Legal Reasoning, GK, English, Logical Reasoning.', p_basic: 899, p_pro: 1799, p_max: 2499 },
+                { cat: 'LAW_COMM', tag: 'CA/CS', title: 'CA Foundation Mastery', type: 'Commerce', desc: 'Accounting, Mercantile Law, Economics.', p_basic: 899, p_pro: 1799, p_max: 2499 },
+                { cat: 'DEFENSE', tag: 'Armed Forces', title: 'NDA & NA Shaurya Batch', type: 'Defense', desc: 'NDA Maths, Physics, GK, English.', p_basic: 799, p_pro: 1499, p_max: 1999 },
+                { cat: 'GOVT', tag: 'Govt Job', title: 'SSC CGL & Banking (PO/Clerk)', type: 'Banking', desc: 'Quantitative Aptitude, Reasoning, English, GA.', p_basic: 799, p_pro: 1499, p_max: 1999 }
             ];
 
             comps.forEach((c, i) => { list.push({ id: `c_${i}`, cat: c.cat, tag: c.tag, title: c.title, type: c.type, desc: c.desc, p_basic: c.p_basic, p_pro: c.p_pro, p_max: c.p_max }); });
@@ -295,7 +351,7 @@
         generatedBatchesCache = engineGenerateAllBatches();
 
         // ---------------------------------------------------------------------------------
-        // 3. UI RENDERING & MODALS
+        // 3. UI RENDERING & ROUTING TO PAYMENT
         // ---------------------------------------------------------------------------------
         function renderBatches(arr) {
             const container = document.getElementById('batchesList');
@@ -330,6 +386,8 @@
             document.querySelectorAll('.cat-chip').forEach(c => c.classList.remove('active'));
             if(el) el.classList.add('active');
             if(cat === 'ALL') renderBatches(generatedBatchesCache);
+            else if(cat === 'JEE') renderBatches(generatedBatchesCache.filter(b => b.cat === 'ENGINEERING'));
+            else if(cat === 'NEET') renderBatches(generatedBatchesCache.filter(b => b.cat === 'MEDICAL'));
             else renderBatches(generatedBatchesCache.filter(b => b.cat === cat));
         }
 
@@ -345,6 +403,7 @@
             selectedBatchObj = generatedBatchesCache.find(b => b.id === id);
             document.getElementById('detailsTitle').innerText = selectedBatchObj.title;
             
+            // Fetch STRICT subjects based on exact type
             const subs = subjectMapping[selectedBatchObj.type] || subjectMapping['Foundation'];
             const listContainer = document.getElementById('detailsSubjectsList');
             listContainer.innerHTML = '';
