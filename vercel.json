@@ -14,6 +14,18 @@
       "use": "@vercel/static"
     },
     {
+      "src": "batches.html",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "payment.html",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "chat.html",
+      "use": "@vercel/static"
+    },
+    {
       "src": "logo.png",
       "use": "@vercel/static"
     }
@@ -26,6 +38,18 @@
     {
       "source": "/admin.html",
       "destination": "/admin.html"
+    },
+    {
+      "source": "/batches.html",
+      "destination": "/batches.html"
+    },
+    {
+      "source": "/payment.html",
+      "destination": "/payment.html"
+    },
+    {
+      "source": "/chat.html",
+      "destination": "/chat.html"
     },
     {
       "source": "/",
