@@ -12,7 +12,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     
     <style>
-        :root { --bg-color: #030712; --card-bg: #0f172a; --accent-color: #9f1239; --text-main: #f8fafc; --text-muted: #94a3b8; --border-color: rgba(255, 255, 255, 0.12); --success-color: #10b981; --gold-color: #f59e0b; --input-bg: #1e293b; --chat-bg: #020617; }
+        :root { --bg-color: #030712; --card-bg: #0f172a; --accent-color: #9f1239; --text-main: #f8fafc; --text-muted: #94a3b8; --border-color: rgba(255, 255, 255, 0.12); --success-color: #10b981; --gold-color: #f59e0b; --input-bg: #1e293b; }
         body.light-theme { --bg-color: #f1f5f9; --card-bg: #ffffff; --text-main: #0f172a; --text-muted: #64748b; --border-color: #cbd5e1; --input-bg: #ffffff; }
         * { margin:0; padding:0; box-sizing:border-box; font-family:-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; -webkit-tap-highlight-color: transparent; }
         body { background: var(--bg-color); color: var(--text-main); display:flex; flex-direction:column; min-height: 100vh; overflow-x: hidden; transition: background 0.3s, color 0.3s; }
@@ -90,11 +90,14 @@
         <div class="cat-chip" onclick="setCategory('CUET', this)">CUET (UG)</div>
         <div class="cat-chip" onclick="setCategory('UPSC', this)">UPSC & PCS</div>
         <div class="cat-chip" onclick="setCategory('BANKING', this)">Banking & SSC</div>
+        <!-- FIXED: changed filterBatches to setCategory -->
         <div class="cat-chip" onclick="setCategory('DEFENSE', this)">Defense</div>
         <div class="cat-chip" onclick="setCategory('LAW', this)">Law Exams</div>
     </div>
 
-    <div class="batches-container" id="batchesList"></div>
+    <div class="batches-container" id="batchesList">
+        <!-- Rendered safely via JS -->
+    </div>
 
     <!-- DRAWER MENU -->
     <div class="drawer-overlay" id="drawerOverlay" onclick="toggleDrawer()"></div>
@@ -107,7 +110,7 @@
         <div class="drawer-item" onclick="window.location.href='classroom.html'"><i class="fa-solid fa-graduation-cap" style="color:#10b981; width:20px;"></i> My Classroom</div>
     </div>
 
-    <!-- BEAUTIFUL DETAILS MODAL (STRICT SYLLABUS & TEACHERS) -->
+    <!-- DETAILS MODAL (STRICT SYLLABUS) -->
     <div class="modal-overlay" id="detailsModal">
         <div class="modal-card">
             <i class="fa-solid fa-xmark" style="position:absolute; right:16px; top:16px; color:var(--text-muted); cursor:pointer; font-size:20px;" onclick="document.getElementById('detailsModal').style.display='none';"></i>
@@ -147,7 +150,113 @@
         var selectedTier = 'Pro';
         var allBatchesCache = [];
 
-        // 300+ EXAMS ENGINE (INDIA WIDE REAL DATABASE)
+        // 100% REAL SUBJECT MAPPING (EXACTLY MATCHING BATCH TYPES)
+        var subjectMapping = {
+            'State_Foundation': [
+                { name: 'Mathematics', teacher: 'Mr. R.K. Singh', icon: 'fa-calculator' },
+                { name: 'Physics', teacher: 'Mr. HC Verma', icon: 'fa-atom' },
+                { name: 'Chemistry', teacher: 'Mr. Das', icon: 'fa-flask' },
+                { name: 'Biology', teacher: 'Ms. Priya', icon: 'fa-dna' },
+                { name: 'History', teacher: 'Mr. Bipin', icon: 'fa-landmark' },
+                { name: 'Geography', teacher: 'Ms. Majid', icon: 'fa-earth-americas' },
+                { name: 'Political Science', teacher: 'Mr. Laxmikanth', icon: 'fa-scale-balanced' },
+                { name: 'Economics', teacher: 'Mr. Jain', icon: 'fa-chart-line' },
+                { name: 'English', teacher: 'Ms. Riya', icon: 'fa-book-open' },
+                { name: 'Hindi', teacher: 'Mr. Tiwari', icon: 'fa-language' },
+                { name: 'Sanskrit', teacher: 'Dr. A. Shastri', icon: 'fa-om' },
+                { name: 'Urdu', teacher: 'Prof. M. Rahmani', icon: 'fa-moon' },
+                { name: 'Computer / IT', teacher: 'Mr. Gupta', icon: 'fa-laptop' }
+            ],
+            'CBSE_Foundation': [
+                { name: 'Mathematics', teacher: 'Mr. Sharma', icon: 'fa-calculator' },
+                { name: 'Science', teacher: 'Ms. Anjali', icon: 'fa-flask' },
+                { name: 'Social Science', teacher: 'Mr. Bipin', icon: 'fa-earth-americas' },
+                { name: 'English', teacher: 'Ms. Riya', icon: 'fa-book-open' },
+                { name: 'Hindi', teacher: 'Mr. Tiwari', icon: 'fa-language' },
+                { name: 'AI / IT', teacher: 'Mr. Gupta', icon: 'fa-laptop' }
+            ],
+            'PCM': [
+                { name: 'Physics', teacher: 'Mr. HC Verma', icon: 'fa-atom' },
+                { name: 'Physical Chemistry', teacher: 'Dr. H.S. Rathore', icon: 'fa-flask' },
+                { name: 'Organic Chemistry', teacher: 'Prof. N. K. Sharma', icon: 'fa-vials' },
+                { name: 'Inorganic Chemistry', teacher: 'Dr. V. Gupta', icon: 'fa-flask-vial' },
+                { name: 'Mathematics', teacher: 'Mr. Sharma', icon: 'fa-square-root-variable' },
+                { name: 'English', teacher: 'Ms. Riya', icon: 'fa-book-open' }
+            ],
+            'PCB': [
+                { name: 'Physics', teacher: 'Mr. HC Verma', icon: 'fa-atom' },
+                { name: 'Physical Chemistry', teacher: 'Dr. H.S. Rathore', icon: 'fa-flask' },
+                { name: 'Organic Chemistry', teacher: 'Prof. N. K. Sharma', icon: 'fa-vials' },
+                { name: 'Inorganic Chemistry', teacher: 'Dr. V. Gupta', icon: 'fa-flask-vial' },
+                { name: 'Botany', teacher: 'Ms. Kavita', icon: 'fa-leaf' },
+                { name: 'Zoology', teacher: 'Dr. P. Rao', icon: 'fa-frog' },
+                { name: 'English', teacher: 'Ms. Riya', icon: 'fa-book-open' }
+            ],
+            'Commerce': [
+                { name: 'Accountancy', teacher: 'CA V. Malhotra', icon: 'fa-file-invoice-dollar' },
+                { name: 'Business Studies', teacher: 'Ms. Pooja', icon: 'fa-briefcase' },
+                { name: 'Economics', teacher: 'Mr. Jain', icon: 'fa-chart-line' },
+                { name: 'Applied Mathematics', teacher: 'Mr. A. Verma', icon: 'fa-calculator' },
+                { name: 'English', teacher: 'Ms. Riya', icon: 'fa-book-open' }
+            ],
+            'Arts': [
+                { name: 'History', teacher: 'Mr. Bipin', icon: 'fa-landmark' },
+                { name: 'Geography', teacher: 'Ms. Majid', icon: 'fa-earth-americas' },
+                { name: 'Political Science', teacher: 'Mr. Laxmikanth', icon: 'fa-scale-balanced' },
+                { name: 'Economics', teacher: 'Mr. Jain', icon: 'fa-chart-line' },
+                { name: 'Sociology', teacher: 'Ms. Neha', icon: 'fa-users' },
+                { name: 'English', teacher: 'Ms. Riya', icon: 'fa-book-open' }
+            ],
+            'JEE': [
+                { name: 'Advanced Physics', teacher: 'Mr. HC Verma', icon: 'fa-atom' },
+                { name: 'Physical Chemistry', teacher: 'Dr. H.S. Rathore', icon: 'fa-flask' },
+                { name: 'Organic Chemistry', teacher: 'Prof. N. K. Sharma', icon: 'fa-vials' },
+                { name: 'Inorganic Chemistry', teacher: 'Dr. V. Gupta', icon: 'fa-flask-vial' },
+                { name: 'Advanced Mathematics', teacher: 'Mr. Sharma', icon: 'fa-square-root-variable' }
+            ],
+            'NEET': [
+                { name: 'Medical Physics', teacher: 'Mr. HC Verma', icon: 'fa-atom' },
+                { name: 'Physical Chemistry', teacher: 'Dr. H.S. Rathore', icon: 'fa-flask' },
+                { name: 'Organic Chemistry', teacher: 'Prof. N. K. Sharma', icon: 'fa-vials' },
+                { name: 'Inorganic Chemistry', teacher: 'Dr. V. Gupta', icon: 'fa-flask-vial' },
+                { name: 'Botany', teacher: 'Ms. Kavita', icon: 'fa-leaf' },
+                { name: 'Zoology', teacher: 'Dr. P. Rao', icon: 'fa-frog' }
+            ],
+            'CUET': [
+                { name: 'Physics & Chemistry', teacher: 'Mr. HC Verma / Mr. Das', icon: 'fa-flask' },
+                { name: 'Mathematics / Biology', teacher: 'Mr. Sharma / Ms. Priya', icon: 'fa-dna' },
+                { name: 'General Test (Aptitude & Reasoning)', teacher: 'Mr. Kumar', icon: 'fa-brain' },
+                { name: 'English Language', teacher: 'Ms. Riya', icon: 'fa-language' }
+            ],
+            'UPSC': [
+                { name: 'Polity & Governance', teacher: 'Mr. Laxmikanth', icon: 'fa-scale-balanced' },
+                { name: 'History & Culture', teacher: 'Mr. Bipin', icon: 'fa-landmark' },
+                { name: 'Geography & Environment', teacher: 'Ms. Majid', icon: 'fa-earth-asia' },
+                { name: 'Economy', teacher: 'Mr. Jain', icon: 'fa-chart-line' },
+                { name: 'CSAT', teacher: 'Mr. Sharma', icon: 'fa-brain' },
+                { name: 'Current Affairs', teacher: 'Mr. Kumar', icon: 'fa-newspaper' }
+            ],
+            'Defense': [
+                { name: 'NDA Mathematics', teacher: 'Mr. Sharma', icon: 'fa-square-root-variable' },
+                { name: 'Physics & Chemistry', teacher: 'Mr. HC Verma', icon: 'fa-atom' },
+                { name: 'English', teacher: 'Ms. Riya', icon: 'fa-book-open' },
+                { name: 'General Studies', teacher: 'Mr. Bipin', icon: 'fa-globe' }
+            ],
+            'Banking': [
+                { name: 'Quantitative Aptitude', teacher: 'Mr. Sharma', icon: 'fa-calculator' },
+                { name: 'Reasoning Ability', teacher: 'Mr. Kumar', icon: 'fa-brain' },
+                { name: 'English Language', teacher: 'Ms. Riya', icon: 'fa-book-open' },
+                { name: 'General/Banking Awareness', teacher: 'Mr. Jain', icon: 'fa-money-bill-trend-up' }
+            ],
+            'Law': [
+                { name: 'Legal Reasoning', teacher: 'Mr. Advocate', icon: 'fa-gavel' },
+                { name: 'Logical Reasoning', teacher: 'Mr. Kumar', icon: 'fa-brain' },
+                { name: 'General Knowledge', teacher: 'Mr. Bipin', icon: 'fa-globe' },
+                { name: 'English', teacher: 'Ms. Riya', icon: 'fa-book-open' }
+            ]
+        };
+
+        // 300+ EXAMS ENGINE
         function generateAllBatches() {
             var list = [];
             var allBoards = [
@@ -162,85 +271,93 @@
                 "Mizoram Board", "Manipur Board", "Nagaland Board", "Tripura Board", "Sikkim Board"
             ];
 
-            // 1. BOARDS (31 Boards * 6 Categories)
+            // 1. BOARDS 
             for(var i=0; i<allBoards.length; i++) {
                 var board = allBoards[i];
                 var cat = (board.indexOf('CBSE') !== -1 || board.indexOf('ICSE') !== -1 || board.indexOf('NIOS') !== -1) ? 'CBSE' : 'STATE';
                 var shortName = board.split(' ')[0];
                 
+                var foundType = cat === 'STATE' ? 'State_Foundation' : 'CBSE_Foundation';
                 var foundDesc = cat === 'STATE' ? 'Maths, Science, SST, Sanskrit, Urdu, Hindi, Eng, IT.' : 'Maths, Science, SST, Hindi, English, AI/IT.';
 
-                list.push({ id: 'b_' + i + '_9', cat: cat, tag: shortName + ' Board', title: board + ' Class 9', type: 'Class9_10', isState: (cat==='STATE'), desc: foundDesc, p_basic: 199, p_pro: 399 });
-                list.push({ id: 'b_' + i + '_10', cat: cat, tag: shortName + ' Board', title: board + ' Class 10 Target', type: 'Class9_10', isState: (cat==='STATE'), desc: foundDesc, p_basic: 199, p_pro: 399 });
-                list.push({ id: 'b_' + i + '_11pcm', cat: cat, tag: shortName + ' Board', title: board + ' Class 11 (PCM)', type: 'PCM', isState: false, desc: 'Physics, Physical/Org/Inorg Chemistry, Maths.', p_basic: 299, p_pro: 599 });
-                list.push({ id: 'b_' + i + '_11pcb', cat: cat, tag: shortName + ' Board', title: board + ' Class 11 (PCB)', type: 'PCB', isState: false, desc: 'Physics, Physical/Org/Inorg Chemistry, Botany, Zoology.', p_basic: 299, p_pro: 599 });
-                list.push({ id: 'b_' + i + '_11com', cat: cat, tag: shortName + ' Board', title: board + ' Class 11 Commerce', type: 'Commerce', isState: false, desc: 'Accountancy, BST, Economics, Applied Maths.', p_basic: 299, p_pro: 599 });
-                list.push({ id: 'b_' + i + '_11art', cat: cat, tag: shortName + ' Board', title: board + ' Class 11 Arts', type: 'Arts', isState: false, desc: 'History, Geography, Polity, Sociology, Economics.', p_basic: 299, p_pro: 599 });
+                list.push({ id: 'b_' + i + '_9', cat: cat, tag: shortName + ' Board', title: board + ' Class 9', type: foundType, desc: foundDesc, p_basic: 199, p_pro: 399 });
+                list.push({ id: 'b_' + i + '_10', cat: cat, tag: shortName + ' Board', title: board + ' Class 10 Target', type: foundType, desc: foundDesc, p_basic: 199, p_pro: 399 });
+                list.push({ id: 'b_' + i + '_11pcm', cat: cat, tag: shortName + ' Board', title: board + ' Class 11 (PCM)', type: 'PCM', desc: 'Physics, Physical/Org/Inorg Chemistry, Maths.', p_basic: 299, p_pro: 599 });
+                list.push({ id: 'b_' + i + '_11pcb', cat: cat, tag: shortName + ' Board', title: board + ' Class 11 (PCB)', type: 'PCB', desc: 'Physics, Physical/Org/Inorg Chemistry, Botany, Zoology.', p_basic: 299, p_pro: 599 });
+                list.push({ id: 'b_' + i + '_11com', cat: cat, tag: shortName + ' Board', title: board + ' Class 11 Commerce', type: 'Commerce', desc: 'Accountancy, BST, Economics, Applied Maths.', p_basic: 299, p_pro: 599 });
+                list.push({ id: 'b_' + i + '_11art', cat: cat, tag: shortName + ' Board', title: board + ' Class 11 Arts', type: 'Arts', desc: 'History, Geography, Polity, Sociology, Economics.', p_basic: 299, p_pro: 599 });
                 
-                list.push({ id: 'b_' + i + '_12pcm', cat: cat, tag: shortName + ' Board', title: board + ' Class 12 (PCM)', type: 'PCM', isState: false, desc: 'Board targeted Physics, Chem (3 parts), Maths.', p_basic: 299, p_pro: 599 });
-                list.push({ id: 'b_' + i + '_12pcb', cat: cat, tag: shortName + ' Board', title: board + ' Class 12 (PCB)', type: 'PCB', isState: false, desc: 'Board targeted Physics, Chem (3 parts), Botany, Zoology.', p_basic: 299, p_pro: 599 });
-                list.push({ id: 'b_' + i + '_12com', cat: cat, tag: shortName + ' Board', title: board + ' Class 12 Commerce', type: 'Commerce', isState: false, desc: 'Board targeted Accountancy, BST, Economics.', p_basic: 299, p_pro: 599 });
-                list.push({ id: 'b_' + i + '_12art', cat: cat, tag: shortName + ' Board', title: board + ' Class 12 Arts', type: 'Arts', isState: false, desc: 'Board targeted History, Geography, Polity, Sociology.', p_basic: 299, p_pro: 599 });
+                list.push({ id: 'b_' + i + '_12pcm', cat: cat, tag: shortName + ' Board', title: board + ' Class 12 (PCM)', type: 'PCM', desc: 'Board targeted Physics, Chem (3 parts), Maths.', p_basic: 299, p_pro: 599 });
+                list.push({ id: 'b_' + i + '_12pcb', cat: cat, tag: shortName + ' Board', title: board + ' Class 12 (PCB)', type: 'PCB', desc: 'Board targeted Physics, Chem (3 parts), Botany, Zoology.', p_basic: 299, p_pro: 599 });
+                list.push({ id: 'b_' + i + '_12com', cat: cat, tag: shortName + ' Board', title: board + ' Class 12 Commerce', type: 'Commerce', desc: 'Board targeted Accountancy, BST, Economics.', p_basic: 299, p_pro: 599 });
+                list.push({ id: 'b_' + i + '_12art', cat: cat, tag: shortName + ' Board', title: board + ' Class 12 Arts', type: 'Arts', desc: 'Board targeted History, Geography, Polity, Sociology.', p_basic: 299, p_pro: 599 });
             }
 
-            // 2. COMPETITIVE EXAMS (Neet 11, 12, Dropper etc.)
-            list.push({ id: 'c_neet_11', cat: 'NEET', tag: 'NEET Class 11', title: 'NEET-UG Class 11 Target', type: 'NEET', isState: false, desc: 'Class 11 Botany, Zoology, Physics & Chem (3 Parts).', p_basic: 499, p_pro: 999 });
-            list.push({ id: 'c_neet_12', cat: 'NEET', tag: 'NEET Class 12', title: 'NEET-UG Class 12 Target', type: 'NEET', isState: false, desc: 'Class 12 Botany, Zoology, Physics & Chem (3 Parts).', p_basic: 499, p_pro: 999 });
-            list.push({ id: 'c_neet_drop', cat: 'NEET', tag: 'NEET Dropper', title: 'NEET-UG Dropper Batch', type: 'NEET', isState: false, desc: '11th + 12th Complete Syllabus. Physics, Chem (3 Parts), Botany, Zoology.', p_basic: 599, p_pro: 1199 });
+            // 2. COMPETITIVE EXAMS
+            list.push({ id: 'c_neet_11', cat: 'NEET', tag: 'NEET Class 11', title: 'NEET-UG Class 11 Target', type: 'NEET', desc: 'Class 11 Botany, Zoology, Physics & Chem (3 Parts).', p_basic: 499, p_pro: 999 });
+            list.push({ id: 'c_neet_12', cat: 'NEET', tag: 'NEET Class 12', title: 'NEET-UG Class 12 Target', type: 'NEET', desc: 'Class 12 Botany, Zoology, Physics & Chem (3 Parts).', p_basic: 499, p_pro: 999 });
+            list.push({ id: 'c_neet_drop', cat: 'NEET', tag: 'NEET Dropper', title: 'NEET-UG Dropper Batch', type: 'NEET', desc: '11th + 12th Complete Syllabus. Physics, Chem (3 Parts), Botany, Zoology.', p_basic: 599, p_pro: 1199 });
             
-            list.push({ id: 'c_jee_11', cat: 'JEE', tag: 'JEE Class 11', title: 'JEE Main & Adv Class 11', type: 'JEE', isState: false, desc: 'Class 11 Physics, Chemistry (3 Parts) & Maths.', p_basic: 499, p_pro: 999 });
-            list.push({ id: 'c_jee_12', cat: 'JEE', tag: 'JEE Class 12', title: 'JEE Main & Adv Class 12', type: 'JEE', isState: false, desc: 'Class 12 Physics, Chemistry (3 Parts) & Maths.', p_basic: 499, p_pro: 999 });
-            list.push({ id: 'c_jee_drop', cat: 'JEE', tag: 'JEE Dropper', title: 'JEE Main & Adv Dropper Batch', type: 'JEE', isState: false, desc: '11th + 12th Complete PCM Syllabus.', p_basic: 599, p_pro: 1199 });
+            list.push({ id: 'c_jee_11', cat: 'JEE', tag: 'JEE Class 11', title: 'JEE Main & Adv Class 11', type: 'JEE', desc: 'Class 11 Physics, Chemistry (3 Parts) & Maths.', p_basic: 499, p_pro: 999 });
+            list.push({ id: 'c_jee_12', cat: 'JEE', tag: 'JEE Class 12', title: 'JEE Main & Adv Class 12', type: 'JEE', desc: 'Class 12 Physics, Chemistry (3 Parts) & Maths.', p_basic: 499, p_pro: 999 });
+            list.push({ id: 'c_jee_drop', cat: 'JEE', tag: 'JEE Dropper', title: 'JEE Main & Adv Dropper Batch', type: 'JEE', desc: '11th + 12th Complete PCM Syllabus.', p_basic: 599, p_pro: 1199 });
 
-            list.push({ id: 'c_upsc_ias', cat: 'UPSC', tag: 'UPSC CSE', title: 'UPSC IAS Foundation', type: 'UPSC', isState: false, desc: 'History, Polity, Geography, Economy, Ethics, CSAT.', p_basic: 999, p_pro: 1999 });
-            list.push({ id: 'c_cuet_sci', cat: 'CUET', tag: 'CUET UG', title: 'CUET Science Domain', type: 'CUET', isState: false, desc: 'Physics, Chemistry, Maths, Bio, Gen Test, English.', p_basic: 399, p_pro: 699 });
-            list.push({ id: 'c_bank_po', cat: 'BANKING', tag: 'SBI/IBPS', title: 'Banking PO Target', type: 'Banking', isState: false, desc: 'Quant, Reasoning, English, Banking Awareness.', p_basic: 399, p_pro: 799 });
-            list.push({ id: 'c_nda', cat: 'DEFENSE', tag: 'NDA/NA', title: 'NDA Complete Prep', type: 'Defense', isState: false, desc: 'NDA Maths, Physics, GK, English.', p_basic: 399, p_pro: 799 });
-            list.push({ id: 'c_clat', cat: 'LAW', tag: 'CLAT', title: 'CLAT & Law Entrance', type: 'Law', isState: false, desc: 'Legal & Logical Reasoning, GK, English.', p_basic: 499, p_pro: 999 });
+            list.push({ id: 'c_upsc_ias', cat: 'UPSC', tag: 'UPSC CSE', title: 'UPSC IAS Foundation', type: 'UPSC', desc: 'History, Polity, Geography, Economy, Ethics, CSAT.', p_basic: 999, p_pro: 1999 });
+            list.push({ id: 'c_cuet_sci', cat: 'CUET', tag: 'CUET UG', title: 'CUET Science Domain', type: 'CUET', desc: 'Physics, Chemistry, Maths, Bio, Gen Test, English.', p_basic: 399, p_pro: 699 });
+            list.push({ id: 'c_bank_po', cat: 'BANKING', tag: 'SBI/IBPS', title: 'Banking PO Target', type: 'Banking', desc: 'Quant, Reasoning, English, Banking Awareness.', p_basic: 399, p_pro: 799 });
+            list.push({ id: 'c_nda', cat: 'DEFENSE', tag: 'NDA/NA', title: 'NDA Complete Prep', type: 'Defense', desc: 'NDA Maths, Physics, GK, English.', p_basic: 399, p_pro: 799 });
+            list.push({ id: 'c_clat', cat: 'LAW', tag: 'CLAT', title: 'CLAT & Law Entrance', type: 'Law', desc: 'Legal & Logical Reasoning, GK, English.', p_basic: 499, p_pro: 999 });
 
             return list;
         }
 
         allBatchesCache = generateAllBatches();
 
-        // UI RENDER ENGINE (Safe String Building)
+        // UI RENDER ENGINE WITH FAIL-SAFE
         function renderBatches() {
-            var container = document.getElementById('batchesList');
-            var search = document.getElementById('searchInput').value.toLowerCase();
-            container.innerHTML = '';
+            try {
+                var container = document.getElementById('batchesList');
+                if(!container) return;
+                
+                var searchEl = document.getElementById('searchInput');
+                var search = searchEl ? searchEl.value.toLowerCase() : '';
+                container.innerHTML = '';
 
-            var filtered = [];
-            for(var i=0; i<allBatchesCache.length; i++) {
-                var b = allBatchesCache[i];
-                var matchesCat = (currentCategory === 'ALL' || b.cat === currentCategory);
-                var matchesSearch = b.title.toLowerCase().indexOf(search) !== -1 || b.desc.toLowerCase().indexOf(search) !== -1;
-                if(matchesCat && matchesSearch) {
-                    filtered.push(b);
+                var filtered = [];
+                for(var i=0; i<allBatchesCache.length; i++) {
+                    var b = allBatchesCache[i];
+                    var matchesCat = (currentCategory === 'ALL' || b.cat === currentCategory);
+                    var matchesSearch = b.title.toLowerCase().indexOf(search) !== -1 || b.desc.toLowerCase().indexOf(search) !== -1;
+                    if(matchesCat && matchesSearch) {
+                        filtered.push(b);
+                    }
                 }
-            }
 
-            if(filtered.length === 0) {
-                container.innerHTML = '<div style="text-align:center; padding:30px; color:var(--text-muted);">No batches found.</div>';
-                return;
-            }
+                if(filtered.length === 0) {
+                    container.innerHTML = '<div style="text-align:center; padding:30px; color:var(--text-muted);">No batches found.</div>';
+                    return;
+                }
 
-            var finalHTML = '';
-            for(var j=0; j<filtered.length; j++) {
-                var fb = filtered[j];
-                finalHTML += '<div class="batch-card">' +
-                    '<span class="batch-tag">' + fb.tag + '</span>' +
-                    '<div class="batch-title">' + fb.title + '</div>' +
-                    '<div class="batch-desc">' + fb.desc + '</div>' +
-                    '<div class="batch-footer">' +
-                        '<div><span class="batch-price-sub">Starting From</span><span class="batch-price">₹' + fb.p_basic + '/yr</span></div>' +
-                        '<div class="btn-row">' +
-                            '<button class="btn-details" onclick="openDetails(\'' + fb.id + '\')">Details</button>' +
-                            '<button class="btn-buy" onclick="openPricing(\'' + fb.id + '\')">Buy Pass</button>' +
+                var finalHTML = '';
+                for(var j=0; j<filtered.length; j++) {
+                    var fb = filtered[j];
+                    finalHTML += '<div class="batch-card">' +
+                        '<span class="batch-tag">' + fb.tag + '</span>' +
+                        '<div class="batch-title">' + fb.title + '</div>' +
+                        '<div class="batch-desc">' + fb.desc + '</div>' +
+                        '<div class="batch-footer">' +
+                            '<div><span class="batch-price-sub">Starting From</span><span class="batch-price">₹' + fb.p_basic + '/yr</span></div>' +
+                            '<div class="btn-row">' +
+                                '<button class="btn-details" onclick="openDetails(\'' + fb.id + '\')">Details</button>' +
+                                '<button class="btn-buy" onclick="openPricing(\'' + fb.id + '\')">Buy Pass</button>' +
+                            '</div>' +
                         '</div>' +
-                    '</div>' +
-                '</div>';
+                    '</div>';
+                }
+                container.innerHTML = finalHTML;
+            } catch(e) {
+                document.getElementById('batchesList').innerHTML = '<div style="color:red; padding:20px;">System Error: ' + e.message + '</div>';
             }
-            container.innerHTML = finalHTML;
         }
 
         function setCategory(cat, el) {
@@ -253,123 +370,15 @@
 
         function filterRender() { renderBatches(); }
 
-        // DYNAMIC UNIQUE FACULTY ASSIGNER LOGIC
-        // Isse guarantee milti hai ki koi teacher galat batch me na jaaye.
         function openDetails(id) {
-            for(var i=0; i<allBatchesCache.length; i++) { 
-                if(allBatchesCache[i].id === id) selectedBatchObj = allBatchesCache[i]; 
-            }
-            
+            for(var i=0; i<allBatchesCache.length; i++) { if(allBatchesCache[i].id === id) selectedBatchObj = allBatchesCache[i]; }
             document.getElementById('detailsTitle').innerText = selectedBatchObj.title;
             
-            // Extract board index to make unique teachers
-            var bIndex = 0;
-            if(selectedBatchObj.id.indexOf('b_') === 0) {
-                bIndex = parseInt(selectedBatchObj.id.split('_')[1]);
-            }
-
-            // Arrays of Unique Real Names
-            var mathT = ['Mr. Sharma', 'Mr. R.K. Singh', 'Mr. A. Mathur', 'Prof. Jha', 'Mr. Bansal'];
-            var phyT = ['Mr. HC Verma', 'Mr. P. Pandey', 'Dr. S. Yadav, 'Prof. N. K. Sinha', 'Mr. V. Desai'];
-            var chemT = ['Mr. Das', 'Dr. H.S. Rathore', 'Ms. Neha', 'Prof. V. Gupta', 'Dr. A. K. Singh'];
-            var bioT = ['Ms. Priya', 'Ms. Kavita', 'Dr. P. Rao', 'Ms. S. Nair', 'Dr. M. Ali'];
-            var sstT = ['Mr. Bipin', 'Ms. Majid', 'Mr. Laxmikanth', 'Mr. Jain', 'Prof. A. K. Jha'];
-            var langT = ['Ms. Rachna, 'Mr. Tiwari', 'Dr. A. Shastri', 'Prof. M. Rahmani', 'Ms. S. Gupta'];
-
-            var bType = selectedBatchObj.type;
-            var isState = selectedBatchObj.isState;
-            var boardName = selectedBatchObj.title.split(' ')[0]; // e.g. "Bihar", "CBSE"
-
-            var subs = [];
-            
-            if(bType === 'Class9_10') {
-                subs.push({ name: 'Mathematics', teacher: mathT[bIndex%5] + ' (' + boardName + ' Expert)', icon: 'fa-calculator' });
-                subs.push({ name: 'Physics', teacher: phyT[bIndex%5], icon: 'fa-atom' });
-                subs.push({ name: 'Chemistry', teacher: chemT[bIndex%5], icon: 'fa-flask' });
-                subs.push({ name: 'Biology', teacher: bioT[bIndex%5], icon: 'fa-dna' });
-                subs.push({ name: 'History & Civics', teacher: sstT[bIndex%5], icon: 'fa-landmark' });
-                subs.push({ name: 'Geography & Econ', teacher: sstT[(bIndex+1)%5], icon: 'fa-earth-americas' });
-                subs.push({ name: 'English Literature', teacher: langT[bIndex%5], icon: 'fa-book-open' });
-                subs.push({ name: 'Hindi / Regional', teacher: langT[(bIndex+1)%5], icon: 'fa-language' });
-                if(isState) {
-                    subs.push({ name: 'Sanskrit', teacher: 'Dr. A. Shastri', icon: 'fa-om' });
-                    subs.push({ name: 'Urdu', teacher: 'Prof. M. Rahmani', icon: 'fa-moon' });
-                }
-                subs.push({ name: 'Computer Applications', teacher: 'Mr. Gupta', icon: 'fa-laptop' });
-            } 
-            else if(bType === 'PCM') {
-                subs.push({ name: 'Physics', teacher: phyT[bIndex%5] + ' (Class 11/12 Expert)', icon: 'fa-atom' });
-                subs.push({ name: 'Physical Chemistry', teacher: chemT[bIndex%5], icon: 'fa-flask' });
-                subs.push({ name: 'Organic Chemistry', teacher: chemT[(bIndex+1)%5], icon: 'fa-vials' });
-                subs.push({ name: 'Inorganic Chemistry', teacher: chemT[(bIndex+2)%5], icon: 'fa-flask-vial' });
-                subs.push({ name: 'Mathematics', teacher: mathT[bIndex%5], icon: 'fa-square-root-variable' });
-                subs.push({ name: 'English Core', teacher: langT[bIndex%5], icon: 'fa-book-open' });
-            }
-            else if(bType === 'PCB') {
-                subs.push({ name: 'Physics', teacher: phyT[bIndex%5] + ' (Class 11/12 Expert)', icon: 'fa-atom' });
-                subs.push({ name: 'Physical Chemistry', teacher: chemT[bIndex%5], icon: 'fa-flask' });
-                subs.push({ name: 'Organic Chemistry', teacher: chemT[(bIndex+1)%5], icon: 'fa-vials' });
-                subs.push({ name: 'Inorganic Chemistry', teacher: chemT[(bIndex+2)%5], icon: 'fa-flask-vial' });
-                subs.push({ name: 'Botany', teacher: bioT[bIndex%5], icon: 'fa-leaf' });
-                subs.push({ name: 'Zoology', teacher: bioT[(bIndex+1)%5], icon: 'fa-frog' });
-                subs.push({ name: 'English Core', teacher: langT[bIndex%5], icon: 'fa-book-open' });
-            }
-            else if(bType === 'Commerce') {
-                subs.push({ name: 'Accountancy', teacher: 'CA V. Malhotra', icon: 'fa-file-invoice-dollar' });
-                subs.push({ name: 'Business Studies', teacher: 'Ms. Pooja', icon: 'fa-briefcase' });
-                subs.push({ name: 'Economics', teacher: sstT[bIndex%5], icon: 'fa-chart-line' });
-                subs.push({ name: 'Applied Mathematics', teacher: mathT[bIndex%5], icon: 'fa-calculator' });
-                subs.push({ name: 'English Core', teacher: langT[bIndex%5], icon: 'fa-book-open' });
-            }
-            else if(bType === 'Arts') {
-                subs.push({ name: 'History', teacher: sstT[bIndex%5], icon: 'fa-landmark' });
-                subs.push({ name: 'Geography', teacher: sstT[(bIndex+1)%5], icon: 'fa-earth-americas' });
-                subs.push({ name: 'Political Science', teacher: sstT[(bIndex+2)%5], icon: 'fa-scale-balanced' });
-                subs.push({ name: 'Economics', teacher: sstT[(bIndex+3)%5], icon: 'fa-chart-line' });
-                subs.push({ name: 'Sociology/Psychology', teacher: 'Ms. Neha', icon: 'fa-users' });
-                subs.push({ name: 'English Core', teacher: langT[bIndex%5], icon: 'fa-book-open' });
-            }
-            else if(bType === 'NEET') {
-                subs.push({ name: 'Medical Physics', teacher: 'Dr. H.C. Verma (NEET Specialist)', icon: 'fa-atom' });
-                subs.push({ name: 'Physical Chemistry', teacher: 'Dr. H.S. Rathore', icon: 'fa-flask' });
-                subs.push({ name: 'Organic Chemistry', teacher: 'Prof. N.K. Sharma', icon: 'fa-vials' });
-                subs.push({ name: 'Inorganic Chemistry', teacher: 'Dr. V. Gupta', icon: 'fa-flask-vial' });
-                subs.push({ name: 'Botany', teacher: 'Ms. Kavita (Medical Bio)', icon: 'fa-leaf' });
-                subs.push({ name: 'Zoology', teacher: 'Dr. P. Rao (Medical Bio)', icon: 'fa-frog' });
-            }
-            else if(bType === 'JEE') {
-                subs.push({ name: 'Advanced Physics', teacher: 'Prof. H.C. Verma (JEE Specialist)', icon: 'fa-atom' });
-                subs.push({ name: 'Physical Chemistry', teacher: 'Dr. H.S. Rathore', icon: 'fa-flask' });
-                subs.push({ name: 'Organic Chemistry', teacher: 'Prof. N.K. Sharma', icon: 'fa-vials' });
-                subs.push({ name: 'Inorganic Chemistry', teacher: 'Dr. V. Gupta', icon: 'fa-flask-vial' });
-                subs.push({ name: 'Advanced Mathematics', teacher: 'Mr. J.P. Singh (Olympiad Mentor)', icon: 'fa-square-root-variable' });
-            }
-            else if(bType === 'UPSC') {
-                subs.push({ name: 'Polity & Governance', teacher: 'Mr. Laxmikanth', icon: 'fa-scale-balanced' });
-                subs.push({ name: 'History & Culture', teacher: 'Mr. Bipin', icon: 'fa-landmark' });
-                subs.push({ name: 'Geography & Environment', teacher: 'Ms. Majid', icon: 'fa-earth-asia' });
-                subs.push({ name: 'Economy', teacher: 'Mr. Jain', icon: 'fa-chart-line' });
-                subs.push({ name: 'CSAT', teacher: 'Mr. Sharma', icon: 'fa-brain' });
-            }
-            else {
-                // Fallback for Banking, Defense, Law, CUET
-                subs.push({ name: 'General Aptitude & Reasoning', teacher: 'Mr. Kumar', icon: 'fa-brain' });
-                subs.push({ name: 'General Knowledge', teacher: 'Mr. Bipin', icon: 'fa-globe' });
-                subs.push({ name: 'English Language', teacher: 'Ms. Riya', icon: 'fa-book-open' });
-                subs.push({ name: 'Core Subjects', teacher: 'Expert Faculty', icon: 'fa-book' });
-            }
-
-            // Create HTML safely
+            var subs = subjectMapping[selectedBatchObj.type] || subjectMapping['State_Foundation'];
             var html = '';
-            for(var k=0; k<subs.length; k++) {
-                var s = subs[k];
-                html += '<div class="sub-card">' +
-                        '<div class="sub-icon"><i class="fa-solid ' + s.icon + '"></i></div>' +
-                        '<div><h4 style="color:var(--text-main); font-size:14px; margin-bottom:2px;">' + s.name + '</h4>' +
-                        '<small style="color:var(--gold-color); font-weight:700;"><i class="fa-solid fa-chalkboard-user"></i> Faculty: ' + s.teacher + '</small></div>' +
-                        '</div>';
+            for(var j=0; j<subs.length; j++) {
+                html += '<div class="sub-card"><div class="sub-icon"><i class="fa-solid ' + subs[j].icon + '"></i></div><div><h4 style="color:var(--text-main); font-size:14px; margin-bottom:2px;">' + subs[j].name + '</h4><small style="color:var(--gold-color); font-weight:700;"><i class="fa-solid fa-chalkboard-user"></i> Faculty: ' + subs[j].teacher + '</small></div></div>';
             }
-            
             document.getElementById('detailsSubjectsList').innerHTML = html;
             document.getElementById('detailsModal').style.display = 'flex';
         }
@@ -402,7 +411,8 @@
             window.location.href = 'payment.html';
         }
 
-        window.onload = function() { renderBatches(); };
+        // IMMEDIATE EXECUTION TO PREVENT BLANK SCREEN
+        renderBatches();
     </script>
 </body>
 </html>
