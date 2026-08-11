@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>TicBull Academy - Secure Checkout</title>
+    
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#2563eb">
+    <link rel="apple-touch-icon" href="logo.png">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <style>
+        /* 100% ORIGINAL CSS VARIABLES & BASE */
+        :root { --bg-color: #030712; --card-bg: #0f172a; --accent-color: #9f1239; --text-main: #f8fafc; --text-muted: #94a3b8; --border-color: rgba(255, 255, 255, 0.12); --success-color: #10b981; --gold-color: #f59e0b; --input-bg: #1e293b; }
+        body.light-theme { --bg-color: #f1f5f9; --card-bg: #ffffff; --text-main: #0f172a; --text-muted: #64748b; --border-color: #cbd5e1; --input-bg: #ffffff; }
+        * { margin:0; padding:0; box-sizing:border-box; font-family:-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; -webkit-tap-highlight-color: transparent; }
+        body { background: var(--bg-color); color: var(--text-main); display:flex; flex-direction:column; min-height: 100vh; overflow-x: hidden; transition: background 0.3s, color 0.3s; }
+
+        /* TOP BAR */
+        .top-bar { display:flex; justify-content:center; align-items:center; padding:15px 20px; z-index:50; background: var(--card-bg); border-bottom: 1px solid var(--border-color); position: sticky; top: 0; }
+        .back-btn { position: absolute; left: 20px; background:transparent; border:none; color:var(--text-main); font-size:20px; cursor:pointer; display:flex; align-items:center; }
+        .checkout-title { font-size: 16px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; color: var(--text-muted); }
+        .secure-badge { position: absolute; right: 20px; color: var(--success-color); font-size: 18px; }
+
+        .container { flex: 1; padding: 20px; display: flex; flex-direction: column; gap: 20px; max-width: 600px; margin: 0 auto; width: 100%; }
+
+        /* ORDER SUMMARY CARD */
+        .summary-card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 20px; padding: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+        .summary-header { display: flex; align-items: center; gap: 12px; margin-bottom: 15px; padding-bottom: 15px; border-bottom: 1px dashed var(--border-color); }
+        .summary-icon { width: 45px; height: 45px; background: rgba(159, 18, 57, 0.1); color: var(--accent-color); border-radius: 12px; display: flex; justify-content: center; align-items: center; font-size: 20px; }
+        .batch-name { font-size: 16px; font-weight: 800; color: var(--text-main); }
+        .plan-name { font-size: 12px; color: var(--gold-color); font-weight: 700; background: rgba(245, 158, 11, 0.1); padding: 3px 8px; border-radius: 6px; display: inline-block; margin-top: 4px; }
+        
+        .price-row { display: flex; justify-content: space-between; font-size: 14px; color: var(--text-muted); margin-bottom: 10px; }
+        .price-row.total { border-top: 1px dashed var(--border-color); padding-top: 15px; margin-top: 5px; font-size: 18px; font-weight: 800; color: var(--text-main); margin-bottom: 0; }
+        .price-row.total span:last-child { color: var(--success-color); }
+
+        /* PAYMENT METHODS */
+        .section-title { font-size: 14px; font-weight: 800; color: var(--text-muted); margin-top: 10px; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 0.5px; }
+        
+        .method-card { background: var(--input-bg); border: 1px solid var(--border-color); border-radius: 16px; padding: 16px; margin-bottom: 12px; display: flex; align-items: center; gap: 15px; cursor: pointer; transition: 0.2s; position: relative; }
+        .method-card.active { border-color: var(--accent-color); background: rgba(159, 18, 57, 0.05); }
+        .method-card.active::after { content: '\f058'; font-family: "Font Awesome 6 Free"; font-weight: 900; position: absolute; right: 16px; color: var(--success-color); font-size: 20px; }
+        .method-icon { width: 40px; height: 40px; background: var(--card-bg); border-radius: 10px; display: flex; justify-content: center; align-items: center; font-size: 18px; border: 1px solid var(--border-color); }
+        .method-info h4 { font-size: 15px; color: var(--text-main); margin-bottom: 3px; }
+        .method-info p { font-size: 11px; color: var(--text-muted); }
+
+        /* Upi Logos */
+        .upi-logos { display: flex; gap: 8px; margin-top: 5px; }
+        .upi-logos i { font-size: 14px; color: var(--text-muted); }
+
+        /* PAY BUTTON */
+        .btn-pay { background: var(--success-color); color: #fff; font-weight: 800; padding: 18px; border: none; border-radius: 16px; cursor: pointer; font-size: 16px; margin-top: 10px; transition: 0.2s; box-shadow: 0 8px 20px rgba(16, 185, 129, 0.3); display: flex; justify-content: center; align-items: center; gap: 10px; width: 100%; }
+        .btn-pay:active { transform: scale(0.97); }
+
+        /* PROCESSING OVERLAY */
+        .processing-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg-color); z-index: 9999; display: none; flex-direction: column; justify-content: center; align-items: center; }
+        .loader-spinner { width: 50px; height: 50px; border: 4px solid var(--border-color); border-top: 4px solid var(--accent-color); border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 20px; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .processing-text { font-size: 16px; font-weight: 700; color: var(--text-main); margin-bottom: 8px; }
+        .processing-subtext { font-size: 12px; color: var(--text-muted); }
+        
+        .success-icon { font-size: 60px; color: var(--success-color); margin-bottom: 20px; display: none; animation: popIn 0.5s ease; }
+        @keyframes popIn { 0% { opacity:0; transform:scale(0.5); } 100% { opacity:1; transform:scale(1); } }
+    </style>
+</head>
+<body>
+
+    <!-- TOP BAR -->
+    <div class="top-bar">
+        <button class="back-btn" onclick="goBack()"><i class="fa-solid fa-arrow-left"></i></button>
+        <div class="checkout-title">Secure Checkout</div>
+        <div class="secure-badge"><i class="fa-solid fa-shield-halved"></i></div>
+    </div>
+
+    <div class="container">
+        <!-- ORDER SUMMARY -->
+        <div class="summary-card">
+            <div class="summary-header">
+                <div class="summary-icon"><i class="fa-solid fa-graduation-cap"></i></div>
+                <div>
+                    <div class="batch-name" id="displayBatchName">Loading Batch...</div>
+                    <div class="plan-name" id="displayPlanTier">Loading Plan...</div>
+                </div>
+            </div>
+            
+            <div class="price-row">
+                <span>Base Price</span>
+                <span id="displayBasePrice">₹0</span>
+            </div>
+            <div class="price-row">
+                <span>GST (18%)</span>
+                <span id="displayTax">₹0</span>
+            </div>
+            <div class="price-row total">
+                <span>Total Amount</span>
+                <span id="displayTotalAmount">₹0</span>
+            </div>
+        </div>
+
+        <div class="section-title">Select Payment Method</div>
+
+        <!-- PAYMENT METHODS -->
+        <div class="method-card active" onclick="selectMethod('UPI', this)">
+            <div class="method-icon" style="color: #4285F4;"><i class="fa-brands fa-google-pay"></i></div>
+            <div class="method-info">
+                <h4>UPI (GPay, PhonePe, Paytm)</h4>
+                <div class="upi-logos">
+                    <i class="fa-solid fa-building-columns"></i> Fast & Secure
+                </div>
+            </div>
+        </div>
+
+        <div class="method-card" onclick="selectMethod('CARD', this)">
+            <div class="method-icon" style="color: #6366f1;"><i class="fa-regular fa-credit-card"></i></div>
+            <div class="method-info">
+                <h4>Credit / Debit Card</h4>
+                <p>Visa, MasterCard, RuPay accepted</p>
+            </div>
+        </div>
+
+        <div class="method-card" onclick="selectMethod('NETBANKING', this)">
+            <div class="method-icon" style="color: #f59e0b;"><i class="fa-solid fa-building-columns"></i></div>
+            <div class="method-info">
+                <h4>Net Banking</h4>
+                <p>All major Indian banks available</p>
+            </div>
+        </div>
+
+        <!-- PAY BUTTON -->
+        <button class="btn-pay" onclick="processPayment()">
+            PAY <span id="btnAmount">₹0</span> <i class="fa-solid fa-lock"></i>
+        </button>
+    </div>
+
+    <!-- PROCESSING OVERLAY -->
+    <div class="processing-overlay" id="processingOverlay">
+        <div class="loader-spinner" id="spinner"></div>
+        <i class="fa-solid fa-circle-check success-icon" id="successIcon"></i>
+        <div class="processing-text" id="procText">Processing Payment...</div>
+        <div class="processing-subtext" id="procSubText">Please do not press back or close the app</div>
+    </div>
+
+    <script>
+        // Check Authentication and Theme
+        window.addEventListener('DOMContentLoaded', function() {
+            var savedEmail = localStorage.getItem('ticbull_email');
+            var savedToken = localStorage.getItem('ticbull_token');
+            if(!savedEmail || !savedToken) {
+                if(window.location.hostname !== 'localhost') { window.location.href = "index.html"; return; }
+            }
+            
+            var isLight = localStorage.getItem('ticbull_theme') === 'light';
+            if(isLight) { document.body.classList.add('light-theme'); }
+
+            loadOrderDetails();
+        });
+
+        function goBack() {
+            window.location.href = 'batches.html';
+        }
+
+        var finalTotal = 0;
+        var selectedMethod = 'UPI';
+
+        // Load details from Session Storage (passed from batches.html)
+        function loadOrderDetails() {
+            var batchTitle = sessionStorage.getItem('tb_checkout_title');
+            var batchPrice = sessionStorage.getItem('tb_checkout_price');
+            
+            // If someone opens payment.html directly without selecting a batch
+            if(!batchTitle || !batchPrice) {
+                document.getElementById('displayBatchName').innerText = "TicBull Special Batch";
+                document.getElementById('displayPlanTier').innerText = "Pro Pass";
+                batchPrice = 399; // Default fallback
+            } else {
+                document.getElementById('displayBatchName').innerText = batchTitle;
+                // Add "Pass" string if not present
+                var tier = sessionStorage.getItem('tb_checkout_tier') || 'Pro';
+                document.getElementById('displayPlanTier').innerText = tier + " Pass";
+            }
+
+            var basePrice = parseInt(batchPrice);
+            var tax = Math.round(basePrice * 0.18); // 18% GST calculation
+            finalTotal = basePrice + tax;
+
+            document.getElementById('displayBasePrice').innerText = '₹' + basePrice;
+            document.getElementById('displayTax').innerText = '₹' + tax;
+            document.getElementById('displayTotalAmount').innerText = '₹' + finalTotal;
+            document.getElementById('btnAmount').innerText = '₹' + finalTotal;
+        }
+
+        function selectMethod(method, element) {
+            selectedMethod = method;
+            var cards = document.querySelectorAll('.method-card');
+            for(var i=0; i<cards.length; i++) {
+                cards[i].classList.remove('active');
+            }
+            element.classList.add('active');
+        }
+
+        function processPayment() {
+            // Show processing screen
+            var overlay = document.getElementById('processingOverlay');
+            var spinner = document.getElementById('spinner');
+            var successIcon = document.getElementById('successIcon');
+            var text = document.getElementById('procText');
+            var subtext = document.getElementById('procSubText');
+            
+            overlay.style.display = 'flex';
+            
+            // Step 1: Mock Server Contact
+            setTimeout(function() {
+                text.innerText = "Contacting Bank...";
+                
+                // Step 2: Mock Authentication
+                setTimeout(function() {
+                    text.innerText = "Verifying Payment...";
+                    
+                    // Step 3: Mock Success
+                    setTimeout(function() {
+                        spinner.style.display = 'none';
+                        successIcon.style.display = 'block';
+                        text.innerText = "Payment Successful!";
+                        text.style.color = "var(--success-color)";
+                        subtext.innerText = "Welcome to TicBull Academy. Redirecting...";
+                        
+                        // Mark as purchased in local storage so classroom can read it
+                        var enrolledBatches = JSON.parse(localStorage.getItem('tb_enrolled') || '[]');
+                        var newBatch = {
+                            title: document.getElementById('displayBatchName').innerText,
+                            tier: document.getElementById('displayPlanTier').innerText,
+                            date: new Date().toLocaleDateString()
+                        };
+                        enrolledBatches.push(newBatch);
+                        localStorage.setItem('tb_enrolled', JSON.stringify(enrolledBatches));
+                        
+                        // Step 4: Redirect to Classroom
+                        setTimeout(function() {
+                            window.location.href = 'classroom.html';
+                        }, 2000);
+                        
+                    }, 1500);
+                }, 1500);
+            }, 1000);
+        }
+    </script>
+</body>
+</html>
