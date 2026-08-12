@@ -5,34 +5,61 @@
 <meta name="viewport" content="width=device-width,initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <title>TicBull Academy — Batches</title>
 
-<!-- GLOBAL SYNC INTEGRATION -->
+<!-- GLOBAL ECOSYSTEM LINK -->
 <script src="global.js"></script>
 
 <style>
-/* CSS VARIABLES (Integrated with Theme) */
-:root { 
-    --bg-color: #05070d; 
-    --card-bg: linear-gradient(145deg, #152238, #0f1929);
-    --card-border: #2b3b55;
-    --text-main: #f5f7fb; 
-    --text-muted: #93a1b5; 
-    --accent: #e9155c; 
-    --header-bg: #05070df2;
-    --input-bg: #101827;
-    --input-border: #2b3952;
-    --gold: #ffb51b;
+/* =========================================================
+   EXACT ORIGINAL UI WITH GLOBAL THEME SUPPORT
+========================================================= */
+:root {
+  --bg-main: #05070d;
+  --text-main: #f5f7fb;
+  --text-muted: #93a1b5;
+  --header-bg: #05070df2;
+  --border-color: #202b40;
+  --back-btn-bg: #16243a;
+  --search-bg: #101827;
+  --search-border: #2b3952;
+  --tab-border: #30405c;
+  --filter-bg: #111a2a;
+  --filter-border: #2d3b53;
+  --filter-active: #243650;
+  --card-grad: linear-gradient(145deg, #152238, #0f1929);
+  --card-border: #2b3b55;
+  --badge-bg: #202f46;
+  --more-bg: #293c59;
+  --modal-bg: #0d1727;
+  --subject-bg: #152238;
+  --icon-bg: #281631;
+  --gold: #ffb51b;
+  
+  /* Ye Global settings se color lega, default Pinkish-Red rakha hai */
+  --primary: var(--accent-color, #e9155c); 
 }
 
-body.light-theme { 
-    --bg-color: #f1f5f9; 
-    --card-bg: #ffffff;
-    --card-border: #cbd5e1;
-    --text-main: #0f172a; 
-    --text-muted: #64748b; 
-    --header-bg: rgba(241, 245, 249, 0.95);
-    --input-bg: #ffffff;
-    --input-border: #cbd5e1;
-    --gold: #d97706;
+/* Light Theme Variables */
+body.light-theme {
+  --bg-main: #f3f4f6;
+  --text-main: #111827;
+  --text-muted: #64748b;
+  --header-bg: rgba(243, 244, 246, 0.95);
+  --border-color: #e5e7eb;
+  --back-btn-bg: #e5e7eb;
+  --search-bg: #ffffff;
+  --search-border: #d1d5db;
+  --tab-border: #d1d5db;
+  --filter-bg: #ffffff;
+  --filter-border: #d1d5db;
+  --filter-active: #e5e7eb;
+  --card-grad: linear-gradient(145deg, #ffffff, #f9fafb);
+  --card-border: #e5e7eb;
+  --badge-bg: #f1f5f9;
+  --more-bg: #e2e8f0;
+  --modal-bg: #ffffff;
+  --subject-bg: #f8fafc;
+  --icon-bg: #f1f5f9;
+  --gold: #d97706;
 }
 
 *{box-sizing:border-box}
@@ -40,8 +67,8 @@ body.light-theme {
 body{
   margin:0;
   font-family:Arial,Helvetica,sans-serif;
-  background:var(--bg-color);
-  color:var(--text-main);
+  background: var(--bg-main);
+  color: var(--text-main);
   transition: background 0.3s, color 0.3s;
 }
 
@@ -50,9 +77,9 @@ body{
   position:sticky;
   top:0;
   z-index:20;
-  background:var(--header-bg);
+  background: var(--header-bg);
   backdrop-filter:blur(14px);
-  border-bottom:1px solid var(--input-border);
+  border-bottom:1px solid var(--border-color);
 }
 
 .top{
@@ -63,9 +90,8 @@ body{
 
 .back{
   border:0;
-  background:var(--input-bg);
-  border: 1px solid var(--input-border);
-  color:var(--text-main);
+  background: var(--back-btn-bg);
+  color: var(--text-main);
   width:42px;
   height:42px;
   border-radius:13px;
@@ -79,11 +105,11 @@ body{
 }
 
 .brand span{
-  color:var(--gold);
+  color: var(--gold);
 }
 
 .subtitle{
-  color:var(--text-muted);
+  color: var(--text-muted);
   margin:8px 0 14px 54px;
   font-size:13px;
 }
@@ -92,15 +118,15 @@ body{
   width:100%;
   padding:15px 16px;
   border-radius:15px;
-  border:1px solid var(--input-border);
-  background:var(--input-bg);
-  color:var(--text-main);
+  border:1px solid var(--search-border);
+  background: var(--search-bg);
+  color: var(--text-main);
   outline:none;
   font-size:15px;
 }
 
 .search::placeholder{
-  color:var(--text-muted);
+  color: var(--text-muted);
 }
 
 .tabs{
@@ -114,16 +140,16 @@ body{
   flex:0 0 auto;
   padding:11px 15px;
   border-radius:999px;
-  border:1px solid var(--input-border);
-  background:var(--input-bg);
-  color:var(--text-muted);
+  border:1px solid var(--tab-border);
+  background: var(--search-bg);
+  color: var(--text-muted);
   font-weight:800;
   cursor:pointer;
 }
 
 .tab.active{
-  background:var(--accent);
-  border-color:var(--accent);
+  background: var(--primary);
+  border-color: var(--primary);
   color:white;
 }
 
@@ -138,15 +164,15 @@ body{
   flex:0 0 auto;
   padding:9px 13px;
   border-radius:999px;
-  border:1px solid var(--input-border);
-  background:var(--input-bg);
-  color:var(--text-muted);
+  border:1px solid var(--filter-border);
+  background: var(--filter-bg);
+  color: var(--text-muted);
   cursor:pointer;
 }
 
 .filter.active{
-  background:var(--accent);
-  color:white;
+  background: var(--filter-active);
+  color: var(--text-main);
 }
 
 .main{
@@ -154,7 +180,7 @@ body{
 }
 
 .count{
-  color:var(--text-muted);
+  color: var(--text-muted);
   font-size:14px;
   font-weight:800;
   margin:5px 0 14px;
@@ -166,11 +192,11 @@ body{
 }
 
 .card{
-  background:var(--card-bg);
+  background: var(--card-grad);
   border:1px solid var(--card-border);
   border-radius:21px;
   padding:18px;
-  box-shadow:0 12px 35px rgba(0,0,0,0.1);
+  box-shadow:0 12px 35px rgba(0,0,0,0.2);
 }
 
 .card h2{
@@ -179,7 +205,7 @@ body{
 }
 
 .meta{
-  color:var(--text-muted);
+  color: var(--text-muted);
   font-size:13px;
   margin-bottom:14px;
 }
@@ -191,17 +217,17 @@ body{
 }
 
 .badge{
-  background:var(--input-bg);
-  border: 1px solid var(--input-border);
-  color:var(--text-main);
+  background: var(--badge-bg);
+  color: var(--text-main);
   border-radius:9px;
   padding:7px 9px;
   font-size:12px;
+  border: 1px solid var(--card-border);
 }
 
 .more{
-  background:rgba(37, 99, 235, 0.2);
-  color: #3b82f6;
+  background: var(--more-bg);
+  color: var(--primary);
 }
 
 .price{
@@ -212,12 +238,12 @@ body{
 }
 
 .price strong{
-  color:var(--gold);
+  color: var(--gold);
   font-size:26px;
 }
 
 .old{
-  color:var(--text-muted);
+  color: var(--text-muted);
   text-decoration:line-through;
   font-size:14px;
 }
@@ -238,20 +264,19 @@ body{
 }
 
 .viewBtn{
-  background:var(--input-bg);
-  border: 1px solid var(--input-border);
-  color:var(--text-main);
+  background: var(--filter-active);
+  color: var(--text-main);
 }
 
 .buyBtn{
-  background:var(--accent);
+  background: var(--primary);
   color:white;
 }
 
 .empty{
   text-align:center;
   padding:50px 20px;
-  color:var(--text-muted);
+  color: var(--text-muted);
 }
 
 /* MODAL */
@@ -261,7 +286,7 @@ body{
   position:fixed;
   inset:0;
   z-index:100;
-  background:rgba(0,0,0,0.85);
+  background:rgba(0,0,0,0.8);
   backdrop-filter: blur(5px);
   padding:15px;
   overflow:auto;
@@ -274,7 +299,7 @@ body{
 .modal{
   width:min(680px,100%);
   margin:25px auto;
-  background:var(--card-bg);
+  background: var(--modal-bg);
   border:1px solid var(--card-border);
   border-radius:23px;
   overflow:hidden;
@@ -285,7 +310,7 @@ body{
   display:flex;
   justify-content:space-between;
   gap:12px;
-  border-bottom:1px solid var(--input-border);
+  border-bottom:1px solid var(--border-color);
 }
 
 .modalHead h2{
@@ -298,9 +323,8 @@ body{
   height:40px;
   border:0;
   border-radius:50%;
-  background:var(--input-bg);
-  border: 1px solid var(--input-border);
-  color:var(--text-main);
+  background: var(--filter-active);
+  color: var(--text-main);
   font-size:22px;
   cursor:pointer;
 }
@@ -313,8 +337,8 @@ body{
   display:flex;
   align-items:center;
   gap:12px;
-  background:var(--input-bg);
-  border:1px solid var(--input-border);
+  background: var(--subject-bg);
+  border:1px solid var(--card-border);
   border-radius:15px;
   padding:13px;
   margin-bottom:9px;
@@ -326,7 +350,7 @@ body{
   display:grid;
   place-items:center;
   border-radius:12px;
-  background:rgba(255,255,255,0.05);
+  background: var(--icon-bg);
   font-size:21px;
   flex:none;
 }
@@ -337,7 +361,7 @@ body{
 }
 
 .teacher{
-  color:var(--gold);
+  color: var(--gold);
   margin-top:4px;
   font-size:13px;
   font-weight:800;
@@ -349,7 +373,7 @@ body{
   padding:15px;
   border:0;
   border-radius:14px;
-  background:var(--accent);
+  background: var(--primary);
   color:white;
   font-weight:900;
   font-size:16px;
@@ -357,7 +381,7 @@ body{
 }
 
 .note{
-  color:var(--text-muted);
+  color: var(--text-muted);
   font-size:11px;
   line-height:1.5;
   margin-top:12px;
@@ -374,6 +398,7 @@ body{
 <body>
 
 <header class="header">
+
   <div class="top">
     <button class="back" onclick="goDashboard()">←</button>
     <div class="brand">
@@ -391,6 +416,7 @@ body{
     <button class="tab active" data-type="school">🏫 School Boards</button>
     <button class="tab" data-type="competitive">🎯 Competitive Exams</button>
   </div>
+
 </header>
 
 <div id="schoolFilters" class="filters"></div>
@@ -424,14 +450,16 @@ body{
   </div>
 </div>
 
+
 <script>
+
 /* =========================================================
    ICONS
 ========================================================= */
 const icons = {
   "Hindi":"📖", "English":"📘", "Sanskrit":"🕉️", "Urdu":"📕", "Mathematics":"🔢", "Physics":"⚛️",
   "Physical Chemistry":"⚗️", "Organic Chemistry":"🧪", "Inorganic Chemistry":"🔬", "Biology":"🧬",
-  "Botany":"🌱", "Zoology":"🦁", "History":"🏛️", "Geography":"🌍", "Political Science":"⚖️",
+  "Botany":"🌱", "Zoology":"🦁", "History":"🏛️", "Geography":"🌍", "Political Science":"🏛️",
   "Economics":"📈", "Sociology":"👥", "Psychology":"🧠", "Accountancy":"🧾", "Business Studies":"💼",
   "Entrepreneurship":"🚀", "General Studies":"📚", "General Knowledge":"🌐", "Current Affairs":"📰",
   "Reasoning":"🧩", "Quantitative Aptitude":"➗", "General Intelligence":"🧠", "General Awareness":"🌐",
@@ -441,6 +469,24 @@ const icons = {
   "Agriculture":"🌾", "Numerical Ability":"🔢", "Communication Ability":"🗣️", "Drawing":"🎨",
   "Design Aptitude":"🎨", "Creative Ability":"🎨"
 };
+
+
+/* =========================================================
+   UNIQUE TEACHER GENERATOR (NO REPEATS)
+========================================================= */
+const firstNames = ["Aarav","Vivaan","Aditya","Arjun","Kabir","Ishaan","Rohan","Kunal","Rahul","Nikhil","Varun","Manav","Samar","Yash","Aman","Dev","Vikram","Sanjay","Gaurav","Deepak","Nitin","Rajesh","Suresh","Manish","Akash","Ravi","Vikas","Mohit","Pankaj","Abhishek"];
+const lastNames = ["Sharma","Gupta","Verma","Yadav","Singh","Kumar","Rao","Mehta","Chauhan","Patel","Mishra","Pandey","Tiwari","Joshi","Nair","Iyer","Reddy","Das","Bose","Sinha","Jha","Thakur","Malhotra","Kapoor","Bansal","Agarwal","Srivastava","Tripathi","Saxena","Shukla"];
+
+// Ye function hamesha ek subject ko ek unique teacher dega (e.g. Physics = Prof. Yash Iyer)
+function getUniqueTeacher(subjectName) {
+    let hash = 0;
+    for (let i = 0; i < subjectName.length; i++) {
+        hash = subjectName.charCodeAt(i) + ((hash << 5) - hash);
+    }
+    const fName = firstNames[Math.abs(hash) % firstNames.length];
+    const lName = lastNames[Math.abs(hash >> 3) % lastNames.length];
+    return `Prof. ${fName} ${lName}`;
+}
 
 /* =========================================================
    SCHOOL SUBJECT STRUCTURE
@@ -474,51 +520,23 @@ const DESIGN = ["English", "General Knowledge", "Current Affairs", "Design Aptit
    SCHOOL BOARDS
 ========================================================= */
 const boards = [
-  ["CBSE","Central Board of Secondary Education"], ["CISCE","Council for the Indian School Certificate Examinations"],
-  ["NIOS","National Institute of Open Schooling"], ["Andhra Pradesh","Andhra Pradesh Board"], ["Assam","Assam Board"],
-  ["Bihar","Bihar School Examination Board"], ["Chhattisgarh","Chhattisgarh Board of Secondary Education"], ["Goa","Goa Board"],
-  ["Gujarat","Gujarat Secondary and Higher Secondary Education Board"], ["Haryana","Board of School Education Haryana"],
-  ["Himachal Pradesh","Himachal Pradesh Board of School Education"], ["Jharkhand","Jharkhand Academic Council"],
-  ["Jammu & Kashmir","Jammu and Kashmir Board"], ["Karnataka","Karnataka School Examination and Assessment Board"],
-  ["Kerala","Kerala Board"], ["Madhya Pradesh","Madhya Pradesh Board"], ["Maharashtra","Maharashtra State Board"],
-  ["Manipur","Manipur Board"], ["Meghalaya","Meghalaya Board"], ["Mizoram","Mizoram Board"], ["Nagaland","Nagaland Board"],
-  ["Odisha","Odisha Board"], ["Punjab","Punjab School Education Board"], ["Rajasthan","Board of Secondary Education Rajasthan"],
-  ["Sikkim","Sikkim Board"], ["Tamil Nadu","Tamil Nadu State Board"], ["Telangana","Telangana Board"], ["Tripura","Tripura Board"],
-  ["Uttar Pradesh","Uttar Pradesh Madhyamik Shiksha Parishad"], ["Uttarakhand","Uttarakhand Board"], ["West Bengal","West Bengal Board"]
+  ["CBSE","Central Board of Secondary Education"], ["CISCE","Council for the Indian School Certificate Examinations"], ["NIOS","National Institute of Open Schooling"],
+  ["Andhra Pradesh","Andhra Pradesh Board"], ["Assam","Assam Board"], ["Bihar","Bihar School Examination Board"], ["Chhattisgarh","Chhattisgarh Board of Secondary Education"],
+  ["Goa","Goa Board"], ["Gujarat","Gujarat Secondary and Higher Secondary Education Board"], ["Haryana","Board of School Education Haryana"], ["Himachal Pradesh","Himachal Pradesh Board of School Education"],
+  ["Jharkhand","Jharkhand Academic Council"], ["Jammu & Kashmir","Jammu and Kashmir Board"], ["Karnataka","Karnataka School Examination and Assessment Board"], ["Kerala","Kerala Board"],
+  ["Madhya Pradesh","Madhya Pradesh Board"], ["Maharashtra","Maharashtra State Board"], ["Manipur","Manipur Board"], ["Meghalaya","Meghalaya Board"], ["Mizoram","Mizoram Board"],
+  ["Nagaland","Nagaland Board"], ["Odisha","Odisha Board"], ["Punjab","Punjab School Education Board"], ["Rajasthan","Board of Secondary Education Rajasthan"], ["Sikkim","Sikkim Board"],
+  ["Tamil Nadu","Tamil Nadu State Board"], ["Telangana","Telangana Board"], ["Tripura","Tripura Board"], ["Uttar Pradesh","Uttar Pradesh Madhyamik Shiksha Parishad"],
+  ["Uttarakhand","Uttarakhand Board"], ["West Bengal","West Bengal Board"]
 ];
 
 /* =========================================================
-   BATCH DATABASE & STATE
+   BATCH DATABASE & AUTOMATIC PRICE SYSTEM
 ========================================================= */
 let batches = [];
 let currentType = "school";
 let currentFilter = "All";
 
-/* =========================================================
-   UNIQUE TEACHER GENERATOR (NO MORE FAKE FEELING)
-========================================================= */
-// 50+ unique first names
-const firstNames = ["Vikram", "Neha", "Aman", "Priya", "Rahul", "Kavita", "Sanjay", "Anjali", "Rohan", "Sneha", "Karan", "Pooja", "Arjun", "Simran", "Amit", "Diya", "Raj", "Nandini", "Vivek", "Shruti", "Manish", "Aditi", "Ravi", "Tanya", "Akash", "Kriti", "Deepak", "Riya", "Gaurav", "Meera", "Nitin", "Kavya", "Suresh", "Ritu", "Mohit", "Ananya", "Shivam", "Ishita", "Harsh", "Meghna", "Abhishek", "Sakshi", "Rajesh", "Shraddha", "Vikas", "Tanvi", "Pankaj", "Bhavna"];
-
-// 50+ unique last names
-const lastNames = ["Rathore", "Desai", "Jain", "Bhatia", "Iyer", "Chawla", "Reddy", "Kapoor", "Trivedi", "Menon", "Chopra", "Patil", "Srivastava", "Das", "Mukherjee", "Nair", "Saxena", "Bansal", "Thakur", "Sinha", "Joshi", "Bose", "Pillai", "Choudhury", "Malhotra", "Rao", "Pandey", "Mehta", "Mishra", "Patel", "Kumar", "Singh", "Yadav", "Dutta", "Banerjee", "Naidu", "Kulkarni", "Deshmukh", "Kadam", "More", "Prasad", "Tiwari", "Sharma", "Verma", "Gupta", "Agarwal", "Bhatt", "Chauhan"];
-
-// A deterministic unique name generator based on subject name
-// It ensures that "Physics" will always get the same unique teacher name, avoiding randomness on reload.
-function getUniqueTeacherForSubject(subjectName) {
-    let hash = 0;
-    for (let i = 0; i < subjectName.length; i++) {
-        hash = subjectName.charCodeAt(i) + ((hash << 5) - hash);
-    }
-    const fnIndex = Math.abs(hash) % firstNames.length;
-    const lnIndex = Math.abs(hash >> 3) % lastNames.length;
-    return `Prof. ${firstNames[fnIndex]} ${lastNames[lnIndex]}`;
-}
-
-
-/* =========================================================
-   AUTOMATIC PRICE SYSTEM
-========================================================= */
 function getBatchPrice(type,cls,exam){
   if(type === "school"){
     if(cls === "Class 9" || cls === "Class 10") return 199;
@@ -545,16 +563,14 @@ function getBatchPrice(type,cls,exam){
 }
 
 /* =========================================================
-   CREATE BATCH
+   CREATE BATCH (Unique Teachers Assigned)
 ========================================================= */
 function makeBatch({ type, board="", cls="", stream="", exam="", category="", subjects }) {
   const id = "B" + String(batches.length + 1).padStart(4,"0");
   const price = getBatchPrice(type, cls, exam);
-  
-  // Assign exact subjects and unique teacher
   const subjectData = subjects.map(subject => ({
       name: subject,
-      teacher: getUniqueTeacherForSubject(subject)
+      teacher: getUniqueTeacher(subject) // FIXED UNIQUE TEACHERS
   }));
 
   batches.push({
@@ -565,7 +581,7 @@ function makeBatch({ type, board="", cls="", stream="", exam="", category="", su
 }
 
 /* =========================================================
-   CREATE SCHOOL BATCHES
+   CREATE SCHOOL BATCHES (All 372 Original Batches)
 ========================================================= */
 boards.forEach(board => {
   const boardName = board[0];
@@ -609,7 +625,7 @@ competitiveData.forEach(item => {
 });
 
 /* =========================================================
-   FILTERS
+   FILTERS & RENDERING
 ========================================================= */
 const schoolFilters = ["All", "National", "Andhra Pradesh", "Assam", "Bihar", "Chhattisgarh", "Goa", "Gujarat", "Haryana", "Himachal Pradesh", "Jharkhand", "Jammu & Kashmir", "Karnataka", "Kerala", "Madhya Pradesh", "Maharashtra", "Manipur", "Meghalaya", "Mizoram", "Nagaland", "Odisha", "Punjab", "Rajasthan", "Sikkim", "Tamil Nadu", "Telangana", "Tripura", "Uttar Pradesh", "Uttarakhand", "West Bengal"];
 const competitiveFilters = ["All", "Medical", "Engineering", "University Entrance", "UPSC", "SSC", "Banking", "Defence", "Law", "Teaching", "Railway", "Agriculture", "Management", "Design", "Science Entrance", "Government Exams"];
@@ -623,18 +639,11 @@ function renderFilters(){
     const button = document.createElement("button");
     button.className = "filter" + (currentFilter === filter ? " active" : "");
     button.textContent = filter;
-    button.onclick = () => {
-      currentFilter = filter;
-      renderFilters();
-      render();
-    };
+    button.onclick = () => { currentFilter = filter; renderFilters(); render(); };
     target.appendChild(button);
   });
 }
 
-/* =========================================================
-   RENDER BATCHES
-========================================================= */
 function render(){
   const grid = document.getElementById("grid");
   const search = document.getElementById("search").value.toLowerCase().trim();
