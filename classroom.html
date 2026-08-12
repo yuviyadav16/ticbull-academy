@@ -11,7 +11,7 @@
         .content { padding: 20px; }
         .batch-card { background: #101827; padding: 20px; border-radius: 20px; margin-bottom: 15px; border: 1px solid #2b3952; }
         .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 15px; }
-        .sub-card { background: #16243a; border: 1px solid #2b3952; padding: 20px; border-radius: 12px; text-align: center; cursor: pointer; }
+        .sub-card { background: #16243a; border: 1px solid #2b3952; padding: 20px; border-radius: 12px; text-align: center; cursor: pointer; font-weight: 800; color: #c8d1df; }
         .btn-access { background: #e9155c; color: white; border: none; width: 100%; padding: 14px; border-radius: 12px; margin-top: 15px; cursor: pointer; font-weight: 900; }
     </style>
 </head>
@@ -28,6 +28,10 @@
 
         function loadBatches() {
             container.innerHTML = '';
+            if(enrolled.length === 0) {
+                container.innerHTML = `<div style="text-align:center; color:#9aa7ba;">No batches found. Please enroll from batches page.</div>`;
+                return;
+            }
             enrolled.forEach((b, i) => {
                 container.innerHTML += `
                     <div class="batch-card">
@@ -40,9 +44,11 @@
 
         function showSubjects(i) {
             document.getElementById('headTitle').innerText = "Select Subject";
-            let subs = enrolled[i].subjects; // YAHI HAI ASLI LOGIC
+            let subs = enrolled[i].subjects || ["Physics", "Chemistry", "Mathematics", "English", "Biology"];
             let html = '<div class="grid-2">';
-            subs.forEach(s => html += `<div class="sub-card" onclick="location.href='chat.html?sub=${s}'"><b>${s}</b></div>`);
+            subs.forEach(s => {
+                html += `<div class="sub-card" onclick="alert('Opening ${s}')"><b>${s}</b></div>`;
+            });
             container.innerHTML = html + '</div>';
         }
 
@@ -50,3 +56,4 @@
     </script>
 </body>
 </html>
+
