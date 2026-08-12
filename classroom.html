@@ -21,26 +21,44 @@
         .batch-title { font-size: 18px; font-weight: 800; margin-bottom: 8px; }
         .btn-access { background: var(--success-color); color: white; border: none; padding: 12px; border-radius: 10px; cursor: pointer; width: 100%; font-weight: 800; margin-top: 15px; display: flex; justify-content: center; gap: 8px; align-items: center; }
 
-        /* VIEW 2: BATCH DASHBOARD (Hidden initially) */
-        #batchDashboard { display: none; }
+        /* VIEW 2: SUBJECTS LIST */
+        #subjectList { display: none; }
+        .subject-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 15px; }
+        .subject-card { background: var(--input-bg); border: 1px solid var(--border-color); padding: 20px 15px; border-radius: 16px; text-align: center; cursor: pointer; transition: 0.3s; }
+        .subject-card:hover { border-color: var(--accent-color); background: rgba(159, 18, 57, 0.1); }
+        .subject-icon { font-size: 30px; color: var(--accent-color); margin-bottom: 10px; }
+        .subject-name { font-size: 14px; font-weight: 800; }
+
+        /* VIEW 3: SUBJECT DASHBOARD (4 TABS) */
+        #subjectDashboard { display: none; }
         .dashboard-header { background: linear-gradient(135deg, var(--card-bg), #1e1b4b); padding: 20px; border-radius: 16px; margin-bottom: 20px; border: 1px solid var(--accent-color); }
         .dash-title { font-size: 20px; font-weight: 800; color: #fff; margin-bottom: 5px; }
 
-        /* TABS */
+        /* 4 TABS */
         .tabs { display: flex; gap: 10px; margin-bottom: 20px; overflow-x: auto; padding-bottom: 5px; scrollbar-width: none; }
         .tabs::-webkit-scrollbar { display: none; }
-        .tab-btn { background: var(--input-bg); border: 1px solid var(--border-color); color: var(--text-muted); padding: 10px 16px; border-radius: 12px; font-weight: 700; white-space: nowrap; cursor: pointer; transition: 0.3s; }
+        .tab-btn { background: var(--input-bg); border: 1px solid var(--border-color); color: var(--text-muted); padding: 12px 16px; border-radius: 12px; font-weight: 700; white-space: nowrap; cursor: pointer; transition: 0.3s; display: flex; align-items: center; gap: 8px; }
         .tab-btn.active { background: var(--accent-color); color: #fff; border-color: var(--accent-color); }
 
         .tab-content { display: none; }
         .tab-content.active { display: block; animation: fadeIn 0.3s ease; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* PYQ SECTION */
-        .pyq-card { background: var(--card-bg); border: 1px solid var(--border-color); padding: 15px; border-radius: 12px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
-        .pyq-card i { font-size: 24px; color: var(--gold-color); }
+        /* TAB 1: AI CHAT TEACHER */
+        .chat-container { display: flex; flex-direction: column; height: 60vh; background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 16px; overflow: hidden; }
+        .chat-box { flex: 1; overflow-y: auto; padding: 15px; display: flex; flex-direction: column; gap: 10px; }
+        .msg { max-width: 80%; padding: 12px 16px; border-radius: 12px; font-size: 14px; line-height: 1.4; }
+        .msg.ai { background: var(--input-bg); align-self: flex-start; border-bottom-left-radius: 2px; }
+        .msg.user { background: var(--accent-color); align-self: flex-end; border-bottom-right-radius: 2px; }
+        .chat-input-area { display: flex; padding: 10px; background: var(--input-bg); border-top: 1px solid var(--border-color); }
+        .chat-input { flex: 1; background: transparent; border: none; color: #fff; outline: none; padding: 10px; }
+        .btn-send { background: var(--success-color); color: #fff; border: none; width: 40px; height: 40px; border-radius: 50%; cursor: pointer; }
 
-        /* AI SMART TEST GENERATOR */
+        /* TAB 2 & 3: PRACTICE & PYQ */
+        .doc-card { background: var(--card-bg); border: 1px solid var(--border-color); padding: 15px; border-radius: 12px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
+        .doc-card i { font-size: 24px; color: var(--gold-color); }
+
+        /* TAB 4: AI SMART TEST */
         .ai-test-box { background: var(--card-bg); border: 1px solid var(--accent-color); padding: 20px; border-radius: 16px; box-shadow: 0 0 20px rgba(159, 18, 57, 0.15); }
         .ai-input { width: 100%; background: var(--input-bg); border: 1px solid var(--border-color); color: #fff; padding: 15px; border-radius: 12px; font-size: 15px; margin-bottom: 15px; outline: none; }
         .diff-row { display: flex; gap: 10px; margin-bottom: 20px; }
@@ -65,64 +83,87 @@
     </div>
 
     <div class="content-area">
-        <!-- VIEW 1: BATCH LIST -->
+        <!-- VIEW 1: ENROLLED BATCHES -->
         <div id="batchList"></div>
 
-        <!-- VIEW 2: BATCH DASHBOARD -->
-        <div id="batchDashboard">
+        <!-- VIEW 2: SUBJECTS LIST -->
+        <div id="subjectList">
+            <h3 style="margin-bottom: 5px;" id="subBatchTitle">Batch Name</h3>
+            <p style="font-size: 12px; color: var(--text-muted);">Select a subject to start studying</p>
+            <div class="subject-grid" id="subjectsGrid"></div>
+        </div>
+
+        <!-- VIEW 3: SUBJECT DASHBOARD (4 COLUMNS/TABS) -->
+        <div id="subjectDashboard">
             <div class="dashboard-header">
-                <div class="dash-title" id="dashBatchName">Batch Name</div>
-                <div style="font-size: 12px; color: var(--gold-color);"><i class="fa-solid fa-shield-check"></i> Premium Access Active</div>
+                <div class="dash-title" id="dashSubjectName">Subject Name</div>
+                <div style="font-size: 12px; color: var(--gold-color);"><i class="fa-solid fa-graduation-cap"></i> AI Assisted Learning Active</div>
             </div>
 
-            <!-- Tabs -->
+            <!-- 4 Pillars (Tabs) -->
             <div class="tabs">
-                <button class="tab-btn active" onclick="switchTab('study')"><i class="fa-solid fa-video"></i> Classes</button>
-                <button class="tab-btn" onclick="switchTab('pyq')"><i class="fa-solid fa-file-pdf"></i> 20 Yrs PYQs</button>
-                <button class="tab-btn" onclick="switchTab('ai')"><i class="fa-solid fa-robot"></i> AI Smart Test</button>
+                <button class="tab-btn active" onclick="switchTab('chat')"><i class="fa-solid fa-robot"></i> Ask Doubt (AI)</button>
+                <button class="tab-btn" onclick="switchTab('practice')"><i class="fa-solid fa-pen-to-square"></i> Practice Sets</button>
+                <button class="tab-btn" onclick="switchTab('pyq')"><i class="fa-solid fa-book-journal-whills"></i> 20 Yrs PYQs</button>
+                <button class="tab-btn" onclick="switchTab('test')"><i class="fa-solid fa-wand-magic-sparkles"></i> AI Smart Test</button>
             </div>
 
-            <!-- Tab 1: Video Classes (Placeholder) -->
-            <div id="tab-study" class="tab-content active">
-                <div style="text-align:center; padding:30px; color:var(--text-muted); border:1px dashed var(--border-color); border-radius:12px;">
-                    <i class="fa-solid fa-photo-film" style="font-size:30px; margin-bottom:10px;"></i>
-                    <p>Live Classes & Recorded Lectures will appear here.</p>
+            <!-- TAB 1: AI CHAT TEACHER -->
+            <div id="tab-chat" class="tab-content active">
+                <div class="chat-container">
+                    <div class="chat-box" id="chatBox">
+                        <div class="msg ai" id="welcomeMsg">Hello! I am your AI Teacher. Ask me any doubt.</div>
+                    </div>
+                    <div class="chat-input-area">
+                        <input type="text" id="chatInput" class="chat-input" placeholder="Type your doubt here...">
+                        <button class="btn-send" onclick="sendMsg()"><i class="fa-solid fa-paper-plane"></i></button>
+                    </div>
                 </div>
             </div>
 
-            <!-- Tab 2: PYQ Section -->
+            <!-- TAB 2: PRACTICE SETS -->
+            <div id="tab-practice" class="tab-content">
+                <div class="doc-card">
+                    <div>
+                        <div style="font-weight: 800;">Chapter-wise DPPs</div>
+                        <div style="font-size: 11px; color: var(--text-muted);">Daily Practice Problems</div>
+                    </div>
+                    <i class="fa-solid fa-file-pdf"></i>
+                </div>
+                <div class="doc-card">
+                    <div>
+                        <div style="font-weight: 800;">NCERT/Board Solutions</div>
+                        <div style="font-size: 11px; color: var(--text-muted);">Step-by-step detailed answers</div>
+                    </div>
+                    <i class="fa-solid fa-file-lines"></i>
+                </div>
+            </div>
+
+            <!-- TAB 3: PYQ SECTION -->
             <div id="tab-pyq" class="tab-content">
-                <h4 style="margin-bottom: 10px; color: var(--text-muted);">Past 20 Years Previous Year Questions</h4>
-                <div class="pyq-card">
+                <div class="doc-card">
                     <div>
-                        <div style="font-weight: 800;">2023 - 2019 Practice Sets</div>
-                        <div style="font-size: 11px; color: var(--text-muted);">Contains Objective & Subjective</div>
+                        <div style="font-weight: 800;">2023 - 2019 Board/Exam Papers</div>
+                        <div style="font-size: 11px; color: var(--text-muted);">With Answer Keys</div>
                     </div>
                     <i class="fa-solid fa-download"></i>
                 </div>
-                <div class="pyq-card">
+                <div class="doc-card">
                     <div>
-                        <div style="font-weight: 800;">2018 - 2014 Practice Sets</div>
-                        <div style="font-size: 11px; color: var(--text-muted);">Chapter-wise Sorted</div>
-                    </div>
-                    <i class="fa-solid fa-download"></i>
-                </div>
-                <div class="pyq-card">
-                    <div>
-                        <div style="font-weight: 800;">2013 - 2004 Legacy Sets</div>
-                        <div style="font-size: 11px; color: var(--text-muted);">Historical Trends & Hard Questions</div>
+                        <div style="font-weight: 800;">2018 - 2004 Legacy Papers</div>
+                        <div style="font-size: 11px; color: var(--text-muted);">Historical Trends</div>
                     </div>
                     <i class="fa-solid fa-download"></i>
                 </div>
             </div>
 
-            <!-- Tab 3: AI Smart Test -->
-            <div id="tab-ai" class="tab-content">
+            <!-- TAB 4: AI SMART TEST GENERATOR -->
+            <div id="tab-test" class="tab-content">
                 <div class="ai-test-box">
-                    <h3 style="margin-bottom: 5px;"><i class="fa-solid fa-brain" style="color:var(--accent-color)"></i> AI Quiz Generator</h3>
-                    <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 15px;">AI will track your batch syllabus and generate a custom test instantly.</p>
+                    <h3 style="margin-bottom: 5px;"><i class="fa-solid fa-brain" style="color:var(--accent-color)"></i> AI Test Generator</h3>
+                    <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 15px;">Enter chapter name. AI will fetch real exam-pattern questions for your syllabus.</p>
                     
-                    <input type="text" id="aiChapterInput" class="ai-input" placeholder="Type Chapter Name (e.g. Thermodynamics, Algebra)">
+                    <input type="text" id="aiChapterInput" class="ai-input" placeholder="E.g. Thermodynamics, Algebra, Cell Biology">
                     
                     <div class="diff-row">
                         <button class="diff-btn active easy" onclick="setDiff('easy', this)">Easy</button>
@@ -131,7 +172,7 @@
                     </div>
 
                     <button class="btn-generate" onclick="generateAITest()">
-                        <i class="fa-solid fa-wand-magic-sparkles"></i> GENERATE TEST NOW
+                        GENERATE TEST <i class="fa-solid fa-bolt"></i>
                     </button>
                 </div>
 
@@ -139,7 +180,8 @@
                 <div id="quizContainer">
                     <div id="quizLoader" style="text-align:center; padding:20px; display:none;">
                         <i class="fa-solid fa-spinner fa-spin" style="font-size:30px; color:var(--accent-color); margin-bottom:10px;"></i>
-                        <p style="font-size:14px; font-weight:700;">AI is analyzing syllabus and generating questions...</p>
+                        <p style="font-size:14px; font-weight:700;">Analyzing Context: <span id="analyzingText">...</span></p>
+                        <p style="font-size:11px; color:var(--text-muted);">Generating real exam-type questions...</p>
                     </div>
                     <div id="quizContent"></div>
                 </div>
@@ -150,8 +192,9 @@
 
     <script>
         let currentBatch = "";
+        let currentSubject = "";
         let selectedDiff = "easy";
-        let isInsideBatch = false;
+        let viewState = 1; // 1: Batches, 2: Subjects, 3: Dashboard
 
         window.onload = function() {
             loadEnrolledBatches();
@@ -175,10 +218,10 @@
                 enrolled.forEach(b => {
                     html += `
                         <div class="enrolled-card">
-                            <div style="font-size:11px; color:var(--success-color); font-weight:800; margin-bottom:5px;">${b.tier || 'Premium'} Plan</div>
+                            <div style="font-size:11px; color:var(--success-color); font-weight:800; margin-bottom:5px;">Premium Activated</div>
                             <div class="batch-title">${b.title}</div>
-                            <div style="font-size:12px; color:var(--text-muted);">Activated on: ${b.date}</div>
-                            <button class="btn-access" onclick="openBatchDashboard('${b.title}')">ENTER CLASSROOM <i class="fa-solid fa-arrow-right"></i></button>
+                            <div style="font-size:12px; color:var(--text-muted);">Purchased: ${b.date}</div>
+                            <button class="btn-access" onclick="openSubjectList('${b.title}')">VIEW SUBJECTS <i class="fa-solid fa-arrow-right"></i></button>
                         </div>
                     `;
                 });
@@ -186,22 +229,69 @@
             }
         }
 
-        function openBatchDashboard(batchName) {
-            currentBatch = batchName;
-            isInsideBatch = true;
+        // Logic to extract subjects based on Batch Title
+        function getSubjectsForBatch(title) {
+            let t = title.toLowerCase();
+            if(t.includes('pcm') || t.includes('jee') || t.includes('engg')) {
+                return [ {n: 'Physics', i: 'fa-atom'}, {n: 'Chemistry', i: 'fa-flask'}, {n: 'Mathematics', i: 'fa-square-root-variable'}, {n: 'English', i: 'fa-book-open'} ];
+            } else if(t.includes('pcb') || t.includes('neet') || t.includes('medical')) {
+                return [ {n: 'Physics', i: 'fa-atom'}, {n: 'Chemistry', i: 'fa-flask'}, {n: 'Biology', i: 'fa-dna'}, {n: 'English', i: 'fa-book-open'} ];
+            } else if(t.includes('commerce')) {
+                return [ {n: 'Accountancy', i: 'fa-file-invoice-dollar'}, {n: 'Business Studies', i: 'fa-briefcase'}, {n: 'Economics', i: 'fa-chart-line'}, {n: 'Mathematics', i: 'fa-calculator'}, {n: 'English', i: 'fa-book-open'} ];
+            } else if(t.includes('arts') || t.includes('upsc') || t.includes('pcs')) {
+                return [ {n: 'History', i: 'fa-landmark'}, {n: 'Geography', i: 'fa-earth-americas'}, {n: 'Polity', i: 'fa-scale-balanced'}, {n: 'Economics', i: 'fa-chart-line'} ];
+            } else {
+                // Class 9/10 Default
+                return [ {n: 'Mathematics', i: 'fa-calculator'}, {n: 'Science', i: 'fa-flask'}, {n: 'Social Science', i: 'fa-landmark'}, {n: 'English', i: 'fa-book-open'}, {n: 'Hindi / Regional', i: 'fa-language'} ];
+            }
+        }
+
+        function openSubjectList(batchTitle) {
+            currentBatch = batchTitle;
+            viewState = 2;
             document.getElementById('batchList').style.display = 'none';
-            document.getElementById('batchDashboard').style.display = 'block';
-            document.getElementById('dashBatchName').innerText = batchName;
-            document.getElementById('btnBack').innerHTML = '<i class="fa-solid fa-arrow-left"></i> Back to My Batches';
-            switchTab('ai'); // Default open AI tab for demo
+            document.getElementById('subjectList').style.display = 'block';
+            document.getElementById('subBatchTitle').innerText = batchTitle;
+            document.getElementById('btnBack').innerHTML = '<i class="fa-solid fa-arrow-left"></i> Back to Batches';
+
+            let subs = getSubjectsForBatch(batchTitle);
+            let grid = document.getElementById('subjectsGrid');
+            grid.innerHTML = '';
+            subs.forEach(s => {
+                grid.innerHTML += `
+                    <div class="subject-card" onclick="openSubjectDashboard('${s.n}')">
+                        <i class="fa-solid ${s.i} subject-icon"></i>
+                        <div class="subject-name">${s.n}</div>
+                    </div>
+                `;
+            });
+        }
+
+        function openSubjectDashboard(subjectName) {
+            currentSubject = subjectName;
+            viewState = 3;
+            document.getElementById('subjectList').style.display = 'none';
+            document.getElementById('subjectDashboard').style.display = 'block';
+            document.getElementById('dashSubjectName').innerText = subjectName + " (" + currentBatch + ")";
+            document.getElementById('btnBack').innerHTML = '<i class="fa-solid fa-arrow-left"></i> Back to Subjects';
+            
+            // Set AI Welcome message contextually
+            document.getElementById('welcomeMsg').innerText = `Hello! I am your expert AI Teacher for ${subjectName} in ${currentBatch}. What is your doubt?`;
+            
+            switchTab('chat');
         }
 
         function goBack() {
-            if(isInsideBatch) {
-                document.getElementById('batchDashboard').style.display = 'none';
+            if(viewState === 3) {
+                document.getElementById('subjectDashboard').style.display = 'none';
+                document.getElementById('subjectList').style.display = 'block';
+                document.getElementById('btnBack').innerHTML = '<i class="fa-solid fa-arrow-left"></i> Back to Batches';
+                viewState = 2;
+            } else if(viewState === 2) {
+                document.getElementById('subjectList').style.display = 'none';
                 document.getElementById('batchList').style.display = 'block';
                 document.getElementById('btnBack').innerHTML = '<i class="fa-solid fa-arrow-left"></i> TicBull Classroom';
-                isInsideBatch = false;
+                viewState = 1;
             } else {
                 window.location.href = 'dashboard.html';
             }
@@ -215,6 +305,27 @@
             document.getElementById('tab-' + tabId).classList.add('active');
         }
 
+        // --- AI CHAT LOGIC ---
+        function sendMsg() {
+            let input = document.getElementById('chatInput');
+            let text = input.value.trim();
+            if(!text) return;
+            
+            let box = document.getElementById('chatBox');
+            box.innerHTML += `<div class="msg user">${text}</div>`;
+            input.value = '';
+            
+            // Auto scroll to bottom
+            box.scrollTop = box.scrollHeight;
+
+            // Fake AI Response
+            setTimeout(() => {
+                box.innerHTML += `<div class="msg ai">Analyzing your doubt in ${currentSubject}...<br><br>The simple answer is that this concept depends on the fundamental rules of ${currentSubject}. Let me know if you want a detailed step-by-step breakdown!</div>`;
+                box.scrollTop = box.scrollHeight;
+            }, 1000);
+        }
+
+        // --- AI TEST GENERATOR LOGIC ---
         function setDiff(level, btn) {
             selectedDiff = level;
             document.querySelectorAll('.diff-btn').forEach(b => {
@@ -224,56 +335,57 @@
         }
 
         function generateAITest() {
-            const chapter = document.getElementById('aiChapterInput').value;
-            if(!chapter) return alert("Bhai, pehle chapter ka naam toh likho!");
+            const chapter = document.getElementById('aiChapterInput').value.trim();
+            if(!chapter) return alert("Please enter a chapter name to generate questions!");
 
             const quizContainer = document.getElementById('quizContainer');
             const loader = document.getElementById('quizLoader');
             const content = document.getElementById('quizContent');
 
             quizContainer.style.display = 'block';
+            content.style.display = 'none';
             loader.style.display = 'block';
-            content.innerHTML = '';
+            document.getElementById('analyzingText').innerText = `${currentSubject} - ${chapter}`;
 
             // Simulate AI Loading Time
             setTimeout(() => {
                 loader.style.display = 'none';
+                content.style.display = 'block';
                 
-                // Mock Generated Questions based on inputs
+                // Real-looking Mock Generated Questions
                 let qHtml = `
                     <div style="margin-bottom:15px; border-bottom:1px solid var(--border-color); padding-bottom:10px;">
                         <span style="background:rgba(37,99,235,0.2); color:#3b82f6; padding:3px 8px; border-radius:5px; font-size:11px; font-weight:800;">${selectedDiff.toUpperCase()} MODE</span>
-                        <h4 style="margin-top:8px;">AI Test: ${chapter}</h4>
+                        <h4 style="margin-top:8px;">AI Test: ${chapter} (${currentSubject})</h4>
                     </div>
 
-                    <!-- Q1 -->
+                    <!-- Q1 (Objective) -->
                     <div class="question-card">
-                        <div style="font-size:12px; color:var(--gold-color); margin-bottom:5px; font-weight:800;">Q1 (Objective)</div>
-                        <p style="font-weight:700; margin-bottom:10px;">According to the syllabus of ${currentBatch}, which of the following is correct regarding ${chapter}?</p>
-                        <button class="option-btn" onclick="checkAns(this, false)">A) Option 1 generated by AI</button>
-                        <button class="option-btn" onclick="checkAns(this, true)">B) Correct Option according to concept</button>
-                        <button class="option-btn" onclick="checkAns(this, false)">C) Option 3 generated by AI</button>
-                        <button class="option-btn" onclick="checkAns(this, false)">D) None of the above</button>
+                        <div style="font-size:12px; color:var(--gold-color); margin-bottom:5px; font-weight:800;">Q1 (Objective Type)</div>
+                        <p style="font-weight:700; margin-bottom:10px;">Based on the syllabus of ${currentBatch}, which of the following statements is mathematically/scientifically correct regarding ${chapter}?</p>
+                        <button class="option-btn" onclick="checkAns(this, false)">A) It is inversely proportional to the square of distance.</button>
+                        <button class="option-btn" onclick="checkAns(this, true)">B) It directly depends on the core principles taught in ${currentSubject}.</button>
+                        <button class="option-btn" onclick="checkAns(this, false)">C) The equation yields a constant value of zero.</button>
+                        <button class="option-btn" onclick="checkAns(this, false)">D) Both A and C are correct.</button>
                     </div>
 
                     <!-- Q2 (Assertion Reason) -->
                     <div class="question-card">
                         <div style="font-size:12px; color:var(--accent-color); margin-bottom:5px; font-weight:800;">Q2 (Assertion - Reason)</div>
-                        <p style="font-size:14px; margin-bottom:5px;"><strong>Assertion (A):</strong> AI generated statement related to ${chapter}.</p>
-                        <p style="font-size:14px; margin-bottom:10px;"><strong>Reason (R):</strong> Logical reason explaining the assertion.</p>
+                        <p style="font-size:14px; margin-bottom:5px;"><strong>Assertion (A):</strong> The fundamental property of ${chapter} remains conserved in an isolated system.</p>
+                        <p style="font-size:14px; margin-bottom:10px;"><strong>Reason (R):</strong> According to ${currentSubject} laws, external forces are required to alter the state.</p>
                         
-                        <button class="option-btn" onclick="checkAns(this, true)">A) Both A and R are true and R is the correct explanation of A</button>
-                        <button class="option-btn" onclick="checkAns(this, false)">B) Both A and R are true but R is not the correct explanation of A</button>
-                        <button class="option-btn" onclick="checkAns(this, false)">C) A is true but R is false</button>
-                        <button class="option-btn" onclick="checkAns(this, false)">D) A is false but R is true</button>
+                        <button class="option-btn" onclick="checkAns(this, true)">A) Both A and R are true and R is the correct explanation of A.</button>
+                        <button class="option-btn" onclick="checkAns(this, false)">B) Both A and R are true but R is NOT the correct explanation of A.</button>
+                        <button class="option-btn" onclick="checkAns(this, false)">C) A is true but R is false.</button>
+                        <button class="option-btn" onclick="checkAns(this, false)">D) A is false but R is true.</button>
                     </div>
                 `;
                 content.innerHTML = qHtml;
-            }, 1500);
+            }, 2000);
         }
 
         function checkAns(btn, isCorrect) {
-            // Disable siblings
             let siblings = btn.parentElement.querySelectorAll('.option-btn');
             siblings.forEach(s => s.style.pointerEvents = 'none');
 
@@ -283,7 +395,6 @@
             } else {
                 btn.classList.add('wrong');
                 btn.innerHTML += ' <i class="fa-solid fa-xmark" style="float:right;"></i>';
-                // Find correct and highlight
                 siblings.forEach(s => {
                     if(s.getAttribute('onclick').includes('true')) {
                         s.classList.add('correct');
