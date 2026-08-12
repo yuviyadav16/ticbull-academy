@@ -11,6 +11,9 @@
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     
+    <!-- FIX: LINKING THE GLOBAL CONTROLLER -->
+    <script src="global.js"></script>
+
     <style>
         :root { --bg-color: #030712; --card-bg: rgba(15, 23, 42, 0.95); --accent-color: #2563eb; --accent-glow: rgba(37, 99, 235, 0.45); --text-main: #f8fafc; --text-muted: #94a3b8; --border-color: rgba(255, 255, 255, 0.12); --success-color: #10b981; --gold-color: #f59e0b; --input-bg: #0f172a; }
         body.light-theme { --bg-color: #f1f5f9; --card-bg: #ffffff; --text-main: #0f172a; --text-muted: #64748b; --border-color: #cbd5e1; --input-bg: #ffffff; }
@@ -185,7 +188,10 @@
         <div class="drawer-item" onclick="window.location.href='batches.html'"><i class="fa-solid fa-layer-group" style="color:var(--accent-color); width:20px;"></i> All Batches & Goals</div>
         <div class="drawer-item" onclick="openSyllabusBoard()"><i class="fa-solid fa-list-check" style="color:#0ea5e9; width:20px;"></i> Syllabus Tracker Board</div>
         <div class="drawer-item" onclick="openSettingsModal()"><i class="fa-solid fa-gear" style="color:#94a3b8; width:20px;"></i> App Settings</div>
-        <div class="drawer-item" onclick="toggleTheme()"><i class="fa-solid fa-circle-half-stroke" style="color:var(--gold-color); width:20px;"></i> <span id="themeToggleText">Switch to Light Mode</span></div>
+        
+        <!-- FIX: This uses the logic defined globally -->
+        <div class="drawer-item" onclick="toggleThemeDashboard()"><i class="fa-solid fa-circle-half-stroke" style="color:var(--gold-color); width:20px;"></i> <span id="themeToggleText">Switch to Light Mode</span></div>
+        
         <div class="drawer-item" onclick="openPricingModal()"><i class="fa-solid fa-crown" style="color:#f59e0b; width:20px;"></i> Upgrade Course Pass</div>
         
         <div class="drawer-item" onclick="logoutUser()" style="color:#ef4444; margin-top:10px; border-top:1px solid var(--border-color); padding-top:16px;"><i class="fa-solid fa-right-from-bracket" style="width:20px;"></i> Log Out Account</div>
@@ -215,7 +221,7 @@
             
             <div class="setting-item">
                 <span style="display:flex; align-items:center; gap:12px;"><i class="fa-solid fa-music"></i> App Click Sounds</span>
-                <label class="switch"><input type="checkbox" id="soundToggle" checked onchange="toggleSoundSetting(this)"><span class="slider"></span></label>
+                <label class="switch"><input type="checkbox" id="soundToggle" onchange="toggleSoundSettingDashboard(this)"><span class="slider"></span></label>
             </div>
             <div class="setting-item">
                 <span style="display:flex; align-items:center; gap:12px;"><i class="fa-solid fa-microphone"></i> Microphone Permission</span>
@@ -275,7 +281,7 @@
         </div>
     </div>
 
-        <!-- PRICING MODAL (UPDATED - ALL-ACCESS REMOVED) -->
+    <!-- PRICING MODAL -->
     <div class="modal-overlay" id="pricingModal">
         <div class="modal-card">
             <i class="fa-solid fa-xmark" style="position:absolute; right:16px; top:16px; color:var(--text-muted); cursor:pointer; font-size:20px;" onclick="document.getElementById('pricingModal').style.display='none';"></i>
@@ -305,17 +311,13 @@
 
     <script>
         let currentStudentData = { name: '', email: '', dob: '', photo: '' };
-        let appSoundEnabled = true;
 
-        // ---------------------------------------------------------------------------------
-        // 1. PERSISTENCE ENGINE & PROFILE LOADING (SETTINGS SAVED FOREVER)
-        // ---------------------------------------------------------------------------------
         window.addEventListener('DOMContentLoaded', () => {
             const savedEmail = localStorage.getItem('ticbull_email');
             const savedToken = localStorage.getItem('ticbull_token');
             
             generateThemeColors();
-            applySavedSettings(); // Load theme, color & sound preferences permanently
+            updateUIFromGlobalSettings(); 
 
             if(!savedEmail || !savedToken) {
                 if(window.location.hostname !== 'localhost') { window.location.href = "index.html"; return; }
@@ -390,50 +392,42 @@
         }
 
         // ---------------------------------------------------------------------------------
-        // 2. PERSISTENT SETTINGS ENGINE (THEME, COLOR, SOUND SAVED)
+        // SETTINGS & GLOBAL SYNC OVERRIDES
         // ---------------------------------------------------------------------------------
-        function applySavedSettings() {
-            // Theme Mode
-            const isLight = localStorage.getItem('ticbull_theme') === 'light';
-            if(isLight) {
-                document.body.classList.add('light-theme');
-                document.getElementById('themeToggleText').innerText = 'Switch to Dark Mode';
-            }
-
-            // Accent Color
-            const savedColor = localStorage.getItem('ticbull_theme_color');
+        function updateUIFromGlobalSettings() {
+            const isLight = document.body.classList.contains('light-theme');
+            document.getElementById('themeToggleText').innerText = isLight ? 'Switch to Dark Mode' : 'Switch to Light Mode';
+            
+            const savedColor = localStorage.getItem('tb_theme_color');
             if(savedColor) {
                 document.documentElement.style.setProperty('--accent-color', savedColor);
             }
 
-            // Sound Toggle
-            const savedSound = localStorage.getItem('ticbull_sound');
-            appSoundEnabled = savedSound !== 'false';
-            const soundCheckbox = document.getElementById('soundToggle');
-            if(soundCheckbox) soundCheckbox.checked = appSoundEnabled;
+            const soundToggle = document.getElementById('soundToggle');
+            if(soundToggle) {
+                soundToggle.checked = (localStorage.getItem('tb_sound') !== 'off');
+            }
         }
 
-        function toggleDrawer() {
-            document.getElementById('drawer').classList.toggle('open');
-            document.getElementById('drawerOverlay').style.display = document.getElementById('drawer').classList.contains('open') ? 'block' : 'none';
+        function toggleThemeDashboard() { 
+            // Inform global.js to switch theme
+            let current = localStorage.getItem('tb_theme') || 'dark';
+            localStorage.setItem('tb_theme', current === 'dark' ? 'light' : 'dark');
+            Global.applyTheme(); // Call global function
+            updateUIFromGlobalSettings();
         }
 
-        function toggleTheme() { 
-            document.body.classList.toggle('light-theme'); 
-            const isLight = document.body.classList.contains('light-theme'); 
-            localStorage.setItem('ticbull_theme', isLight ? 'light' : 'dark');
-            document.getElementById('themeToggleText').innerText = isLight ? 'Switch to Dark Mode' : 'Switch to Light Mode'; 
+        function toggleSoundSettingDashboard(checkbox) { 
+            localStorage.setItem('tb_sound', checkbox.checked ? 'on' : 'off');
+            showToast(checkbox.checked ? "App Sounds Enabled" : "App Sounds Muted", "success"); 
         }
 
-        function openSettingsModal() { document.getElementById('settingsModal').style.display = 'flex'; toggleDrawer(); }
-        function openPricingModal() { document.getElementById('pricingModal').style.display = 'flex'; toggleDrawer(); }
-        
         function generateThemeColors() {
             const colors = ['#2563eb', '#10b981', '#8b5cf6', '#f43f5e', '#f59e0b', '#06b6d4', '#84cc16', '#14b8a6', '#f97316', '#ef4444', '#ec4899', '#d946ef', '#a855f7', '#6366f1', '#3b82f6', '#0ea5e9', '#0d9488', '#22c55e', '#eab308', '#f97316', '#ef4444', '#f43f5e', '#ec4899', '#d946ef', '#a855f7', '#8b5cf6', '#6366f1', '#4f46e5', '#3b82f6', '#0284c7', '#0369a1', '#075985', '#0f766e', '#115e59', '#166534', '#3f6212', '#854d0e', '#9a3412', '#9f1239', '#9d174d'];
             const grid = document.getElementById('themeGrid');
             if(!grid) return;
             grid.innerHTML = '';
-            const activeColor = localStorage.getItem('ticbull_theme_color') || '#2563eb';
+            const activeColor = localStorage.getItem('tb_theme_color') || '#2563eb';
             colors.forEach((c) => {
                 const act = (c.toLowerCase() === activeColor.toLowerCase()) ? 'active' : '';
                 grid.innerHTML += `<span class="theme-circle ${act}" style="background:${c};" onclick="changeAppTheme('${c}', this)"></span>`;
@@ -442,12 +436,21 @@
 
         function changeAppTheme(color, el) { 
             document.documentElement.style.setProperty('--accent-color', color); 
-            localStorage.setItem('ticbull_theme_color', color);
+            localStorage.setItem('tb_theme_color', color);
             document.querySelectorAll('.theme-circle').forEach(c => c.classList.remove('active')); 
             el.classList.add('active'); 
             showToast("Theme Color Updated!", "success"); 
         }
 
+
+        function toggleDrawer() {
+            document.getElementById('drawer').classList.toggle('open');
+            document.getElementById('drawerOverlay').style.display = document.getElementById('drawer').classList.contains('open') ? 'block' : 'none';
+        }
+
+        function openSettingsModal() { document.getElementById('settingsModal').style.display = 'flex'; toggleDrawer(); }
+        function openPricingModal() { document.getElementById('pricingModal').style.display = 'flex'; toggleDrawer(); }
+        
         function openEditProfileModal() {
             document.getElementById('editName').value = currentStudentData.name;
             document.getElementById('editDob').value = currentStudentData.dob;
@@ -492,28 +495,6 @@
             }
         }
 
-        function toggleSoundSetting(checkbox) { 
-            appSoundEnabled = checkbox.checked; 
-            localStorage.setItem('ticbull_sound', appSoundEnabled);
-            showToast(appSoundEnabled ? "App Sounds Enabled" : "App Sounds Muted", "success"); 
-        }
-
-        const AudioContext = window.AudioContext || window.webkitAudioContext;
-        const audioCtx = new AudioContext();
-        function playClickSound() {
-            if(!appSoundEnabled) return;
-            if(audioCtx.state === 'suspended') audioCtx.resume();
-            const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain();
-            osc.type = 'sine'; osc.frequency.setValueAtTime(800, audioCtx.currentTime);
-            gain.gain.setValueAtTime(0.05, audioCtx.currentTime);
-            gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.1);
-            osc.connect(gain); gain.connect(audioCtx.destination);
-            osc.start(); osc.stop(audioCtx.currentTime + 0.1);
-        }
-        document.addEventListener('click', function(e) {
-            if(e.target.closest('button') || e.target.closest('.drawer-item') || e.target.closest('.theme-circle') || e.target.closest('.dashboard-socials a')) playClickSound();
-        });
-
         // VIDEO SOUND TOGGLE
         function toggleVideoSound(event) {
             event.preventDefault(); 
@@ -534,7 +515,7 @@
         }
 
         // ---------------------------------------------------------------------------------
-        // 3. ACCOUNT DELETION LOGIC (STRICT BACKEND VALIDATION)
+        // ACCOUNT DELETION LOGIC (STRICT BACKEND VALIDATION)
         // ---------------------------------------------------------------------------------
         function openDeleteAccountModal() {
             document.getElementById('settingsModal').style.display = 'none';
@@ -603,7 +584,7 @@
         }
 
         // ---------------------------------------------------------------------------------
-        // 4. SYLLABUS TRACKER LOGIC
+        // SYLLABUS TRACKER LOGIC
         // ---------------------------------------------------------------------------------
         let syllabusItems = [];
         function openSyllabusBoard() {
@@ -641,4 +622,3 @@
     
 </body>
 </html>
-
