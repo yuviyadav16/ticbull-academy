@@ -40,6 +40,22 @@
     {
       "src": "animation.mp4",
       "use": "@vercel/static"
+    },
+    {
+      "src": "privacy-policy.html",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "terms.html",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "refund-policy.html",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "contact.html",
+      "use": "@vercel/static"
     }
   ],
   "rewrites": [
@@ -74,6 +90,22 @@
     {
       "source": "/animation.mp4",
       "destination": "/animation.mp4"
+    },
+    {
+      "source": "/privacy-policy.html",
+      "destination": "/privacy-policy.html"
+    },
+    {
+      "source": "/terms.html",
+      "destination": "/terms.html"
+    },
+    {
+      "source": "/refund-policy.html",
+      "destination": "/refund-policy.html"
+    },
+    {
+      "source": "/contact.html",
+      "destination": "/contact.html"
     },
     {
       "source": "/",
