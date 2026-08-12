@@ -1,624 +1,790 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>TicBull Academy - Dashboard</title>
-    
-    <link rel="manifest" href="/manifest.json">
-    <meta name="theme-color" content="#2563eb">
-    <link rel="apple-touch-icon" href="logo.png">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>TicBull Academy — Batches</title>
 
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    
-    <!-- FIX: LINKING THE GLOBAL CONTROLLER -->
-    <script src="global.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
-    <style>
-        :root { --bg-color: #030712; --card-bg: rgba(15, 23, 42, 0.95); --accent-color: #2563eb; --accent-glow: rgba(37, 99, 235, 0.45); --text-main: #f8fafc; --text-muted: #94a3b8; --border-color: rgba(255, 255, 255, 0.12); --success-color: #10b981; --gold-color: #f59e0b; --input-bg: #0f172a; }
-        body.light-theme { --bg-color: #f1f5f9; --card-bg: #ffffff; --text-main: #0f172a; --text-muted: #64748b; --border-color: #cbd5e1; --input-bg: #ffffff; }
-        * { margin:0; padding:0; box-sizing:border-box; font-family:-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; -webkit-tap-highlight-color: transparent; }
-        body { background: var(--bg-color); color: var(--text-main); display:flex; flex-direction:column; height: 100vh; overflow: hidden; transition: background 0.3s, color 0.3s; }
+<style>
+/* =========================================================
+   100% DASHBOARD MATCHED CSS VARIABLES (GLOBAL SYNC)
+========================================================= */
+:root { 
+    --bg-color: #030712; 
+    --card-bg: rgba(15, 23, 42, 0.95); 
+    --accent-color: #2563eb; /* Auto-updates via JS */
+    --accent-glow: rgba(37, 99, 235, 0.45); 
+    --text-main: #f8fafc; 
+    --text-muted: #94a3b8; 
+    --border-color: rgba(255, 255, 255, 0.12); 
+    --success-color: #10b981; 
+    --gold-color: #f59e0b; 
+    --input-bg: #0f172a; 
+}
 
-        /* CUSTOM TOAST */
-        #custom-toast { position: fixed; top: -100px; left: 50%; transform: translateX(-50%); background: var(--card-bg); color: var(--text-main); border: 1px solid var(--accent-color); padding: 12px 24px; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); z-index: 10000; display: flex; align-items: center; gap: 12px; font-size: 13.5px; font-weight: 600; transition: top 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55); }
-        #custom-toast.show { top: 30px; }
+body.light-theme { 
+    --bg-color: #f1f5f9; 
+    --card-bg: #ffffff; 
+    --text-main: #0f172a; 
+    --text-muted: #64748b; 
+    --border-color: #cbd5e1; 
+    --input-bg: #ffffff; 
+}
 
-        /* TOP BAR */
-        .top-bar { display:flex; justify-content:space-between; align-items:center; padding:20px; z-index:50; }
-        .logo-area { display:flex; align-items:center; gap:10px; }
-        .logo-area img { width: 40px; height: 40px; border-radius: 50%; box-shadow: 0 0 15px var(--accent-glow); border:1px solid rgba(255,255,255,0.2); }
-        .logo-area span { font-weight:800; font-size:18px; color:#fff; letter-spacing:0.5px; }
-        .menu-btn { background:var(--card-bg); border:1px solid var(--border-color); color:var(--text-main); font-size:18px; padding:10px 14px; border-radius:12px; cursor:pointer; box-shadow:0 5px 15px rgba(0,0,0,0.3); transition: 0.2s; }
-        .menu-btn:active { transform: scale(0.9); }
+* { margin:0; padding:0; box-sizing:border-box; font-family:-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; -webkit-tap-highlight-color: transparent; }
 
-        /* MAIN CONTENT */
-        .main-content { display:flex; flex-direction:column; align-items:center; justify-content:center; flex:1; padding:20px; position:relative; }
-        
-        /* SOCIAL MEDIA BAR */
-        .dashboard-socials { display: flex; gap: 15px; margin-bottom: 20px; justify-content: center; width: 100%; max-width: 400px; z-index: 10; }
-        .dashboard-socials a { color: var(--text-main); font-size: 20px; background: var(--card-bg); border: 1px solid var(--border-color); width: 45px; height: 45px; display: flex; align-items: center; justify-content: center; border-radius: 50%; transition: 0.3s; box-shadow: 0 4px 15px rgba(0,0,0,0.3); text-decoration: none; }
-        .dashboard-socials a:hover { transform: translateY(-4px); background: rgba(255,255,255,0.1); box-shadow: 0 8px 25px rgba(255,255,255,0.2); }
-        .icon-yt { color: #ff0000 !important; }
-        .icon-ig { color: #e1306c !important; }
-        .icon-x { color: #ffffff !important; }
-        .icon-tg { color: #0088cc !important; }
-        .icon-fb { color: #1877f2 !important; }
+body {
+  background: var(--bg-color);
+  color: var(--text-main);
+  transition: background 0.3s, color 0.3s;
+}
 
-        /* VIDEO CONTAINER */
-        .video-container { width: 100%; max-width: 400px; height: 180px; margin-bottom: 20px; border-radius: 20px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.5); border: 1px solid var(--border-color); background: #000; display:flex; justify-content:center; align-items:center; z-index: 10; position: relative; }
-        .video-container video { width: 100%; height: 100%; object-fit: cover; pointer-events: none; }
-        .sound-toggle-btn { position: absolute; bottom: 15px; right: 15px; background: rgba(0,0,0,0.8); color: #fff; border: 2px solid rgba(255,255,255,0.4); border-radius: 50%; width: 45px; height: 45px; cursor: pointer; display: flex; align-items: center; justify-content: center; z-index: 9999; transition: 0.3s; box-shadow: 0 4px 15px rgba(0,0,0,0.8); pointer-events: auto; }
-        
-        .action-card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius:24px; padding:30px 22px; width:100%; max-width:400px; box-shadow:0 20px 50px rgba(0,0,0,0.5); text-align:center; z-index: 10; }
-        .action-card h2 { font-size:24px; font-weight:800; margin-bottom:8px; display:flex; justify-content:center; align-items:center; gap:10px; }
-        .action-card p { font-size:13px; color:var(--text-muted); margin-bottom:25px; }
-        
-        .btn-large { width:100%; font-weight:800; padding:18px; border:none; border-radius:16px; cursor:pointer; font-size:15px; margin-bottom:15px; display:flex; align-items:center; justify-content:center; gap:12px; transition:0.3s; color:#fff; }
-        .btn-large:active { transform:scale(0.96); }
-        .btn-explore { background: linear-gradient(135deg, #2563eb, #3b82f6); box-shadow: 0 8px 20px rgba(37, 99, 235, 0.4); }
-        .btn-classroom { background: linear-gradient(135deg, #10b981, #059669); box-shadow: 0 8px 20px rgba(16, 185, 129, 0.4); }
+.header {
+  padding:20px 16px 16px;
+  position:sticky;
+  top:0;
+  z-index:20;
+  background: var(--bg-color);
+  backdrop-filter:blur(14px);
+  border-bottom:1px solid var(--border-color);
+}
 
-        /* DRAWER MENU */
-        .drawer-overlay { position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.75); z-index:1000; display:none; }
-        .drawer { position:fixed; top:0; left:-320px; width:320px; height:100%; background:var(--card-bg); border-right:1px solid var(--border-color); z-index:1001; transition:0.3s; padding:20px; display:flex; flex-direction:column; overflow-y:auto; }
-        .drawer.open { left:0; }
-        .drawer-header { display:flex; justify-content:space-between; align-items:center; padding-bottom:14px; border-bottom:1px solid var(--border-color); margin-bottom:14px; }
-        
-        .profile-card { background:linear-gradient(135deg, rgba(37, 99, 235, 0.15), rgba(245, 158, 11, 0.1)); border:1px solid var(--border-color); border-radius:18px; padding:16px; margin-bottom:16px; text-align:left; position:relative; display:flex; align-items:center; gap:14px; }
-        .profile-avatar-box { position:relative; width:50px; height:50px; flex-shrink:0; }
-        .profile-avatar-img { width:100%; height:100%; border-radius:50%; object-fit:cover; border:2px solid var(--accent-color); }
-        .profile-avatar-initial { width:100%; height:100%; border-radius:50%; background:var(--accent-color); color:#fff; display:flex; justify-content:center; align-items:center; font-weight:800; font-size:20px; border:2px solid rgba(255,255,255,0.2); }
-        .avatar-upload-icon { position:absolute; bottom:-2px; right:-2px; background:var(--gold-color); color:#000; width:22px; height:22px; border-radius:50%; font-size:11px; display:flex; justify-content:center; align-items:center; cursor:pointer; }
-        .edit-profile-btn { position:absolute; top:12px; right:12px; color:var(--text-muted); font-size:14px; cursor:pointer; }
+.top {
+  display:flex;
+  align-items:center;
+  gap:12px;
+}
 
-        .drawer-item { padding:12px 14px; border-radius:12px; color:var(--text-main); font-size:14px; font-weight:600; display:flex; align-items:center; gap:14px; cursor:pointer; margin-bottom:8px; transition:0.2s; }
-        .drawer-item:hover { background:rgba(255,255,255,0.08); padding-left: 20px; color: var(--accent-color); }
+.back {
+  border:1px solid var(--border-color);
+  background: var(--card-bg);
+  color: var(--text-main);
+  width:42px;
+  height:42px;
+  border-radius:12px;
+  font-size:18px;
+  cursor:pointer;
+  box-shadow:0 5px 15px rgba(0,0,0,0.3);
+  transition: 0.2s;
+}
+.back:active { transform: scale(0.9); }
 
-        /* MODALS */
-        .modal-overlay { position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); z-index:2000; display:none; justify-content:center; align-items:center; padding:16px; backdrop-filter: blur(5px); }
-        .modal-card { background:var(--card-bg); border:1px solid var(--border-color); border-radius:24px; padding:26px; max-width:400px; width:100%; text-align:left; position:relative; box-shadow: 0 20px 50px rgba(0,0,0,0.5); animation: popIn 0.3s ease; }
-        @keyframes popIn { 0% { opacity:0; transform:scale(0.8) translateY(10px); } 100% { opacity:1; transform:scale(1) translateY(0); } }
+.brand {
+  font-size:24px;
+  font-weight:900;
+}
 
-        .setting-item { display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; font-size: 14.5px; font-weight:600; color: var(--text-main); }
-        .switch { position: relative; display: inline-block; width: 44px; height: 24px; }
-        .switch input { opacity: 0; width: 0; height: 0; }
-        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: var(--border-color); transition: .4s; border-radius: 34px; }
-        .slider:before { position: absolute; content: ""; height: 18px; width: 18px; left: 3px; bottom: 3px; background-color: white; transition: .4s; border-radius: 50%; }
-        input:checked + .slider { background-color: var(--success-color); }
-        input:checked + .slider:before { transform: translateX(20px); }
-        
-        .theme-grid { display: grid; grid-template-columns: repeat(8, 1fr); gap: 10px; margin-top: 10px; max-height: 120px; overflow-y: auto; padding-right: 5px; }
-        .theme-circle { width: 28px; height: 28px; border-radius: 50%; display:inline-block; cursor:pointer; border:2px solid transparent; transition:0.2s;}
-        .theme-circle.active { border-color:#fff; transform:scale(1.2); box-shadow: 0 0 10px rgba(255,255,255,0.4);}
-        
-        .btn-delete-acc { width:100%; background:#ef4444; color:#fff; font-weight:800; font-size:14px; padding:15px; border-radius:12px; border:none; margin-top:20px; cursor:pointer; box-shadow:0 8px 20px rgba(239, 68, 68, 0.4); display:flex; align-items:center; justify-content:center; gap:10px; transition:0.2s; }
-        .btn-delete-acc:active { transform: scale(0.96); }
-        
-        .input-group { position:relative; margin-bottom:14px; text-align:left; }
-        .input-group i.left-icon { position:absolute; left:14px; top:50%; transform:translateY(-50%); color:var(--text-muted); font-size:14px; }
-        .input-group input { width:100%; background:var(--input-bg); border:1px solid var(--border-color); color:var(--text-main); padding:14px 40px; border-radius:12px; font-size:14px; outline:none; transition:0.3s; }
-        .input-group input:focus { border-color:var(--accent-color); }
-        .btn-primary { width:100%; background: var(--accent-color); color:#fff; font-weight:700; padding:14px; border:none; border-radius:12px; cursor:pointer; font-size:14px; margin-top:10px; transition:0.2s;}
-        .btn-primary:active { transform: scale(0.98); }
+.brand span {
+  color: var(--gold-color);
+}
 
-        .syllabus-task { display:flex; align-items:center; gap:12px; background:var(--chat-bg); padding:12px 14px; border:1px solid var(--border-color); border-radius:12px; margin-bottom:8px; text-align:left; transition:0.2s; }
-        .syllabus-task input[type="checkbox"] { width:18px; height:18px; accent-color:var(--success-color); cursor:pointer; }
-        .syllabus-task span { font-size:13.5px; font-weight:600; color:var(--text-main); flex:1; }
-        .syllabus-task.completed span { text-decoration: line-through; color:var(--text-muted); }
-    </style>
+.subtitle {
+  color: var(--text-muted);
+  margin:8px 0 14px 54px;
+  font-size:13px;
+}
+
+/* DASHBOARD STYLE INPUT */
+.input-group { position:relative; margin-bottom:14px; text-align:left; width: 100%; }
+.input-group i.left-icon { position:absolute; left:14px; top:50%; transform:translateY(-50%); color:var(--text-muted); font-size:14px; }
+.input-group input { width:100%; background:var(--input-bg); border:1px solid var(--border-color); color:var(--text-main); padding:14px 40px; border-radius:12px; font-size:14px; outline:none; transition:0.3s; }
+.input-group input:focus { border-color:var(--accent-color); box-shadow: 0 0 12px var(--accent-glow); }
+
+.tabs {
+  display:flex;
+  gap:9px;
+  overflow-x:auto;
+  margin-top:13px;
+  padding-bottom: 5px;
+}
+.tabs::-webkit-scrollbar, .filters::-webkit-scrollbar { display: none; }
+
+.tab {
+  flex:0 0 auto;
+  padding:10px 16px;
+  border-radius:12px;
+  border:1px solid var(--border-color);
+  background: var(--input-bg);
+  color: var(--text-muted);
+  font-weight:700;
+  font-size: 13.5px;
+  cursor:pointer;
+  transition: 0.3s;
+}
+
+.tab.active {
+  background: var(--accent-color);
+  border-color: var(--accent-color);
+  color: white;
+  box-shadow: 0 4px 15px var(--accent-glow);
+}
+
+.filters {
+  display:flex;
+  gap:8px;
+  overflow-x:auto;
+  padding:13px 16px 4px;
+}
+
+.filter {
+  flex:0 0 auto;
+  padding:8px 14px;
+  border-radius:12px;
+  border:1px solid var(--border-color);
+  background: var(--input-bg);
+  color: var(--text-muted);
+  font-size: 13px;
+  font-weight: 600;
+  cursor:pointer;
+  transition: 0.2s;
+}
+
+.filter.active {
+  background: rgba(255,255,255,0.1);
+  color: var(--text-main);
+  border-color: var(--text-muted);
+}
+body.light-theme .filter.active { background: #e2e8f0; border-color: #94a3b8; }
+
+.main {
+  padding:15px 16px 70px;
+}
+
+.count {
+  color: var(--text-muted);
+  font-size:13px;
+  font-weight:700;
+  margin:5px 0 14px;
+}
+
+.grid {
+  display:grid;
+  gap:16px;
+}
+
+/* EXACT DASHBOARD CARD MATCH */
+.card {
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 24px;
+  padding: 24px 20px;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.4);
+}
+body.light-theme .card { box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
+
+.card h2 {
+  margin:0 0 6px;
+  font-size:19px;
+  font-weight:800;
+}
+
+.meta {
+  color: var(--text-muted);
+  font-size:12.5px;
+  margin-bottom:16px;
+  font-weight: 600;
+}
+
+.badges {
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+}
+
+.badge {
+  background: var(--input-bg);
+  border: 1px solid var(--border-color);
+  color: var(--text-main);
+  border-radius:8px;
+  padding:6px 10px;
+  font-size:11.5px;
+  font-weight: 600;
+}
+
+.more {
+  background: rgba(37, 99, 235, 0.15);
+  color: var(--accent-color);
+  border-color: var(--accent-color);
+}
+
+.price {
+  display:flex;
+  align-items:center;
+  gap:10px;
+  margin:20px 0 16px;
+}
+
+.price strong {
+  color: var(--gold-color);
+  font-size:24px;
+  font-weight: 900;
+}
+
+.old {
+  color: var(--text-muted);
+  text-decoration:line-through;
+  font-size:13px;
+  font-weight: 600;
+}
+
+.actions {
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+}
+
+.viewBtn, .buyBtn {
+  border:0;
+  padding:14px 10px;
+  border-radius:12px;
+  font-weight:800;
+  font-size: 13.5px;
+  cursor:pointer;
+  transition: 0.2s;
+}
+
+.viewBtn {
+  background: var(--input-bg);
+  border: 1px solid var(--border-color);
+  color: var(--text-main);
+}
+.viewBtn:active { transform: scale(0.96); }
+
+.buyBtn {
+  background: var(--accent-color);
+  color: white;
+  box-shadow: 0 8px 20px var(--accent-glow);
+}
+.buyBtn:active { transform: scale(0.96); }
+
+.empty {
+  text-align:center;
+  padding:50px 20px;
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+/* MODAL DESIGN EXACT MATCH */
+.overlay {
+  display:none;
+  position:fixed;
+  inset:0;
+  z-index:2000;
+  background:rgba(0,0,0,0.85);
+  backdrop-filter: blur(5px);
+  padding:16px;
+  overflow:auto;
+  align-items: center;
+  justify-content: center;
+}
+
+.overlay.show {
+  display:flex;
+}
+
+.modal {
+  width:100%;
+  max-width: 420px;
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 24px;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+  overflow:hidden;
+  animation: popIn 0.3s ease;
+}
+@keyframes popIn { 0% { opacity:0; transform:scale(0.8) translateY(10px); } 100% { opacity:1; transform:scale(1) translateY(0); } }
+
+.modalHead {
+  padding:22px;
+  display:flex;
+  justify-content:space-between;
+  align-items: flex-start;
+  gap:12px;
+  border-bottom:1px solid var(--border-color);
+}
+
+.modalHead h2 { margin:0; font-size:20px; font-weight: 800; }
+
+.close {
+  width:36px;
+  height:36px;
+  border:0;
+  border-radius:50%;
+  background: transparent;
+  color: var(--text-muted);
+  font-size:20px;
+  cursor:pointer;
+  transition: 0.2s;
+}
+.close:hover { color: var(--text-main); }
+
+.modalBody {
+  padding:22px;
+  max-height: 60vh;
+  overflow-y: auto;
+}
+
+.subject {
+  display:flex;
+  align-items:center;
+  gap:14px;
+  background: var(--input-bg);
+  border: 1px solid var(--border-color);
+  border-radius:16px;
+  padding:14px;
+  margin-bottom:10px;
+}
+
+.icon {
+  width:44px;
+  height:44px;
+  display:grid;
+  place-items:center;
+  border-radius:12px;
+  background: rgba(37, 99, 235, 0.1);
+  color: var(--text-main);
+  font-size:20px;
+  flex:none;
+}
+
+.subjectName {
+  font-size:15px;
+  font-weight:800;
+  color: var(--text-main);
+}
+
+.teacher {
+  color: var(--gold-color);
+  margin-top:4px;
+  font-size:12.5px;
+  font-weight:700;
+}
+
+.modalBuy {
+  width:100%;
+  margin-top:16px;
+  padding:16px;
+  border:0;
+  border-radius:14px;
+  background: var(--accent-color);
+  color:white;
+  font-weight:800;
+  font-size:15px;
+  cursor:pointer;
+  box-shadow: 0 8px 20px var(--accent-glow);
+  transition: 0.2s;
+}
+.modalBuy:active { transform: scale(0.98); }
+
+.note {
+  color: var(--text-muted);
+  font-size:11.5px;
+  line-height:1.5;
+  margin-top:16px;
+  text-align: center;
+  font-weight: 600;
+}
+
+@media(min-width:700px){
+  .grid{
+    grid-template-columns:repeat(2,1fr);
+  }
+}
+</style>
 </head>
+
 <body>
 
-    <div id="custom-toast"><i class="fa-solid fa-circle-check toast-icon success"></i> <span id="toast-message">Notification</span></div>
+<header class="header">
+  <div class="top">
+    <button class="back" onclick="goDashboard()"><i class="fa-solid fa-arrow-left"></i></button>
+    <div class="brand">TicBull <span>Academy</span></div>
+  </div>
 
-    <!-- TOP BAR -->
-    <div class="top-bar">
-        <div class="logo-area">
-            <img src="./logo.png" onerror="this.src='https://raw.githubusercontent.com/yuviyadav16/ticbull-academy/main/logo.png'">
-            <span>TicBull Academy</span>
-        </div>
-        <button class="menu-btn" onclick="toggleDrawer()"><i class="fa-solid fa-bars"></i></button>
+  <div class="subtitle">Board → Class / Stream → Subjects → Teacher</div>
+
+  <div class="input-group">
+      <i class="fa-solid fa-magnifying-glass left-icon"></i>
+      <input id="search" placeholder="Search board, class, stream, NEET, JEE...">
+  </div>
+
+  <div class="tabs">
+    <button class="tab active" data-type="school"><i class="fa-solid fa-school"></i> School Boards</button>
+    <button class="tab" data-type="competitive"><i class="fa-solid fa-bullseye"></i> Competitive Exams</button>
+  </div>
+</header>
+
+<div id="schoolFilters" class="filters"></div>
+<div id="competitiveFilters" class="filters" style="display:none"></div>
+
+<main class="main">
+  <div id="count" class="count"></div>
+  <div id="grid" class="grid"></div>
+</main>
+
+
+<!-- SUBJECT MODAL -->
+<div id="overlay" class="overlay" onclick="outsideClose(event)">
+  <div class="modal">
+    <div class="modalHead">
+      <div>
+        <h2 id="modalTitle"></h2>
+        <div id="modalMeta" class="meta" style="margin-top:6px; margin-bottom:0;"></div>
+      </div>
+      <button class="close" onclick="closeModal()"><i class="fa-solid fa-xmark"></i></button>
     </div>
 
-    <!-- MAIN CONTENT -->
-    <div class="main-content">
-        
-        <!-- SOCIAL MEDIA LINKS -->
-        <div class="dashboard-socials">
-            <a href="https://www.instagram.com/mryuvi_yadav" target="_blank" class="icon-ig"><i class="fa-brands fa-instagram"></i></a>
-            <a href="https://youtube.com/@mryuviyadav" target="_blank" class="icon-yt"><i class="fa-brands fa-youtube"></i></a>
-            <a href="https://t.me/mryuviyadav" target="_blank" class="icon-tg"><i class="fa-brands fa-telegram"></i></a>
-            <a href="https://x.com/mryuviyadav" target="_blank" class="icon-x"><i class="fa-brands fa-x-twitter"></i></a>
-            <a href="https://facebook.com/mryuviyadav" target="_blank" class="icon-fb"><i class="fa-brands fa-facebook"></i></a>
-        </div>
-        
-        <!-- VIDEO ANIMATION -->
-        <div class="video-container">
-            <video autoplay loop muted playsinline id="bg-video">
-                <source src="/animation.mp4" type="video/mp4">
-                <source src="https://raw.githubusercontent.com/yuviyadav16/ticbull-academy/main/animation.mp4" type="video/mp4">
-            </video>
-            
-            <button id="videoSoundBtn" class="sound-toggle-btn" onclick="toggleVideoSound(event)">
-                <i class="fa-solid fa-volume-xmark" style="font-size: 18px;"></i>
-            </button>
-        </div>
-
-        <!-- ACTION CARD -->
-        <div class="action-card">
-            <h2 style="color:var(--success-color);"><i class="fa-solid fa-circle-check"></i> Welcome, <span id="welcomeNameText" style="color:var(--text-main); margin-left:8px;">Student</span>!</h2>
-            <p>Select an option to continue your learning journey.</p>
-
-            <button class="btn-large btn-explore" onclick="window.location.href='batches.html'">
-                <i class="fa-solid fa-magnifying-glass"></i> Explore All Batches
-            </button>
-            
-            <button class="btn-large btn-classroom" onclick="window.location.href='classroom.html'">
-                <i class="fa-solid fa-graduation-cap"></i> Your Classroom
-            </button>
-        </div>
+    <div class="modalBody">
+      <div id="subjectList"></div>
+      <button id="modalBuy" class="modalBuy">BUY NOW</button>
+      <div class="note">This screen shows only the subjects assigned to this batch and the teacher assigned to each subject.</div>
     </div>
+  </div>
+</div>
 
-    <!-- MENU DRAWER -->
-    <div class="drawer-overlay" id="drawerOverlay" onclick="toggleDrawer()"></div>
-    <div class="drawer" id="drawer">
-        <div class="drawer-header">
-            <strong style="font-size:16px;">Menu & Profile</strong>
-            <i class="fa-solid fa-xmark" style="color:var(--text-muted); cursor:pointer; font-size:18px;" onclick="toggleDrawer()"></i>
-        </div>
+<script>
+/* =========================================================
+   1. GLOBAL SETTINGS SYNC (THEME, COLOR, SOUND)
+========================================================= */
+let appSoundEnabled = true;
 
-        <div class="profile-card">
-            <i class="fa-solid fa-pen-to-square edit-profile-btn" onclick="openEditProfileModal()"></i>
-            <div class="profile-header">
-                <div class="profile-avatar-box">
-                    <img src="" id="drawerAvatarImg" class="profile-avatar-img" style="display:none;" alt="Avatar">
-                    <div class="profile-avatar-initial" id="drawerAvatarInitial">S</div>
-                    <label class="avatar-upload-icon" for="avatarUploadInput"><i class="fa-solid fa-camera"></i></label>
-                    <input type="file" id="avatarUploadInput" accept="image/*" style="display:none;" onchange="handleAvatarUpload(event)">
-                </div>
-                <div>
-                    <strong style="color:#fff; font-size:16px;" id="drawerStudentName">Loading...</strong>
-                    <div style="font-size:11px; color:var(--text-muted); margin-top:2px;" id="drawerStudentEmail">student@ticbull.com</div>
-                    <div style="font-size:12px; color:var(--accent-color); font-weight:700; margin-top:4px;" id="drawerStudentAge">Age: Active Learner</div>
-                </div>
-            </div>
-        </div>
-        
-        <div class="drawer-item" onclick="window.location.href='batches.html'"><i class="fa-solid fa-layer-group" style="color:var(--accent-color); width:20px;"></i> All Batches & Goals</div>
-        <div class="drawer-item" onclick="openSyllabusBoard()"><i class="fa-solid fa-list-check" style="color:#0ea5e9; width:20px;"></i> Syllabus Tracker Board</div>
-        <div class="drawer-item" onclick="openSettingsModal()"><i class="fa-solid fa-gear" style="color:#94a3b8; width:20px;"></i> App Settings</div>
-        
-        <!-- FIX: This uses the logic defined globally -->
-        <div class="drawer-item" onclick="toggleThemeDashboard()"><i class="fa-solid fa-circle-half-stroke" style="color:var(--gold-color); width:20px;"></i> <span id="themeToggleText">Switch to Light Mode</span></div>
-        
-        <div class="drawer-item" onclick="openPricingModal()"><i class="fa-solid fa-crown" style="color:#f59e0b; width:20px;"></i> Upgrade Course Pass</div>
-        
-        <div class="drawer-item" onclick="logoutUser()" style="color:#ef4444; margin-top:10px; border-top:1px solid var(--border-color); padding-top:16px;"><i class="fa-solid fa-right-from-bracket" style="width:20px;"></i> Log Out Account</div>
+function applyDashboardSettings() {
+    // Sync Light/Dark Mode
+    const isLight = localStorage.getItem('ticbull_theme') === 'light';
+    if(isLight) document.body.classList.add('light-theme');
+    else document.body.classList.remove('light-theme');
 
-        <div style="margin-top:auto; padding-top:16px;">
-            <div style="font-size:11px; font-weight:800; color:var(--text-muted); margin-bottom:12px;">TICBULL OFFICIAL SUPPORT:</div>
-            <a href="mailto:ticbull.support@gmail.com" target="_blank" style="color:var(--text-main); text-decoration:none; display:flex; align-items:center; gap:10px; margin-bottom:12px; font-size:13px; font-weight:600;"><i class="fa-solid fa-envelope" style="color:#2563eb;"></i> ticbull.support@gmail.com</a>
-            <a href="https://www.instagram.com/ticbull" target="_blank" style="color:var(--text-main); text-decoration:none; display:flex; align-items:center; gap:10px; margin-bottom:12px; font-size:13px; font-weight:600;"><i class="fa-brands fa-instagram" style="color:#e1306c;"></i> @ticbull Official Support</a>
-            <a href="https://t.me/ticbullteam" target="_blank" style="color:var(--text-main); text-decoration:none; display:flex; align-items:center; gap:10px; font-size:13px; font-weight:600;"><i class="fa-brands fa-telegram" style="color:#0088cc;"></i> @ticbullteam Telegram Support</a>
-            
-            <div style="font-size:11px; font-weight:800; color:var(--text-muted); margin:20px 0 10px 0;">DEVELOPER SOCIALS:</div>
-            <div style="display:flex; gap:18px; font-size:20px;">
-                <a href="https://youtube.com/@mryuviyadav" target="_blank" style="color:#ff0000;"><i class="fa-brands fa-youtube"></i></a>
-                <a href="https://www.instagram.com/mryuvi_yadav" target="_blank" style="color:#e1306c;"><i class="fa-brands fa-instagram"></i></a>
-                <a href="https://x.com/mryuviyadav" target="_blank" style="color:var(--text-main);"><i class="fa-brands fa-x-twitter"></i></a>
-                <a href="https://t.me/mryuviyadav" target="_blank" style="color:#0088cc;"><i class="fa-brands fa-telegram"></i></a>
-                <a href="https://facebook.com/mryuviyadav" target="_blank" style="color:#1877f2;"><i class="fa-brands fa-facebook"></i></a>
-            </div>
+    // Sync Theme Color
+    const savedColor = localStorage.getItem('ticbull_theme_color');
+    if(savedColor) {
+        document.documentElement.style.setProperty('--accent-color', savedColor);
+        // Add opacity for glow effect
+        document.documentElement.style.setProperty('--accent-glow', savedColor + '66');
+    }
+
+    // Sync Sound
+    const savedSound = localStorage.getItem('ticbull_sound');
+    appSoundEnabled = savedSound !== 'false';
+}
+
+// Play Click Sound
+const AudioContext = window.AudioContext || window.webkitAudioContext;
+const audioCtx = new AudioContext();
+function playClickSound() {
+    if(!appSoundEnabled) return;
+    if(audioCtx.state === 'suspended') audioCtx.resume();
+    const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain();
+    osc.type = 'sine'; osc.frequency.setValueAtTime(800, audioCtx.currentTime);
+    gain.gain.setValueAtTime(0.05, audioCtx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.1);
+    osc.connect(gain); gain.connect(audioCtx.destination);
+    osc.start(); osc.stop(audioCtx.currentTime + 0.1);
+}
+
+document.addEventListener('click', function(e) {
+    if(e.target.closest('button') || e.target.closest('.tab') || e.target.closest('.filter')) playClickSound();
+});
+
+applyDashboardSettings(); // Execute on load
+
+/* =========================================================
+   ICONS
+========================================================= */
+const icons = {
+  "Hindi":"📖", "English":"📘", "Sanskrit":"🕉️", "Urdu":"📕", "Mathematics":"🔢", "Physics":"⚛️",
+  "Physical Chemistry":"⚗️", "Organic Chemistry":"🧪", "Inorganic Chemistry":"🔬", "Biology":"🧬",
+  "Botany":"🌱", "Zoology":"🦁", "History":"🏛️", "Geography":"🌍", "Political Science":"⚖️",
+  "Economics":"📈", "Sociology":"👥", "Psychology":"🧠", "Accountancy":"🧾", "Business Studies":"💼",
+  "Entrepreneurship":"🚀", "General Studies":"📚", "General Knowledge":"🌐", "Current Affairs":"📰",
+  "Reasoning":"🧩", "Quantitative Aptitude":"➗", "General Intelligence":"🧠", "General Awareness":"🌐",
+  "General Science":"🔬", "Computer Knowledge":"💻", "Legal Reasoning":"⚖️", "Logical Reasoning":"🧩",
+  "Quantitative Techniques":"➗", "English Language":"📘", "Reading Comprehension":"📖",
+  "Verbal Ability":"🗣️", "Data Interpretation":"📊", "Child Development":"👶", "Teaching Aptitude":"👨‍🏫",
+  "Agriculture":"🌾", "Numerical Ability":"🔢", "Communication Ability":"🗣️", "Drawing":"🎨",
+  "Design Aptitude":"🎨", "Creative Ability":"🎨"
+};
+
+/* =========================================================
+   UNIQUE TEACHER GENERATOR (NO REPEATS)
+========================================================= */
+const firstNames = ["Aarav","Vivaan","Aditya","Arjun","Kabir","Ishaan","Rohan","Kunal","Rahul","Nikhil","Varun","Manav","Samar","Yash","Aman","Dev","Vikram","Sanjay","Gaurav","Deepak","Nitin","Rajesh","Suresh","Manish","Akash","Ravi","Vikas","Mohit","Pankaj","Abhishek"];
+const lastNames = ["Sharma","Gupta","Verma","Yadav","Singh","Kumar","Rao","Mehta","Chauhan","Patel","Mishra","Pandey","Tiwari","Joshi","Nair","Iyer","Reddy","Das","Bose","Sinha","Jha","Thakur","Malhotra","Kapoor","Bansal","Agarwal","Srivastava","Tripathi","Saxena","Shukla"];
+
+function getUniqueTeacher(subjectName) {
+    let hash = 0;
+    for (let i = 0; i < subjectName.length; i++) { hash = subjectName.charCodeAt(i) + ((hash << 5) - hash); }
+    const fName = firstNames[Math.abs(hash) % firstNames.length];
+    const lName = lastNames[Math.abs(hash >> 3) % lastNames.length];
+    return `Prof. ${fName} ${lName}`;
+}
+
+/* =========================================================
+   SUBJECT STRUCTURE (100% ORIGINAL)
+========================================================= */
+const CLASS_9_10 = ["Hindi", "English", "Mathematics", "Physics", "Chemistry", "Biology", "History", "Geography", "Political Science", "Economics"];
+const PCM = ["English", "Physics", "Physical Chemistry", "Organic Chemistry", "Inorganic Chemistry", "Mathematics"];
+const PCB = ["English", "Physics", "Physical Chemistry", "Organic Chemistry", "Inorganic Chemistry", "Botany", "Zoology"];
+const PCMB = ["English", "Physics", "Physical Chemistry", "Organic Chemistry", "Inorganic Chemistry", "Mathematics", "Botany", "Zoology"];
+const COMMERCE = ["English", "Accountancy", "Business Studies", "Economics", "Mathematics"];
+const ARTS = ["English", "Hindi", "History", "Political Science", "Geography", "Economics", "Sociology", "Psychology"];
+
+const NEET = ["Physics", "Physical Chemistry", "Organic Chemistry", "Inorganic Chemistry", "Botany", "Zoology"];
+const JEE = ["Physics", "Physical Chemistry", "Organic Chemistry", "Inorganic Chemistry", "Mathematics"];
+const CUET = ["English", "General Knowledge", "Current Affairs", "Quantitative Aptitude", "Reasoning"];
+const UPSC = ["History", "Geography", "Political Science", "Economics", "General Studies", "Current Affairs"];
+const SSC = ["General Intelligence", "Quantitative Aptitude", "English", "General Awareness", "Current Affairs"];
+const BANKING = ["Quantitative Aptitude", "Reasoning", "English", "General Awareness", "Current Affairs", "Computer Knowledge"];
+const NDA = ["Mathematics", "English", "General Studies", "Physics", "Chemistry", "History", "Geography", "Current Affairs"];
+const DEFENCE = ["English", "General Knowledge", "Current Affairs", "Mathematics", "Reasoning"];
+const CLAT = ["English", "Current Affairs", "General Knowledge", "Legal Reasoning", "Logical Reasoning", "Quantitative Techniques"];
+const TEACHING = ["Child Development", "Teaching Aptitude", "Reasoning", "General Awareness", "English", "Current Affairs"];
+const RAILWAY = ["Mathematics", "General Intelligence", "General Science", "General Awareness", "Current Affairs"];
+const AGRICULTURE = ["Physics", "Chemistry", "Biology", "Mathematics", "Agriculture"];
+const MANAGEMENT = ["Quantitative Aptitude", "Logical Reasoning", "Data Interpretation", "Verbal Ability", "Reading Comprehension"];
+const DESIGN = ["English", "General Knowledge", "Current Affairs", "Design Aptitude", "Creative Ability", "Drawing"];
+
+const boards = [
+  ["CBSE","Central Board of Secondary Education"], ["CISCE","Council for the Indian School Certificate Examinations"], ["NIOS","National Institute of Open Schooling"],
+  ["Andhra Pradesh","Andhra Pradesh Board"], ["Assam","Assam Board"], ["Bihar","Bihar School Examination Board"], ["Chhattisgarh","Chhattisgarh Board of Secondary Education"],
+  ["Goa","Goa Board"], ["Gujarat","Gujarat Secondary and Higher Secondary Education Board"], ["Haryana","Board of School Education Haryana"], ["Himachal Pradesh","Himachal Pradesh Board of School Education"],
+  ["Jharkhand","Jharkhand Academic Council"], ["Jammu & Kashmir","Jammu and Kashmir Board"], ["Karnataka","Karnataka School Examination and Assessment Board"], ["Kerala","Kerala Board"],
+  ["Madhya Pradesh","Madhya Pradesh Board"], ["Maharashtra","Maharashtra State Board"], ["Manipur","Manipur Board"], ["Meghalaya","Meghalaya Board"], ["Mizoram","Mizoram Board"],
+  ["Nagaland","Nagaland Board"], ["Odisha","Odisha Board"], ["Punjab","Punjab School Education Board"], ["Rajasthan","Board of Secondary Education Rajasthan"], ["Sikkim","Sikkim Board"],
+  ["Tamil Nadu","Tamil Nadu State Board"], ["Telangana","Telangana Board"], ["Tripura","Tripura Board"], ["Uttar Pradesh","Uttar Pradesh Madhyamik Shiksha Parishad"],
+  ["Uttarakhand","Uttarakhand Board"], ["West Bengal","West Bengal Board"]
+];
+
+/* =========================================================
+   BATCH DATABASE & AUTOMATIC PRICE SYSTEM
+========================================================= */
+let batches = [];
+let currentType = "school";
+let currentFilter = "All";
+
+function getBatchPrice(type,cls,exam){
+  if(type === "school"){
+    if(cls === "Class 9" || cls === "Class 10") return 199;
+    if(cls === "Class 11" || cls === "Class 12") return 249;
+  }
+  if(exam === "NEET" || exam === "JEE Main + Advanced"){
+    if(cls === "Class 11") return 299;
+    if(cls === "Class 12") return 399;
+    if(cls === "Dropper") return 499;
+  }
+  if(exam === "CUET UG") return 299;
+  if(exam === "UPSC Civil Services") return 499;
+  if(["SSC", "SSC CGL", "SSC CHSL", "SSC MTS"].includes(exam)) return 299;
+  if(["Banking", "IBPS PO", "IBPS Clerk", "SBI PO", "SBI Clerk"].includes(exam)) return 299;
+  if(["NDA", "CDS", "AFCAT"].includes(exam)) return 299;
+  if(["CLAT", "AILET"].includes(exam)) return 299;
+  if(["CTET", "State TET", "UGC NET"].includes(exam)) return 299;
+  if(["RRB NTPC", "RRB Group D", "RRB ALP"].includes(exam)) return 299;
+  if(exam === "ICAR / Agriculture Entrance") return 249;
+  if(["CAT", "IPMAT"].includes(exam)) return 399;
+  if(["NIFT", "NID DAT"].includes(exam)) return 249;
+  if(["IISER Aptitude Test", "NEST"].includes(exam)) return 299;
+  return 199;
+}
+
+function makeBatch({ type, board="", cls="", stream="", exam="", category="", subjects }) {
+  const id = "B" + String(batches.length + 1).padStart(4,"0");
+  const price = getBatchPrice(type, cls, exam);
+  const subjectData = subjects.map(subject => ({ name: subject, teacher: getUniqueTeacher(subject) }));
+
+  batches.push({
+    id, type, board, cls, stream, exam, category, price,
+    oldPrice: Math.round(price * 1.5), subjects: subjectData
+  });
+}
+
+// GENERATE ALL 372 SCHOOL BATCHES
+boards.forEach(board => {
+  const boardName = board[0];
+  const classes = [
+    {cls:"Class 9", stream:"General", sub:CLASS_9_10, cat:"School Boards"},
+    {cls:"Class 10", stream:"General", sub:CLASS_9_10, cat:"School Boards"},
+    {cls:"Class 11", stream:"Science — PCM", sub:PCM, cat:"Science"},
+    {cls:"Class 11", stream:"Science — PCB", sub:PCB, cat:"Science"},
+    {cls:"Class 11", stream:"Science — PCMB", sub:PCMB, cat:"Science"},
+    {cls:"Class 11", stream:"Commerce", sub:COMMERCE, cat:"Commerce"},
+    {cls:"Class 11", stream:"Arts / Humanities", sub:ARTS, cat:"Arts"},
+    {cls:"Class 12", stream:"Science — PCM", sub:PCM, cat:"Science"},
+    {cls:"Class 12", stream:"Science — PCB", sub:PCB, cat:"Science"},
+    {cls:"Class 12", stream:"Science — PCMB", sub:PCMB, cat:"Science"},
+    {cls:"Class 12", stream:"Commerce", sub:COMMERCE, cat:"Commerce"},
+    {cls:"Class 12", stream:"Arts / Humanities", sub:ARTS, cat:"Arts"}
+  ];
+  classes.forEach(c => makeBatch({ type:"school", board:boardName, cls:c.cls, stream:c.stream, category:c.cat, subjects:c.sub }));
+});
+
+// GENERATE COMPETITIVE BATCHES
+const competitiveData = [
+  ["NEET","Class 11","Medical Foundation",NEET,"Medical"], ["NEET","Class 12","Medical Preparation",NEET,"Medical"], ["NEET","Dropper","Medical Dropper",NEET,"Medical"],
+  ["JEE Main + Advanced","Class 11","Engineering Foundation",JEE,"Engineering"], ["JEE Main + Advanced","Class 12","Engineering Preparation",JEE,"Engineering"], ["JEE Main + Advanced","Dropper","Engineering Dropper",JEE,"Engineering"],
+  ["CUET UG","Class 11","Foundation",CUET,"University Entrance"], ["CUET UG","Class 12","Preparation",CUET,"University Entrance"], ["CUET UG","Dropper","Dropper",CUET,"University Entrance"],
+  ["UPSC Civil Services","Foundation","Foundation",UPSC,"UPSC"], ["UPSC Civil Services","CSE","Civil Services Preparation",UPSC,"UPSC"], ["UPSC Civil Services","Mains","Mains Preparation",UPSC,"UPSC"],
+  ["SSC","Foundation","SSC Foundation",SSC,"SSC"], ["SSC CGL","Graduate","CGL Preparation",SSC,"SSC"], ["SSC CHSL","12th Level","CHSL Preparation",SSC,"SSC"], ["SSC MTS","10th Level","MTS Preparation",SSC,"SSC"],
+  ["Banking","Foundation","Banking Foundation",BANKING,"Banking"], ["IBPS PO","Graduate","PO Preparation",BANKING,"Banking"], ["IBPS Clerk","Graduate","Clerk Preparation",BANKING,"Banking"], ["SBI PO","Graduate","PO Preparation",BANKING,"Banking"], ["SBI Clerk","Graduate","Clerk Preparation",BANKING,"Banking"],
+  ["NDA","Class 11","NDA Foundation",NDA,"Defence"], ["NDA","Class 12","NDA Preparation",NDA,"Defence"], ["NDA","Dropper","NDA Advanced",NDA,"Defence"], ["CDS","Graduate","CDS Preparation",DEFENCE,"Defence"], ["AFCAT","Graduate","AFCAT Preparation",DEFENCE,"Defence"],
+  ["CLAT","Class 11","CLAT Foundation",CLAT,"Law"], ["CLAT","Class 12","CLAT Preparation",CLAT,"Law"], ["CLAT","Dropper","CLAT Dropper",CLAT,"Law"], ["AILET","Class 12","AILET Preparation",CLAT,"Law"],
+  ["CTET","Foundation","CTET Foundation",TEACHING,"Teaching"], ["CTET","Paper 1","Primary Teacher",TEACHING,"Teaching"], ["CTET","Paper 2","Upper Primary Teacher",TEACHING,"Teaching"], ["State TET","Foundation","TET Preparation",TEACHING,"Teaching"], ["UGC NET","Graduate","NET Preparation",TEACHING,"Teaching"],
+  ["RRB NTPC","12th / Graduate","NTPC Preparation",RAILWAY,"Railway"], ["RRB Group D","10th / ITI","Group D Preparation",RAILWAY,"Railway"], ["RRB ALP","ITI / Diploma","ALP Preparation",RAILWAY,"Railway"],
+  ["ICAR / Agriculture Entrance","Class 11","Agriculture Foundation",AGRICULTURE,"Agriculture"],
+  ["CAT","Graduate","MBA Entrance",MANAGEMENT,"Management"], ["IPMAT","Class 12","Management Foundation",MANAGEMENT,"Management"],
+  ["NIFT","Class 12","Fashion Design Entrance",DESIGN,"Design"], ["NID DAT","Class 12","Design Entrance",DESIGN,"Design"],
+  ["IISER Aptitude Test","Class 12","Science Entrance",["Physics", "Chemistry", "Mathematics", "Biology"],"Science Entrance"], ["NEST","Class 12","Science Entrance",["Physics", "Chemistry", "Mathematics", "Biology"],"Science Entrance"],
+  ["State PSC","Graduate","PSC Foundation",UPSC,"Government Exams"], ["State SSC","12th / Graduate","State SSC",SSC,"Government Exams"], ["State Police Exams","12th / Graduate","Police Exam Foundation",["General Knowledge", "Current Affairs", "Reasoning", "Quantitative Aptitude", "General Science"],"Government Exams"]
+];
+
+competitiveData.forEach(item => makeBatch({ type:"competitive", exam:item[0], cls:item[1], stream:item[2], subjects:item[3], category:item[4] }));
+
+/* =========================================================
+   FILTERS & RENDERING
+========================================================= */
+const schoolFilters = ["All", "National", "Andhra Pradesh", "Assam", "Bihar", "Chhattisgarh", "Goa", "Gujarat", "Haryana", "Himachal Pradesh", "Jharkhand", "Jammu & Kashmir", "Karnataka", "Kerala", "Madhya Pradesh", "Maharashtra", "Manipur", "Meghalaya", "Mizoram", "Nagaland", "Odisha", "Punjab", "Rajasthan", "Sikkim", "Tamil Nadu", "Telangana", "Tripura", "Uttar Pradesh", "Uttarakhand", "West Bengal"];
+const competitiveFilters = ["All", "Medical", "Engineering", "University Entrance", "UPSC", "SSC", "Banking", "Defence", "Law", "Teaching", "Railway", "Agriculture", "Management", "Design", "Science Entrance", "Government Exams"];
+
+function renderFilters(){
+  const target = currentType === "school" ? document.getElementById("schoolFilters") : document.getElementById("competitiveFilters");
+  target.innerHTML = "";
+  const filters = currentType === "school" ? schoolFilters : competitiveFilters;
+  
+  filters.forEach(filter => {
+    const button = document.createElement("button");
+    button.className = "filter" + (currentFilter === filter ? " active" : "");
+    button.textContent = filter;
+    button.onclick = () => { currentFilter = filter; renderFilters(); render(); };
+    target.appendChild(button);
+  });
+}
+
+function render(){
+  const grid = document.getElementById("grid");
+  const search = document.getElementById("search").value.toLowerCase().trim();
+  let list = batches.filter(batch => batch.type === currentType);
+
+  if(currentFilter !== "All"){
+    list = list.filter(batch => {
+      if(currentType === "school"){
+        if(currentFilter === "National") return ["CBSE", "CISCE", "NIOS"].includes(batch.board);
+        return batch.board === currentFilter;
+      }
+      return batch.category === currentFilter;
+    });
+  }
+
+  if(search){
+    list = list.filter(batch => {
+      const text = [batch.board, batch.cls, batch.stream, batch.exam, batch.category, ...batch.subjects.map(s => s.name), ...batch.subjects.map(s => s.teacher)].join(" ").toLowerCase();
+      return text.includes(search);
+    });
+  }
+
+  document.getElementById("count").textContent = `${list.length} batches available`;
+
+  if(!list.length){
+    grid.innerHTML = `<div class="empty">😕 No batch found.<br>Try another board, class or exam.</div>`;
+    return;
+  }
+
+  grid.innerHTML = list.map(batch => {
+    const title = batch.type === "school" ? `${batch.board} — ${batch.cls}` : `${batch.exam} — ${batch.cls}`;
+    const meta = batch.type === "school" ? `${batch.board} • ${batch.stream}` : `${batch.exam} • ${batch.stream}`;
+    const visible = batch.subjects.slice(0,6);
+    const more = batch.subjects.length - 6;
+
+    return `
+      <article class="card">
+        <h2>${escapeHTML(title)}</h2>
+        <div class="meta">${escapeHTML(meta)}</div>
+        <div class="badges">
+          ${visible.map(subject => `<span class="badge">${escapeHTML(subject.name)}</span>`).join("")}
+          ${more > 0 ? `<span class="badge more">+${more} more</span>` : ""}
         </div>
+        <div class="price">
+          <strong>₹${batch.price}</strong>
+          <span class="old">₹${batch.oldPrice}</span>
+        </div>
+        <div class="actions">
+          <button class="viewBtn" onclick="viewSubjects('${batch.id}')">VIEW SUBJECTS</button>
+          <button class="buyBtn" onclick="buy('${batch.id}')">BUY NOW</button>
+        </div>
+      </article>
+    `;
+  }).join("");
+}
+
+/* =========================================================
+   SUBJECT MODAL
+========================================================= */
+function viewSubjects(id){
+  const batch = batches.find(item => item.id === id);
+  if(!batch) return;
+
+  const title = batch.type === "school" ? `${batch.board} — ${batch.cls}` : `${batch.exam} — ${batch.cls}`;
+  document.getElementById("modalTitle").textContent = title;
+  document.getElementById("modalMeta").textContent = batch.type === "school" ? `${batch.board} • ${batch.stream}` : `${batch.exam} • ${batch.stream}`;
+
+  document.getElementById("subjectList").innerHTML = batch.subjects.map(subject => `
+    <div class="subject">
+      <div class="icon">${icons[subject.name] || "📚"}</div>
+      <div>
+        <div class="subjectName">${escapeHTML(subject.name)}</div>
+        <div class="teacher">👨‍🏫 ${escapeHTML(subject.teacher)}</div>
+      </div>
     </div>
+  `).join("");
 
-    <!-- SETTINGS MODAL -->
-    <div class="modal-overlay" id="settingsModal">
-        <div class="modal-card">
-            <i class="fa-solid fa-xmark" style="position:absolute; right:16px; top:16px; color:var(--text-muted); cursor:pointer; font-size:20px;" onclick="document.getElementById('settingsModal').style.display='none';"></i>
-            <h3 style="font-size:19px; margin-bottom:24px; display:flex; align-items:center; gap:10px;"><i class="fa-solid fa-gear"></i> App Settings</h3>
-            
-            <div class="setting-item">
-                <span style="display:flex; align-items:center; gap:12px;"><i class="fa-solid fa-music"></i> App Click Sounds</span>
-                <label class="switch"><input type="checkbox" id="soundToggle" onchange="toggleSoundSettingDashboard(this)"><span class="slider"></span></label>
-            </div>
-            <div class="setting-item">
-                <span style="display:flex; align-items:center; gap:12px;"><i class="fa-solid fa-microphone"></i> Microphone Permission</span>
-                <label class="switch"><input type="checkbox" checked><span class="slider"></span></label>
-            </div>
-            <div class="setting-item">
-                <span style="display:flex; align-items:center; gap:12px;"><i class="fa-solid fa-camera"></i> Camera & Media</span>
-                <label class="switch"><input type="checkbox" checked><span class="slider"></span></label>
-            </div>
-            
-            <div style="margin-top:20px; padding-top:16px; border-top:1px solid var(--border-color);">
-                <span style="font-size:12px; color:var(--text-muted); display:block; margin-bottom:12px;">Chat Theme Color (40+ Options):</span>
-                <div class="theme-grid" id="themeGrid"></div>
-            </div>
+  document.getElementById("modalBuy").textContent = `BUY NOW — ₹${batch.price}`;
+  document.getElementById("modalBuy").onclick = () => buy(batch.id);
+  document.getElementById("overlay").classList.add("show");
+}
 
-            <button class="btn-delete-acc" onclick="openDeleteAccountModal()"><i class="fa-solid fa-trash"></i> DELETE ACCOUNT PERMANENTLY</button>
-        </div>
-    </div>
+function closeModal(){ document.getElementById("overlay").classList.remove("show"); }
+function outsideClose(event){ if(event.target.id === "overlay") closeModal(); }
 
-    <!-- DELETE ACCOUNT MODAL -->
-    <div class="modal-overlay" id="deleteAccountModal">
-        <div class="modal-card">
-            <i class="fa-solid fa-xmark" style="position:absolute; right:16px; top:16px; color:var(--text-muted); cursor:pointer; font-size:20px;" onclick="document.getElementById('deleteAccountModal').style.display='none';"></i>
-            <h3 style="color:#ef4444; font-size:19px; margin-bottom:10px; display:flex; align-items:center; gap:10px;"><i class="fa-solid fa-triangle-exclamation"></i> Delete Account</h3>
-            <p style="font-size:12.5px; color:var(--text-muted); margin-bottom:20px; line-height:1.4;">WARNING: Deleting your account will permanently erase your subscription, chats, and all data. This cannot be undone.</p>
-            
-            <div class="input-group">
-                <i class="fa-regular fa-envelope left-icon"></i>
-                <input type="email" id="delAccEmail" disabled style="opacity:0.6;" value="">
-            </div>
-            
-            <div id="delAccOtpSection" style="display:none;">
-                <div class="input-group" style="margin-top:10px;">
-                    <i class="fa-solid fa-shield-halved left-icon"></i>
-                    <input type="text" id="delAccOtp" placeholder="Enter Deletion OTP" maxlength="6" style="text-align:center; font-weight:800; letter-spacing:4px;">
-                </div>
-                <button class="btn-primary" id="confirmDeleteAccBtn" style="background:#ef4444; box-shadow:0 8px 20px rgba(239, 68, 68, 0.4);" onclick="verifyAndDeleteAccount()">PERMANENTLY DELETE</button>
-            </div>
+/* =========================================================
+   BUY NOW
+========================================================= */
+function buy(id) {
+  const batch = batches.find(item => item.id === id);
+  if (!batch) return;
+  const title = batch.type === "school" ? `${batch.board} — ${batch.cls} — ${batch.stream}` : `${batch.exam} — ${batch.cls} — ${batch.stream}`;
+  const exactSubjects = batch.subjects.map(s => s.name);
 
-            <button class="btn-primary" id="sendDelOtpBtn" onclick="initiateAccountDeletion()">SEND DELETION OTP</button>
-        </div>
-    </div>
+  sessionStorage.setItem("tb_checkout_title", title);
+  sessionStorage.setItem("tb_checkout_price", batch.price);
+  sessionStorage.setItem("tb_checkout_tier", "Pro");
+  sessionStorage.setItem("tb_checkout_subjects", JSON.stringify(exactSubjects));
+  window.location.href = "payment.html";
+}
 
-    <!-- SYLLABUS TRACKER MODAL -->
-    <div class="modal-overlay" id="syllabusModal">
-        <div class="modal-card" style="max-height:80vh;">
-            <i class="fa-solid fa-xmark" style="position:absolute; right:16px; top:16px; color:var(--text-muted); cursor:pointer; font-size:20px;" onclick="document.getElementById('syllabusModal').style.display='none';"></i>
-            <h3 style="font-size:19px; margin-bottom:6px;"><i class="fa-solid fa-list-check"></i> Syllabus Tracker</h3>
-            <p style="font-size:12px; color:var(--text-muted); margin-bottom:16px;">Track your chapters & study progress.</p>
-            
-            <div class="input-group">
-                <input type="text" id="newSyllabusItem" placeholder="Add chapter/topic..." style="padding-left:14px; border-radius:12px;">
-            </div>
-            <button class="btn-primary" style="margin-top:4px;" onclick="addSyllabusItem()">ADD TOPIC</button>
+/* =========================================================
+   TABS & EVENTS
+========================================================= */
+function goDashboard(){ window.location.href = "dashboard.html"; }
 
-            <div id="syllabusList" style="margin-top:16px; overflow-y:auto; flex:1;"></div>
-        </div>
-    </div>
+document.querySelectorAll(".tab").forEach(tab => {
+  tab.addEventListener("click", () => {
+    document.querySelectorAll(".tab").forEach(item => item.classList.remove("active"));
+    tab.classList.add("active");
+    currentType = tab.dataset.type;
+    currentFilter = "All";
+    document.getElementById("schoolFilters").style.display = currentType === "school" ? "flex" : "none";
+    document.getElementById("competitiveFilters").style.display = currentType === "competitive" ? "flex" : "none";
+    renderFilters();
+    render();
+  });
+});
 
-    <!-- PRICING MODAL -->
-    <div class="modal-overlay" id="pricingModal">
-        <div class="modal-card">
-            <i class="fa-solid fa-xmark" style="position:absolute; right:16px; top:16px; color:var(--text-muted); cursor:pointer; font-size:20px;" onclick="document.getElementById('pricingModal').style.display='none';"></i>
-            <h3 style="font-size:19px; margin-bottom:4px; display:flex; align-items:center; gap:10px;"><i class="fa-solid fa-graduation-cap"></i> TicBull Course Pass</h3>
-            <p style="font-size:12px; color:var(--text-muted); margin-bottom:20px;">India's Most Affordable Exam Preparation</p>
-            
-            <div style="background:rgba(37, 99, 235, 0.1); border:1px solid var(--accent-color); padding:16px; border-radius:14px; margin-bottom:15px; text-align:center;">
-                <i class="fa-solid fa-circle-check" style="font-size:28px; color:var(--success-color); margin-bottom:8px;"></i>
-                <div style="font-size:14px; font-weight:800; color:#fff; margin-bottom:4px;">Select Your Target Batch</div>
-                <div style="font-size:12px; color:var(--text-muted); line-height:1.4;">Har batch ka apna affordable pricing aur 2 Days Free Trial available hai. Alag-alag select karke padhai shuru karein!</div>
-            </div>
+document.getElementById("search").addEventListener("input", render);
+function escapeHTML(value){ return String(value).replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;").replaceAll("'", "&#039;"); }
 
-            <button class="btn-primary" style="padding:15px; font-size:14.5px;" onclick="window.location.href='batches.html'">EXPLORE ALL BATCHES</button>
-        </div>
-    </div>
+renderFilters();
+render();
+</script>
 
-    <!-- EDIT PROFILE MODAL -->
-    <div class="modal-overlay" id="editProfileModal">
-        <div class="modal-card">
-            <i class="fa-solid fa-xmark" style="position:absolute; right:16px; top:16px; color:var(--text-muted); cursor:pointer; font-size:20px;" onclick="document.getElementById('editProfileModal').style.display='none'"></i>
-            <h3 style="font-size:19px; margin-bottom:20px;"><i class="fa-solid fa-user-pen"></i> Edit Profile</h3>
-            <div class="input-group"><i class="fa-regular fa-user left-icon"></i><input type="text" id="editName" placeholder="Full Name"></div>
-            <div class="input-group"><i class="fa-regular fa-calendar left-icon"></i><input type="date" id="editDob"></div>
-            <button class="btn-primary" onclick="saveProfile()">SAVE CHANGES</button>
-        </div>
-    </div>
-
-    <script>
-        let currentStudentData = { name: '', email: '', dob: '', photo: '' };
-
-        window.addEventListener('DOMContentLoaded', () => {
-            const savedEmail = localStorage.getItem('ticbull_email');
-            const savedToken = localStorage.getItem('ticbull_token');
-            
-            generateThemeColors();
-            updateUIFromGlobalSettings(); 
-
-            if(!savedEmail || !savedToken) {
-                if(window.location.hostname !== 'localhost') { window.location.href = "index.html"; return; }
-            }
-
-            fetch('/api/check-session', {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({ email: savedEmail, token: savedToken })
-            })
-            .then(res => res.json())
-            .then(data => {
-                if(data.success && data.active) {
-                    currentStudentData.email = savedEmail;
-                    currentStudentData.name = data.user?.name || localStorage.getItem('ticbull_name') || 'Student';
-                    currentStudentData.dob = data.user?.dob || localStorage.getItem('ticbull_dob') || '';
-                    currentStudentData.photo = data.user?.photo || localStorage.getItem('ticbull_photo') || '';
-                    
-                    localStorage.setItem('ticbull_name', currentStudentData.name);
-                    if(currentStudentData.dob) localStorage.setItem('ticbull_dob', currentStudentData.dob);
-                    if(currentStudentData.photo) localStorage.setItem('ticbull_photo', currentStudentData.photo);
-                    
-                    loadProfileData();
-                } else {
-                    localStorage.clear();
-                    window.location.href = "index.html";
-                }
-            })
-            .catch(() => {
-                currentStudentData.email = savedEmail;
-                currentStudentData.name = localStorage.getItem('ticbull_name') || 'Student';
-                currentStudentData.dob = localStorage.getItem('ticbull_dob') || '';
-                currentStudentData.photo = localStorage.getItem('ticbull_photo') || '';
-                loadProfileData();
-            });
-        });
-
-        function showToast(msg, type = 'success') {
-            const toast = document.getElementById('custom-toast');
-            toast.innerHTML = `<i class="fa-solid ${type === 'success' ? 'fa-circle-check toast-icon success' : 'fa-circle-exclamation toast-icon error'}"></i> <span>${msg}</span>`;
-            toast.classList.add('show');
-            setTimeout(() => toast.classList.remove('show'), 3000);
-        }
-
-        function loadProfileData() {
-            const name = currentStudentData.name;
-            const email = currentStudentData.email;
-            const dob = currentStudentData.dob;
-            const photo = currentStudentData.photo;
-
-            document.getElementById('welcomeNameText').innerText = name.split(' ')[0];
-            document.getElementById('drawerStudentName').innerText = name;
-            document.getElementById('drawerStudentEmail').innerText = email;
-            document.getElementById('delAccEmail').value = email; 
-            
-            if(dob) {
-                let age = new Date().getFullYear() - new Date(dob).getFullYear();
-                const monthDiff = new Date().getMonth() - new Date(dob).getMonth();
-                if (monthDiff < 0 || (monthDiff === 0 && new Date().getDate() < new Date(dob).getDate())) age--;
-                document.getElementById('drawerStudentAge').innerText = `Age: ${age} Years Old`;
-            } else {
-                document.getElementById('drawerStudentAge').innerText = `Active Learner`;
-            }
-
-            if(photo) {
-                document.getElementById('drawerAvatarImg').src = photo;
-                document.getElementById('drawerAvatarImg').style.display = 'block';
-                document.getElementById('drawerAvatarInitial').style.display = 'none';
-            } else {
-                document.getElementById('drawerAvatarInitial').innerText = name.charAt(0).toUpperCase();
-            }
-        }
-
-        // ---------------------------------------------------------------------------------
-        // SETTINGS & GLOBAL SYNC OVERRIDES
-        // ---------------------------------------------------------------------------------
-        function updateUIFromGlobalSettings() {
-            const isLight = document.body.classList.contains('light-theme');
-            document.getElementById('themeToggleText').innerText = isLight ? 'Switch to Dark Mode' : 'Switch to Light Mode';
-            
-            const savedColor = localStorage.getItem('tb_theme_color');
-            if(savedColor) {
-                document.documentElement.style.setProperty('--accent-color', savedColor);
-            }
-
-            const soundToggle = document.getElementById('soundToggle');
-            if(soundToggle) {
-                soundToggle.checked = (localStorage.getItem('tb_sound') !== 'off');
-            }
-        }
-
-        function toggleThemeDashboard() { 
-            // Inform global.js to switch theme
-            let current = localStorage.getItem('tb_theme') || 'dark';
-            localStorage.setItem('tb_theme', current === 'dark' ? 'light' : 'dark');
-            Global.applyTheme(); // Call global function
-            updateUIFromGlobalSettings();
-        }
-
-        function toggleSoundSettingDashboard(checkbox) { 
-            localStorage.setItem('tb_sound', checkbox.checked ? 'on' : 'off');
-            showToast(checkbox.checked ? "App Sounds Enabled" : "App Sounds Muted", "success"); 
-        }
-
-        function generateThemeColors() {
-            const colors = ['#2563eb', '#10b981', '#8b5cf6', '#f43f5e', '#f59e0b', '#06b6d4', '#84cc16', '#14b8a6', '#f97316', '#ef4444', '#ec4899', '#d946ef', '#a855f7', '#6366f1', '#3b82f6', '#0ea5e9', '#0d9488', '#22c55e', '#eab308', '#f97316', '#ef4444', '#f43f5e', '#ec4899', '#d946ef', '#a855f7', '#8b5cf6', '#6366f1', '#4f46e5', '#3b82f6', '#0284c7', '#0369a1', '#075985', '#0f766e', '#115e59', '#166534', '#3f6212', '#854d0e', '#9a3412', '#9f1239', '#9d174d'];
-            const grid = document.getElementById('themeGrid');
-            if(!grid) return;
-            grid.innerHTML = '';
-            const activeColor = localStorage.getItem('tb_theme_color') || '#2563eb';
-            colors.forEach((c) => {
-                const act = (c.toLowerCase() === activeColor.toLowerCase()) ? 'active' : '';
-                grid.innerHTML += `<span class="theme-circle ${act}" style="background:${c};" onclick="changeAppTheme('${c}', this)"></span>`;
-            });
-        }
-
-        function changeAppTheme(color, el) { 
-            document.documentElement.style.setProperty('--accent-color', color); 
-            localStorage.setItem('tb_theme_color', color);
-            document.querySelectorAll('.theme-circle').forEach(c => c.classList.remove('active')); 
-            el.classList.add('active'); 
-            showToast("Theme Color Updated!", "success"); 
-        }
-
-
-        function toggleDrawer() {
-            document.getElementById('drawer').classList.toggle('open');
-            document.getElementById('drawerOverlay').style.display = document.getElementById('drawer').classList.contains('open') ? 'block' : 'none';
-        }
-
-        function openSettingsModal() { document.getElementById('settingsModal').style.display = 'flex'; toggleDrawer(); }
-        function openPricingModal() { document.getElementById('pricingModal').style.display = 'flex'; toggleDrawer(); }
-        
-        function openEditProfileModal() {
-            document.getElementById('editName').value = currentStudentData.name;
-            document.getElementById('editDob').value = currentStudentData.dob;
-            document.getElementById('editProfileModal').style.display = 'flex';
-            toggleDrawer();
-        }
-
-        function saveProfile() {
-            currentStudentData.name = document.getElementById('editName').value;
-            currentStudentData.dob = document.getElementById('editDob').value;
-            localStorage.setItem('ticbull_name', currentStudentData.name);
-            localStorage.setItem('ticbull_dob', currentStudentData.dob);
-            
-            fetch(`/api/update-profile`, {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({ email: currentStudentData.email, name: currentStudentData.name, dob: currentStudentData.dob, photo: currentStudentData.photo })
-            }).catch(err => console.log("Saved locally"));
-
-            loadProfileData();
-            document.getElementById('editProfileModal').style.display = 'none';
-            showToast("Profile Updated!", "success");
-        }
-
-        function handleAvatarUpload(event) {
-            const file = event.target.files[0];
-            if(file) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    currentStudentData.photo = e.target.result;
-                    localStorage.setItem('ticbull_photo', e.target.result);
-                    loadProfileData();
-                    showToast("Profile Photo Updated!", "success");
-
-                    fetch(`/api/update-profile`, {
-                        method: 'POST',
-                        headers: {'Content-Type': 'application/json'},
-                        body: JSON.stringify({ email: currentStudentData.email, name: currentStudentData.name, dob: currentStudentData.dob, photo: currentStudentData.photo })
-                    }).catch(err => console.log("Saved locally"));
-                };
-                reader.readAsDataURL(file);
-            }
-        }
-
-        // VIDEO SOUND TOGGLE
-        function toggleVideoSound(event) {
-            event.preventDefault(); 
-            event.stopPropagation(); 
-            
-            const vid = document.getElementById('bg-video');
-            const btn = document.getElementById('videoSoundBtn');
-            
-            if (vid.muted) {
-                vid.muted = false;
-                btn.innerHTML = '<i class="fa-solid fa-volume-high" style="color:var(--success-color); font-size:18px;"></i>';
-                showToast("Video Sound On", "success");
-            } else {
-                vid.muted = true;
-                btn.innerHTML = '<i class="fa-solid fa-volume-xmark" style="font-size:18px;"></i>';
-                showToast("Video Muted", "success");
-            }
-        }
-
-        // ---------------------------------------------------------------------------------
-        // ACCOUNT DELETION LOGIC (STRICT BACKEND VALIDATION)
-        // ---------------------------------------------------------------------------------
-        function openDeleteAccountModal() {
-            document.getElementById('settingsModal').style.display = 'none';
-            document.getElementById('deleteAccountModal').style.display = 'flex';
-            document.getElementById('delAccOtpSection').style.display = 'none';
-            document.getElementById('sendDelOtpBtn').style.display = 'block';
-        }
-
-        function initiateAccountDeletion() {
-            const btn = document.getElementById('sendDelOtpBtn');
-            btn.innerText = "SENDING WARNING OTP...";
-            btn.disabled = true;
-
-            fetch(`/api/send-delete-otp`, {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({ email: currentStudentData.email })
-            }).then(res => res.json()).then(data => {
-                if(data.success) {
-                    btn.style.display = 'none';
-                    document.getElementById('delAccOtpSection').style.display = 'block';
-                    showToast("Warning OTP Sent to Email!", "success");
-                } else {
-                    btn.innerText = "SEND DELETION OTP";
-                    btn.disabled = false;
-                    showToast(data.message || "Failed to send OTP", "error");
-                }
-            }).catch(() => {
-                btn.innerText = "SEND DELETION OTP";
-                btn.disabled = false;
-                showToast("Server Error! Check Backend.", "error");
-            });
-        }
-
-        function verifyAndDeleteAccount() {
-            const otp = document.getElementById('delAccOtp').value.trim();
-            if(!otp) return showToast("Enter OTP to delete!", "error");
-            const btn = document.getElementById('confirmDeleteAccBtn');
-            btn.disabled = true;
-            btn.innerText = "DELETING...";
-
-            fetch(`/api/delete-account`, {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({ email: currentStudentData.email, otp: otp })
-            }).then(res => res.json()).then(data => {
-                if(data.success) {
-                    showToast("Account Permanently Deleted.", "success");
-                    localStorage.clear();
-                    setTimeout(() => window.location.href="index.html", 1500);
-                } else {
-                    btn.disabled = false;
-                    btn.innerText = "PERMANENTLY DELETE";
-                    showToast(data.message || "Invalid OTP!", "error"); 
-                }
-            }).catch(() => {
-                btn.disabled = false;
-                btn.innerText = "PERMANENTLY DELETE";
-                showToast("Server Error. Could not delete.", "error");
-            });
-        }
-
-        function logoutUser() {
-            localStorage.removeItem('ticbull_token');
-            window.location.href = "index.html";
-        }
-
-        // ---------------------------------------------------------------------------------
-        // SYLLABUS TRACKER LOGIC
-        // ---------------------------------------------------------------------------------
-        let syllabusItems = [];
-        function openSyllabusBoard() {
-            document.getElementById('syllabusModal').style.display = 'flex';
-            toggleDrawer();
-            const saved = localStorage.getItem('ticbull_syllabus_' + currentStudentData.email);
-            if(saved) syllabusItems = JSON.parse(saved);
-            renderSyllabus();
-        }
-        function addSyllabusItem() {
-            const input = document.getElementById('newSyllabusItem');
-            if(!input.value.trim()) return;
-            syllabusItems.unshift({ text: input.value.trim(), done: false });
-            input.value = ''; saveSyllabus();
-        }
-        function toggleSyllabusItem(index) { syllabusItems[index].done = !syllabusItems[index].done; saveSyllabus(); }
-        function deleteSyllabusItem(index) { syllabusItems.splice(index, 1); saveSyllabus(); }
-        function saveSyllabus() { localStorage.setItem('ticbull_syllabus_' + currentStudentData.email, JSON.stringify(syllabusItems)); renderSyllabus(); }
-        function renderSyllabus() {
-            const list = document.getElementById('syllabusList');
-            list.innerHTML = '';
-            if(syllabusItems.length === 0) return list.innerHTML = '<p style="color:var(--text-muted); font-size:12px; text-align:center;">No topics added.</p>';
-            syllabusItems.forEach((item, i) => {
-                list.innerHTML += `<div class="syllabus-task ${item.done ? 'completed' : ''}"><input type="checkbox" ${item.done ? 'checked' : ''} onchange="toggleSyllabusItem(${i})"><span>${item.text}</span><i class="fa-solid fa-trash" style="color:#ef4444; font-size:14px; cursor:pointer;" onclick="deleteSyllabusItem(${i})"></i></div>`;
-            });
-        }
-    </script> 
-    <footer style="text-align: center; margin-top: 30px; padding: 15px; font-size: 12px; border-top: 1px solid #334155;">
-  <a href="/privacy-policy.html" target="_blank" style="color: #94a3b8; text-decoration: none; margin: 0 8px;">Privacy Policy</a> | 
-  <a href="/terms.html" target="_blank" style="color: #94a3b8; text-decoration: none; margin: 0 8px;">Terms & Conditions</a> | 
-  <a href="/refund-policy.html" target="_blank" style="color: #94a3b8; text-decoration: none; margin: 0 8px;">Refund Policy</a> | 
-  <a href="/contact.html" target="_blank" style="color: #94a3b8; text-decoration: none; margin: 0 8px;">Contact Us</a>
-  <p style="color: #64748b; margin-top: 8px;">© 2026 TicBull Academy. All rights reserved.</p>
-</footer> 
-    
 </body>
 </html>
