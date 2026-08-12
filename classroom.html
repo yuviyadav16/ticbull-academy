@@ -2,7 +2,6 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <!-- PWA & APP MODE TAGS (To hide URL bar and feel like a real app) -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -13,20 +12,17 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     
     <style>
-        /* DYNAMIC THEME VARIABLES */
         :root { 
             --bg: #05070d; --card: #101827; --card-grad: linear-gradient(145deg, #152238, #0f1929); 
             --accent: #e9155c; --text: #f5f7fb; --text-muted: #9aa7ba; --border: #2b3952; 
             --success: #10b981; --danger: #ef4444; --gold: #ffb51b; 
         }
 
-        /* LIGHT THEME (Connected to Dashboard) */
         body.light-theme {
             --bg: #f3f4f6; --card: #ffffff; --card-grad: linear-gradient(145deg, #ffffff, #f9fafb); 
             --text: #111827; --text-muted: #6b7280; --border: #e5e7eb;
         }
 
-        /* ANTI-WEB BEHAVIOR (To feel like an App) */
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: Arial, sans-serif; -webkit-tap-highlight-color: transparent; user-select: none; }
         body { background: var(--bg); color: var(--text); height: 100vh; overflow: hidden; display: flex; flex-direction: column; overscroll-behavior-y: none; }
 
@@ -92,20 +88,14 @@
     </div>
 
     <div class="content">
-        <!-- 1. BATCH LIST -->
         <div id="batchView"></div>
-
-        <!-- 2. SUBJECT LIST -->
         <div id="subjectView">
             <h3 style="color: var(--text-muted); margin-bottom: 10px;">Select Subject to Study</h3>
             <div class="grid-2" id="subjectGrid"></div>
         </div>
-
-        <!-- 3. ACTION COLUMNS -->
         <div id="actionView">
             <h3 style="margin-bottom: 5px; color: var(--gold); font-size:22px;" id="selectedSubTitle">Subject</h3>
             <p style="color: var(--text-muted); font-size: 13px; margin-bottom: 20px;">Select your learning mode below.</p>
-            
             <div class="grid-2">
                 <div class="action-card chat" onclick="openMode('chat.html')">
                     <i class="fa-solid fa-robot"></i><div class="action-name">Ask AI Teacher</div>
@@ -121,26 +111,20 @@
                 </div>
             </div>
         </div>
-
-        <!-- 4. AI TEST SETUP -->
         <div id="testSetupView">
             <div class="setup-box">
                 <h2 style="color: var(--accent); margin-bottom: 5px;"><i class="fa-solid fa-brain"></i> AI Test Series</h2>
                 <p style="color: var(--text-muted); font-size: 13px;">Enter a chapter name from <strong style="color:var(--text)" id="testSubName"></strong>.</p>
-                
                 <p style="font-size:12px; color:var(--text-muted); margin-top:15px; margin-bottom:5px;">Select Difficulty Level:</p>
                 <div class="diff-grid">
                     <button class="diff-btn" onclick="setDiff(this, 'easy')">Easy</button>
                     <button class="diff-btn active" onclick="setDiff(this, 'normal')" id="defaultDiff">Normal</button>
                     <button class="diff-btn" onclick="setDiff(this, 'hard')">Hard</button>
                 </div>
-
                 <input type="text" id="chapInput" class="input-chap" placeholder="Enter Chapter Name">
                 <button class="btn-access" onclick="startTest()">START UNLIMITED TEST <i class="fa-solid fa-play"></i></button>
             </div>
         </div>
-
-        <!-- 5. ACTIVE TEST RUNNING -->
         <div id="testActiveView">
             <div class="timer-text" id="timerText">00:15</div>
             <div class="timer-bar"><div class="timer-fill" id="timerFill"></div></div>
@@ -150,7 +134,6 @@
         </div>
     </div>
 
-    <!-- CUSTOM POPUP -->
     <div id="ticModal" class="tic-modal">
         <div class="tic-box">
             <h3 id="ticModalMsg" style="font-size:17px; margin-bottom:15px; line-height:1.4;">Message</h3>
@@ -161,28 +144,13 @@
         </div>
     </div>
 
-    <!-- GLOBAL SETTINGS SYNCHRONIZER (THEME & SOUND) -->
     <script>
-        // Theme Sync
-        const currentTheme = localStorage.getItem('tb_theme') || 'dark';
-        if(currentTheme === 'light') {
+        // Theme Sync (Sound hata diya gaya hai)
+        if(localStorage.getItem('tb_theme') === 'light') {
             document.body.classList.add('light-theme');
             document.querySelector('meta[name="theme-color"]').setAttribute('content', '#f3f4f6');
         }
 
-        // Sound Sync (Global Click Listener)
-        const clickAudio = new Audio('https://assets.mixkit.co/active_storage/sfx/2568/2568-preview.mp3'); 
-        document.addEventListener('click', (e) => {
-            if(e.target.closest('button, .sub-card, .action-card, .option, .diff-btn, .tic-btn')) {
-                if(localStorage.getItem('tb_sound') !== 'off') {
-                    clickAudio.currentTime = 0;
-                    clickAudio.play().catch(()=>{});
-                }
-            }
-        });
-    </script>
-
-    <script>
         function showTicModal(msg, onYes, showCancel = true) {
             document.getElementById('ticModalMsg').innerText = msg;
             document.getElementById('ticModal').style.display = 'flex';
@@ -196,21 +164,15 @@
             };
         }
 
-        let viewState = 1;
-        let currentSubject = "";
-        let currentChapter = "";
-        let selectedDiff = "normal";
-        let currentBatchIndex = 0;
-        let enrolled = [];
-        
-        let score = 0; let timer = 15; let timerInterval; let qCount = 1; let isAnswered = false;
+        let viewState = 1, currentSubject = "", currentChapter = "", selectedDiff = "normal", currentBatchIndex = 0, enrolled = [];
+        let score = 0, timer = 15, timerInterval, qCount = 1, isAnswered = false;
 
         const icons = {
-            "English":"📘", "Physics":"⚛️", "Physical Chemistry":"⚗️", 
-            "Organic Chemistry":"🧬", "Inorganic Chemistry":"🔬", "Mathematics":"🔢",
-            "Biology":"🧬", "Botany":"🌱", "Zoology":"🦁", "Chemistry":"🧪", 
-            "Hindi":"📖", "Accountancy":"🧾", "Business Studies":"💼", "Economics":"📈",
-            "History":"🏛️", "Geography":"🌍", "Political Science":"⚖️", "Science":"🔬", "Social Science":"🌍"
+            "English":"📘", "Physics":"⚛️", "Physical Chemistry":"⚗️", "Organic Chemistry":"🧬", 
+            "Inorganic Chemistry":"🔬", "Mathematics":"🔢", "Biology":"🧬", "Botany":"🌱", 
+            "Zoology":"🦁", "Chemistry":"🧪", "Hindi":"📖", "Accountancy":"🧾", 
+            "Business Studies":"💼", "Economics":"📈", "History":"🏛️", "Geography":"🌍", 
+            "Political Science":"⚖️", "Science":"🔬", "Social Science":"🌍"
         };
 
         window.onload = function() {
@@ -247,39 +209,35 @@
             let batch = enrolled[batchIndex];
             let subjects = [];
 
+            // 100% PURE DYNAMIC LOGIC - NO HARDCODING
             if (batch && batch.subjects) {
-                if (Array.isArray(batch.subjects)) { subjects = batch.subjects; } 
-                else {
-                    try { subjects = JSON.parse(batch.subjects); } 
-                    catch(e) { if(typeof batch.subjects === 'string') subjects = batch.subjects.split(',').map(s => s.trim()); }
-                }
-            }
-
-            if (!subjects || subjects.length === 0) {
-                let t = (batch.title || "").toLowerCase();
-                if(t.includes('9') || t.includes('10') || t.includes('general')) {
-                    subjects = ["Hindi", "English", "Mathematics", "Physics", "Chemistry", "Biology", "History", "Geography", "Political Science", "Economics"];
-                } else if(t.includes('pcm')) {
-                    subjects = ["English", "Physics", "Physical Chemistry", "Organic Chemistry", "Inorganic Chemistry", "Mathematics"];
-                } else if(t.includes('pcb')) {
-                    subjects = ["English", "Physics", "Zoology", "Botany", "Chemistry"];
-                } else {
-                    subjects = ["Physics", "Chemistry", "Biology", "Mathematics", "English"];
+                if (Array.isArray(batch.subjects)) {
+                    subjects = batch.subjects;
+                } else if (typeof batch.subjects === 'string') {
+                    try {
+                        subjects = JSON.parse(batch.subjects);
+                    } catch(e) {
+                        subjects = batch.subjects.split(',').map(s => s.trim());
+                    }
                 }
             }
 
             let grid = document.getElementById('subjectGrid');
             grid.innerHTML = '';
 
-            subjects.forEach(subject => {
-                let iconStr = icons[subject] || "📚"; 
-                grid.innerHTML += `
-                    <div class="sub-card" onclick="openActionView('${subject}')">
-                        <span class="sub-icon">${iconStr}</span>
-                        <div class="sub-name">${subject}</div>
-                    </div>
-                `;
-            });
+            if (subjects && subjects.length > 0) {
+                subjects.forEach(subject => {
+                    let iconStr = icons[subject] || "📚"; 
+                    grid.innerHTML += `
+                        <div class="sub-card" onclick="openActionView('${subject}')">
+                            <span class="sub-icon">${iconStr}</span>
+                            <div class="sub-name">${subject}</div>
+                        </div>
+                    `;
+                });
+            } else {
+                grid.innerHTML = `<div style="grid-column: span 2; text-align: center; color: var(--danger); padding: 20px; font-weight:bold;">No subjects found for this batch.</div>`;
+            }
 
             hideAllViews();
             document.getElementById('subjectView').style.display = 'block';
