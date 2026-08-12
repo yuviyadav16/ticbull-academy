@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TicBull Classroom</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        :root { --bg: #030712; --card: #0f172a; --accent: #9f1239; --text: #f8fafc; }
+        body { background: var(--bg); color: var(--text); font-family: sans-serif; padding: 20px; }
+        
+        .header { margin-bottom: 20px; }
+        .enrolled-card { background: var(--card); border: 1px solid #1e293b; padding: 20px; border-radius: 16px; margin-bottom: 15px; }
+        .batch-title { font-size: 18px; font-weight: 800; color: #fff; margin-bottom: 10px; }
+        .btn-access { background: var(--accent); color: white; border: none; padding: 12px; border-radius: 10px; cursor: pointer; width: 100%; font-weight: 700; }
+        .empty-state { text-align: center; padding: 50px; color: #64748b; }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <h2><i class="fa-solid fa-chalkboard-user" style="color:var(--accent)"></i> My Classroom</h2>
+        <p style="font-size: 12px; color: #64748b;">Access your enrolled premium batches here.</p>
+    </div>
+
+    <div id="classroomList">
+        <!-- Enrolled batches will load here -->
+    </div>
+
+    <script>
+        window.onload = function() {
+            const enrolled = JSON.parse(localStorage.getItem('tb_enrolled') || '[]');
+            const container = document.getElementById('classroomList');
+
+            if(enrolled.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fa-solid fa-box-open" style="font-size: 40px; margin-bottom: 15px;"></i>
+                        <p>No batches enrolled yet.</p>
+                        <button onclick="window.location.href='batches.html'" style="margin-top:15px; background:none; border:1px solid #fff; color:white; padding:10px 20px; border-radius:8px;">Browse Batches</button>
+                    </div>
+                `;
+            } else {
+                enrolled.forEach(b => {
+                    container.innerHTML += `
+                        <div class="enrolled-card">
+                            <div class="batch-title">${b.title}</div>
+                            <small style="color:var(--gold-color)">Activated on: ${b.date}</small>
+                            <button class="btn-access" style="margin-top:15px" onclick="openContent('${b.title}')">START LEARNING</button>
+                        </div>
+                    `;
+                });
+            }
+        };
+
+        function openContent(title) {
+            alert("Redirecting to your premium content for: " + title);
+            // Yahan content player page ka link aayega
+        }
+    </script>
+</body>
+</html>
