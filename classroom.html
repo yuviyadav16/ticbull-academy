@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>TicBull Academy - Classroom</title>
+    <title>TicBull Academy - My Classroom</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
         :root { --bg: #05070d; --card: #101827; --card-grad: linear-gradient(145deg, #152238, #0f1929); --accent: #e9155c; --text: #f5f7fb; --text-muted: #9aa7ba; --border: #2b3952; --success: #10b981; --danger: #ef4444; --gold: #ffb51b; }
@@ -21,16 +21,16 @@
         /* VIEW 1: BATCHES */
         #batchView { display: block; }
         .batch-card { background: var(--card-grad); border: 1px solid var(--border); border-radius: 20px; padding: 20px; margin-bottom: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
-        .batch-name { font-size: 20px; font-weight: 900; margin-bottom: 5px; }
+        .batch-name { font-size: 20px; font-weight: 900; margin-bottom: 5px; line-height: 1.3; }
         .btn-access { background: var(--accent); color: white; border: none; width: 100%; padding: 14px; border-radius: 12px; font-weight: 900; margin-top: 15px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; }
 
         /* VIEW 2: SUBJECTS */
         #subjectView { display: none; }
         .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 15px; }
-        .sub-card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 20px 10px; text-align: center; cursor: pointer; transition: 0.2s; }
+        .sub-card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 20px 10px; text-align: center; cursor: pointer; transition: 0.2s; display: flex; flex-direction: column; align-items: center; gap: 10px; }
         .sub-card:active { transform: scale(0.95); border-color: var(--accent); }
-        .sub-icon { font-size: 32px; margin-bottom: 10px; display: block; }
-        .sub-name { font-size: 15px; font-weight: 800; color: #c8d1df; }
+        .sub-icon { font-size: 32px; display: block; }
+        .sub-name { font-size: 14px; font-weight: 800; color: #c8d1df; }
 
         /* VIEW 3: 4 COLUMNS (ACTIONS) */
         #actionView { display: none; }
@@ -44,12 +44,11 @@
 
         /* VIEW 4: AI TEST SETUP & RUNNING */
         #testSetupView, #testActiveView { display: none; }
-        .setup-box { background: var(--card); border: 1px solid var(--accent); padding: 20px; border-radius: 18px; }
+        .setup-box { background: var(--card); border: 1px solid var(--border); padding: 20px; border-radius: 18px; }
         .input-chap { width: 100%; background: #16243a; border: 1px solid var(--border); padding: 15px; border-radius: 12px; color: white; font-size: 16px; outline: none; margin: 15px 0; }
         
-        /* TEST RUNNING UI */
         .timer-bar { height: 6px; background: #26354b; border-radius: 5px; overflow: hidden; margin-bottom: 20px; }
-        .timer-fill { height: 100%; width: 100%; background: var(--gold); transition: width 1s linear, background 0.3s; }
+        .timer-fill { height: 100%; width: 100%; background: var(--success); transition: width 1s linear, background 0.3s; }
         .timer-fill.danger { background: var(--danger); }
         .timer-text { font-size: 24px; font-weight: 900; text-align: center; margin-bottom: 10px; color: var(--gold); }
 
@@ -82,26 +81,22 @@
 
         <!-- 3. ACTION COLUMNS (4 PILLARS) -->
         <div id="actionView">
-            <h3 style="margin-bottom: 5px; color: #ffb51b;" id="selectedSubTitle">Subject</h3>
+            <h3 style="margin-bottom: 5px; color: #ffb51b; font-size:22px;" id="selectedSubTitle">Subject</h3>
             <p style="color: var(--text-muted); font-size: 13px; margin-bottom: 20px;">Select your learning mode below.</p>
             
             <div class="grid-2">
-                <!-- Connect to chat.html -->
                 <div class="action-card chat" onclick="window.location.href='chat.html?sub=' + currentSubject">
                     <i class="fa-solid fa-robot"></i>
                     <div class="action-name">Ask AI Teacher</div>
                 </div>
-                <!-- Connect to practice.html -->
                 <div class="action-card prac" onclick="window.location.href='practice.html?sub=' + currentSubject">
                     <i class="fa-solid fa-pen-nib"></i>
                     <div class="action-name">Practice Sets</div>
                 </div>
-                <!-- Connect to pyqs.html -->
                 <div class="action-card pyq" onclick="window.location.href='pyqs.html?sub=' + currentSubject">
                     <i class="fa-solid fa-file-pdf"></i>
                     <div class="action-name">20 Yrs PYQs</div>
                 </div>
-                <!-- Connect to AI Test (Internal Setup) -->
                 <div class="action-card test" onclick="showTestSetup()">
                     <i class="fa-solid fa-bolt"></i>
                     <div class="action-name">AI Smart Test</div>
@@ -112,16 +107,17 @@
         <!-- 4. AI TEST SETUP -->
         <div id="testSetupView">
             <div class="setup-box">
-                <h2 style="color: var(--accent); margin-bottom: 5px;"><i class="fa-solid fa-bolt"></i> AI Test Generator</h2>
-                <p style="color: var(--text-muted); font-size: 13px;">Enter a chapter name from <strong style="color:white" id="testSubName"></strong>. AI will generate unlimited questions.</p>
+                <h2 style="color: var(--accent); margin-bottom: 5px;"><i class="fa-solid fa-brain"></i> AI Test Series</h2>
+                <p style="color: var(--text-muted); font-size: 13px;">Enter a chapter name from <strong style="color:white" id="testSubName"></strong>. AI will generate unlimited real exam-level questions 1-by-1.</p>
                 
-                <input type="text" id="chapInput" class="input-chap" placeholder="E.g. Motion, Thermodynamics, Algebra...">
+                <input type="text" id="chapInput" class="input-chap" placeholder="Enter Chapter (e.g. Thermodynamics)">
                 
-                <ul style="color: var(--text-muted); font-size: 12px; margin-left: 15px; margin-bottom: 20px; line-height: 1.6;">
-                    <li>15 Seconds per question</li>
-                    <li>Correct Answer: <strong style="color:var(--success)">+4 Points</strong></li>
-                    <li>Wrong/Timeout: <strong style="color:var(--danger)">-1 Point</strong></li>
-                </ul>
+                <div style="background:#16243a; padding:15px; border-radius:12px; margin-bottom:20px; font-size:13px; color:#c8d1df; line-height:1.6;">
+                    <strong>Rules:</strong><br>
+                    ⏳ 15 Seconds Timer per question<br>
+                    ✅ Correct Answer: <strong style="color:var(--success)">+4 Points</strong><br>
+                    ❌ Wrong / Timeout: <strong style="color:var(--danger)">-1 Point</strong>
+                </div>
 
                 <button class="btn-access" onclick="startTest()">START UNLIMITED TEST <i class="fa-solid fa-play"></i></button>
             </div>
@@ -135,9 +131,8 @@
             <div class="question-box" id="qText">Generating Question...</div>
             <div id="optionsBox"></div>
 
-            <button class="btn-next" id="btnNext" onclick="nextQuestion()">NEXT QUESTION <i class="fa-solid fa-arrow-right"></i></button>
+            <button class="btn-next" id="btnNext" onclick="generateQuestion()">NEXT QUESTION <i class="fa-solid fa-forward"></i></button>
         </div>
-
     </div>
 
     <script>
@@ -146,62 +141,74 @@
         let currentSubject = "";
         let currentChapter = "";
         
-        // Test Variables
         let score = 0;
         let timer = 15;
         let timerInterval;
         let qCount = 1;
         let isAnswered = false;
 
-        // ICONS
+        // Emoji Icons Mapping from Batches.html
         const icons = {
-            "Hindi":"📖", "English":"📘", "Mathematics":"🔢", "Physics":"⚛️", "Chemistry":"🧪", 
-            "Biology":"🧬", "History":"🏛️", "Geography":"🌍", "Accountancy":"🧾", "Economics":"📈"
+            "Hindi":"📖", "English":"📘", "Sanskrit":"🕉️", "Urdu":"📕", "Regional Language":"🗣️",
+            "Mathematics":"🔢", "Physics":"⚛️", "Chemistry":"🧪", "Physical Chemistry":"⚗️",
+            "Organic Chemistry":"🧬", "Inorganic Chemistry":"🔬", "Biology":"🧬", "Botany":"🌱", "Zoology":"🦁",
+            "History":"🏛️", "Geography":"🌍", "Political Science":"🏛️", "Economics":"📈",
+            "Sociology":"👥", "Psychology":"🧠", "Accountancy":"🧾", "Business Studies":"💼",
+            "Computer Science":"💻", "Artificial Intelligence":"🤖", "Physical Education":"🏃"
         };
 
         window.onload = function() {
-            // Load purchased batches from Storage or show a mock one if empty
-            let enrolled = JSON.parse(sessionStorage.getItem('tb_enrolled') || '[]');
+            let enrolled = JSON.parse(localStorage.getItem('tb_enrolled') || '[]');
             
-            // Mock data for demo if array is empty
+            // Temporary Fallback (If coming directly for testing)
             if(enrolled.length === 0) {
-                let testTitle = sessionStorage.getItem('tb_checkout_title');
-                if(!testTitle) testTitle = "CBSE — Class 12 — Science - PCM"; // Fallback
-                enrolled = [{ title: testTitle, date: "Today" }];
+                let savedTitle = sessionStorage.getItem('tb_checkout_title') || "CBSE — Class 12 — Science — PCM";
+                let savedSubs = JSON.parse(sessionStorage.getItem('tb_checkout_subjects') || '["English", "Physics", "Physical Chemistry", "Organic Chemistry", "Inorganic Chemistry", "Mathematics"]');
+                
+                enrolled = [{
+                    title: savedTitle,
+                    date: new Date().toLocaleDateString(),
+                    subjects: savedSubs
+                }];
             }
 
             let html = '';
-            enrolled.forEach(b => {
+            enrolled.forEach((b, index) => {
+                // Keep subject array hidden in a dataset or globally map it
+                window['batchSubs_' + index] = b.subjects || getFallbackSubjects(b.title);
+                
                 html += `
                     <div class="batch-card">
-                        <div style="color:var(--success); font-size:12px; font-weight:800; margin-bottom:5px;">Premium Activated</div>
+                        <div style="color:var(--success); font-size:12px; font-weight:800; margin-bottom:5px;"><i class="fa-solid fa-circle-check"></i> Premium Access</div>
                         <div class="batch-name">${b.title}</div>
-                        <div style="color:var(--text-muted); font-size:13px;">Purchased: ${b.date}</div>
-                        <button class="btn-access" onclick="openSubjectView('${b.title}')">GO TO CLASSROOM <i class="fa-solid fa-arrow-right"></i></button>
+                        <div style="color:var(--text-muted); font-size:12px;">Enrolled on: ${b.date}</div>
+                        <button class="btn-access" onclick="openSubjectView('${b.title}', ${index})">STUDY NOW <i class="fa-solid fa-arrow-right"></i></button>
                     </div>
                 `;
             });
             document.getElementById('batchView').innerHTML = html;
         };
 
-        // Get realistic subjects based on batch string
-        function getSubjectsList(title) {
+        // Fallback Intelligence (if checkout didn't pass subjects properly)
+        function getFallbackSubjects(title) {
             let t = title.toLowerCase();
-            if(t.includes('pcm') || t.includes('jee')) return ["Physics", "Chemistry", "Mathematics", "English"];
-            if(t.includes('pcb') || t.includes('neet')) return ["Physics", "Chemistry", "Biology", "English"];
-            if(t.includes('commerce')) return ["Accountancy", "Economics", "Business Studies", "Mathematics", "English"];
-            return ["Mathematics", "Science", "Social Science", "English", "Hindi"];
+            if(t.includes('pcm') || t.includes('jee')) return ["English", "Physics", "Physical Chemistry", "Organic Chemistry", "Inorganic Chemistry", "Mathematics"];
+            if(t.includes('pcb') || t.includes('neet')) return ["English", "Physics", "Physical Chemistry", "Organic Chemistry", "Inorganic Chemistry", "Botany", "Zoology"];
+            if(t.includes('commerce')) return ["English", "Accountancy", "Business Studies", "Economics", "Mathematics"];
+            if(t.includes('arts') || t.includes('humanities')) return ["English", "Hindi", "History", "Political Science", "Geography", "Economics"];
+            return ["Hindi", "English", "Mathematics", "Physics", "Chemistry", "Biology", "History", "Geography", "Political Science", "Economics"];
         }
 
         // --- NAVIGATION LOGIC ---
-        function openSubjectView(batchTitle) {
+        function openSubjectView(batchTitle, index) {
             currentBatch = batchTitle;
             viewState = 2;
             document.getElementById('batchView').style.display = 'none';
             document.getElementById('subjectView').style.display = 'block';
-            document.getElementById('headTitle').innerText = "Subjects";
+            document.getElementById('headTitle').innerText = "Classroom";
 
-            let subs = getSubjectsList(batchTitle);
+            // Extract accurate subjects!
+            let subs = window['batchSubs_' + index];
             let html = '';
             subs.forEach(s => {
                 html += `
@@ -228,18 +235,20 @@
             document.getElementById('actionView').style.display = 'none';
             document.getElementById('testSetupView').style.display = 'block';
             document.getElementById('testSubName').innerText = currentSubject;
-            document.getElementById('headTitle').innerText = "AI Test Setup";
+            document.getElementById('headTitle').innerText = "AI Test Engine";
         }
 
         function goBack() {
             if(viewState === 5) {
-                // If exiting test mid-way
-                clearInterval(timerInterval);
-                document.getElementById('testActiveView').style.display = 'none';
-                document.getElementById('testSetupView').style.display = 'block';
-                document.getElementById('scoreBoard').style.display = 'none';
-                viewState = 4;
-                document.getElementById('headTitle').innerText = "AI Test Setup";
+                // Quit Test
+                if(confirm("Are you sure you want to quit the test? Your score will be lost.")) {
+                    clearInterval(timerInterval);
+                    document.getElementById('testActiveView').style.display = 'none';
+                    document.getElementById('testSetupView').style.display = 'block';
+                    document.getElementById('scoreBoard').style.display = 'none';
+                    viewState = 4;
+                    document.getElementById('headTitle').innerText = "AI Test Engine";
+                }
             } else if(viewState === 4) {
                 document.getElementById('testSetupView').style.display = 'none';
                 document.getElementById('actionView').style.display = 'block';
@@ -249,21 +258,21 @@
                 document.getElementById('actionView').style.display = 'none';
                 document.getElementById('subjectView').style.display = 'block';
                 viewState = 2;
-                document.getElementById('headTitle').innerText = "Subjects";
+                document.getElementById('headTitle').innerText = "Classroom";
             } else if(viewState === 2) {
                 document.getElementById('subjectView').style.display = 'none';
                 document.getElementById('batchView').style.display = 'block';
                 viewState = 1;
-                document.getElementById('headTitle').innerText = "My Classroom";
+                document.getElementById('headTitle').innerText = "Dashboard";
             } else {
                 window.location.href = 'dashboard.html';
             }
         }
 
-        // --- AI TEST ENGINE LOGIC ---
+        // --- AI TEST ENGINE LOGIC (Timer + Scoring + Auto-Tick) ---
         function startTest() {
             currentChapter = document.getElementById('chapInput').value.trim();
-            if(!currentChapter) return alert("Please enter chapter name!");
+            if(!currentChapter) return alert("Please enter chapter name to start!");
             
             score = 0;
             qCount = 1;
@@ -288,20 +297,19 @@
             document.getElementById('timerFill').style.width = '100%';
             document.getElementById('timerFill').classList.remove('danger');
             
-            // Mock AI Generation (Real integration will use API)
-            document.getElementById('qText').innerText = `Q${qCount}: Based on the core principles of ${currentChapter} in ${currentSubject}, which of the following statements generated by AI is functionally correct?`;
+            document.getElementById('qText').innerHTML = `<span style="color:var(--text-muted); font-size:12px;">Q${qCount} | ${currentSubject} • ${currentChapter}</span><br>Which of the following is logically accurate according to ${currentChapter}?`;
             
-            // Create options where only one is randomly true
             let correctIndex = Math.floor(Math.random() * 4);
             let html = '';
             for(let i=0; i<4; i++) {
                 let isCorrect = (i === correctIndex) ? 'true' : 'false';
-                let text = (i === correctIndex) ? "This is the logically correct concept formulated by AI." : `Distractor option ${i+1} generated by AI to confuse.`;
-                html += `<div class="option" onclick="selectOption(this, ${isCorrect})"><span>${text}</span></div>`;
+                let optText = (i === correctIndex) ? "This is the logically correct option generated by AI for this concept." : `This is a distractor option designed by AI to test your knowledge.`;
+                html += `<div class="option" onclick="selectOption(this, ${isCorrect})"><span>${String.fromCharCode(65+i)}) ${optText}</span></div>`;
             }
             document.getElementById('optionsBox').innerHTML = html;
 
             startTimer();
+            qCount++;
         }
 
         function startTimer() {
@@ -319,6 +327,7 @@
                 if(timer < 10) document.getElementById('timerText').innerText = `00:0${timer}`;
                 else document.getElementById('timerText').innerText = `00:${timer}`;
 
+                // AUTO-TICK (TIMEOUT)
                 if(timer <= 0) {
                     clearInterval(timerInterval);
                     if(!isAnswered) autoTimeOut();
@@ -331,7 +340,7 @@
             isAnswered = true;
             clearInterval(timerInterval);
 
-            // Disable all options
+            // Lock options
             let allOptions = document.querySelectorAll('.option');
             allOptions.forEach(opt => opt.classList.add('disabled'));
 
@@ -343,7 +352,8 @@
                 elem.classList.add('wrong');
                 elem.innerHTML += '<i class="fa-solid fa-circle-xmark"></i>';
                 score -= 1;
-                // Reveal Correct Answer
+                
+                // Show Correct Answer Automatically
                 allOptions.forEach(opt => {
                     if(opt.getAttribute('onclick').includes('true')) {
                         opt.classList.add('correct');
@@ -357,12 +367,13 @@
 
         function autoTimeOut() {
             isAnswered = true;
-            score -= 1; // Negative marking for timeout
+            score -= 1; // Negative marking
             updateScore();
 
             let allOptions = document.querySelectorAll('.option');
             allOptions.forEach(opt => {
                 opt.classList.add('disabled');
+                // Highlight the true answer automatically so student learns
                 if(opt.getAttribute('onclick').includes('true')) {
                     opt.classList.add('correct');
                     opt.innerHTML += '<i class="fa-solid fa-circle-check"></i>';
@@ -370,11 +381,6 @@
             });
             document.getElementById('timerText').innerText = "TIME OUT!";
             document.getElementById('btnNext').style.display = 'block';
-        }
-
-        function nextQuestion() {
-            qCount++;
-            generateQuestion();
         }
     </script>
 </body>
