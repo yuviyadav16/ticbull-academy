@@ -229,8 +229,8 @@ body.light-theme .card { box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
 
 <header class="header">
   <div class="top">
-    <!-- FIX 2: DIRECT URL ASSIGN FOR 100% WORKING BACK BUTTON -->
-    <button class="back" onclick="window.location.href='dashboard.html'"><i class="fa-solid fa-arrow-left"></i></button>
+    <!-- FIX 2: SAFE BACK BUTTON FUNCTION -->
+    <button class="back" onclick="goDashboard()"><i class="fa-solid fa-arrow-left"></i></button>
     <div class="brand">TicBull <span>Academy</span></div>
   </div>
 
@@ -277,27 +277,38 @@ body.light-theme .card { box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
 
 <script>
 /* =========================================================
-   CLICK SOUND SYSTEM
+   CLICK SOUND SYSTEM (FIXED TO PREVENT CRASHES)
 ========================================================= */
 let appSoundEnabled = localStorage.getItem('ticbull_sound') !== 'false';
 const AudioContext = window.AudioContext || window.webkitAudioContext;
 let audioCtx;
 
 function playClickSound() {
-    if(!appSoundEnabled) return;
-    if(!audioCtx) audioCtx = new AudioContext();
-    if(audioCtx.state === 'suspended') audioCtx.resume();
-    const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain();
-    osc.type = 'sine'; osc.frequency.setValueAtTime(800, audioCtx.currentTime);
-    gain.gain.setValueAtTime(0.05, audioCtx.currentTime);
-    gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.1);
-    osc.connect(gain); gain.connect(audioCtx.destination);
-    osc.start(); osc.stop(audioCtx.currentTime + 0.1);
+    try {
+        if(!appSoundEnabled) return;
+        if(!audioCtx) audioCtx = new AudioContext();
+        if(audioCtx.state === 'suspended') audioCtx.resume();
+        const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain();
+        osc.type = 'sine'; osc.frequency.setValueAtTime(800, audioCtx.currentTime);
+        gain.gain.setValueAtTime(0.05, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.1);
+        osc.connect(gain); gain.connect(audioCtx.destination);
+        osc.start(); osc.stop(audioCtx.currentTime + 0.1);
+    } catch(e) {
+        // Silently ignore audio errors so buttons keep working
+    }
 }
 
 document.addEventListener('click', function(e) {
     if(e.target.closest('button') || e.target.closest('.tab') || e.target.closest('.filter')) playClickSound();
 });
+
+/* =========================================================
+   SAFE NAVIGATION FUNCTION
+========================================================= */
+function goDashboard() { 
+    window.location.href = "dashboard.html"; 
+}
 
 /* =========================================================
    ICONS
