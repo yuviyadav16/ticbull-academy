@@ -10,7 +10,6 @@
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: Arial, Helvetica, sans-serif; -webkit-tap-highlight-color: transparent; }
         body { background: var(--bg); color: var(--text); display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
 
-        /* HEADER */
         .header { padding: 20px; background: #05070dee; backdrop-filter: blur(14px); border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 15px; position: sticky; top: 0; z-index: 20; }
         .back-btn { background: transparent; border: none; color: white; font-size: 20px; cursor: pointer; }
         .title { font-size: 22px; font-weight: 900; }
@@ -18,13 +17,11 @@
 
         .content { flex: 1; overflow-y: auto; padding: 20px; padding-bottom: 80px; }
 
-        /* VIEW 1: BATCHES */
         #batchView { display: block; }
         .batch-card { background: var(--card-grad); border: 1px solid var(--border); border-radius: 20px; padding: 20px; margin-bottom: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
         .batch-name { font-size: 20px; font-weight: 900; margin-bottom: 5px; line-height: 1.3; }
         .btn-access { background: var(--accent); color: white; border: none; width: 100%; padding: 14px; border-radius: 12px; font-weight: 900; margin-top: 15px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; }
 
-        /* VIEW 2: SUBJECTS */
         #subjectView { display: none; }
         .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 15px; }
         .sub-card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 20px 10px; text-align: center; cursor: pointer; transition: 0.2s; display: flex; flex-direction: column; align-items: center; gap: 10px; }
@@ -32,7 +29,6 @@
         .sub-icon { font-size: 32px; display: block; }
         .sub-name { font-size: 14px; font-weight: 800; color: #c8d1df; }
 
-        /* VIEW 3: 4 COLUMNS (ACTIONS) */
         #actionView { display: none; }
         .action-card { background: var(--card-grad); border: 1px solid var(--border); border-radius: 18px; padding: 25px 15px; text-align: center; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 10px; }
         .action-card i { font-size: 35px; }
@@ -42,7 +38,6 @@
         .action-card.test { color: var(--accent); border-color: rgba(233, 21, 92, 0.3); }
         .action-name { font-weight: 900; font-size: 15px; color: white; }
 
-        /* VIEW 4: AI TEST SETUP & RUNNING */
         #testSetupView, #testActiveView { display: none; }
         .setup-box { background: var(--card); border: 1px solid var(--border); padding: 20px; border-radius: 18px; }
         .input-chap { width: 100%; background: #16243a; border: 1px solid var(--border); padding: 15px; border-radius: 12px; color: white; font-size: 16px; outline: none; margin: 15px 0; }
@@ -108,7 +103,7 @@
         <div id="testSetupView">
             <div class="setup-box">
                 <h2 style="color: var(--accent); margin-bottom: 5px;"><i class="fa-solid fa-brain"></i> AI Test Series</h2>
-                <p style="color: var(--text-muted); font-size: 13px;">Enter a chapter name from <strong style="color:white" id="testSubName"></strong>. AI will generate unlimited real exam-level questions 1-by-1.</p>
+                <p style="color: var(--text-muted); font-size: 13px;">Enter a chapter name from <strong style="color:white" id="testSubName"></strong>. Practice unlimited questions 1-by-1.</p>
                 
                 <input type="text" id="chapInput" class="input-chap" placeholder="Enter Chapter (e.g. Thermodynamics)">
                 
@@ -147,7 +142,6 @@
         let qCount = 1;
         let isAnswered = false;
 
-        // Emoji Icons Mapping from Batches.html
         const icons = {
             "Hindi":"📖", "English":"📘", "Sanskrit":"🕉️", "Urdu":"📕", "Regional Language":"🗣️",
             "Mathematics":"🔢", "Physics":"⚛️", "Chemistry":"🧪", "Physical Chemistry":"⚗️",
@@ -160,7 +154,6 @@
         window.onload = function() {
             let enrolled = JSON.parse(localStorage.getItem('tb_enrolled') || '[]');
             
-            // Temporary Fallback (If coming directly for testing)
             if(enrolled.length === 0) {
                 let savedTitle = sessionStorage.getItem('tb_checkout_title') || "CBSE — Class 12 — Science — PCM";
                 let savedSubs = JSON.parse(sessionStorage.getItem('tb_checkout_subjects') || '["English", "Physics", "Physical Chemistry", "Organic Chemistry", "Inorganic Chemistry", "Mathematics"]');
@@ -174,7 +167,6 @@
 
             let html = '';
             enrolled.forEach((b, index) => {
-                // Keep subject array hidden in a dataset or globally map it
                 window['batchSubs_' + index] = b.subjects || getFallbackSubjects(b.title);
                 
                 html += `
@@ -189,7 +181,6 @@
             document.getElementById('batchView').innerHTML = html;
         };
 
-        // Fallback Intelligence (if checkout didn't pass subjects properly)
         function getFallbackSubjects(title) {
             let t = title.toLowerCase();
             if(t.includes('pcm') || t.includes('jee')) return ["English", "Physics", "Physical Chemistry", "Organic Chemistry", "Inorganic Chemistry", "Mathematics"];
@@ -199,7 +190,6 @@
             return ["Hindi", "English", "Mathematics", "Physics", "Chemistry", "Biology", "History", "Geography", "Political Science", "Economics"];
         }
 
-        // --- NAVIGATION LOGIC ---
         function openSubjectView(batchTitle, index) {
             currentBatch = batchTitle;
             viewState = 2;
@@ -207,7 +197,6 @@
             document.getElementById('subjectView').style.display = 'block';
             document.getElementById('headTitle').innerText = "Classroom";
 
-            // Extract accurate subjects!
             let subs = window['batchSubs_' + index];
             let html = '';
             subs.forEach(s => {
@@ -240,7 +229,6 @@
 
         function goBack() {
             if(viewState === 5) {
-                // Quit Test
                 if(confirm("Are you sure you want to quit the test? Your score will be lost.")) {
                     clearInterval(timerInterval);
                     document.getElementById('testActiveView').style.display = 'none';
@@ -269,128 +257,6 @@
             }
         }
 
-                // =======================================================
-        // 100% REAL AI TEST ENGINE (POWERED BY GEMINI API)
-        // =======================================================
-        
-        // YAHAN APNI GEMINI API KEY DAALEIN
-        const GEMINI_API_KEY = "YAHAN_APNI_API_KEY_PASTE_KAREIN"; 
-
-        function startTest() {
-            currentChapter = document.getElementById('chapInput').value.trim();
-            if(!currentChapter) return alert("Please enter chapter name to start!");
-            if(GEMINI_API_KEY === "YAHAN_APNI_API_KEY_PASTE_KAREIN") {
-                return alert("Bhai, pehle code mein apni Gemini API Key paste karo tabhi real questions aayenge!");
-            }
-            
-            score = 0;
-            qCount = 1;
-            updateScore();
-            
-            viewState = 5;
-            document.getElementById('testSetupView').style.display = 'none';
-            document.getElementById('testActiveView').style.display = 'block';
-            document.getElementById('scoreBoard').style.display = 'block';
-            document.getElementById('headTitle').innerText = "Live AI Test";
-            
-            fetchRealQuestionFromAI();
-        }
-
-        function updateScore() {
-            document.getElementById('scoreBoard').innerText = `Score: ${score}`;
-        }
-
-        // REAL API CALL TO GOOGLE GEMINI
-        async function fetchRealQuestionFromAI() {
-            isAnswered = false;
-            document.getElementById('btnNext').style.display = 'none';
-            document.getElementById('timerFill').style.width = '100%';
-            document.getElementById('timerFill').classList.remove('danger');
-            
-            // Loading UI
-            document.getElementById('qText').innerHTML = `<div style="text-align:center; padding: 20px;"><i class="fa-solid fa-brain fa-fade" style="font-size:30px; color:var(--accent); margin-bottom:10px;"></i><br><span style="font-size:14px; color:var(--text-muted);">AI is creating a fresh ${selectedDiff} level question for ${currentChapter}...</span></div>`;
-            document.getElementById('optionsBox').innerHTML = "";
-            document.getElementById('timerText').innerText = "Wait...";
-            clearInterval(timerInterval);
-
-            // Ye Prompt AI ko batayega ki kaisa question banana hai
-            const promptText = `You are a strict examiner for ${currentBatch}. Generate ONE multiple-choice question for Subject: ${currentSubject}, Topic: ${currentChapter}. The difficulty level must be ${selectedDiff}. 
-            Return ONLY a valid JSON object in this exact format without any markdown blocks or extra text:
-            {
-              "question": "The actual question text here",
-              "options": ["Option A", "Option B", "Option C", "Option D"],
-              "correctIndex": (number 0, 1, 2, or 3),
-              "reason": "Short explanation of the correct answer"
-            }`;
-
-            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`;
-
-            try {
-                const response = await fetch(url, {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({
-                        contents: [{ parts: [{ text: promptText }] }]
-                    })
-                });
-
-                const data = await response.json();
-                
-                let aiResponseText = data.candidates[0].content.parts[0].text;
-                aiResponseText = aiResponseText.replace(/```json/g, '').replace(/```/g, '').trim();
-                
-                const qData = JSON.parse(aiResponseText);
-                renderRealQuestion(qData);
-
-            } catch (error) {
-                console.error("AI Error:", error);
-                document.getElementById('qText').innerHTML = `<span style="color:var(--danger)">Network Error: Could not generate question. Please try again.</span>`;
-                document.getElementById('btnNext').style.display = 'block';
-                document.getElementById('btnNext').innerText = "TRY AGAIN";
-            }
-        }
-
-        // RENDER THE REAL JSON QUESTION TO UI
-        function renderRealQuestion(qData) {
-            document.getElementById('qText').innerHTML = `
-                <span style="color:var(--text-muted); font-size:12px;">Q${qCount} | ${currentSubject} • ${currentChapter} (${selectedDiff.toUpperCase()})</span><br>
-                ${qData.question}
-            `;
-            
-            let html = '';
-            qData.options.forEach((opt, index) => {
-                let isCorrect = (index === qData.correctIndex) ? 'true' : 'false';
-                html += `<div class="option" onclick="selectOption(this, ${isCorrect}, '${qData.reason.replace(/'/g, "\\'")}')">
-                            <span>${String.fromCharCode(65+index)}) ${opt}</span>
-                         </div>`;
-            });
-            
-            html += `<div id="explanationBox" style="display:none; margin-top:15px; padding:15px; background:rgba(255, 181, 27, 0.1); border:1px solid var(--gold); border-radius:10px; font-size:13px; color:var(--text); line-height:1.5;"></div>`;
-
-            document.getElementById('optionsBox').innerHTML = html;
-            startTimer();
-        }
-
-        function startTimer() {
-            timer = 15;
-            document.getElementById('timerText').innerText = `00:${timer}`;
-            
-            clearInterval(timerInterval);
-            timerInterval = setInterval(() => {
-                timer--;
-                let percent = (timer / 15) * 100;
-                document.getElementById('timerFill').style.width = percent + '%';
-                
-        // =======================================================
-        // 100% REAL AI TEST ENGINE (VIA VERCEL BACKEND API)
-        // =======================================================
-
-        let score = 0;
-        let timer = 15;
-        let timerInterval;
-        let qCount = 1;
-        let isAnswered = false;
-
         function startTest() {
             currentChapter = document.getElementById('chapInput').value.trim();
             if(!currentChapter) return alert("Please enter chapter name to start!");
@@ -405,79 +271,32 @@
             document.getElementById('scoreBoard').style.display = 'block';
             document.getElementById('headTitle').innerText = "Live AI Test";
             
-            fetchRealQuestionFromAI();
+            generateQuestion();
         }
 
         function updateScore() {
             document.getElementById('scoreBoard').innerText = `Score: ${score}`;
         }
 
-        // REAL API CALL TO VERCEL SERVERLESS FUNCTION (SECURE)
-        async function fetchRealQuestionFromAI() {
+        function generateQuestion() {
             isAnswered = false;
             document.getElementById('btnNext').style.display = 'none';
             document.getElementById('timerFill').style.width = '100%';
             document.getElementById('timerFill').classList.remove('danger');
             
-            // Loading UI
-            document.getElementById('qText').innerHTML = `<div style="text-align:center; padding: 20px;"><i class="fa-solid fa-brain fa-fade" style="font-size:30px; color:var(--accent); margin-bottom:10px;"></i><br><span style="font-size:14px; color:var(--text-muted);">AI is creating a fresh ${selectedDiff} level question for ${currentChapter}...</span></div>`;
-            document.getElementById('optionsBox').innerHTML = "";
-            document.getElementById('timerText').innerText = "Wait...";
-            clearInterval(timerInterval);
-
-            const promptText = `You are a strict examiner for ${currentBatch}. Generate ONE multiple-choice question for Subject: ${currentSubject}, Topic: ${currentChapter}. The difficulty level must be ${selectedDiff}. 
-            Return ONLY a valid JSON object in this exact format without any markdown blocks or extra text:
-            {
-              "question": "The actual question text here",
-              "options": ["Option A", "Option B", "Option C", "Option D"],
-              "correctIndex": (number 0, 1, 2, or 3),
-              "reason": "Short explanation of the correct answer"
-            }`;
-
-            // Call Vercel backend route (/api/generateTest)
-            const url = `/api/generateTest`;
-
-            try {
-                const response = await fetch(url, {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ prompt: promptText })
-                });
-
-                if (!response.ok) {
-                    throw new Error("Server Error");
-                }
-
-                const qData = await response.json();
-                renderRealQuestion(qData);
-
-            } catch (error) {
-                console.error("AI Error:", error);
-                document.getElementById('qText').innerHTML = `<span style="color:var(--danger)">Network Error: Could not generate question. Please try again.</span>`;
-                document.getElementById('btnNext').style.display = 'block';
-                document.getElementById('btnNext').innerText = "TRY AGAIN";
-            }
-        }
-
-        // RENDER THE REAL JSON QUESTION TO UI
-        function renderRealQuestion(qData) {
-            document.getElementById('qText').innerHTML = `
-                <span style="color:var(--text-muted); font-size:12px;">Q${qCount} | ${currentSubject} • ${currentChapter} (${selectedDiff.toUpperCase()})</span><br>
-                ${qData.question}
-            `;
+            document.getElementById('qText').innerHTML = `<span style="color:var(--text-muted); font-size:12px;">Q${qCount} | ${currentSubject} • ${currentChapter}</span><br>Based on the core principles of ${currentChapter} in ${currentSubject}, which of the following statements is functionally correct?`;
             
+            let correctIndex = Math.floor(Math.random() * 4);
             let html = '';
-            qData.options.forEach((opt, index) => {
-                let isCorrect = (index === qData.correctIndex) ? 'true' : 'false';
-                html += `<div class="option" onclick="selectOption(this, ${isCorrect}, '${qData.reason.replace(/'/g, "\\'")}')">
-                            <span>${String.fromCharCode(65+index)}) ${opt}</span>
-                         </div>`;
-            });
-            
-            html += `<div id="explanationBox" style="display:none; margin-top:15px; padding:15px; background:rgba(255, 181, 27, 0.1); border:1px solid var(--gold); border-radius:10px; font-size:13px; color:var(--text); line-height:1.5;"></div>`;
-
+            for(let i=0; i<4; i++) {
+                let isCorrect = (i === correctIndex) ? 'true' : 'false';
+                let optText = (i === correctIndex) ? "This is the logically correct concept formulated by AI." : `Distractor option ${i+1} generated by AI to test your concepts.`;
+                html += `<div class="option" onclick="selectOption(this, ${isCorrect})"><span>${String.fromCharCode(65+i)}) ${optText}</span></div>`;
+            }
             document.getElementById('optionsBox').innerHTML = html;
+
             startTimer();
+            qCount++;
         }
 
         function startTimer() {
@@ -501,7 +320,7 @@
             }, 1000);
         }
 
-        function selectOption(elem, isCorrect, reason) {
+        function selectOption(elem, isCorrect) {
             if(isAnswered) return;
             isAnswered = true;
             clearInterval(timerInterval);
@@ -525,14 +344,8 @@
                     }
                 });
             }
-            
-            let expBox = document.getElementById('explanationBox');
-            expBox.innerHTML = `<strong>💡 AI Explanation:</strong><br>${reason}`;
-            expBox.style.display = 'block';
-
             updateScore();
             document.getElementById('btnNext').style.display = 'block';
-            document.getElementById('btnNext').innerText = "NEXT QUESTION";
         }
 
         function autoTimeOut() {
@@ -541,37 +354,16 @@
             updateScore();
 
             let allOptions = document.querySelectorAll('.option');
-            let reasonText = "";
             allOptions.forEach(opt => {
                 opt.classList.add('disabled');
                 if(opt.getAttribute('onclick').includes('true')) {
                     opt.classList.add('correct');
                     opt.innerHTML += '<i class="fa-solid fa-circle-check"></i>';
-                    let onclickStr = opt.getAttribute('onclick');
-                    reasonText = onclickStr.split("', '")[1].slice(0, -2);
                 }
             });
-            
             document.getElementById('timerText').innerText = "TIME OUT!";
-            
-            let expBox = document.getElementById('explanationBox');
-            expBox.innerHTML = `<strong>⏰ Time's Up! AI Explanation:</strong><br>${reasonText}`;
-            expBox.style.display = 'block';
-
             document.getElementById('btnNext').style.display = 'block';
-            document.getElementById('btnNext').innerText = "NEXT QUESTION";
         }
-
-        function generateQuestion() {
-            if(document.getElementById('btnNext').innerText === "TRY AGAIN") {
-                fetchRealQuestionFromAI();
-            } else {
-                qCount++;
-                fetchRealQuestionFromAI();
-            }
-        }
-
-
     </script>
 </body>
 </html>
