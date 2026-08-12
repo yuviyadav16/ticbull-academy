@@ -381,6 +381,115 @@
                 let percent = (timer / 15) * 100;
                 document.getElementById('timerFill').style.width = percent + '%';
                 
+        // =======================================================
+        // 100% REAL AI TEST ENGINE (VIA VERCEL BACKEND API)
+        // =======================================================
+
+        let score = 0;
+        let timer = 15;
+        let timerInterval;
+        let qCount = 1;
+        let isAnswered = false;
+
+        function startTest() {
+            currentChapter = document.getElementById('chapInput').value.trim();
+            if(!currentChapter) return alert("Please enter chapter name to start!");
+            
+            score = 0;
+            qCount = 1;
+            updateScore();
+            
+            viewState = 5;
+            document.getElementById('testSetupView').style.display = 'none';
+            document.getElementById('testActiveView').style.display = 'block';
+            document.getElementById('scoreBoard').style.display = 'block';
+            document.getElementById('headTitle').innerText = "Live AI Test";
+            
+            fetchRealQuestionFromAI();
+        }
+
+        function updateScore() {
+            document.getElementById('scoreBoard').innerText = `Score: ${score}`;
+        }
+
+        // REAL API CALL TO VERCEL SERVERLESS FUNCTION (SECURE)
+        async function fetchRealQuestionFromAI() {
+            isAnswered = false;
+            document.getElementById('btnNext').style.display = 'none';
+            document.getElementById('timerFill').style.width = '100%';
+            document.getElementById('timerFill').classList.remove('danger');
+            
+            // Loading UI
+            document.getElementById('qText').innerHTML = `<div style="text-align:center; padding: 20px;"><i class="fa-solid fa-brain fa-fade" style="font-size:30px; color:var(--accent); margin-bottom:10px;"></i><br><span style="font-size:14px; color:var(--text-muted);">AI is creating a fresh ${selectedDiff} level question for ${currentChapter}...</span></div>`;
+            document.getElementById('optionsBox').innerHTML = "";
+            document.getElementById('timerText').innerText = "Wait...";
+            clearInterval(timerInterval);
+
+            const promptText = `You are a strict examiner for ${currentBatch}. Generate ONE multiple-choice question for Subject: ${currentSubject}, Topic: ${currentChapter}. The difficulty level must be ${selectedDiff}. 
+            Return ONLY a valid JSON object in this exact format without any markdown blocks or extra text:
+            {
+              "question": "The actual question text here",
+              "options": ["Option A", "Option B", "Option C", "Option D"],
+              "correctIndex": (number 0, 1, 2, or 3),
+              "reason": "Short explanation of the correct answer"
+            }`;
+
+            // Call Vercel backend route (/api/generateTest)
+            const url = `/api/generateTest`;
+
+            try {
+                const response = await fetch(url, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ prompt: promptText })
+                });
+
+                if (!response.ok) {
+                    throw new Error("Server Error");
+                }
+
+                const qData = await response.json();
+                renderRealQuestion(qData);
+
+            } catch (error) {
+                console.error("AI Error:", error);
+                document.getElementById('qText').innerHTML = `<span style="color:var(--danger)">Network Error: Could not generate question. Please try again.</span>`;
+                document.getElementById('btnNext').style.display = 'block';
+                document.getElementById('btnNext').innerText = "TRY AGAIN";
+            }
+        }
+
+        // RENDER THE REAL JSON QUESTION TO UI
+        function renderRealQuestion(qData) {
+            document.getElementById('qText').innerHTML = `
+                <span style="color:var(--text-muted); font-size:12px;">Q${qCount} | ${currentSubject} • ${currentChapter} (${selectedDiff.toUpperCase()})</span><br>
+                ${qData.question}
+            `;
+            
+            let html = '';
+            qData.options.forEach((opt, index) => {
+                let isCorrect = (index === qData.correctIndex) ? 'true' : 'false';
+                html += `<div class="option" onclick="selectOption(this, ${isCorrect}, '${qData.reason.replace(/'/g, "\\'")}')">
+                            <span>${String.fromCharCode(65+index)}) ${opt}</span>
+                         </div>`;
+            });
+            
+            html += `<div id="explanationBox" style="display:none; margin-top:15px; padding:15px; background:rgba(255, 181, 27, 0.1); border:1px solid var(--gold); border-radius:10px; font-size:13px; color:var(--text); line-height:1.5;"></div>`;
+
+            document.getElementById('optionsBox').innerHTML = html;
+            startTimer();
+        }
+
+        function startTimer() {
+            timer = 15;
+            document.getElementById('timerText').innerText = `00:${timer}`;
+            
+            clearInterval(timerInterval);
+            timerInterval = setInterval(() => {
+                timer--;
+                let percent = (timer / 15) * 100;
+                document.getElementById('timerFill').style.width = percent + '%';
+                
                 if(timer <= 5) document.getElementById('timerFill').classList.add('danger');
                 if(timer < 10) document.getElementById('timerText').innerText = `00:0${timer}`;
                 else document.getElementById('timerText').innerText = `00:${timer}`;
@@ -461,6 +570,7 @@
                 fetchRealQuestionFromAI();
             }
         }
+
 
     </script>
 </body>
