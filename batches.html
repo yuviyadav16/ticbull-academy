@@ -1,423 +1,1662 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>TicBull Academy - Explore Batches</title>
-    
-    <link rel="manifest" href="/manifest.json">
-    <meta name="theme-color" content="#2563eb">
-    <link rel="apple-touch-icon" href="logo.png">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<title>TicBull Academy — Batches</title>
 
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    
-    <style>
-        :root { --bg-color: #030712; --card-bg: #0f172a; --accent-color: #9f1239; --text-main: #f8fafc; --text-muted: #94a3b8; --border-color: rgba(255, 255, 255, 0.12); --success-color: #10b981; --gold-color: #f59e0b; --input-bg: #1e293b; }
-        body.light-theme { --bg-color: #f1f5f9; --card-bg: #ffffff; --text-main: #0f172a; --text-muted: #64748b; --border-color: #cbd5e1; --input-bg: #ffffff; }
-        * { margin:0; padding:0; box-sizing:border-box; font-family:-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; -webkit-tap-highlight-color: transparent; }
-        body { background: var(--bg-color); color: var(--text-main); display:flex; flex-direction:column; min-height: 100vh; overflow-x: hidden; transition: background 0.3s, color 0.3s; }
+<style>
+:root{
+ --bg:#05070d;
+ --panel:#0e1628;
+ --card:#18243a;
+ --line:#2b3a53;
+ --text:#f6f7fb;
+ --muted:#9ca9bf;
+ --accent:#d4144f;
+ --gold:#ffab18;
+ --green:#21c77a;
+}
 
-        .top-bar { display:flex; justify-content:space-between; align-items:center; padding:15px 20px; z-index:50; background: var(--card-bg); border-bottom: 1px solid var(--border-color); position: sticky; top: 0; }
-        .back-btn { background:transparent; border:none; color:var(--text-main); font-size:18px; cursor:pointer; display:flex; align-items:center; gap:12px; font-weight:800; }
-        .menu-btn { background:var(--input-bg); border:1px solid var(--border-color); color:var(--text-main); font-size:16px; padding:8px 12px; border-radius:10px; cursor:pointer; }
-        
-        .search-area { padding: 15px 20px 5px; background: var(--bg-color); }
-        .search-box { position: relative; width: 100%; }
-        .search-box input { width: 100%; background: var(--card-bg); border: 1px solid var(--border-color); color: var(--text-main); padding: 14px 20px 14px 45px; border-radius: 16px; font-size: 14px; outline: none; transition: 0.3s; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
-        .search-box i { position: absolute; left: 18px; top: 50%; transform: translateY(-50%); color: var(--text-muted); font-size: 15px; }
+*{box-sizing:border-box}
 
-        .category-scroll { display: flex; gap: 10px; overflow-x: auto; padding: 10px 20px 15px; scrollbar-width: none; background: var(--bg-color); }
-        .category-scroll::-webkit-scrollbar { display: none; }
-        .cat-chip { background: var(--card-bg); border: 1px solid var(--border-color); color: var(--text-muted); padding: 8px 18px; border-radius: 20px; font-size: 13px; font-weight: 700; white-space: nowrap; cursor: pointer; transition: 0.3s; }
-        .cat-chip.active { background: var(--accent-color); color: #fff; border-color: var(--accent-color); } 
+body{
+ margin:0;
+ background:radial-gradient(circle at top,#101b31 0,#05070d 48%);
+ font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
+ color:var(--text);
+}
 
-        .batches-container { flex: 1; padding: 10px 20px 30px; display: flex; flex-direction: column; gap: 16px; overflow-y: auto; }
-        
-        .batch-card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 18px; padding: 18px; position: relative; overflow: hidden; display: flex; flex-direction: column; justify-content: space-between; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
-        .batch-card::before { content:''; position:absolute; top:0; left:0; width:5px; height:100%; background: var(--accent-color); border-radius: 18px 0 0 18px; }
-        .batch-tag { background: rgba(159, 18, 57, 0.15); color: var(--success-color); padding: 5px 10px; border-radius: 6px; font-size: 11px; font-weight: 800; display: inline-block; margin-bottom: 8px; text-transform: uppercase; border: 1px solid rgba(16, 185, 129, 0.3); align-self: flex-start; }
-        .batch-title { font-size: 17px; font-weight: 800; color: var(--text-main); margin-bottom: 6px; }
-        .batch-desc { font-size: 12.5px; color: var(--text-muted); margin-bottom: 16px; line-height: 1.4; }
-        
-        .batch-footer { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border-color); padding-top: 12px; margin-top: auto; }
-        .batch-price { font-size: 17px; font-weight: 800; color: var(--success-color); }
-        .batch-price-sub { font-size: 10px; color: var(--text-muted); display: block; font-weight: 800; text-transform: uppercase; }
-        
-        .btn-row { display: flex; gap: 8px; }
-        .btn-details { background: transparent; color: var(--text-main); font-weight: 700; padding: 8px 14px; border: 1px solid var(--border-color); border-radius: 10px; cursor: pointer; font-size: 12px; transition: 0.2s; }
-        .btn-details:hover { background: var(--input-bg); }
-        .btn-buy { background: var(--accent-color); color: #fff; font-weight: 700; padding: 8px 14px; border: none; border-radius: 10px; cursor: pointer; font-size: 12px; }
+header{
+ position:sticky;
+ top:0;
+ z-index:20;
+ background:rgba(5,7,13,.94);
+ backdrop-filter:blur(16px);
+ border-bottom:1px solid #1e2a40;
+}
 
-        .drawer-overlay { position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.75); z-index:3000; display:none; }
-        .drawer { position:fixed; top:0; left:-320px; width:320px; height:100%; background:var(--card-bg); border-right:1px solid var(--border-color); z-index:3001; transition:0.3s; padding:20px; display:flex; flex-direction:column; }
-        .drawer.open { left:0; }
-        .drawer-header { display:flex; justify-content:space-between; align-items:center; padding-bottom:14px; border-bottom:1px solid var(--border-color); margin-bottom:14px; }
-        .drawer-item { padding:14px 16px; border-radius:12px; color:var(--text-main); font-size:14.5px; font-weight:600; display:flex; align-items:center; gap:14px; cursor:pointer; margin-bottom:8px; }
+.top{
+ padding:18px 16px 12px;
+ max-width:1200px;
+ margin:auto;
+}
 
-        /* MODALS */
-        .modal-overlay { position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); z-index:2000; display:none; justify-content:center; align-items:center; padding:16px; backdrop-filter: blur(5px); }
-        .modal-card { background:var(--card-bg); border:1px solid var(--border-color); border-radius:24px; padding:22px; max-width:420px; width:100%; text-align:left; position:relative; max-height: 90vh; display: flex; flex-direction: column; }
-        
-        .sub-list-container { overflow-y: auto; margin-top: 15px; padding-right: 5px; flex: 1; }
-        .sub-card { display: flex; align-items: center; gap: 12px; background: var(--input-bg); padding: 12px; border-radius: 12px; border: 1px solid var(--border-color); margin-bottom:10px; }
-        .sub-icon { width: 40px; height: 40px; border-radius: 10px; background: rgba(159, 18, 57, 0.1); color: var(--accent-color); display: flex; justify-content: center; align-items: center; font-size: 18px; }
-        
-        .tier-card { border: 2px solid var(--border-color); border-radius: 14px; padding: 12px; margin-bottom: 10px; cursor: pointer; background: var(--input-bg); }
-        .tier-card.selected { border-color: var(--accent-color); background: rgba(159, 18, 57, 0.05); }
-        .btn-primary { width:100%; background: var(--accent-color); color:#fff; font-weight:800; padding:14px; border:none; border-radius:12px; cursor:pointer; font-size:14px; margin-top:10px; }
-    </style>
+.brand{
+ font-size:25px;
+ font-weight:900;
+}
+
+.brand span{
+ color:var(--gold);
+}
+
+.sub{
+ color:var(--muted);
+ font-size:13px;
+ margin-top:4px;
+}
+
+.search{
+ margin-top:14px;
+ display:flex;
+ gap:8px;
+}
+
+.search input{
+ width:100%;
+ background:#111b2d;
+ border:1px solid var(--line);
+ color:white;
+ border-radius:14px;
+ padding:14px;
+ outline:none;
+ font-size:15px;
+}
+
+.tabs{
+ display:flex;
+ gap:8px;
+ overflow:auto;
+ padding:10px 16px;
+ max-width:1200px;
+ margin:auto;
+}
+
+.tab{
+ white-space:nowrap;
+ border:1px solid var(--line);
+ background:#101a2c;
+ color:#cbd5e1;
+ border-radius:999px;
+ padding:9px 14px;
+ font-weight:800;
+ cursor:pointer;
+}
+
+.tab.active{
+ background:var(--accent);
+ border-color:var(--accent);
+ color:#fff;
+}
+
+.filters{
+ display:flex;
+ gap:8px;
+ overflow:auto;
+ padding:4px 16px 14px;
+ max-width:1200px;
+ margin:auto;
+}
+
+.filter{
+ white-space:nowrap;
+ border:1px solid var(--line);
+ background:#101a2c;
+ color:#cbd5e1;
+ border-radius:999px;
+ padding:8px 13px;
+ font-size:12px;
+ font-weight:800;
+ cursor:pointer;
+}
+
+.filter.active{
+ background:#273650;
+ color:#fff;
+}
+
+main{
+ max-width:1200px;
+ margin:auto;
+ padding:18px 16px 50px;
+}
+
+.count{
+ color:var(--muted);
+ margin-bottom:15px;
+ font-size:13px;
+}
+
+.grid{
+ display:grid;
+ grid-template-columns:repeat(3,1fr);
+ gap:14px;
+}
+
+.card{
+ background:linear-gradient(145deg,#17243a,#111b2d);
+ border:1px solid #293952;
+ border-radius:20px;
+ padding:18px;
+ box-shadow:0 12px 35px #0005;
+}
+
+.card h3{
+ margin:0 0 5px;
+ font-size:18px;
+}
+
+.card .meta{
+ color:var(--muted);
+ font-size:13px;
+ margin-bottom:13px;
+}
+
+.tags{
+ display:flex;
+ flex-wrap:wrap;
+ gap:6px;
+ margin-bottom:15px;
+}
+
+.tag{
+ background:#202d43;
+ color:#d7deea;
+ padding:6px 8px;
+ border-radius:8px;
+ font-size:11px;
+ font-weight:700;
+}
+
+.price{
+ font-size:22px;
+ color:var(--gold);
+ font-weight:900;
+}
+
+.old{
+ color:#718096;
+ text-decoration:line-through;
+ font-size:12px;
+ margin-left:5px;
+}
+
+.actions{
+ display:flex;
+ gap:8px;
+ margin-top:14px;
+}
+
+.btn{
+ flex:1;
+ border:0;
+ border-radius:12px;
+ padding:12px 10px;
+ font-weight:900;
+ cursor:pointer;
+}
+
+.details{
+ background:#202d43;
+ color:white;
+}
+
+.buy{
+ background:var(--accent);
+ color:white;
+}
+
+.empty{
+ padding:35px;
+ text-align:center;
+ color:var(--muted);
+ border:1px dashed #33445f;
+ border-radius:18px;
+}
+
+.modal{
+ display:none;
+ position:fixed;
+ inset:0;
+ z-index:50;
+ background:#000b;
+ align-items:center;
+ justify-content:center;
+ padding:16px;
+}
+
+.modal.show{
+ display:flex;
+}
+
+.box{
+ width:min(680px,100%);
+ max-height:90vh;
+ overflow:auto;
+ background:#0d1628;
+ border:1px solid #30415e;
+ border-radius:26px;
+ padding:20px;
+ position:relative;
+}
+
+.close{
+ position:absolute;
+ right:16px;
+ top:12px;
+ background:none;
+ border:0;
+ color:#9aa8bd;
+ font-size:32px;
+ cursor:pointer;
+}
+
+.box h2{
+ margin:0 45px 5px 0;
+}
+
+.crumb{
+ color:#94a3b8;
+ margin-bottom:16px;
+}
+
+.subject{
+ display:flex;
+ align-items:center;
+ gap:12px;
+ background:#1b2940;
+ border:1px solid #34435a;
+ border-radius:16px;
+ padding:13px;
+ margin:9px 0;
+}
+
+.icon{
+ width:40px;
+ height:40px;
+ display:grid;
+ place-items:center;
+ background:#2a1830;
+ border-radius:12px;
+ font-size:21px;
+ flex-shrink:0;
+}
+
+.sname{
+ font-weight:900;
+}
+
+.teacher{
+ color:var(--gold);
+ font-weight:800;
+ font-size:13px;
+ margin-top:4px;
+}
+
+.chat{
+ margin-left:auto;
+ background:#273a54;
+ color:#fff;
+ border:1px solid #3a506e;
+ border-radius:10px;
+ padding:8px 10px;
+ font-weight:800;
+ cursor:pointer;
+}
+
+.buybig{
+ width:100%;
+ margin-top:15px;
+ background:var(--accent);
+ color:white;
+ border:0;
+ border-radius:14px;
+ padding:15px;
+ font-weight:900;
+ font-size:16px;
+ cursor:pointer;
+}
+
+.note{
+ font-size:12px;
+ color:#8fa0b8;
+ line-height:1.5;
+ margin-top:14px;
+}
+
+.notice{
+ background:#101d32;
+ border:1px solid #2a3c57;
+ padding:12px;
+ border-radius:14px;
+ color:#b7c5d8;
+ font-size:12px;
+ margin-bottom:15px;
+}
+
+@media(max-width:850px){
+ .grid{
+  grid-template-columns:repeat(2,1fr);
+ }
+}
+
+@media(max-width:560px){
+ .grid{
+  grid-template-columns:1fr;
+ }
+ .box{
+  padding:16px;
+ }
+ .subject{
+  align-items:flex-start;
+ }
+ .chat{
+  margin-left:auto;
+ }
+}
+</style>
 </head>
+
 <body>
 
-    <div class="top-bar">
-        <button class="back-btn" onclick="window.location.href='dashboard.html'"><i class="fa-solid fa-arrow-left"></i> TicBull Batches</button>
-        <button class="menu-btn" onclick="toggleDrawer()"><i class="fa-solid fa-bars"></i></button>
+<header>
+
+<div class="top">
+
+<div class="brand">
+TicBull <span>Academy</span>
+</div>
+
+<div class="sub">
+Board → Class/Stream → Subjects → Teacher → AI Chat Room
+</div>
+
+<div class="search">
+<input id="search"
+placeholder="Search board, class, stream, NEET, JEE, UPSC...">
+</div>
+
+</div>
+
+<div class="tabs">
+
+<button class="tab active" data-type="school">
+🏫 School Boards
+</button>
+
+<button class="tab" data-type="competitive">
+🎯 Competitive Exams
+</button>
+
+</div>
+
+<div class="filters" id="filters"></div>
+
+</header>
+
+<main>
+
+<div class="count" id="count"></div>
+
+<div class="grid" id="grid"></div>
+
+</main>
+
+
+<div class="modal" id="modal">
+
+<div class="box">
+
+<button class="close" onclick="closeModal()">×</button>
+
+<h2 id="modalTitle"></h2>
+
+<div class="crumb" id="modalCrumb"></div>
+
+<div class="notice" id="modalNotice"></div>
+
+<div id="subjects"></div>
+
+<button class="buybig" onclick="buyCurrent()">
+BUY NOW — ₹<span id="modalPrice"></span>
+</button>
+
+<div class="note">
+Demo checkout button. Payment gateway/backend ko baad mein
+buy() function ke andar connect kar sakte ho.
+</div>
+
+</div>
+
+</div>
+
+
+<script>
+
+/* =========================================================
+   SCHOOL BOARDS
+========================================================= */
+
+const BOARDS = [
+
+{"name":"CBSE","full":"Central Board of Secondary Education","region":"National"},
+
+{"name":"CISCE / ICSE / ISC","full":"Council for the Indian School Certificate Examinations","region":"National"},
+
+{"name":"NIOS","full":"National Institute of Open Schooling","region":"National Open"},
+
+{"name":"Andhra Pradesh BSE","full":"Board of Secondary Education, Andhra Pradesh","region":"Andhra Pradesh"},
+
+{"name":"Andhra Pradesh BIE","full":"Board of Intermediate Education, Andhra Pradesh","region":"Andhra Pradesh"},
+
+{"name":"Assam SEBA / ASSEB","full":"Board of Secondary Education / Assam State School Education Board","region":"Assam"},
+
+{"name":"Assam AHSEC / ASSEB","full":"Assam Higher Secondary Education Council / ASSEB","region":"Assam"},
+
+{"name":"Bihar Board (BSEB)","full":"Bihar School Examination Board","region":"Bihar"},
+
+{"name":"Bihar Sanskrit Shiksha Board","full":"Bihar Sanskrit Shiksha Board","region":"Bihar"},
+
+{"name":"Bihar State Madrasa Board","full":"Bihar State Madrasa Education Board","region":"Bihar"},
+
+{"name":"BBOSE","full":"Bihar Board of Open Schooling & Examination","region":"Bihar Open"},
+
+{"name":"Chhattisgarh Board (CGBSE)","full":"Chhattisgarh Board of Secondary Education","region":"Chhattisgarh"},
+
+{"name":"Goa Board (GBSHSE)","full":"Goa Board of Secondary and Higher Secondary Education","region":"Goa"},
+
+{"name":"Gujarat Board (GSEB)","full":"Gujarat Secondary and Higher Secondary Education Board","region":"Gujarat"},
+
+{"name":"Haryana Board (BSEH)","full":"Board of School Education Haryana","region":"Haryana"},
+
+{"name":"Himachal Pradesh Board (HPBOSE)","full":"Himachal Pradesh Board of School Education","region":"Himachal Pradesh"},
+
+{"name":"Jammu & Kashmir Board (JKBOSE)","full":"Jammu and Kashmir Board of School Education","region":"Jammu & Kashmir"},
+
+{"name":"Jharkhand Academic Council (JAC)","full":"Jharkhand Academic Council","region":"Jharkhand"},
+
+{"name":"Karnataka SSLC / KSEAB","full":"Karnataka School Examination and Assessment Board","region":"Karnataka"},
+
+{"name":"Kerala DHSE / KBPE","full":"Kerala Board of Public Examinations / Directorate of Higher Secondary Education","region":"Kerala"},
+
+{"name":"Madhya Pradesh Board (MPBSE)","full":"Board of Secondary Education Madhya Pradesh","region":"Madhya Pradesh"},
+
+{"name":"Maharashtra SSC / HSC","full":"Maharashtra State Board of Secondary and Higher Secondary Education","region":"Maharashtra"},
+
+{"name":"Manipur COHSEM / BSEM","full":"Council of Higher Secondary Education / Board of Secondary Education Manipur","region":"Manipur"},
+
+{"name":"Meghalaya MBOSE","full":"Meghalaya Board of School Education","region":"Meghalaya"},
+
+{"name":"Mizoram MBSE","full":"Mizoram Board of School Education","region":"Mizoram"},
+
+{"name":"Nagaland NBSE","full":"Nagaland Board of School Education","region":"Nagaland"},
+
+{"name":"Odisha CHSE / BSE","full":"Council of Higher Secondary Education / Board of Secondary Education Odisha","region":"Odisha"},
+
+{"name":"Punjab PSEB","full":"Punjab School Education Board","region":"Punjab"},
+
+{"name":"Rajasthan RBSE","full":"Board of Secondary Education Rajasthan","region":"Rajasthan"},
+
+{"name":"Tamil Nadu SSLC / HSE","full":"Tamil Nadu Directorate of Government Examinations","region":"Tamil Nadu"},
+
+{"name":"Telangana SSC / TSBIE","full":"Board of Secondary Education / Telangana State Board of Intermediate Education","region":"Telangana"},
+
+{"name":"Tripura TBSE","full":"Tripura Board of Secondary Education","region":"Tripura"},
+
+{"name":"Uttar Pradesh UPMSP","full":"Board of High School and Intermediate Education Uttar Pradesh","region":"Uttar Pradesh"},
+
+{"name":"Uttarakhand UBSE","full":"Uttarakhand Board of School Education","region":"Uttarakhand"},
+
+{"name":"West Bengal WBBSE / WBCHSE","full":"West Bengal Board of Secondary Education / Council of Higher Secondary Education","region":"West Bengal"},
+
+{"name":"Delhi DoE","full":"Directorate of Education Delhi","region":"Delhi"},
+
+{"name":"Sikkim Board","full":"Government of Sikkim School Education","region":"Sikkim"},
+
+{"name":"Arunachal Pradesh Board","full":"Arunachal Pradesh School Education","region":"Arunachal Pradesh"},
+
+{"name":"Puducherry School Education","full":"Government School Education Puducherry","region":"Puducherry"},
+
+{"name":"Chandigarh School Education","full":"Chandigarh School Education","region":"Chandigarh"},
+
+{"name":"Dadra & Nagar Haveli / Daman & Diu","full":"UT School Education","region":"Union Territory"},
+
+{"name":"Ladakh School Education","full":"Ladakh School Education Department","region":"Ladakh"},
+
+{"name":"Lakshadweep School Education","full":"Lakshadweep School Education","region":"Lakshadweep"},
+
+{"name":"Andaman & Nicobar School Education","full":"Andaman and Nicobar School Education","region":"Andaman & Nicobar"},
+
+{"name":"CGBSE Sanskrit","full":"Chhattisgarh Sanskrit Board","region":"Chhattisgarh"},
+
+{"name":"Maharashtra Sanskrit Board","full":"Maharashtra Sanskrit Board","region":"Maharashtra"},
+
+{"name":"Maharashtra Urdu Board","full":"Maharashtra Urdu Education","region":"Maharashtra"},
+
+{"name":"Rajasthan Sanskrit Board","full":"Rajasthan Sanskrit Education","region":"Rajasthan"},
+
+{"name":"Rajasthan Madrasa Board","full":"Rajasthan Madrasa Board","region":"Rajasthan"},
+
+{"name":"West Bengal Madrasah Board","full":"West Bengal Board of Madrasah Education","region":"West Bengal"},
+
+{"name":"Kerala Arabic / Oriental Boards","full":"Kerala Oriental and Arabic Education","region":"Kerala"},
+
+{"name":"Telangana Open School","full":"Telangana Open School Society","region":"Telangana"},
+
+{"name":"Andhra Pradesh Open School","full":"Andhra Pradesh Open School Society","region":"Andhra Pradesh"},
+
+{"name":"Madhya Pradesh Open School","full":"Madhya Pradesh State Open School","region":"Madhya Pradesh"},
+
+{"name":"Rajasthan Open School","full":"Rajasthan State Open School","region":"Rajasthan"},
+
+{"name":"Haryana Open School","full":"Haryana Open School","region":"Haryana"},
+
+{"name":"West Bengal Open School","full":"West Bengal Council of Rabindra Open Schooling","region":"West Bengal"},
+
+{"name":"Kerala Open School","full":"Kerala State Open School","region":"Kerala"},
+
+{"name":"Karnataka Open School","full":"Karnataka Open School","region":"Karnataka"}
+
+];
+
+
+/* =========================================================
+   SUBJECT GROUPS
+========================================================= */
+
+const CLASS_9_10 = [
+
+["Hindi","📖"],
+["English","📘"],
+["Sanskrit","🕉️"],
+["Urdu","📕"],
+["Mathematics","🔢"],
+["Physics","⚛️"],
+["Chemistry","🧪"],
+["Biology","🧬"],
+["History","🏛️"],
+["Political Science","🏛️"],
+["Geography","🌍"],
+["Economics","📈"],
+["Social Science","🌎"],
+["Computer / IT","💻"],
+["Artificial Intelligence","🤖"],
+["Physical Education","🏃"],
+["Art Education","🎨"]
+
+];
+
+const SCIENCE_PCMB = [
+
+["Physics","⚛️"],
+["Physical Chemistry","🧪"],
+["Organic Chemistry","🧪"],
+["Inorganic Chemistry","🧪"],
+["Botany","🌱"],
+["Zoology","🦁"],
+["Mathematics","🔢"],
+["English","📘"]
+
+];
+
+const SCIENCE_PCB = [
+
+["Physics","⚛️"],
+["Physical Chemistry","🧪"],
+["Organic Chemistry","🧪"],
+["Inorganic Chemistry","🧪"],
+["Botany","🌱"],
+["Zoology","🦁"],
+["English","📘"]
+
+];
+
+const SCIENCE_PCM = [
+
+["Physics","⚛️"],
+["Physical Chemistry","🧪"],
+["Organic Chemistry","🧪"],
+["Inorganic Chemistry","🧪"],
+["Mathematics","🔢"],
+["English","📘"]
+
+];
+
+const COMMERCE = [
+
+["Accountancy","💰"],
+["Business Studies","💼"],
+["Economics","📈"],
+["Mathematics / Applied Mathematics","🔢"],
+["English","📘"],
+["Entrepreneurship","🚀"],
+["Informatics Practices","💻"],
+["Physical Education","🏃"]
+
+];
+
+const ARTS = [
+
+["History","🏛️"],
+["Political Science","🏛️"],
+["Geography","🌍"],
+["Economics","📈"],
+["Sociology","👥"],
+["Psychology","🧠"],
+["Philosophy","💭"],
+["Legal Studies","⚖️"],
+["Hindi","📖"],
+["English","📘"],
+["Sanskrit","🕉️"],
+["Urdu","📕"],
+["Fine Arts","🎨"],
+["Physical Education","🏃"]
+
+];
+
+
+/* =========================================================
+   TEACHERS
+========================================================= */
+
+const TEACHERS = [
+
+"Prof. Aarav Sharma",
+"Prof. Anjali Gupta",
+"Prof. Manish Rao",
+"Prof. Sunil Yadav",
+"Prof. Pooja Gupta",
+"Prof. Gaurav Rao",
+"Prof. Anita Rajput",
+"Prof. Ravi Verma",
+"Prof. Deepak Mehta",
+"Prof. Kavita Nair",
+"Prof. Nitin Chauhan",
+"Prof. Divya Joshi",
+"Prof. Neha Yadav",
+"Prof. Sanjay Tiwari",
+"Prof. Vikas Patel",
+"Prof. Rajesh Pandey",
+"Prof. Aarti Mishra",
+"Prof. Chetan Rajput"
+
+];
+
+
+/* =========================================================
+   COMPETITIVE EXAMS
+========================================================= */
+
+const COMPETITIVE = [
+
+{
+ title:"NEET — Class 11",
+ exam:"NEET",
+ level:"Class 11",
+ price:299,
+ subjects:[
+  ["Physics","⚛️"],
+  ["Physical Chemistry","🧪"],
+  ["Organic Chemistry","🧪"],
+  ["Inorganic Chemistry","🧪"],
+  ["Botany","🌱"],
+  ["Zoology","🦁"]
+ ]
+},
+
+{
+ title:"NEET — Class 12",
+ exam:"NEET",
+ level:"Class 12",
+ price:299,
+ subjects:[
+  ["Physics","⚛️"],
+  ["Physical Chemistry","🧪"],
+  ["Organic Chemistry","🧪"],
+  ["Inorganic Chemistry","🧪"],
+  ["Botany","🌱"],
+  ["Zoology","🦁"]
+ ]
+},
+
+{
+ title:"NEET — Dropper",
+ exam:"NEET",
+ level:"Dropper",
+ price:399,
+ subjects:[
+  ["Physics","⚛️"],
+  ["Physical Chemistry","🧪"],
+  ["Organic Chemistry","🧪"],
+  ["Inorganic Chemistry","🧪"],
+  ["Botany","🌱"],
+  ["Zoology","🦁"]
+ ]
+},
+
+{
+ title:"JEE — Class 11",
+ exam:"JEE",
+ level:"Class 11",
+ price:299,
+ subjects:[
+  ["Physics","⚛️"],
+  ["Physical Chemistry","🧪"],
+  ["Organic Chemistry","🧪"],
+  ["Inorganic Chemistry","🧪"],
+  ["Mathematics","🔢"]
+ ]
+},
+
+{
+ title:"JEE — Class 12",
+ exam:"JEE",
+ level:"Class 12",
+ price:299,
+ subjects:[
+  ["Physics","⚛️"],
+  ["Physical Chemistry","🧪"],
+  ["Organic Chemistry","🧪"],
+  ["Inorganic Chemistry","🧪"],
+  ["Mathematics","🔢"]
+ ]
+},
+
+{
+ title:"JEE — Dropper",
+ exam:"JEE",
+ level:"Dropper",
+ price:399,
+ subjects:[
+  ["Physics","⚛️"],
+  ["Physical Chemistry","🧪"],
+  ["Organic Chemistry","🧪"],
+  ["Inorganic Chemistry","🧪"],
+  ["Mathematics","🔢"]
+ ]
+},
+
+{
+ title:"CUET UG",
+ exam:"CUET",
+ level:"UG",
+ price:249,
+ subjects:[
+  ["Language","📖"],
+  ["General Test","📝"],
+  ["Mathematics","🔢"],
+  ["Physics","⚛️"],
+  ["Chemistry","🧪"],
+  ["Biology","🧬"],
+  ["History","🏛️"],
+  ["Political Science","🏛️"],
+  ["Geography","🌍"],
+  ["Economics","📈"],
+  ["Business Studies","💼"]
+ ]
+},
+
+{
+ title:"UPSC Civil Services",
+ exam:"UPSC",
+ level:"Civil Services",
+ price:499,
+ subjects:[
+  ["General Studies I","🏛️"],
+  ["General Studies II","⚖️"],
+  ["General Studies III","🌍"],
+  ["General Studies IV","🧠"],
+  ["CSAT","🔢"],
+  ["Essay","📝"],
+  ["Optional Subject","📚"],
+  ["Current Affairs","📰"]
+ ]
+},
+
+{
+ title:"UPSC Foundation",
+ exam:"UPSC",
+ level:"Foundation",
+ price:399,
+ subjects:[
+  ["History","🏛️"],
+  ["Geography","🌍"],
+  ["Polity","⚖️"],
+  ["Economy","📈"],
+  ["Science & Technology","🔬"],
+  ["Environment","🌱"],
+  ["Current Affairs","📰"],
+  ["CSAT","🔢"]
+ ]
+},
+
+{
+ title:"NDA — Class 11",
+ exam:"NDA",
+ level:"Class 11",
+ price:249,
+ subjects:[
+  ["Mathematics","🔢"],
+  ["English","📘"],
+  ["Physics","⚛️"],
+  ["Chemistry","🧪"],
+  ["History","🏛️"],
+  ["Geography","🌍"],
+  ["Current Affairs","📰"]
+ ]
+},
+
+{
+ title:"NDA — Class 12",
+ exam:"NDA",
+ level:"Class 12",
+ price:249,
+ subjects:[
+  ["Mathematics","🔢"],
+  ["English","📘"],
+  ["General Science","🔬"],
+  ["History","🏛️"],
+  ["Geography","🌍"],
+  ["Current Affairs","📰"]
+ ]
+},
+
+{
+ title:"SSC CGL",
+ exam:"SSC",
+ level:"CGL",
+ price:199,
+ subjects:[
+  ["Quantitative Aptitude","🔢"],
+  ["Reasoning","🧠"],
+  ["English","📘"],
+  ["General Awareness","🌍"],
+  ["Current Affairs","📰"],
+  ["Computer","💻"]
+ ]
+},
+
+{
+ title:"SSC CHSL",
+ exam:"SSC",
+ level:"CHSL",
+ price:199,
+ subjects:[
+  ["Quantitative Aptitude","🔢"],
+  ["Reasoning","🧠"],
+  ["English","📘"],
+  ["General Awareness","🌍"],
+  ["Computer","💻"]
+ ]
+},
+
+{
+ title:"SSC MTS",
+ exam:"SSC",
+ level:"MTS",
+ price:149,
+ subjects:[
+  ["Numerical Ability","🔢"],
+  ["Reasoning","🧠"],
+  ["English","📘"],
+  ["General Awareness","🌍"]
+ ]
+},
+
+{
+ title:"IBPS PO",
+ exam:"Banking",
+ level:"PO",
+ price:199,
+ subjects:[
+  ["Quantitative Aptitude","🔢"],
+  ["Reasoning","🧠"],
+  ["English","📘"],
+  ["General Awareness","🌍"],
+  ["Banking Awareness","🏦"],
+  ["Computer","💻"]
+ ]
+},
+
+{
+ title:"IBPS Clerk",
+ exam:"Banking",
+ level:"Clerk",
+ price:199,
+ subjects:[
+  ["Numerical Ability","🔢"],
+  ["Reasoning","🧠"],
+  ["English","📘"],
+  ["General Awareness","🌍"],
+  ["Computer","💻"]
+ ]
+},
+
+{
+ title:"SBI PO",
+ exam:"Banking",
+ level:"PO",
+ price:249,
+ subjects:[
+  ["Quantitative Aptitude","🔢"],
+  ["Reasoning","🧠"],
+  ["English","📘"],
+  ["General Awareness","🌍"],
+  ["Banking Awareness","🏦"]
+ ]
+},
+
+{
+ title:"SBI Clerk",
+ exam:"Banking",
+ level:"Clerk",
+ price:199,
+ subjects:[
+  ["Numerical Ability","🔢"],
+  ["Reasoning","🧠"],
+  ["English","📘"],
+  ["General Awareness","🌍"]
+ ]
+},
+
+{
+ title:"RRB NTPC",
+ exam:"Railway",
+ level:"NTPC",
+ price:199,
+ subjects:[
+  ["Mathematics","🔢"],
+  ["General Intelligence","🧠"],
+  ["General Awareness","🌍"],
+  ["Current Affairs","📰"]
+ ]
+},
+
+{
+ title:"RRB Group D",
+ exam:"Railway",
+ level:"Group D",
+ price:149,
+ subjects:[
+  ["Mathematics","🔢"],
+  ["Reasoning","🧠"],
+  ["General Science","🔬"],
+  ["General Awareness","🌍"]
+ ]
+},
+
+{
+ title:"CLAT UG",
+ exam:"Law",
+ level:"UG",
+ price:249,
+ subjects:[
+  ["English Language","📘"],
+  ["Current Affairs","📰"],
+  ["Legal Reasoning","⚖️"],
+  ["Logical Reasoning","🧠"],
+  ["Quantitative Techniques","🔢"]
+ ]
+},
+
+{
+ title:"AILET UG",
+ exam:"Law",
+ level:"UG",
+ price:249,
+ subjects:[
+  ["English","📘"],
+  ["Current Affairs","📰"],
+  ["Logical Reasoning","🧠"],
+  ["Legal Reasoning","⚖️"]
+ ]
+},
+
+{
+ title:"CA Foundation",
+ exam:"CA",
+ level:"Foundation",
+ price:299,
+ subjects:[
+  ["Accounting","💰"],
+  ["Business Laws","⚖️"],
+  ["Quantitative Aptitude","🔢"],
+  ["Business Economics","📈"]
+ ]
+},
+
+{
+ title:"CMA Foundation",
+ exam:"CMA",
+ level:"Foundation",
+ price:299,
+ subjects:[
+  ["Fundamentals of Accounting","💰"],
+  ["Business Laws","⚖️"],
+  ["Mathematics","🔢"],
+  ["Economics","📈"]
+ ]
+},
+
+{
+ title:"CS Executive Foundation",
+ exam:"CS",
+ level:"Foundation",
+ price:299,
+ subjects:[
+  ["Business Law","⚖️"],
+  ["Business Economics","📈"],
+  ["Accounting","💰"],
+  ["Quantitative Aptitude","🔢"]
+ ]
+},
+
+{
+ title:"NIFT Entrance",
+ exam:"NIFT",
+ level:"UG",
+ price:249,
+ subjects:[
+  ["Creative Ability","🎨"],
+  ["General Ability","🧠"],
+  ["Quantitative Ability","🔢"],
+  ["English","📘"],
+  ["Current Affairs","📰"]
+ ]
+},
+
+{
+ title:"NID DAT",
+ exam:"NID",
+ level:"UG",
+ price:249,
+ subjects:[
+  ["Design Aptitude","🎨"],
+  ["Visual Reasoning","👁️"],
+  ["General Knowledge","🌍"],
+  ["Creative Ability","✨"]
+ ]
+},
+
+{
+ title:"UCEED",
+ exam:"UCEED",
+ level:"UG",
+ price:249,
+ subjects:[
+  ["Visualization","👁️"],
+  ["Observation","🔍"],
+  ["Design Thinking","🎨"],
+  ["Logical Reasoning","🧠"],
+  ["English","📘"]
+ ]
+},
+
+{
+ title:"IPMAT",
+ exam:"IPMAT",
+ level:"UG",
+ price:249,
+ subjects:[
+  ["Quantitative Ability","🔢"],
+  ["Verbal Ability","📘"],
+  ["Logical Reasoning","🧠"]
+ ]
+},
+
+{
+ title:"NCHM JEE",
+ exam:"NCHM JEE",
+ level:"UG",
+ price:199,
+ subjects:[
+  ["Numerical Ability","🔢"],
+  ["Reasoning","🧠"],
+  ["English","📘"],
+  ["General Knowledge","🌍"],
+  ["Service Aptitude","🍽️"]
+ ]
+},
+
+{
+ title:"ICAR UG",
+ exam:"ICAR",
+ level:"UG",
+ price:249,
+ subjects:[
+  ["Physics","⚛️"],
+  ["Chemistry","🧪"],
+  ["Biology","🧬"],
+  ["Mathematics","🔢"],
+  ["Agriculture","🌱"]
+ ]
+},
+
+{
+ title:"UGC NET",
+ exam:"UGC NET",
+ level:"NET",
+ price:399,
+ subjects:[
+  ["Teaching Aptitude","📚"],
+  ["Research Aptitude","🔬"],
+  ["Reasoning","🧠"],
+  ["Communication","🗣️"],
+  ["ICT","💻"],
+  ["Subject Paper","📖"]
+ ]
+},
+
+{
+ title:"CSIR NET",
+ exam:"CSIR NET",
+ level:"NET",
+ price:399,
+ subjects:[
+  ["General Aptitude","🧠"],
+  ["Physics","⚛️"],
+  ["Chemistry","🧪"],
+  ["Life Sciences","🧬"],
+  ["Mathematical Sciences","🔢"]
+ ]
+},
+
+{
+ title:"GATE",
+ exam:"GATE",
+ level:"Engineering",
+ price:399,
+ subjects:[
+  ["Engineering Mathematics","🔢"],
+  ["General Aptitude","🧠"],
+  ["Core Engineering Subject","⚙️"],
+  ["Programming","💻"]
+ ]
+},
+
+{
+ title:"CAT",
+ exam:"CAT",
+ level:"MBA",
+ price:299,
+ subjects:[
+  ["Quantitative Aptitude","🔢"],
+  ["VARC","📘"],
+  ["DILR","🧠"]
+ ]
+}
+
+];
+
+
+/* =========================================================
+   BATCH GENERATOR
+========================================================= */
+
+let batches=[];
+
+BOARDS.forEach(board=>{
+
+ for(let cls of [9,10]){
+
+  batches.push({
+   type:"school",
+   category:board.region,
+   board:board.name,
+   title:`${board.name} — Class ${cls}`,
+   stream:"General",
+   price:149,
+   subjects:CLASS_9_10
+  });
+
+ }
+
+ for(let cls of [11,12]){
+
+  const streams=[
+   ["Science — PCMB",SCIENCE_PCMB],
+   ["Science — PCB",SCIENCE_PCB],
+   ["Science — PCM",SCIENCE_PCM],
+   ["Commerce",COMMERCE],
+   ["Arts / Humanities",ARTS]
+  ];
+
+  streams.forEach(([stream,subjects])=>{
+
+   batches.push({
+    type:"school",
+    category:board.region,
+    board:board.name,
+    title:`${board.name} — Class ${cls}`,
+    stream:stream,
+    price:199,
+    subjects:subjects
+   });
+
+  });
+
+ }
+
+});
+
+
+COMPETITIVE.forEach(x=>{
+
+ batches.push({
+  ...x,
+  type:"competitive",
+  category:x.exam
+ });
+
+});
+
+
+let mode="school";
+let selectedFilter="All";
+let current=null;
+
+
+/* =========================================================
+   TEACHER
+========================================================= */
+
+function teacher(index){
+
+ return TEACHERS[index % TEACHERS.length];
+
+}
+
+
+/* =========================================================
+   FILTERS
+========================================================= */
+
+function filters(){
+
+ const el=document.getElementById("filters");
+
+ let list=[];
+
+ if(mode==="school"){
+
+  list=[
+   "All",
+   "National",
+   "Bihar",
+   "Uttar Pradesh",
+   "Rajasthan",
+   "Maharashtra",
+   "Gujarat",
+   "West Bengal",
+   "Madhya Pradesh",
+   "Karnataka",
+   "Tamil Nadu",
+   "Kerala",
+   "Telangana",
+   "Andhra Pradesh",
+   "Other"
+  ];
+
+ }else{
+
+  list=[
+   "All",
+   "NEET",
+   "JEE",
+   "CUET",
+   "UPSC",
+   "NDA",
+   "SSC",
+   "Banking",
+   "Railway",
+   "Law",
+   "CA",
+   "CMA",
+   "CS",
+   "Design",
+   "Management",
+   "UG",
+   "NET",
+   "Engineering"
+  ];
+
+ }
+
+ el.innerHTML=list.map(x=>`
+
+ <button class="filter ${x===selectedFilter?'active':''}"
+ onclick="setFilter('${x}')">
+ ${x}
+ </button>
+
+ `).join("");
+
+}
+
+
+function setFilter(x){
+
+ selectedFilter=x;
+
+ filters();
+
+ render();
+
+}
+
+
+/* =========================================================
+   RENDER
+========================================================= */
+
+function render(){
+
+ const q=document.getElementById("search").value.toLowerCase().trim();
+
+ let data=batches.filter(x=>x.type===mode);
+
+ if(selectedFilter!=="All"){
+
+  if(mode==="school"){
+
+   if(selectedFilter==="Other"){
+
+    data=data.filter(x=>
+     ![
+      "National",
+      "Bihar",
+      "Uttar Pradesh",
+      "Rajasthan",
+      "Maharashtra",
+      "Gujarat",
+      "West Bengal",
+      "Madhya Pradesh",
+      "Karnataka",
+      "Tamil Nadu",
+      "Kerala",
+      "Telangana",
+      "Andhra Pradesh"
+     ].includes(x.category)
+    );
+
+   }else{
+
+    data=data.filter(x=>x.category===selectedFilter);
+
+   }
+
+  }else{
+
+   data=data.filter(x=>
+    x.exam===selectedFilter ||
+    x.level===selectedFilter
+   );
+
+  }
+
+ }
+
+ if(q){
+
+  data=data.filter(x=>{
+
+   const str=JSON.stringify(x).toLowerCase();
+
+   return str.includes(q);
+
+  });
+
+ }
+
+ document.getElementById("count").textContent=
+ `${data.length} batches available`;
+
+ const grid=document.getElementById("grid");
+
+ if(!data.length){
+
+  grid.innerHTML=
+   `<div class="empty">
+    No batch found.<br>
+    Try another board, class, stream or exam.
+   </div>`;
+
+  return;
+
+ }
+
+ grid.innerHTML=data.map((x,i)=>`
+
+ <div class="card">
+
+  <h3>${x.title}</h3>
+
+  <div class="meta">
+   ${x.board ? x.board+" • " : ""}
+   ${x.stream || x.level || ""}
+  </div>
+
+  <div class="tags">
+
+   ${(x.subjects||[]).slice(0,6).map(s=>{
+
+    const name=Array.isArray(s)?s[0]:s;
+
+    return `<span class="tag">${name}</span>`;
+
+   }).join("")}
+
+   ${(x.subjects||[]).length>6?
+    `<span class="tag">+${x.subjects.length-6} more</span>`:""}
+
+  </div>
+
+  <div>
+
+   <span class="price">
+    ₹${x.price}
+   </span>
+
+   <span class="old">
+    ₹${x.price*2}
+   </span>
+
+  </div>
+
+  <div class="actions">
+
+   <button class="btn details"
+   onclick='viewBatch(${JSON.stringify(x).replace(/'/g,"&#39;")})'>
+   VIEW SUBJECTS
+   </button>
+
+   <button class="btn buy"
+   onclick='buy(${JSON.stringify(x).replace(/'/g,"&#39;")})'>
+   BUY NOW
+   </button>
+
+  </div>
+
+ </div>
+
+ `).join("");
+
+}
+
+
+/* =========================================================
+   VIEW MODAL
+========================================================= */
+
+function viewBatch(x){
+
+ current=x;
+
+ document.getElementById("modalTitle").textContent=x.title;
+
+ document.getElementById("modalCrumb").textContent=
+  `${x.board || x.exam || ""} → ${x.level || x.stream || ""} → Subjects`;
+
+ document.getElementById("modalPrice").textContent=x.price;
+
+ document.getElementById("modalNotice").textContent=
+  "Subjects shown here are learning modules for this batch. Official board/exam syllabus and pattern can change, so verify the latest official notification before publishing the final academic mapping.";
+
+ document.getElementById("subjects").innerHTML=
+ (x.subjects||[]).map((s,i)=>{
+
+  const pair=Array.isArray(s)?s:[s,"📚"];
+
+  return `
+
+  <div class="subject">
+
+   <div class="icon">
+    ${pair[1]}
+   </div>
+
+   <div>
+
+    <div class="sname">
+     ${pair[0]}
     </div>
 
-    <div class="search-area">
-        <div class="search-box">
-            <i class="fa-solid fa-magnifying-glass"></i>
-            <input type="text" id="searchInput" placeholder="Search 300+ Boards, NEET, JEE, CUET..." onkeyup="filterRender()">
-        </div>
+    <div class="teacher">
+     👨‍🏫 ${teacher(i)}
     </div>
 
-    <div class="category-scroll">
-        <div class="cat-chip active" onclick="setCategory('ALL', this)">All Batches</div>
-        <div class="cat-chip" onclick="setCategory('STATE', this)">State Boards</div>
-        <div class="cat-chip" onclick="setCategory('CBSE', this)">CBSE / ICSE</div>
-        <div class="cat-chip" onclick="setCategory('NEET', this)">NEET (Medical)</div>
-        <div class="cat-chip" onclick="setCategory('JEE', this)">JEE (Engg.)</div>
-        <div class="cat-chip" onclick="setCategory('CUET', this)">CUET (UG)</div>
-        <div class="cat-chip" onclick="setCategory('UPSC', this)">UPSC & PCS</div>
-        <div class="cat-chip" onclick="setCategory('BANKING', this)">Banking & SSC</div>
-        <div class="cat-chip" onclick="setCategory('DEFENSE', this)">Defense</div>
-    </div>
+   </div>
 
-    <div class="batches-container" id="batchesList">
-        <!-- Rendered safely via JS -->
-    </div>
+   <button
+    class="chat"
+    onclick="chat('${String(pair[0]).replaceAll("'","\\'")}')">
+    CHAT
+   </button>
 
-    <!-- DRAWER MENU -->
-    <div class="drawer-overlay" id="drawerOverlay" onclick="toggleDrawer()"></div>
-    <div class="drawer" id="drawer">
-        <div class="drawer-header">
-            <strong style="font-size:18px;">Menu</strong>
-            <i class="fa-solid fa-xmark" style="color:var(--text-muted); cursor:pointer; font-size:22px;" onclick="toggleDrawer()"></i>
-        </div>
-        <div class="drawer-item" onclick="window.location.href='dashboard.html'"><i class="fa-solid fa-home" style="color:var(--accent-color); width:20px;"></i> Dashboard Home</div>
-        <div class="drawer-item" onclick="window.location.href='classroom.html'"><i class="fa-solid fa-graduation-cap" style="color:#10b981; width:20px;"></i> My Classroom</div>
-    </div>
+  </div>
 
-    <!-- DETAILS MODAL (STRICT SYLLABUS & EXPERT UNIQUE TEACHERS) -->
-    <div class="modal-overlay" id="detailsModal">
-        <div class="modal-card">
-            <i class="fa-solid fa-xmark" style="position:absolute; right:16px; top:16px; color:var(--text-muted); cursor:pointer; font-size:20px;" onclick="document.getElementById('detailsModal').style.display='none';"></i>
-            <h3 id="detailsTitle" style="font-size:18px; margin-bottom:4px; color:var(--text-main); margin-right:20px;">Batch Details</h3>
-            <p style="font-size:12px; color:var(--text-muted);">Strictly Core Subjects & Expert Faculty</p>
-            <div id="detailsSubjectsList" class="sub-list-container"></div>
-            <button class="btn-primary" onclick="openPricingFromDetails()">BUY THIS BATCH</button>
-        </div>
-    </div>
+  `;
 
-    <!-- PRICING MODAL -->
-    <div class="modal-overlay" id="pricingModal">
-        <div class="modal-card">
-            <i class="fa-solid fa-xmark" style="position:absolute; right:16px; top:16px; color:var(--text-muted); cursor:pointer; font-size:20px;" onclick="document.getElementById('pricingModal').style.display='none';"></i>
-            <h3 style="font-size:18px; margin-bottom:4px; color:var(--text-main);"><i class="fa-solid fa-crown" style="color:var(--gold-color);"></i> Select Plan</h3>
-            <p id="pricingBatchTitle" style="font-size:12px; color:var(--text-muted); margin-bottom:15px;"></p>
+ }).join("");
 
-            <div class="tier-card" id="tierBasic" onclick="selectTier('Basic')">
-                <div style="display:flex; justify-content:space-between; font-weight:800; color:var(--text-main);"><span>Basic Pass</span> <span id="priceBasic" style="color:var(--success-color)">₹199</span></div>
-                <div style="font-size:11px; color:var(--text-muted); margin-top:4px;">20 Doubts/Day + Complete Syllabus</div>
-            </div>
+ document.getElementById("modal").classList.add("show");
 
-            <div class="tier-card selected" id="tierPro" onclick="selectTier('Pro')">
-                <div style="display:flex; justify-content:space-between; font-weight:800; color:var(--text-main);"><span>Pro Pass</span> <span id="pricePro" style="color:var(--success-color)">₹399</span></div>
-                <div style="font-size:11px; color:var(--text-muted); margin-top:4px;">50 Doubts/Day + AI High Speed</div>
-            </div>
+}
 
-            <button class="btn-primary" onclick="proceedToPayment()">PROCEED TO PAYMENT</button>
-        </div>
-    </div>
 
-    <script>
-        // --- BASIC UI LOGIC ---
-        function toggleDrawer() { document.getElementById('drawer').classList.toggle('open'); document.getElementById('drawerOverlay').style.display = document.getElementById('drawer').classList.contains('open') ? 'block' : 'none'; }
-        
-        var currentCategory = 'ALL';
-        var selectedBatchObj = null;
-        var selectedTier = 'Pro';
-        var allBatchesCache = [];
+function closeModal(){
 
-        // --- 1. DYNAMIC UNIQUE FACULTY GENERATOR ---
-        function getUniqueTeacher(batchId, subjectName) {
-            var str = batchId + "_" + subjectName;
-            var hash = 0;
-            for (var i = 0; i < str.length; i++) {
-                hash = ((hash << 5) - hash) + str.charCodeAt(i);
-                hash = hash & hash; 
-            }
-            hash = Math.abs(hash);
-            
-            var firstNames = ["Rajesh", "Amit", "Priya", "Kavita", "Nitin", "Vikas", "Anjali", "Pooja", "Ravi", "Sanjay", "Neha", "Manish", "Sunil", "Anita", "Deepak", "Gaurav"];
-            var lastNames = ["Sharma", "Verma", "Singh", "Das", "Gupta", "Kumar", "Mishra", "Patel", "Reddy", "Jha", "Tiwari", "Yadav", "Pandey", "Chauhan", "Bansal"];
-            
-            var fName = firstNames[hash % firstNames.length];
-            var lName = lastNames[(hash >> 2) % lastNames.length];
-            var prefix = (hash % 2 === 0) ? "Prof. " : "Dr. ";
-            
-            if (subjectName.indexOf('Urdu') !== -1) {
-                var urduFirst = ["Tariq", "Zoya", "Faisal", "Wahid", "Sana"];
-                var urduLast = ["Khan", "Rahman", "Ali", "Siddiqui"];
-                return prefix + urduFirst[hash % urduFirst.length] + " " + urduLast[(hash>>1) % urduLast.length];
-            }
-            if (subjectName.indexOf('Sanskrit') !== -1) {
-                var sanskritLast = ["Shastri", "Acharya", "Pandey", "Bhatt"];
-                return prefix + fName + " " + sanskritLast[hash % sanskritLast.length];
-            }
-            return prefix + fName + " " + lName;
-        }
+ document.getElementById("modal").classList.remove("show");
 
-        // --- 2. STRICT SUBJECT MAPPING (GARBAGE REMOVED, 100% REAL) ---
-        var subjectMapping = {
-            'State_Foundation': [
-                { name: 'Mathematics', icon: 'fa-calculator' },
-                { name: 'Science', icon: 'fa-flask' },
-                { name: 'Social Science (SST)', icon: 'fa-landmark' },
-                { name: 'English', icon: 'fa-book-open' },
-                { name: 'Hindi', icon: 'fa-language' },
-                { name: 'Sanskrit', icon: 'fa-om' }
-            ],
-            'CBSE_Foundation': [
-                { name: 'Mathematics', icon: 'fa-calculator' },
-                { name: 'Science', icon: 'fa-flask' },
-                { name: 'Social Science (SST)', icon: 'fa-earth-americas' },
-                { name: 'English', icon: 'fa-book-open' },
-                { name: 'Hindi', icon: 'fa-language' },
-                { name: 'Information Technology', icon: 'fa-laptop' }
-            ],
-            'PCM': [
-                { name: 'Physics', icon: 'fa-atom' },
-                { name: 'Physical Chemistry', icon: 'fa-flask' },
-                { name: 'Organic Chemistry', icon: 'fa-vials' },
-                { name: 'Inorganic Chemistry', icon: 'fa-flask-vial' },
-                { name: 'Mathematics', icon: 'fa-square-root-variable' },
-                { name: 'English Core', icon: 'fa-book-open' }
-            ],
-            'PCB': [
-                { name: 'Physics', icon: 'fa-atom' },
-                { name: 'Physical Chemistry', icon: 'fa-flask' },
-                { name: 'Organic Chemistry', icon: 'fa-vials' },
-                { name: 'Inorganic Chemistry', icon: 'fa-flask-vial' },
-                { name: 'Botany', icon: 'fa-leaf' },
-                { name: 'Zoology', icon: 'fa-frog' },
-                { name: 'English Core', icon: 'fa-book-open' }
-            ],
-            'Commerce': [
-                { name: 'Accountancy', icon: 'fa-file-invoice-dollar' },
-                { name: 'Business Studies', icon: 'fa-briefcase' },
-                { name: 'Economics', icon: 'fa-chart-line' },
-                { name: 'Applied Mathematics', icon: 'fa-calculator' },
-                { name: 'English Core', icon: 'fa-book-open' }
-            ],
-            'Arts': [
-                { name: 'History', icon: 'fa-landmark' },
-                { name: 'Geography', icon: 'fa-earth-americas' },
-                { name: 'Political Science', icon: 'fa-scale-balanced' },
-                { name: 'Economics', icon: 'fa-chart-line' },
-                { name: 'English Core', icon: 'fa-book-open' }
-            ],
-            'JEE': [
-                { name: 'Advanced Physics', icon: 'fa-atom' },
-                { name: 'Physical Chemistry', icon: 'fa-flask' },
-                { name: 'Organic Chemistry', icon: 'fa-vials' },
-                { name: 'Inorganic Chemistry', icon: 'fa-flask-vial' },
-                { name: 'Advanced Mathematics', icon: 'fa-square-root-variable' }
-            ],
-            'NEET': [
-                { name: 'Medical Physics', icon: 'fa-atom' },
-                { name: 'Physical Chemistry', icon: 'fa-flask' },
-                { name: 'Organic Chemistry', icon: 'fa-vials' },
-                { name: 'Inorganic Chemistry', icon: 'fa-flask-vial' },
-                { name: 'Botany', icon: 'fa-leaf' },
-                { name: 'Zoology', icon: 'fa-frog' }
-            ],
-            'CUET': [
-                { name: 'Physics & Chemistry', icon: 'fa-flask' },
-                { name: 'Mathematics / Biology', icon: 'fa-dna' },
-                { name: 'General Test', icon: 'fa-brain' },
-                { name: 'English Language', icon: 'fa-language' }
-            ],
-            'UPSC': [
-                { name: 'Polity & Governance', icon: 'fa-scale-balanced' },
-                { name: 'History & Culture', icon: 'fa-landmark' },
-                { name: 'Geography & Environment', icon: 'fa-earth-asia' },
-                { name: 'Economy', icon: 'fa-chart-line' },
-                { name: 'CSAT', icon: 'fa-brain' }
-            ],
-            'Defense': [
-                { name: 'NDA Mathematics', icon: 'fa-square-root-variable' },
-                { name: 'Physics & Chemistry', icon: 'fa-atom' },
-                { name: 'General Knowledge', icon: 'fa-globe' },
-                { name: 'English', icon: 'fa-book-open' }
-            ],
-            'Banking': [
-                { name: 'Quantitative Aptitude', icon: 'fa-calculator' },
-                { name: 'Reasoning Ability', icon: 'fa-brain' },
-                { name: 'English Language', icon: 'fa-book-open' },
-                { name: 'Banking Awareness', icon: 'fa-money-bill-trend-up' }
-            ]
-        };
+}
 
-        // --- 3. 300+ EXAMS ENGINE ---
-        function generateAllBatches() {
-            var list = [];
-            var allBoards = [
-                "Bihar Board", "UP Board", "CBSE", "CISCE/ICSE", "NIOS", 
-                "Jharkhand Board", "West Bengal Board", "Odisha Board", 
-                "Chhattisgarh Board", "Madhya Pradesh Board", "Rajasthan Board", 
-                "Haryana Board", "Punjab Board", "Maharashtra Board", "Gujarat Board"
-            ];
 
-            for(var i=0; i<allBoards.length; i++) {
-                var board = allBoards[i];
-                var cat = (board.indexOf('CBSE') !== -1 || board.indexOf('ICSE') !== -1 || board.indexOf('NIOS') !== -1) ? 'CBSE' : 'STATE';
-                var shortName = board.split(' ')[0];
-                var foundType = cat === 'STATE' ? 'State_Foundation' : 'CBSE_Foundation';
+/* =========================================================
+   BUY
+========================================================= */
 
-                list.push({ id: 'b_' + i + '_9', cat: cat, tag: shortName + ' Board', title: board + ' Class 9', type: foundType, desc: 'Maths, Science, SST, English, Hindi.', p_basic: 199, p_pro: 399 });
-                list.push({ id: 'b_' + i + '_10', cat: cat, tag: shortName + ' Board', title: board + ' Class 10 Target', type: foundType, desc: 'Board Exam targeted core subjects.', p_basic: 199, p_pro: 399 });
-                list.push({ id: 'b_' + i + '_11pcm', cat: cat, tag: shortName + ' Board', title: board + ' Class 11 (PCM)', type: 'PCM', desc: 'Physics, Chem (3 parts), Maths, English.', p_basic: 299, p_pro: 599 });
-                list.push({ id: 'b_' + i + '_11pcb', cat: cat, tag: shortName + ' Board', title: board + ' Class 11 (PCB)', type: 'PCB', desc: 'Physics, Chem (3 parts), Biology, English.', p_basic: 299, p_pro: 599 });
-                list.push({ id: 'b_' + i + '_11com', cat: cat, tag: shortName + ' Board', title: board + ' Class 11 Commerce', type: 'Commerce', desc: 'Accounts, BST, Economics, Maths, English.', p_basic: 299, p_pro: 599 });
-                list.push({ id: 'b_' + i + '_11art', cat: cat, tag: shortName + ' Board', title: board + ' Class 11 Arts', type: 'Arts', desc: 'History, Geography, Polity, Economics, English.', p_basic: 299, p_pro: 599 });
-                
-                list.push({ id: 'b_' + i + '_12pcm', cat: cat, tag: shortName + ' Board', title: board + ' Class 12 (PCM)', type: 'PCM', desc: 'Board targeted Physics, Chem, Maths, English.', p_basic: 299, p_pro: 599 });
-                list.push({ id: 'b_' + i + '_12pcb', cat: cat, tag: shortName + ' Board', title: board + ' Class 12 (PCB)', type: 'PCB', desc: 'Board targeted Physics, Chem, Biology, English.', p_basic: 299, p_pro: 599 });
-                list.push({ id: 'b_' + i + '_12com', cat: cat, tag: shortName + ' Board', title: board + ' Class 12 Commerce', type: 'Commerce', desc: 'Board targeted Accounts, BST, Economics, English.', p_basic: 299, p_pro: 599 });
-                list.push({ id: 'b_' + i + '_12art', cat: cat, tag: shortName + ' Board', title: board + ' Class 12 Arts', type: 'Arts', desc: 'Board targeted History, Geography, Polity, English.', p_basic: 299, p_pro: 599 });
-            }
+function buy(x){
 
-            list.push({ id: 'c_neet_11', cat: 'NEET', tag: 'NEET Class 11', title: 'NEET-UG Class 11 Target', type: 'NEET', desc: 'Class 11 Botany, Zoology, Physics & Chem (3 Parts).', p_basic: 499, p_pro: 999 });
-            list.push({ id: 'c_neet_12', cat: 'NEET', tag: 'NEET Class 12', title: 'NEET-UG Class 12 Target', type: 'NEET', desc: 'Class 12 Botany, Zoology, Physics & Chem (3 Parts).', p_basic: 499, p_pro: 999 });
-            list.push({ id: 'c_neet_drop', cat: 'NEET', tag: 'NEET Dropper', title: 'NEET-UG Dropper Batch', type: 'NEET', desc: '11th + 12th Complete Syllabus. Physics, Chem, Bio.', p_basic: 599, p_pro: 1199 });
-            
-            list.push({ id: 'c_jee_11', cat: 'JEE', tag: 'JEE Class 11', title: 'JEE Main & Adv Class 11', type: 'JEE', desc: 'Class 11 Physics, Chemistry (3 Parts) & Maths.', p_basic: 499, p_pro: 999 });
-            list.push({ id: 'c_jee_12', cat: 'JEE', tag: 'JEE Class 12', title: 'JEE Main & Adv Class 12', type: 'JEE', desc: 'Class 12 Physics, Chemistry (3 Parts) & Maths.', p_basic: 499, p_pro: 999 });
-            list.push({ id: 'c_jee_drop', cat: 'JEE', tag: 'JEE Dropper', title: 'JEE Main & Adv Dropper Batch', type: 'JEE', desc: '11th + 12th Complete PCM Syllabus.', p_basic: 599, p_pro: 1199 });
+ current=x;
 
-            list.push({ id: 'c_upsc_ias', cat: 'UPSC', tag: 'UPSC CSE', title: 'UPSC IAS Foundation', type: 'UPSC', desc: 'History, Polity, Geography, Economy, CSAT.', p_basic: 999, p_pro: 1999 });
-            list.push({ id: 'c_cuet_sci', cat: 'CUET', tag: 'CUET UG', title: 'CUET Science Domain', type: 'CUET', desc: 'Physics, Chemistry, Maths, Bio, Gen Test, English.', p_basic: 399, p_pro: 699 });
-            list.push({ id: 'c_bank_po', cat: 'BANKING', tag: 'SBI/IBPS', title: 'Banking PO Target', type: 'Banking', desc: 'Quant, Reasoning, English, Banking Awareness.', p_basic: 399, p_pro: 799 });
-            list.push({ id: 'c_nda', cat: 'DEFENSE', tag: 'NDA/NA', title: 'NDA Complete Prep', type: 'Defense', desc: 'NDA Maths, Physics, GK, English.', p_basic: 399, p_pro: 799 });
+ alert(
+  `Selected Batch: ${x.title}\n`+
+  `Price: ₹${x.price}\n\n`+
+  `Payment gateway ko buy() function ke andar connect karo.`
+ );
 
-            return list;
-        }
+}
 
-        allBatchesCache = generateAllBatches();
 
-        // --- 4. SAFE UI RENDER ENGINE ---
-        function renderBatches() {
-            var container = document.getElementById('batchesList');
-            var searchEl = document.getElementById('searchInput');
-            var search = searchEl ? searchEl.value.toLowerCase() : '';
-            container.innerHTML = '';
+function buyCurrent(){
 
-            var filtered = [];
-            for(var i=0; i<allBatchesCache.length; i++) {
-                var b = allBatchesCache[i];
-                var matchesCat = (currentCategory === 'ALL' || b.cat === currentCategory);
-                var matchesSearch = b.title.toLowerCase().indexOf(search) !== -1 || b.desc.toLowerCase().indexOf(search) !== -1;
-                if(matchesCat && matchesSearch) filtered.push(b);
-            }
+ if(current){
 
-            if(filtered.length === 0) {
-                container.innerHTML = '<div style="text-align:center; padding:30px; color:var(--text-muted);">No batches found.</div>';
-                return;
-            }
+  buy(current);
 
-            var finalHTML = '';
-            for(var j=0; j<filtered.length; j++) {
-                var fb = filtered[j];
-                finalHTML += '<div class="batch-card">' +
-                    '<span class="batch-tag">' + fb.tag + '</span>' +
-                    '<div class="batch-title">' + fb.title + '</div>' +
-                    '<div class="batch-desc">' + fb.desc + '</div>' +
-                    '<div class="batch-footer">' +
-                        '<div><span class="batch-price-sub">Starting From</span><span class="batch-price">₹' + fb.p_basic + '/yr</span></div>' +
-                        '<div class="btn-row">' +
-                            '<button class="btn-details" onclick="openDetails(\'' + fb.id + '\')">Details</button>' +
-                            '<button class="btn-buy" onclick="openPricing(\'' + fb.id + '\')">Buy Pass</button>' +
-                        '</div>' +
-                    '</div>' +
-                '</div>';
-            }
-            container.innerHTML = finalHTML;
-        }
+ }
 
-        function setCategory(cat, el) {
-            currentCategory = cat;
-            var chips = document.querySelectorAll('.cat-chip');
-            for(var i=0; i<chips.length; i++) { chips[i].classList.remove('active'); }
-            if(el) el.classList.add('active');
-            renderBatches();
-        }
+}
 
-        function filterRender() { renderBatches(); }
 
-        // DYNAMIC DETAILS WITH UNIQUE EXPERT TEACHERS
-        function openDetails(id) {
-            for(var i=0; i<allBatchesCache.length; i++) { if(allBatchesCache[i].id === id) selectedBatchObj = allBatchesCache[i]; }
-            document.getElementById('detailsTitle').innerText = selectedBatchObj.title;
-            
-            var subs = subjectMapping[selectedBatchObj.type] || subjectMapping['State_Foundation'];
-            var html = '';
-            
-            for(var j=0; j<subs.length; j++) {
-                var uniqueTeacher = getUniqueTeacher(selectedBatchObj.id, subs[j].name);
-                
-                html += '<div class="sub-card">' +
-                        '<div class="sub-icon"><i class="fa-solid ' + subs[j].icon + '"></i></div>' +
-                        '<div>' +
-                            '<h4 style="color:var(--text-main); font-size:14px; margin-bottom:2px;">' + subs[j].name + '</h4>' +
-                            '<small style="color:var(--gold-color); font-weight:700;"><i class="fa-solid fa-chalkboard-user"></i> Faculty: ' + uniqueTeacher + '</small>' +
-                        '</div>' +
-                    '</div>';
-            }
-            document.getElementById('detailsSubjectsList').innerHTML = html;
-            document.getElementById('detailsModal').style.display = 'flex';
-        }
+/* =========================================================
+   AI CHAT
+========================================================= */
 
-        function openPricingFromDetails() {
-            document.getElementById('detailsModal').style.display = 'none';
-            openPricing(selectedBatchObj.id);
-        }
+function chat(subject){
 
-        function openPricing(id) {
-            for(var i=0; i<allBatchesCache.length; i++) { if(allBatchesCache[i].id === id) selectedBatchObj = allBatchesCache[i]; }
-            document.getElementById('pricingBatchTitle').innerText = selectedBatchObj.title;
-            document.getElementById('priceBasic').innerText = '₹' + selectedBatchObj.p_basic;
-            document.getElementById('pricePro').innerText = '₹' + selectedBatchObj.p_pro;
-            document.getElementById('pricingModal').style.display = 'flex';
-        }
+ alert(
+  `AI CHAT ROOM\n\n`+
+  `Subject: ${subject}\n\n`+
+  `Yahan tum apna AI API / backend connect kar sakte ho.`
+ );
 
-        function selectTier(tier) {
-            selectedTier = tier;
-            document.getElementById('tierBasic').classList.remove('selected');
-            document.getElementById('tierPro').classList.remove('selected');
-            if(tier === 'Basic') document.getElementById('tierBasic').classList.add('selected');
-            if(tier === 'Pro') document.getElementById('tierPro').classList.add('selected');
-        }
+}
 
-        function proceedToPayment() {
-            var price = (selectedTier === 'Basic') ? selectedBatchObj.p_basic : selectedBatchObj.p_pro;
-            sessionStorage.setItem('tb_checkout_title', selectedBatchObj.title);
-            sessionStorage.setItem('tb_checkout_price', price);
-            window.location.href = 'payment.html';
-        }
 
-        // STARTUP
-        renderBatches();
-    </script>
+/* =========================================================
+   EVENTS
+========================================================= */
+
+document
+.getElementById("search")
+.addEventListener("input",render);
+
+
+document
+.querySelectorAll(".tab")
+.forEach(t=>{
+
+ t.addEventListener("click",()=>{
+
+  document
+  .querySelectorAll(".tab")
+  .forEach(a=>a.classList.remove("active"));
+
+  t.classList.add("active");
+
+  mode=t.dataset.type;
+
+  selectedFilter="All";
+
+  filters();
+
+  render();
+
+ });
+
+});
+
+
+document
+.getElementById("modal")
+.addEventListener("click",e=>{
+
+ if(e.target.id==="modal"){
+
+  closeModal();
+
+ }
+
+});
+
+
+filters();
+
+render();
+
+</script>
+
 </body>
-</html>
+    </html>
