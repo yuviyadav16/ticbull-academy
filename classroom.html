@@ -2,405 +2,379 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>TicBull Academy - My Classroom</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>TicBull Academy - Classroom</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
-        :root { --bg-color: #030712; --card-bg: #0f172a; --accent-color: #9f1239; --text-main: #f8fafc; --text-muted: #94a3b8; --border-color: rgba(255, 255, 255, 0.12); --success-color: #10b981; --gold-color: #f59e0b; --input-bg: #1e293b; }
-        body { background: var(--bg-color); color: var(--text-main); font-family: sans-serif; margin: 0; display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        :root { --bg: #05070d; --card: #101827; --card-grad: linear-gradient(145deg, #152238, #0f1929); --accent: #e9155c; --text: #f5f7fb; --text-muted: #9aa7ba; --border: #2b3952; --success: #10b981; --danger: #ef4444; --gold: #ffb51b; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: Arial, Helvetica, sans-serif; -webkit-tap-highlight-color: transparent; }
+        body { background: var(--bg); color: var(--text); display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
 
-        .top-bar { display:flex; justify-content:space-between; align-items:center; padding:15px 20px; background: var(--card-bg); border-bottom: 1px solid var(--border-color); position: sticky; top: 0; z-index: 10; }
-        .back-btn { background:transparent; border:none; color:var(--text-main); font-size:18px; cursor:pointer; display:flex; align-items:center; gap:12px; font-weight:800; }
+        /* HEADER */
+        .header { padding: 20px; background: #05070dee; backdrop-filter: blur(14px); border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 15px; position: sticky; top: 0; z-index: 20; }
+        .back-btn { background: transparent; border: none; color: white; font-size: 20px; cursor: pointer; }
+        .title { font-size: 22px; font-weight: 900; }
+        .score-board { margin-left: auto; background: rgba(16, 185, 129, 0.15); color: var(--success); padding: 6px 12px; border-radius: 10px; font-weight: 900; display: none; border: 1px solid rgba(16, 185, 129, 0.3); }
 
-        .content-area { flex: 1; overflow-y: auto; padding: 20px; }
+        .content { flex: 1; overflow-y: auto; padding: 20px; padding-bottom: 80px; }
 
-        /* VIEW 1: ENROLLED BATCHES */
-        .enrolled-card { background: var(--card-bg); border: 1px solid var(--border-color); padding: 20px; border-radius: 16px; margin-bottom: 15px; position: relative; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
-        .enrolled-card::before { content:''; position:absolute; top:0; left:0; width:5px; height:100%; background: var(--success-color); }
-        .batch-title { font-size: 18px; font-weight: 800; margin-bottom: 8px; }
-        .btn-access { background: var(--success-color); color: white; border: none; padding: 12px; border-radius: 10px; cursor: pointer; width: 100%; font-weight: 800; margin-top: 15px; display: flex; justify-content: center; gap: 8px; align-items: center; }
+        /* VIEW 1: BATCHES */
+        #batchView { display: block; }
+        .batch-card { background: var(--card-grad); border: 1px solid var(--border); border-radius: 20px; padding: 20px; margin-bottom: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
+        .batch-name { font-size: 20px; font-weight: 900; margin-bottom: 5px; }
+        .btn-access { background: var(--accent); color: white; border: none; width: 100%; padding: 14px; border-radius: 12px; font-weight: 900; margin-top: 15px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; }
 
-        /* VIEW 2: SUBJECTS LIST */
-        #subjectList { display: none; }
-        .subject-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 15px; }
-        .subject-card { background: var(--input-bg); border: 1px solid var(--border-color); padding: 20px 15px; border-radius: 16px; text-align: center; cursor: pointer; transition: 0.3s; }
-        .subject-card:hover { border-color: var(--accent-color); background: rgba(159, 18, 57, 0.1); }
-        .subject-icon { font-size: 30px; color: var(--accent-color); margin-bottom: 10px; }
-        .subject-name { font-size: 14px; font-weight: 800; }
+        /* VIEW 2: SUBJECTS */
+        #subjectView { display: none; }
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 15px; }
+        .sub-card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 20px 10px; text-align: center; cursor: pointer; transition: 0.2s; }
+        .sub-card:active { transform: scale(0.95); border-color: var(--accent); }
+        .sub-icon { font-size: 32px; margin-bottom: 10px; display: block; }
+        .sub-name { font-size: 15px; font-weight: 800; color: #c8d1df; }
 
-        /* VIEW 3: SUBJECT DASHBOARD (4 TABS) */
-        #subjectDashboard { display: none; }
-        .dashboard-header { background: linear-gradient(135deg, var(--card-bg), #1e1b4b); padding: 20px; border-radius: 16px; margin-bottom: 20px; border: 1px solid var(--accent-color); }
-        .dash-title { font-size: 20px; font-weight: 800; color: #fff; margin-bottom: 5px; }
+        /* VIEW 3: 4 COLUMNS (ACTIONS) */
+        #actionView { display: none; }
+        .action-card { background: var(--card-grad); border: 1px solid var(--border); border-radius: 18px; padding: 25px 15px; text-align: center; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 10px; }
+        .action-card i { font-size: 35px; }
+        .action-card.chat { color: #3b82f6; border-color: rgba(59, 130, 246, 0.3); }
+        .action-card.pyq { color: var(--gold); border-color: rgba(255, 181, 27, 0.3); }
+        .action-card.prac { color: #a855f7; border-color: rgba(168, 85, 247, 0.3); }
+        .action-card.test { color: var(--accent); border-color: rgba(233, 21, 92, 0.3); }
+        .action-name { font-weight: 900; font-size: 15px; color: white; }
 
-        /* 4 TABS */
-        .tabs { display: flex; gap: 10px; margin-bottom: 20px; overflow-x: auto; padding-bottom: 5px; scrollbar-width: none; }
-        .tabs::-webkit-scrollbar { display: none; }
-        .tab-btn { background: var(--input-bg); border: 1px solid var(--border-color); color: var(--text-muted); padding: 12px 16px; border-radius: 12px; font-weight: 700; white-space: nowrap; cursor: pointer; transition: 0.3s; display: flex; align-items: center; gap: 8px; }
-        .tab-btn.active { background: var(--accent-color); color: #fff; border-color: var(--accent-color); }
+        /* VIEW 4: AI TEST SETUP & RUNNING */
+        #testSetupView, #testActiveView { display: none; }
+        .setup-box { background: var(--card); border: 1px solid var(--accent); padding: 20px; border-radius: 18px; }
+        .input-chap { width: 100%; background: #16243a; border: 1px solid var(--border); padding: 15px; border-radius: 12px; color: white; font-size: 16px; outline: none; margin: 15px 0; }
+        
+        /* TEST RUNNING UI */
+        .timer-bar { height: 6px; background: #26354b; border-radius: 5px; overflow: hidden; margin-bottom: 20px; }
+        .timer-fill { height: 100%; width: 100%; background: var(--gold); transition: width 1s linear, background 0.3s; }
+        .timer-fill.danger { background: var(--danger); }
+        .timer-text { font-size: 24px; font-weight: 900; text-align: center; margin-bottom: 10px; color: var(--gold); }
 
-        .tab-content { display: none; }
-        .tab-content.active { display: block; animation: fadeIn 0.3s ease; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .question-box { font-size: 18px; font-weight: 800; line-height: 1.5; margin-bottom: 25px; }
+        .option { background: var(--card); border: 1px solid var(--border); padding: 15px; border-radius: 12px; margin-bottom: 10px; font-weight: 700; cursor: pointer; transition: 0.2s; color: #c8d1df; display: flex; justify-content: space-between; align-items: center; }
+        .option.correct { background: rgba(16, 185, 129, 0.2); border-color: var(--success); color: var(--success); }
+        .option.wrong { background: rgba(239, 68, 68, 0.2); border-color: var(--danger); color: var(--danger); }
+        .option.disabled { pointer-events: none; opacity: 0.8; }
 
-        /* TAB 1: AI CHAT TEACHER */
-        .chat-container { display: flex; flex-direction: column; height: 60vh; background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 16px; overflow: hidden; }
-        .chat-box { flex: 1; overflow-y: auto; padding: 15px; display: flex; flex-direction: column; gap: 10px; }
-        .msg { max-width: 80%; padding: 12px 16px; border-radius: 12px; font-size: 14px; line-height: 1.4; }
-        .msg.ai { background: var(--input-bg); align-self: flex-start; border-bottom-left-radius: 2px; }
-        .msg.user { background: var(--accent-color); align-self: flex-end; border-bottom-right-radius: 2px; }
-        .chat-input-area { display: flex; padding: 10px; background: var(--input-bg); border-top: 1px solid var(--border-color); }
-        .chat-input { flex: 1; background: transparent; border: none; color: #fff; outline: none; padding: 10px; }
-        .btn-send { background: var(--success-color); color: #fff; border: none; width: 40px; height: 40px; border-radius: 50%; cursor: pointer; }
-
-        /* TAB 2 & 3: PRACTICE & PYQ */
-        .doc-card { background: var(--card-bg); border: 1px solid var(--border-color); padding: 15px; border-radius: 12px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
-        .doc-card i { font-size: 24px; color: var(--gold-color); }
-
-        /* TAB 4: AI SMART TEST */
-        .ai-test-box { background: var(--card-bg); border: 1px solid var(--accent-color); padding: 20px; border-radius: 16px; box-shadow: 0 0 20px rgba(159, 18, 57, 0.15); }
-        .ai-input { width: 100%; background: var(--input-bg); border: 1px solid var(--border-color); color: #fff; padding: 15px; border-radius: 12px; font-size: 15px; margin-bottom: 15px; outline: none; }
-        .diff-row { display: flex; gap: 10px; margin-bottom: 20px; }
-        .diff-btn { flex: 1; padding: 10px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--input-bg); color: var(--text-main); font-weight: 700; cursor: pointer; }
-        .diff-btn.active.easy { background: var(--success-color); color: white; border-color: var(--success-color); }
-        .diff-btn.active.normal { background: var(--gold-color); color: white; border-color: var(--gold-color); }
-        .diff-btn.active.hard { background: #ef4444; color: white; border-color: #ef4444; }
-        .btn-generate { width: 100%; background: linear-gradient(90deg, var(--accent-color), #be123c); color: white; border: none; padding: 15px; border-radius: 12px; font-weight: 800; font-size: 16px; cursor: pointer; }
-
-        /* QUIZ UI */
-        #quizContainer { margin-top: 20px; display: none; }
-        .question-card { background: var(--input-bg); padding: 15px; border-radius: 12px; margin-bottom: 15px; border: 1px solid var(--border-color); }
-        .option-btn { display: block; width: 100%; text-align: left; padding: 12px; background: var(--card-bg); border: 1px solid var(--border-color); margin-top: 8px; border-radius: 8px; color: var(--text-main); cursor: pointer; transition: 0.2s; }
-        .option-btn.correct { background: rgba(16, 185, 129, 0.2); border-color: var(--success-color); color: var(--success-color); }
-        .option-btn.wrong { background: rgba(239, 68, 68, 0.2); border-color: #ef4444; color: #ef4444; }
+        .btn-next { background: var(--accent); color: white; border: none; padding: 16px; border-radius: 12px; font-weight: 900; width: 100%; font-size: 16px; margin-top: 20px; cursor: pointer; display: none; }
     </style>
 </head>
 <body>
 
-    <div class="top-bar">
-        <button class="back-btn" id="btnBack" onclick="goBack()"><i class="fa-solid fa-arrow-left"></i> TicBull Classroom</button>
+    <div class="header">
+        <button class="back-btn" onclick="goBack()"><i class="fa-solid fa-arrow-left"></i></button>
+        <div class="title" id="headTitle">My Classroom</div>
+        <div class="score-board" id="scoreBoard">Score: 0</div>
     </div>
 
-    <div class="content-area">
-        <!-- VIEW 1: ENROLLED BATCHES -->
-        <div id="batchList"></div>
+    <div class="content">
+        <!-- 1. BATCH LIST -->
+        <div id="batchView"></div>
 
-        <!-- VIEW 2: SUBJECTS LIST -->
-        <div id="subjectList">
-            <h3 style="margin-bottom: 5px;" id="subBatchTitle">Batch Name</h3>
-            <p style="font-size: 12px; color: var(--text-muted);">Select a subject to start studying</p>
-            <div class="subject-grid" id="subjectsGrid"></div>
+        <!-- 2. SUBJECT LIST -->
+        <div id="subjectView">
+            <h3 style="color: var(--text-muted); margin-bottom: 10px;">Select Subject to Study</h3>
+            <div class="grid-2" id="subjectGrid"></div>
         </div>
 
-        <!-- VIEW 3: SUBJECT DASHBOARD (4 COLUMNS/TABS) -->
-        <div id="subjectDashboard">
-            <div class="dashboard-header">
-                <div class="dash-title" id="dashSubjectName">Subject Name</div>
-                <div style="font-size: 12px; color: var(--gold-color);"><i class="fa-solid fa-graduation-cap"></i> AI Assisted Learning Active</div>
-            </div>
-
-            <!-- 4 Pillars (Tabs) -->
-            <div class="tabs">
-                <button class="tab-btn active" onclick="switchTab('chat')"><i class="fa-solid fa-robot"></i> Ask Doubt (AI)</button>
-                <button class="tab-btn" onclick="switchTab('practice')"><i class="fa-solid fa-pen-to-square"></i> Practice Sets</button>
-                <button class="tab-btn" onclick="switchTab('pyq')"><i class="fa-solid fa-book-journal-whills"></i> 20 Yrs PYQs</button>
-                <button class="tab-btn" onclick="switchTab('test')"><i class="fa-solid fa-wand-magic-sparkles"></i> AI Smart Test</button>
-            </div>
-
-            <!-- TAB 1: AI CHAT TEACHER -->
-            <div id="tab-chat" class="tab-content active">
-                <div class="chat-container">
-                    <div class="chat-box" id="chatBox">
-                        <div class="msg ai" id="welcomeMsg">Hello! I am your AI Teacher. Ask me any doubt.</div>
-                    </div>
-                    <div class="chat-input-area">
-                        <input type="text" id="chatInput" class="chat-input" placeholder="Type your doubt here...">
-                        <button class="btn-send" onclick="sendMsg()"><i class="fa-solid fa-paper-plane"></i></button>
-                    </div>
+        <!-- 3. ACTION COLUMNS (4 PILLARS) -->
+        <div id="actionView">
+            <h3 style="margin-bottom: 5px; color: #ffb51b;" id="selectedSubTitle">Subject</h3>
+            <p style="color: var(--text-muted); font-size: 13px; margin-bottom: 20px;">Select your learning mode below.</p>
+            
+            <div class="grid-2">
+                <!-- Connect to chat.html -->
+                <div class="action-card chat" onclick="window.location.href='chat.html?sub=' + currentSubject">
+                    <i class="fa-solid fa-robot"></i>
+                    <div class="action-name">Ask AI Teacher</div>
                 </div>
-            </div>
-
-            <!-- TAB 2: PRACTICE SETS -->
-            <div id="tab-practice" class="tab-content">
-                <div class="doc-card">
-                    <div>
-                        <div style="font-weight: 800;">Chapter-wise DPPs</div>
-                        <div style="font-size: 11px; color: var(--text-muted);">Daily Practice Problems</div>
-                    </div>
+                <!-- Connect to practice.html -->
+                <div class="action-card prac" onclick="window.location.href='practice.html?sub=' + currentSubject">
+                    <i class="fa-solid fa-pen-nib"></i>
+                    <div class="action-name">Practice Sets</div>
+                </div>
+                <!-- Connect to pyqs.html -->
+                <div class="action-card pyq" onclick="window.location.href='pyqs.html?sub=' + currentSubject">
                     <i class="fa-solid fa-file-pdf"></i>
+                    <div class="action-name">20 Yrs PYQs</div>
                 </div>
-                <div class="doc-card">
-                    <div>
-                        <div style="font-weight: 800;">NCERT/Board Solutions</div>
-                        <div style="font-size: 11px; color: var(--text-muted);">Step-by-step detailed answers</div>
-                    </div>
-                    <i class="fa-solid fa-file-lines"></i>
-                </div>
-            </div>
-
-            <!-- TAB 3: PYQ SECTION -->
-            <div id="tab-pyq" class="tab-content">
-                <div class="doc-card">
-                    <div>
-                        <div style="font-weight: 800;">2023 - 2019 Board/Exam Papers</div>
-                        <div style="font-size: 11px; color: var(--text-muted);">With Answer Keys</div>
-                    </div>
-                    <i class="fa-solid fa-download"></i>
-                </div>
-                <div class="doc-card">
-                    <div>
-                        <div style="font-weight: 800;">2018 - 2004 Legacy Papers</div>
-                        <div style="font-size: 11px; color: var(--text-muted);">Historical Trends</div>
-                    </div>
-                    <i class="fa-solid fa-download"></i>
+                <!-- Connect to AI Test (Internal Setup) -->
+                <div class="action-card test" onclick="showTestSetup()">
+                    <i class="fa-solid fa-bolt"></i>
+                    <div class="action-name">AI Smart Test</div>
                 </div>
             </div>
-
-            <!-- TAB 4: AI SMART TEST GENERATOR -->
-            <div id="tab-test" class="tab-content">
-                <div class="ai-test-box">
-                    <h3 style="margin-bottom: 5px;"><i class="fa-solid fa-brain" style="color:var(--accent-color)"></i> AI Test Generator</h3>
-                    <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 15px;">Enter chapter name. AI will fetch real exam-pattern questions for your syllabus.</p>
-                    
-                    <input type="text" id="aiChapterInput" class="ai-input" placeholder="E.g. Thermodynamics, Algebra, Cell Biology">
-                    
-                    <div class="diff-row">
-                        <button class="diff-btn active easy" onclick="setDiff('easy', this)">Easy</button>
-                        <button class="diff-btn normal" onclick="setDiff('normal', this)">Normal</button>
-                        <button class="diff-btn hard" onclick="setDiff('hard', this)">Hard</button>
-                    </div>
-
-                    <button class="btn-generate" onclick="generateAITest()">
-                        GENERATE TEST <i class="fa-solid fa-bolt"></i>
-                    </button>
-                </div>
-
-                <!-- Quiz Area -->
-                <div id="quizContainer">
-                    <div id="quizLoader" style="text-align:center; padding:20px; display:none;">
-                        <i class="fa-solid fa-spinner fa-spin" style="font-size:30px; color:var(--accent-color); margin-bottom:10px;"></i>
-                        <p style="font-size:14px; font-weight:700;">Analyzing Context: <span id="analyzingText">...</span></p>
-                        <p style="font-size:11px; color:var(--text-muted);">Generating real exam-type questions...</p>
-                    </div>
-                    <div id="quizContent"></div>
-                </div>
-            </div>
-
         </div>
+
+        <!-- 4. AI TEST SETUP -->
+        <div id="testSetupView">
+            <div class="setup-box">
+                <h2 style="color: var(--accent); margin-bottom: 5px;"><i class="fa-solid fa-bolt"></i> AI Test Generator</h2>
+                <p style="color: var(--text-muted); font-size: 13px;">Enter a chapter name from <strong style="color:white" id="testSubName"></strong>. AI will generate unlimited questions.</p>
+                
+                <input type="text" id="chapInput" class="input-chap" placeholder="E.g. Motion, Thermodynamics, Algebra...">
+                
+                <ul style="color: var(--text-muted); font-size: 12px; margin-left: 15px; margin-bottom: 20px; line-height: 1.6;">
+                    <li>15 Seconds per question</li>
+                    <li>Correct Answer: <strong style="color:var(--success)">+4 Points</strong></li>
+                    <li>Wrong/Timeout: <strong style="color:var(--danger)">-1 Point</strong></li>
+                </ul>
+
+                <button class="btn-access" onclick="startTest()">START UNLIMITED TEST <i class="fa-solid fa-play"></i></button>
+            </div>
+        </div>
+
+        <!-- 5. ACTIVE TEST RUNNING -->
+        <div id="testActiveView">
+            <div class="timer-text" id="timerText">00:15</div>
+            <div class="timer-bar"><div class="timer-fill" id="timerFill"></div></div>
+
+            <div class="question-box" id="qText">Generating Question...</div>
+            <div id="optionsBox"></div>
+
+            <button class="btn-next" id="btnNext" onclick="nextQuestion()">NEXT QUESTION <i class="fa-solid fa-arrow-right"></i></button>
+        </div>
+
     </div>
 
     <script>
+        let viewState = 1;
         let currentBatch = "";
         let currentSubject = "";
-        let selectedDiff = "easy";
-        let viewState = 1; // 1: Batches, 2: Subjects, 3: Dashboard
+        let currentChapter = "";
+        
+        // Test Variables
+        let score = 0;
+        let timer = 15;
+        let timerInterval;
+        let qCount = 1;
+        let isAnswered = false;
 
-        window.onload = function() {
-            loadEnrolledBatches();
+        // ICONS
+        const icons = {
+            "Hindi":"📖", "English":"📘", "Mathematics":"🔢", "Physics":"⚛️", "Chemistry":"🧪", 
+            "Biology":"🧬", "History":"🏛️", "Geography":"🌍", "Accountancy":"🧾", "Economics":"📈"
         };
 
-        function loadEnrolledBatches() {
-            const enrolled = JSON.parse(localStorage.getItem('tb_enrolled') || '[]');
-            const container = document.getElementById('batchList');
-
+        window.onload = function() {
+            // Load purchased batches from Storage or show a mock one if empty
+            let enrolled = JSON.parse(sessionStorage.getItem('tb_enrolled') || '[]');
+            
+            // Mock data for demo if array is empty
             if(enrolled.length === 0) {
-                container.innerHTML = `
-                    <div style="text-align: center; padding: 50px 20px; color: var(--text-muted);">
-                        <i class="fa-solid fa-box-open" style="font-size: 50px; margin-bottom: 15px;"></i>
-                        <h3>No Batches Enrolled</h3>
-                        <p style="font-size: 13px; margin-bottom: 20px;">You haven't purchased any premium batch yet.</p>
-                        <button onclick="window.location.href='batches.html'" style="background:var(--accent-color); color:white; border:none; padding:12px 20px; border-radius:10px; font-weight:700; cursor:pointer;">Explore Batches</button>
-                    </div>
-                `;
-            } else {
-                let html = '';
-                enrolled.forEach(b => {
-                    html += `
-                        <div class="enrolled-card">
-                            <div style="font-size:11px; color:var(--success-color); font-weight:800; margin-bottom:5px;">Premium Activated</div>
-                            <div class="batch-title">${b.title}</div>
-                            <div style="font-size:12px; color:var(--text-muted);">Purchased: ${b.date}</div>
-                            <button class="btn-access" onclick="openSubjectList('${b.title}')">VIEW SUBJECTS <i class="fa-solid fa-arrow-right"></i></button>
-                        </div>
-                    `;
-                });
-                container.innerHTML = html;
+                let testTitle = sessionStorage.getItem('tb_checkout_title');
+                if(!testTitle) testTitle = "CBSE — Class 12 — Science - PCM"; // Fallback
+                enrolled = [{ title: testTitle, date: "Today" }];
             }
-        }
 
-        // Logic to extract subjects based on Batch Title
-        function getSubjectsForBatch(title) {
-            let t = title.toLowerCase();
-            if(t.includes('pcm') || t.includes('jee') || t.includes('engg')) {
-                return [ {n: 'Physics', i: 'fa-atom'}, {n: 'Chemistry', i: 'fa-flask'}, {n: 'Mathematics', i: 'fa-square-root-variable'}, {n: 'English', i: 'fa-book-open'} ];
-            } else if(t.includes('pcb') || t.includes('neet') || t.includes('medical')) {
-                return [ {n: 'Physics', i: 'fa-atom'}, {n: 'Chemistry', i: 'fa-flask'}, {n: 'Biology', i: 'fa-dna'}, {n: 'English', i: 'fa-book-open'} ];
-            } else if(t.includes('commerce')) {
-                return [ {n: 'Accountancy', i: 'fa-file-invoice-dollar'}, {n: 'Business Studies', i: 'fa-briefcase'}, {n: 'Economics', i: 'fa-chart-line'}, {n: 'Mathematics', i: 'fa-calculator'}, {n: 'English', i: 'fa-book-open'} ];
-            } else if(t.includes('arts') || t.includes('upsc') || t.includes('pcs')) {
-                return [ {n: 'History', i: 'fa-landmark'}, {n: 'Geography', i: 'fa-earth-americas'}, {n: 'Polity', i: 'fa-scale-balanced'}, {n: 'Economics', i: 'fa-chart-line'} ];
-            } else {
-                // Class 9/10 Default
-                return [ {n: 'Mathematics', i: 'fa-calculator'}, {n: 'Science', i: 'fa-flask'}, {n: 'Social Science', i: 'fa-landmark'}, {n: 'English', i: 'fa-book-open'}, {n: 'Hindi / Regional', i: 'fa-language'} ];
-            }
-        }
-
-        function openSubjectList(batchTitle) {
-            currentBatch = batchTitle;
-            viewState = 2;
-            document.getElementById('batchList').style.display = 'none';
-            document.getElementById('subjectList').style.display = 'block';
-            document.getElementById('subBatchTitle').innerText = batchTitle;
-            document.getElementById('btnBack').innerHTML = '<i class="fa-solid fa-arrow-left"></i> Back to Batches';
-
-            let subs = getSubjectsForBatch(batchTitle);
-            let grid = document.getElementById('subjectsGrid');
-            grid.innerHTML = '';
-            subs.forEach(s => {
-                grid.innerHTML += `
-                    <div class="subject-card" onclick="openSubjectDashboard('${s.n}')">
-                        <i class="fa-solid ${s.i} subject-icon"></i>
-                        <div class="subject-name">${s.n}</div>
+            let html = '';
+            enrolled.forEach(b => {
+                html += `
+                    <div class="batch-card">
+                        <div style="color:var(--success); font-size:12px; font-weight:800; margin-bottom:5px;">Premium Activated</div>
+                        <div class="batch-name">${b.title}</div>
+                        <div style="color:var(--text-muted); font-size:13px;">Purchased: ${b.date}</div>
+                        <button class="btn-access" onclick="openSubjectView('${b.title}')">GO TO CLASSROOM <i class="fa-solid fa-arrow-right"></i></button>
                     </div>
                 `;
             });
+            document.getElementById('batchView').innerHTML = html;
+        };
+
+        // Get realistic subjects based on batch string
+        function getSubjectsList(title) {
+            let t = title.toLowerCase();
+            if(t.includes('pcm') || t.includes('jee')) return ["Physics", "Chemistry", "Mathematics", "English"];
+            if(t.includes('pcb') || t.includes('neet')) return ["Physics", "Chemistry", "Biology", "English"];
+            if(t.includes('commerce')) return ["Accountancy", "Economics", "Business Studies", "Mathematics", "English"];
+            return ["Mathematics", "Science", "Social Science", "English", "Hindi"];
         }
 
-        function openSubjectDashboard(subjectName) {
-            currentSubject = subjectName;
+        // --- NAVIGATION LOGIC ---
+        function openSubjectView(batchTitle) {
+            currentBatch = batchTitle;
+            viewState = 2;
+            document.getElementById('batchView').style.display = 'none';
+            document.getElementById('subjectView').style.display = 'block';
+            document.getElementById('headTitle').innerText = "Subjects";
+
+            let subs = getSubjectsList(batchTitle);
+            let html = '';
+            subs.forEach(s => {
+                html += `
+                    <div class="sub-card" onclick="openActionView('${s}')">
+                        <span class="sub-icon">${icons[s] || "📚"}</span>
+                        <div class="sub-name">${s}</div>
+                    </div>
+                `;
+            });
+            document.getElementById('subjectGrid').innerHTML = html;
+        }
+
+        function openActionView(subject) {
+            currentSubject = subject;
             viewState = 3;
-            document.getElementById('subjectList').style.display = 'none';
-            document.getElementById('subjectDashboard').style.display = 'block';
-            document.getElementById('dashSubjectName').innerText = subjectName + " (" + currentBatch + ")";
-            document.getElementById('btnBack').innerHTML = '<i class="fa-solid fa-arrow-left"></i> Back to Subjects';
-            
-            // Set AI Welcome message contextually
-            document.getElementById('welcomeMsg').innerText = `Hello! I am your expert AI Teacher for ${subjectName} in ${currentBatch}. What is your doubt?`;
-            
-            switchTab('chat');
+            document.getElementById('subjectView').style.display = 'none';
+            document.getElementById('actionView').style.display = 'block';
+            document.getElementById('selectedSubTitle').innerText = subject;
+            document.getElementById('headTitle').innerText = "Study Mode";
+        }
+
+        function showTestSetup() {
+            viewState = 4;
+            document.getElementById('actionView').style.display = 'none';
+            document.getElementById('testSetupView').style.display = 'block';
+            document.getElementById('testSubName').innerText = currentSubject;
+            document.getElementById('headTitle').innerText = "AI Test Setup";
         }
 
         function goBack() {
-            if(viewState === 3) {
-                document.getElementById('subjectDashboard').style.display = 'none';
-                document.getElementById('subjectList').style.display = 'block';
-                document.getElementById('btnBack').innerHTML = '<i class="fa-solid fa-arrow-left"></i> Back to Batches';
+            if(viewState === 5) {
+                // If exiting test mid-way
+                clearInterval(timerInterval);
+                document.getElementById('testActiveView').style.display = 'none';
+                document.getElementById('testSetupView').style.display = 'block';
+                document.getElementById('scoreBoard').style.display = 'none';
+                viewState = 4;
+                document.getElementById('headTitle').innerText = "AI Test Setup";
+            } else if(viewState === 4) {
+                document.getElementById('testSetupView').style.display = 'none';
+                document.getElementById('actionView').style.display = 'block';
+                viewState = 3;
+                document.getElementById('headTitle').innerText = "Study Mode";
+            } else if(viewState === 3) {
+                document.getElementById('actionView').style.display = 'none';
+                document.getElementById('subjectView').style.display = 'block';
                 viewState = 2;
+                document.getElementById('headTitle').innerText = "Subjects";
             } else if(viewState === 2) {
-                document.getElementById('subjectList').style.display = 'none';
-                document.getElementById('batchList').style.display = 'block';
-                document.getElementById('btnBack').innerHTML = '<i class="fa-solid fa-arrow-left"></i> TicBull Classroom';
+                document.getElementById('subjectView').style.display = 'none';
+                document.getElementById('batchView').style.display = 'block';
                 viewState = 1;
+                document.getElementById('headTitle').innerText = "My Classroom";
             } else {
                 window.location.href = 'dashboard.html';
             }
         }
 
-        function switchTab(tabId) {
-            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+        // --- AI TEST ENGINE LOGIC ---
+        function startTest() {
+            currentChapter = document.getElementById('chapInput').value.trim();
+            if(!currentChapter) return alert("Please enter chapter name!");
             
-            event.currentTarget.classList.add('active');
-            document.getElementById('tab-' + tabId).classList.add('active');
+            score = 0;
+            qCount = 1;
+            updateScore();
+            
+            viewState = 5;
+            document.getElementById('testSetupView').style.display = 'none';
+            document.getElementById('testActiveView').style.display = 'block';
+            document.getElementById('scoreBoard').style.display = 'block';
+            document.getElementById('headTitle').innerText = "Live AI Test";
+            
+            generateQuestion();
         }
 
-        // --- AI CHAT LOGIC ---
-        function sendMsg() {
-            let input = document.getElementById('chatInput');
-            let text = input.value.trim();
-            if(!text) return;
-            
-            let box = document.getElementById('chatBox');
-            box.innerHTML += `<div class="msg user">${text}</div>`;
-            input.value = '';
-            
-            // Auto scroll to bottom
-            box.scrollTop = box.scrollHeight;
+        function updateScore() {
+            document.getElementById('scoreBoard').innerText = `Score: ${score}`;
+        }
 
-            // Fake AI Response
-            setTimeout(() => {
-                box.innerHTML += `<div class="msg ai">Analyzing your doubt in ${currentSubject}...<br><br>The simple answer is that this concept depends on the fundamental rules of ${currentSubject}. Let me know if you want a detailed step-by-step breakdown!</div>`;
-                box.scrollTop = box.scrollHeight;
+        function generateQuestion() {
+            isAnswered = false;
+            document.getElementById('btnNext').style.display = 'none';
+            document.getElementById('timerFill').style.width = '100%';
+            document.getElementById('timerFill').classList.remove('danger');
+            
+            // Mock AI Generation (Real integration will use API)
+            document.getElementById('qText').innerText = `Q${qCount}: Based on the core principles of ${currentChapter} in ${currentSubject}, which of the following statements generated by AI is functionally correct?`;
+            
+            // Create options where only one is randomly true
+            let correctIndex = Math.floor(Math.random() * 4);
+            let html = '';
+            for(let i=0; i<4; i++) {
+                let isCorrect = (i === correctIndex) ? 'true' : 'false';
+                let text = (i === correctIndex) ? "This is the logically correct concept formulated by AI." : `Distractor option ${i+1} generated by AI to confuse.`;
+                html += `<div class="option" onclick="selectOption(this, ${isCorrect})"><span>${text}</span></div>`;
+            }
+            document.getElementById('optionsBox').innerHTML = html;
+
+            startTimer();
+        }
+
+        function startTimer() {
+            timer = 15;
+            document.getElementById('timerText').innerText = `00:${timer}`;
+            
+            clearInterval(timerInterval);
+            timerInterval = setInterval(() => {
+                timer--;
+                let percent = (timer / 15) * 100;
+                document.getElementById('timerFill').style.width = percent + '%';
+                
+                if(timer <= 5) document.getElementById('timerFill').classList.add('danger');
+                
+                if(timer < 10) document.getElementById('timerText').innerText = `00:0${timer}`;
+                else document.getElementById('timerText').innerText = `00:${timer}`;
+
+                if(timer <= 0) {
+                    clearInterval(timerInterval);
+                    if(!isAnswered) autoTimeOut();
+                }
             }, 1000);
         }
 
-        // --- AI TEST GENERATOR LOGIC ---
-        function setDiff(level, btn) {
-            selectedDiff = level;
-            document.querySelectorAll('.diff-btn').forEach(b => {
-                b.classList.remove('active', 'easy', 'normal', 'hard');
-            });
-            btn.classList.add('active', level);
-        }
+        function selectOption(elem, isCorrect) {
+            if(isAnswered) return;
+            isAnswered = true;
+            clearInterval(timerInterval);
 
-        function generateAITest() {
-            const chapter = document.getElementById('aiChapterInput').value.trim();
-            if(!chapter) return alert("Please enter a chapter name to generate questions!");
-
-            const quizContainer = document.getElementById('quizContainer');
-            const loader = document.getElementById('quizLoader');
-            const content = document.getElementById('quizContent');
-
-            quizContainer.style.display = 'block';
-            content.style.display = 'none';
-            loader.style.display = 'block';
-            document.getElementById('analyzingText').innerText = `${currentSubject} - ${chapter}`;
-
-            // Simulate AI Loading Time
-            setTimeout(() => {
-                loader.style.display = 'none';
-                content.style.display = 'block';
-                
-                // Real-looking Mock Generated Questions
-                let qHtml = `
-                    <div style="margin-bottom:15px; border-bottom:1px solid var(--border-color); padding-bottom:10px;">
-                        <span style="background:rgba(37,99,235,0.2); color:#3b82f6; padding:3px 8px; border-radius:5px; font-size:11px; font-weight:800;">${selectedDiff.toUpperCase()} MODE</span>
-                        <h4 style="margin-top:8px;">AI Test: ${chapter} (${currentSubject})</h4>
-                    </div>
-
-                    <!-- Q1 (Objective) -->
-                    <div class="question-card">
-                        <div style="font-size:12px; color:var(--gold-color); margin-bottom:5px; font-weight:800;">Q1 (Objective Type)</div>
-                        <p style="font-weight:700; margin-bottom:10px;">Based on the syllabus of ${currentBatch}, which of the following statements is mathematically/scientifically correct regarding ${chapter}?</p>
-                        <button class="option-btn" onclick="checkAns(this, false)">A) It is inversely proportional to the square of distance.</button>
-                        <button class="option-btn" onclick="checkAns(this, true)">B) It directly depends on the core principles taught in ${currentSubject}.</button>
-                        <button class="option-btn" onclick="checkAns(this, false)">C) The equation yields a constant value of zero.</button>
-                        <button class="option-btn" onclick="checkAns(this, false)">D) Both A and C are correct.</button>
-                    </div>
-
-                    <!-- Q2 (Assertion Reason) -->
-                    <div class="question-card">
-                        <div style="font-size:12px; color:var(--accent-color); margin-bottom:5px; font-weight:800;">Q2 (Assertion - Reason)</div>
-                        <p style="font-size:14px; margin-bottom:5px;"><strong>Assertion (A):</strong> The fundamental property of ${chapter} remains conserved in an isolated system.</p>
-                        <p style="font-size:14px; margin-bottom:10px;"><strong>Reason (R):</strong> According to ${currentSubject} laws, external forces are required to alter the state.</p>
-                        
-                        <button class="option-btn" onclick="checkAns(this, true)">A) Both A and R are true and R is the correct explanation of A.</button>
-                        <button class="option-btn" onclick="checkAns(this, false)">B) Both A and R are true but R is NOT the correct explanation of A.</button>
-                        <button class="option-btn" onclick="checkAns(this, false)">C) A is true but R is false.</button>
-                        <button class="option-btn" onclick="checkAns(this, false)">D) A is false but R is true.</button>
-                    </div>
-                `;
-                content.innerHTML = qHtml;
-            }, 2000);
-        }
-
-        function checkAns(btn, isCorrect) {
-            let siblings = btn.parentElement.querySelectorAll('.option-btn');
-            siblings.forEach(s => s.style.pointerEvents = 'none');
+            // Disable all options
+            let allOptions = document.querySelectorAll('.option');
+            allOptions.forEach(opt => opt.classList.add('disabled'));
 
             if(isCorrect) {
-                btn.classList.add('correct');
-                btn.innerHTML += ' <i class="fa-solid fa-check" style="float:right;"></i>';
+                elem.classList.add('correct');
+                elem.innerHTML += '<i class="fa-solid fa-circle-check"></i>';
+                score += 4;
             } else {
-                btn.classList.add('wrong');
-                btn.innerHTML += ' <i class="fa-solid fa-xmark" style="float:right;"></i>';
-                siblings.forEach(s => {
-                    if(s.getAttribute('onclick').includes('true')) {
-                        s.classList.add('correct');
+                elem.classList.add('wrong');
+                elem.innerHTML += '<i class="fa-solid fa-circle-xmark"></i>';
+                score -= 1;
+                // Reveal Correct Answer
+                allOptions.forEach(opt => {
+                    if(opt.getAttribute('onclick').includes('true')) {
+                        opt.classList.add('correct');
+                        opt.innerHTML += '<i class="fa-solid fa-circle-check"></i>';
                     }
                 });
             }
+            updateScore();
+            document.getElementById('btnNext').style.display = 'block';
+        }
+
+        function autoTimeOut() {
+            isAnswered = true;
+            score -= 1; // Negative marking for timeout
+            updateScore();
+
+            let allOptions = document.querySelectorAll('.option');
+            allOptions.forEach(opt => {
+                opt.classList.add('disabled');
+                if(opt.getAttribute('onclick').includes('true')) {
+                    opt.classList.add('correct');
+                    opt.innerHTML += '<i class="fa-solid fa-circle-check"></i>';
+                }
+            });
+            document.getElementById('timerText').innerText = "TIME OUT!";
+            document.getElementById('btnNext').style.display = 'block';
+        }
+
+        function nextQuestion() {
+            qCount++;
+            generateQuestion();
         }
     </script>
 </body>
