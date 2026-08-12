@@ -2117,60 +2117,29 @@ function outsideClose(event){
 
 
 /* =========================================================
-   BUY NOW
+   BUY NOW (FIXED FOR CLASSROOM)
 ========================================================= */
 
-function buy(id){
+function buy(id) {
+  const batch = batches.find(item => item.id === id);
+  if (!batch) return;
 
-  const batch =
-    batches.find(
-      item => item.id === id
-    );
+  // FIX 1: Title mein 'stream' add kar diya taaki PCM/Commerce alag ho jaye
+  const title = batch.type === "school" 
+    ? `${batch.board} — ${batch.cls} — ${batch.stream}` 
+    : `${batch.exam} — ${batch.cls} — ${batch.stream}`;
 
+  // FIX 2: Us batch ke exact subjects nikal kar save kar rahe hain
+  const exactSubjects = batch.subjects.map(s => s.name);
 
-  if(!batch) return;
+  // Payment page aur Classroom ke liye data save kiya
+  sessionStorage.setItem("tb_checkout_title", title);
+  sessionStorage.setItem("tb_checkout_price", batch.price);
+  sessionStorage.setItem("tb_checkout_tier", "Pro");
+  sessionStorage.setItem("tb_checkout_subjects", JSON.stringify(exactSubjects));
 
-
-  const title =
-    batch.type === "school"
-
-    ? `${batch.board} — ${batch.cls}`
-
-    : `${batch.exam} — ${batch.cls}`;
-
-
-  /*
-    Payment page receives selected
-    batch information.
-  */
-
-  sessionStorage.setItem(
-    "tb_checkout_title",
-    title
-  );
-
-
-  sessionStorage.setItem(
-    "tb_checkout_price",
-    batch.price
-  );
-
-
-  sessionStorage.setItem(
-    "tb_checkout_tier",
-    batch.stream || "Pro"
-  );
-
-
-  sessionStorage.setItem(
-    "tb_checkout_batch_id",
-    batch.id
-  );
-
-
-  window.location.href =
-    "payment.html";
-
+  // Payment page par bhej diya
+  window.location.href = "payment.html";
 }
 
 
