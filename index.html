@@ -324,52 +324,53 @@
             });
         }
 
-        function verifyOTPAndLogin() {
-            const otp = document.getElementById('otpInput').value.trim();
-            const password = document.getElementById('password').value.trim();
-            const btn = document.getElementById('verifyBtn');
+            function verifyOTPAndLogin() {
+        const otp = document.getElementById('otpInput').value.trim();
+        const password = document.getElementById('password').value.trim();
+        const btn = document.getElementById('verifyBtn');
 
-            if(!otp) { showToast("Enter 6-digit OTP!", "error"); return; }
-            btn.disabled = true;
-            btn.innerText = "VERIFYING...";
+        if(!otp) { showToast("Enter 6-digit OTP!", "error"); return; }
+        btn.disabled = true;
+        btn.innerText = "VERIFYING...";
 
-            let deviceId = localStorage.getItem('ticbull_device_id') || ('dev_' + Math.random().toString(36).substring(2) + Date.now());
-            localStorage.setItem('ticbull_device_id', deviceId);
+        let deviceId = localStorage.getItem('ticbull_device_id') || ('dev_' + Math.random().toString(36).substring(2) + Date.now());
+        localStorage.setItem('ticbull_device_id', deviceId);
 
-            fetch(`/api/verify-otp`, {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({ email: currentStudentData.email, otp: otp, password: password, auth_mode: currentAuthMode, device_id: deviceId })
-            })
-            .then(res => res.json())
-            .then(data => {
-                btn.disabled = false;
-                btn.innerText = "VERIFY & CONTINUE";
-                if (data.success) {
-                    localStorage.setItem('ticbull_email', currentStudentData.email);
-                    localStorage.setItem('ticbull_token', data.token);
-                    if(data.user) {
-                        localStorage.setItem('ticbull_name', data.user.name || currentStudentData.name);
-                        localStorage.setItem('ticbull_dob', data.user.dob || currentStudentData.dob);
-                    }
-                    showToast("Login Successful!", "success");
-                    setTimeout(() => { window.location.href = "dashboard.html"; }, 1000);
-                } else {
-                    showToast(data.message || "Invalid OTP!", "error");
-                }
-            })
-            .catch(() => {
-                btn.disabled = false;
-                btn.innerText = "VERIFY & CONTINUE";
+        fetch(`/api/verify-otp`, {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({ email: currentStudentData.email, otp: otp, password: password, auth_mode: currentAuthMode, device_id: deviceId })
+        })
+        .then(res => res.json())
+        .then(data => {
+            btn.disabled = false;
+            btn.innerText = "VERIFY & CONTINUE";
+            if (data.success) {
                 localStorage.setItem('ticbull_email', currentStudentData.email);
-                localStorage.setItem('ticbull_token', "testing_secure_token_123");
-                localStorage.setItem('ticbull_name', currentStudentData.name || "Student");
-                showToast("Login Successful! Redirecting...", "success");
-                setTimeout(() => { window.location.href = "batches.html"; }, 1000);
-            });
-        }
-    </script> 
-    
+                localStorage.setItem('ticbull_token', data.token);
+                if(data.user) {
+                    localStorage.setItem('ticbull_name', data.user.name || currentStudentData.name);
+                    localStorage.setItem('ticbull_dob', data.user.dob || currentStudentData.dob);
+                }
+                showToast("Login Successful!", "success");
+                // FIX: Line 356 wali jagah
+                setTimeout(() => { window.location.replace("dashboard.html"); }, 1000);
+            } else {
+                showToast(data.message || "Invalid OTP!", "error");
+            }
+        })
+        .catch(() => {
+            btn.disabled = false;
+            btn.innerText = "VERIFY & CONTINUE";
+            localStorage.setItem('ticbull_email', currentStudentData.email);
+            localStorage.setItem('ticbull_token', "testing_secure_token_123");
+            localStorage.setItem('ticbull_name', currentStudentData.name || "Student");
+            showToast("Login Successful! Redirecting...", "success");
+            // FIX: Line 368 wali jagah (batches.html ko dashboard.html kar diya)
+            setTimeout(() => { window.location.replace("dashboard.html"); }, 1000);
+        });
+    }
+
     <!-- FIX: Added ID and display: none -->
     <footer id="main-footer" style="display: none; text-align: center; margin-top: 30px; padding: 15px; font-size: 12px; border-top: 1px solid #334155;">
         <a href="/privacy-policy.html" target="_blank" style="color: #94a3b8; text-decoration: none; margin: 0 8px;">Privacy Policy</a> | 
