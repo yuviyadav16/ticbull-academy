@@ -188,11 +188,19 @@
 
         window.onload = function() {
             let enrolled = JSON.parse(localStorage.getItem('tb_enrolled') || '[]');
+            
             if(enrolled.length === 0) {
+                let savedTitle = sessionStorage.getItem('tb_checkout_title') || "CBSE — Class 12 — Science — PCB";
+                let savedSubs = JSON.parse(sessionStorage.getItem('tb_checkout_subjects') || '[]');
+                
+                if(savedSubs.length === 0) {
+                    savedSubs = ["English", "Physics", "Zoology", "Botany", "Chemistry"];
+                }
+                
                 enrolled = [{
-                    title: sessionStorage.getItem('tb_checkout_title') || "CBSE — Class 12 — Science — PCB",
+                    title: savedTitle,
                     date: "Today",
-                    subjects: JSON.parse(sessionStorage.getItem('tb_checkout_subjects') || '["English", "Physics", "Zoology", "Botany", "Chemistry"]')
+                    subjects: savedSubs
                 }];
             }
 
@@ -330,7 +338,6 @@
                 const qData = await response.json();
                 renderRealQuestion(qData);
             } catch(e) {
-                // Fallback if network/API fails so test doesn't break
                 renderRealQuestion({
                     question: `Based on ${currentChapter} in ${currentSubject}, select the accurate principle:`,
                     options: [`Primary concept of ${currentChapter}`, `Secondary condition`, `Alternative assumption`, `None of these`],
