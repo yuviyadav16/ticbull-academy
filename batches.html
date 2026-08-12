@@ -8,415 +8,243 @@
 <!-- GLOBAL ECOSYSTEM LINK -->
 <script src="global.js"></script>
 
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
 <style>
 /* =========================================================
-   EXACT ORIGINAL UI WITH GLOBAL THEME SUPPORT
+   100% DASHBOARD MATCHED CSS VARIABLES (GLOBAL SYNC)
 ========================================================= */
-:root {
-  --bg-main: #05070d;
-  --text-main: #f5f7fb;
-  --text-muted: #93a1b5;
-  --header-bg: #05070df2;
-  --border-color: #202b40;
-  --back-btn-bg: #16243a;
-  --search-bg: #101827;
-  --search-border: #2b3952;
-  --tab-border: #30405c;
-  --filter-bg: #111a2a;
-  --filter-border: #2d3b53;
-  --filter-active: #243650;
-  --card-grad: linear-gradient(145deg, #152238, #0f1929);
-  --card-border: #2b3b55;
-  --badge-bg: #202f46;
-  --more-bg: #293c59;
-  --modal-bg: #0d1727;
-  --subject-bg: #152238;
-  --icon-bg: #281631;
-  --gold: #ffb51b;
-  
-  /* Ye Global settings se color lega, default Pinkish-Red rakha hai */
-  --primary: var(--accent-color, #e9155c); 
+:root { 
+    --bg-color: #030712; 
+    --card-bg: rgba(15, 23, 42, 0.95); 
+    --accent-color: #e9155c; /* Default fallback */
+    --accent-glow: rgba(233, 21, 92, 0.45); 
+    --text-main: #f8fafc; 
+    --text-muted: #94a3b8; 
+    --border-color: rgba(255, 255, 255, 0.12); 
+    --success-color: #10b981; 
+    --gold-color: #f59e0b; 
+    --input-bg: #0f172a; 
+    --primary: var(--accent-color); 
 }
 
-/* Light Theme Variables */
-body.light-theme {
-  --bg-main: #f3f4f6;
-  --text-main: #111827;
-  --text-muted: #64748b;
-  --header-bg: rgba(243, 244, 246, 0.95);
-  --border-color: #e5e7eb;
-  --back-btn-bg: #e5e7eb;
-  --search-bg: #ffffff;
-  --search-border: #d1d5db;
-  --tab-border: #d1d5db;
-  --filter-bg: #ffffff;
-  --filter-border: #d1d5db;
-  --filter-active: #e5e7eb;
-  --card-grad: linear-gradient(145deg, #ffffff, #f9fafb);
-  --card-border: #e5e7eb;
-  --badge-bg: #f1f5f9;
-  --more-bg: #e2e8f0;
-  --modal-bg: #ffffff;
-  --subject-bg: #f8fafc;
-  --icon-bg: #f1f5f9;
-  --gold: #d97706;
+body.light-theme { 
+    --bg-color: #f1f5f9; 
+    --card-bg: #ffffff; 
+    --text-main: #0f172a; 
+    --text-muted: #64748b; 
+    --border-color: #cbd5e1; 
+    --input-bg: #ffffff; 
 }
 
-*{box-sizing:border-box}
+* { margin:0; padding:0; box-sizing:border-box; font-family:-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; -webkit-tap-highlight-color: transparent; }
 
-body{
-  margin:0;
-  font-family:Arial,Helvetica,sans-serif;
-  background: var(--bg-main);
+body {
+  background: var(--bg-color);
   color: var(--text-main);
   transition: background 0.3s, color 0.3s;
 }
 
-.header{
+.header {
   padding:20px 16px 16px;
   position:sticky;
   top:0;
   z-index:20;
-  background: var(--header-bg);
+  background: var(--bg-color);
   backdrop-filter:blur(14px);
   border-bottom:1px solid var(--border-color);
 }
 
-.top{
+.top {
   display:flex;
   align-items:center;
   gap:12px;
 }
 
-.back{
-  border:0;
-  background: var(--back-btn-bg);
+.back {
+  border:1px solid var(--border-color);
+  background: var(--card-bg);
   color: var(--text-main);
   width:42px;
   height:42px;
-  border-radius:13px;
-  font-size:21px;
+  border-radius:12px;
+  font-size:18px;
   cursor:pointer;
+  box-shadow:0 5px 15px rgba(0,0,0,0.3);
+  transition: 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
+.back:active { transform: scale(0.9); }
 
-.brand{
-  font-size:28px;
+.brand {
+  font-size:24px;
   font-weight:900;
 }
 
-.brand span{
-  color: var(--gold);
+.brand span {
+  color: var(--gold-color);
 }
 
-.subtitle{
+.subtitle {
   color: var(--text-muted);
   margin:8px 0 14px 54px;
   font-size:13px;
 }
 
-.search{
-  width:100%;
-  padding:15px 16px;
-  border-radius:15px;
-  border:1px solid var(--search-border);
-  background: var(--search-bg);
-  color: var(--text-main);
-  outline:none;
-  font-size:15px;
-}
+.input-group { position:relative; margin-bottom:14px; text-align:left; width: 100%; }
+.input-group i.left-icon { position:absolute; left:14px; top:50%; transform:translateY(-50%); color:var(--text-muted); font-size:14px; }
+.input-group input { width:100%; background:var(--input-bg); border:1px solid var(--border-color); color:var(--text-main); padding:14px 40px; border-radius:12px; font-size:14px; outline:none; transition:0.3s; }
+.input-group input:focus { border-color:var(--primary); box-shadow: 0 0 12px var(--accent-glow); }
 
-.search::placeholder{
-  color: var(--text-muted);
-}
-
-.tabs{
+.tabs {
   display:flex;
   gap:9px;
   overflow-x:auto;
   margin-top:13px;
+  padding-bottom: 5px;
 }
+.tabs::-webkit-scrollbar, .filters::-webkit-scrollbar { display: none; }
 
-.tab{
+.tab {
   flex:0 0 auto;
-  padding:11px 15px;
-  border-radius:999px;
-  border:1px solid var(--tab-border);
-  background: var(--search-bg);
+  padding:10px 16px;
+  border-radius:12px;
+  border:1px solid var(--border-color);
+  background: var(--input-bg);
   color: var(--text-muted);
-  font-weight:800;
+  font-weight:700;
+  font-size: 13.5px;
   cursor:pointer;
+  transition: 0.3s;
 }
 
-.tab.active{
+.tab.active {
   background: var(--primary);
   border-color: var(--primary);
-  color:white;
+  color: white;
+  box-shadow: 0 4px 15px var(--accent-glow);
 }
 
-.filters{
+.filters {
   display:flex;
   gap:8px;
   overflow-x:auto;
   padding:13px 16px 4px;
 }
 
-.filter{
+.filter {
   flex:0 0 auto;
-  padding:9px 13px;
-  border-radius:999px;
-  border:1px solid var(--filter-border);
-  background: var(--filter-bg);
-  color: var(--text-muted);
-  cursor:pointer;
-}
-
-.filter.active{
-  background: var(--filter-active);
-  color: var(--text-main);
-}
-
-.main{
-  padding:15px 16px 70px;
-}
-
-.count{
-  color: var(--text-muted);
-  font-size:14px;
-  font-weight:800;
-  margin:5px 0 14px;
-}
-
-.grid{
-  display:grid;
-  gap:14px;
-}
-
-.card{
-  background: var(--card-grad);
-  border:1px solid var(--card-border);
-  border-radius:21px;
-  padding:18px;
-  box-shadow:0 12px 35px rgba(0,0,0,0.2);
-}
-
-.card h2{
-  margin:0 0 7px;
-  font-size:20px;
-}
-
-.meta{
-  color: var(--text-muted);
-  font-size:13px;
-  margin-bottom:14px;
-}
-
-.badges{
-  display:flex;
-  flex-wrap:wrap;
-  gap:7px;
-}
-
-.badge{
-  background: var(--badge-bg);
-  color: var(--text-main);
-  border-radius:9px;
-  padding:7px 9px;
-  font-size:12px;
-  border: 1px solid var(--card-border);
-}
-
-.more{
-  background: var(--more-bg);
-  color: var(--primary);
-}
-
-.price{
-  display:flex;
-  align-items:center;
-  gap:9px;
-  margin:17px 0 13px;
-}
-
-.price strong{
-  color: var(--gold);
-  font-size:26px;
-}
-
-.old{
-  color: var(--text-muted);
-  text-decoration:line-through;
-  font-size:14px;
-}
-
-.actions{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:9px;
-}
-
-.viewBtn,
-.buyBtn{
-  border:0;
-  padding:13px 7px;
-  border-radius:13px;
-  font-weight:900;
-  cursor:pointer;
-}
-
-.viewBtn{
-  background: var(--filter-active);
-  color: var(--text-main);
-}
-
-.buyBtn{
-  background: var(--primary);
-  color:white;
-}
-
-.empty{
-  text-align:center;
-  padding:50px 20px;
-  color: var(--text-muted);
-}
-
-/* MODAL */
-
-.overlay{
-  display:none;
-  position:fixed;
-  inset:0;
-  z-index:100;
-  background:rgba(0,0,0,0.8);
-  backdrop-filter: blur(5px);
-  padding:15px;
-  overflow:auto;
-}
-
-.overlay.show{
-  display:block;
-}
-
-.modal{
-  width:min(680px,100%);
-  margin:25px auto;
-  background: var(--modal-bg);
-  border:1px solid var(--card-border);
-  border-radius:23px;
-  overflow:hidden;
-}
-
-.modalHead{
-  padding:18px;
-  display:flex;
-  justify-content:space-between;
-  gap:12px;
-  border-bottom:1px solid var(--border-color);
-}
-
-.modalHead h2{
-  margin:0;
-  font-size:21px;
-}
-
-.close{
-  width:40px;
-  height:40px;
-  border:0;
-  border-radius:50%;
-  background: var(--filter-active);
-  color: var(--text-main);
-  font-size:22px;
-  cursor:pointer;
-}
-
-.modalBody{
-  padding:18px;
-}
-
-.subject{
-  display:flex;
-  align-items:center;
-  gap:12px;
-  background: var(--subject-bg);
-  border:1px solid var(--card-border);
-  border-radius:15px;
-  padding:13px;
-  margin-bottom:9px;
-}
-
-.icon{
-  width:42px;
-  height:42px;
-  display:grid;
-  place-items:center;
+  padding:8px 14px;
   border-radius:12px;
-  background: var(--icon-bg);
-  font-size:21px;
-  flex:none;
-}
-
-.subjectName{
-  font-size:16px;
-  font-weight:900;
-}
-
-.teacher{
-  color: var(--gold);
-  margin-top:4px;
-  font-size:13px;
-  font-weight:800;
-}
-
-.modalBuy{
-  width:100%;
-  margin-top:10px;
-  padding:15px;
-  border:0;
-  border-radius:14px;
-  background: var(--primary);
-  color:white;
-  font-weight:900;
-  font-size:16px;
-  cursor:pointer;
-}
-
-.note{
+  border:1px solid var(--border-color);
+  background: var(--input-bg);
   color: var(--text-muted);
-  font-size:11px;
-  line-height:1.5;
-  margin-top:12px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor:pointer;
+  transition: 0.2s;
 }
 
-@media(min-width:700px){
-  .grid{
-    grid-template-columns:repeat(2,1fr);
-  }
+.filter.active {
+  background: rgba(255,255,255,0.1);
+  color: var(--text-main);
+  border-color: var(--text-muted);
 }
+body.light-theme .filter.active { background: #e2e8f0; border-color: #94a3b8; }
+
+.main { padding:15px 16px 70px; }
+.count { color: var(--text-muted); font-size:13px; font-weight:700; margin:5px 0 14px; }
+.grid { display:grid; gap:16px; }
+
+.card {
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 24px;
+  padding: 24px 20px;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.4);
+}
+body.light-theme .card { box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
+
+.card h2 { margin:0 0 6px; font-size:19px; font-weight:800; }
+.meta { color: var(--text-muted); font-size:12.5px; margin-bottom:16px; font-weight: 600; }
+.badges { display:flex; flex-wrap:wrap; gap:8px; }
+.badge { background: var(--input-bg); border: 1px solid var(--border-color); color: var(--text-main); border-radius:8px; padding:6px 10px; font-size:11.5px; font-weight: 600; }
+.more { background: rgba(37, 99, 235, 0.15); color: #3b82f6; border-color: #3b82f6; }
+
+.price { display:flex; align-items:center; gap:10px; margin:20px 0 16px; }
+.price strong { color: var(--gold-color); font-size:24px; font-weight: 900; }
+.old { color: var(--text-muted); text-decoration:line-through; font-size:13px; font-weight: 600; }
+
+.actions { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+.viewBtn, .buyBtn { border:0; padding:14px 10px; border-radius:12px; font-weight:800; font-size: 13.5px; cursor:pointer; transition: 0.2s; }
+.viewBtn { background: var(--input-bg); border: 1px solid var(--border-color); color: var(--text-main); }
+.viewBtn:active { transform: scale(0.96); }
+.buyBtn { background: var(--primary); color: white; box-shadow: 0 8px 20px var(--accent-glow); }
+.buyBtn:active { transform: scale(0.96); }
+.empty { text-align:center; padding:50px 20px; color: var(--text-muted); font-weight: 600; }
+
+/* MODAL DESIGN */
+.overlay { display:none; position:fixed; inset:0; z-index:2000; background:rgba(0,0,0,0.85); backdrop-filter: blur(5px); padding:16px; overflow:auto; align-items: center; justify-content: center; }
+.overlay.show { display:flex; }
+.modal { width:100%; max-width: 420px; background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 24px; box-shadow: 0 20px 50px rgba(0,0,0,0.5); overflow:hidden; animation: popIn 0.3s ease; }
+@keyframes popIn { 0% { opacity:0; transform:scale(0.8) translateY(10px); } 100% { opacity:1; transform:scale(1) translateY(0); } }
+
+.modalHead { padding:22px; display:flex; justify-content:space-between; align-items: flex-start; gap:12px; border-bottom:1px solid var(--border-color); }
+.modalHead h2 { margin:0; font-size:20px; font-weight: 800; }
+.close { width:36px; height:36px; border:0; border-radius:50%; background: transparent; color: var(--text-muted); font-size:20px; cursor:pointer; transition: 0.2s; display:flex; align-items:center; justify-content:center; }
+.close:hover { color: var(--text-main); background: rgba(255,255,255,0.05); }
+
+.modalBody { padding:22px; max-height: 60vh; overflow-y: auto; }
+.subject { display:flex; align-items:center; gap:14px; background: var(--input-bg); border: 1px solid var(--border-color); border-radius:16px; padding:14px; margin-bottom:10px; }
+.icon { width:44px; height:44px; display:grid; place-items:center; border-radius:12px; background: rgba(255,255,255,0.05); color: var(--text-main); font-size:20px; flex:none; }
+.subjectName { font-size:15px; font-weight:800; color: var(--text-main); }
+.teacher { color: var(--gold-color); margin-top:4px; font-size:12.5px; font-weight:700; }
+
+.modalBuy { width:100%; margin-top:16px; padding:16px; border:0; border-radius:14px; background: var(--primary); color:white; font-weight:800; font-size:15px; cursor:pointer; box-shadow: 0 8px 20px var(--accent-glow); transition: 0.2s; }
+.modalBuy:active { transform: scale(0.98); }
+.note { color: var(--text-muted); font-size:11.5px; line-height:1.5; margin-top:16px; text-align: center; font-weight: 600; }
+
+@media(min-width:700px){ .grid{ grid-template-columns:repeat(2,1fr); } }
 </style>
 </head>
 
 <body>
 
+<!-- FIX 1: INSTANT COLOR APPLY BEFORE PAGE LOADS (No Pink Flash) -->
+<script>
+  (function() {
+      const savedColor = localStorage.getItem('ticbull_theme_color');
+      if(savedColor) {
+          document.documentElement.style.setProperty('--accent-color', savedColor);
+          document.documentElement.style.setProperty('--primary', savedColor);
+          document.documentElement.style.setProperty('--accent-glow', savedColor + '66');
+      }
+      if(localStorage.getItem('ticbull_theme') === 'light') {
+          document.body.classList.add('light-theme');
+      }
+  })();
+</script>
+
 <header class="header">
-
   <div class="top">
-    <button class="back" onclick="goDashboard()">←</button>
-    <div class="brand">
-      TicBull <span>Academy</span>
-    </div>
+    <!-- FIX 2: DIRECT URL ASSIGN FOR 100% WORKING BACK BUTTON -->
+    <button class="back" onclick="window.location.href='dashboard.html'"><i class="fa-solid fa-arrow-left"></i></button>
+    <div class="brand">TicBull <span>Academy</span></div>
   </div>
 
-  <div class="subtitle">
-    Board → Class / Stream → Subjects → Teacher
-  </div>
+  <div class="subtitle">Board → Class / Stream → Subjects → Teacher</div>
 
-  <input id="search" class="search" placeholder="Search board, class, stream, NEET, JEE...">
+  <div class="input-group">
+      <i class="fa-solid fa-magnifying-glass left-icon"></i>
+      <input id="search" placeholder="Search board, class, stream, NEET, JEE...">
+  </div>
 
   <div class="tabs">
-    <button class="tab active" data-type="school">🏫 School Boards</button>
-    <button class="tab" data-type="competitive">🎯 Competitive Exams</button>
+    <button class="tab active" data-type="school"><i class="fa-solid fa-school"></i> School Boards</button>
+    <button class="tab" data-type="competitive"><i class="fa-solid fa-bullseye"></i> Competitive Exams</button>
   </div>
-
 </header>
 
 <div id="schoolFilters" class="filters"></div>
@@ -434,24 +262,42 @@ body{
     <div class="modalHead">
       <div>
         <h2 id="modalTitle"></h2>
-        <div id="modalMeta" class="meta" style="margin-top:6px"></div>
+        <div id="modalMeta" class="meta" style="margin-top:6px; margin-bottom:0;"></div>
       </div>
-      <button class="close" onclick="closeModal()">×</button>
+      <button class="close" onclick="closeModal()"><i class="fa-solid fa-xmark"></i></button>
     </div>
 
     <div class="modalBody">
       <div id="subjectList"></div>
       <button id="modalBuy" class="modalBuy">BUY NOW</button>
-      <div class="note">
-        This screen shows only the subjects assigned to this batch
-        and the teacher assigned to each subject.
-      </div>
+      <div class="note">This screen shows only the subjects assigned to this batch and the teacher assigned to each subject.</div>
     </div>
   </div>
 </div>
 
-
 <script>
+/* =========================================================
+   CLICK SOUND SYSTEM
+========================================================= */
+let appSoundEnabled = localStorage.getItem('ticbull_sound') !== 'false';
+const AudioContext = window.AudioContext || window.webkitAudioContext;
+let audioCtx;
+
+function playClickSound() {
+    if(!appSoundEnabled) return;
+    if(!audioCtx) audioCtx = new AudioContext();
+    if(audioCtx.state === 'suspended') audioCtx.resume();
+    const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain();
+    osc.type = 'sine'; osc.frequency.setValueAtTime(800, audioCtx.currentTime);
+    gain.gain.setValueAtTime(0.05, audioCtx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.1);
+    osc.connect(gain); gain.connect(audioCtx.destination);
+    osc.start(); osc.stop(audioCtx.currentTime + 0.1);
+}
+
+document.addEventListener('click', function(e) {
+    if(e.target.closest('button') || e.target.closest('.tab') || e.target.closest('.filter')) playClickSound();
+});
 
 /* =========================================================
    ICONS
@@ -459,7 +305,7 @@ body{
 const icons = {
   "Hindi":"📖", "English":"📘", "Sanskrit":"🕉️", "Urdu":"📕", "Mathematics":"🔢", "Physics":"⚛️",
   "Physical Chemistry":"⚗️", "Organic Chemistry":"🧪", "Inorganic Chemistry":"🔬", "Biology":"🧬",
-  "Botany":"🌱", "Zoology":"🦁", "History":"🏛️", "Geography":"🌍", "Political Science":"🏛️",
+  "Botany":"🌱", "Zoology":"🦁", "History":"🏛️", "Geography":"🌍", "Political Science":"⚖️",
   "Economics":"📈", "Sociology":"👥", "Psychology":"🧠", "Accountancy":"🧾", "Business Studies":"💼",
   "Entrepreneurship":"🚀", "General Studies":"📚", "General Knowledge":"🌐", "Current Affairs":"📰",
   "Reasoning":"🧩", "Quantitative Aptitude":"➗", "General Intelligence":"🧠", "General Awareness":"🌐",
@@ -470,26 +316,22 @@ const icons = {
   "Design Aptitude":"🎨", "Creative Ability":"🎨"
 };
 
-
 /* =========================================================
    UNIQUE TEACHER GENERATOR (NO REPEATS)
 ========================================================= */
 const firstNames = ["Aarav","Vivaan","Aditya","Arjun","Kabir","Ishaan","Rohan","Kunal","Rahul","Nikhil","Varun","Manav","Samar","Yash","Aman","Dev","Vikram","Sanjay","Gaurav","Deepak","Nitin","Rajesh","Suresh","Manish","Akash","Ravi","Vikas","Mohit","Pankaj","Abhishek"];
 const lastNames = ["Sharma","Gupta","Verma","Yadav","Singh","Kumar","Rao","Mehta","Chauhan","Patel","Mishra","Pandey","Tiwari","Joshi","Nair","Iyer","Reddy","Das","Bose","Sinha","Jha","Thakur","Malhotra","Kapoor","Bansal","Agarwal","Srivastava","Tripathi","Saxena","Shukla"];
 
-// Ye function hamesha ek subject ko ek unique teacher dega (e.g. Physics = Prof. Yash Iyer)
 function getUniqueTeacher(subjectName) {
     let hash = 0;
-    for (let i = 0; i < subjectName.length; i++) {
-        hash = subjectName.charCodeAt(i) + ((hash << 5) - hash);
-    }
+    for (let i = 0; i < subjectName.length; i++) { hash = subjectName.charCodeAt(i) + ((hash << 5) - hash); }
     const fName = firstNames[Math.abs(hash) % firstNames.length];
     const lName = lastNames[Math.abs(hash >> 3) % lastNames.length];
     return `Prof. ${fName} ${lName}`;
 }
 
 /* =========================================================
-   SCHOOL SUBJECT STRUCTURE
+   SUBJECT STRUCTURE (100% ORIGINAL)
 ========================================================= */
 const CLASS_9_10 = ["Hindi", "English", "Mathematics", "Physics", "Chemistry", "Biology", "History", "Geography", "Political Science", "Economics"];
 const PCM = ["English", "Physics", "Physical Chemistry", "Organic Chemistry", "Inorganic Chemistry", "Mathematics"];
@@ -498,9 +340,6 @@ const PCMB = ["English", "Physics", "Physical Chemistry", "Organic Chemistry", "
 const COMMERCE = ["English", "Accountancy", "Business Studies", "Economics", "Mathematics"];
 const ARTS = ["English", "Hindi", "History", "Political Science", "Geography", "Economics", "Sociology", "Psychology"];
 
-/* =========================================================
-   COMPETITIVE EXAM SUBJECTS
-========================================================= */
 const NEET = ["Physics", "Physical Chemistry", "Organic Chemistry", "Inorganic Chemistry", "Botany", "Zoology"];
 const JEE = ["Physics", "Physical Chemistry", "Organic Chemistry", "Inorganic Chemistry", "Mathematics"];
 const CUET = ["English", "General Knowledge", "Current Affairs", "Quantitative Aptitude", "Reasoning"];
@@ -516,9 +355,6 @@ const AGRICULTURE = ["Physics", "Chemistry", "Biology", "Mathematics", "Agricult
 const MANAGEMENT = ["Quantitative Aptitude", "Logical Reasoning", "Data Interpretation", "Verbal Ability", "Reading Comprehension"];
 const DESIGN = ["English", "General Knowledge", "Current Affairs", "Design Aptitude", "Creative Ability", "Drawing"];
 
-/* =========================================================
-   SCHOOL BOARDS
-========================================================= */
 const boards = [
   ["CBSE","Central Board of Secondary Education"], ["CISCE","Council for the Indian School Certificate Examinations"], ["NIOS","National Institute of Open Schooling"],
   ["Andhra Pradesh","Andhra Pradesh Board"], ["Assam","Assam Board"], ["Bihar","Bihar School Examination Board"], ["Chhattisgarh","Chhattisgarh Board of Secondary Education"],
@@ -562,46 +398,38 @@ function getBatchPrice(type,cls,exam){
   return 199;
 }
 
-/* =========================================================
-   CREATE BATCH (Unique Teachers Assigned)
-========================================================= */
 function makeBatch({ type, board="", cls="", stream="", exam="", category="", subjects }) {
   const id = "B" + String(batches.length + 1).padStart(4,"0");
   const price = getBatchPrice(type, cls, exam);
-  const subjectData = subjects.map(subject => ({
-      name: subject,
-      teacher: getUniqueTeacher(subject) // FIXED UNIQUE TEACHERS
-  }));
+  const subjectData = subjects.map(subject => ({ name: subject, teacher: getUniqueTeacher(subject) }));
 
   batches.push({
     id, type, board, cls, stream, exam, category, price,
-    oldPrice: Math.round(price * 1.5),
-    subjects: subjectData
+    oldPrice: Math.round(price * 1.5), subjects: subjectData
   });
 }
 
-/* =========================================================
-   CREATE SCHOOL BATCHES (All 372 Original Batches)
-========================================================= */
+// GENERATE ALL 372 SCHOOL BATCHES
 boards.forEach(board => {
   const boardName = board[0];
-  makeBatch({ type:"school", board:boardName, cls:"Class 9", stream:"General", category:"School Boards", subjects:CLASS_9_10 });
-  makeBatch({ type:"school", board:boardName, cls:"Class 10", stream:"General", category:"School Boards", subjects:CLASS_9_10 });
-  makeBatch({ type:"school", board:boardName, cls:"Class 11", stream:"Science — PCM", category:"Science", subjects:PCM });
-  makeBatch({ type:"school", board:boardName, cls:"Class 11", stream:"Science — PCB", category:"Science", subjects:PCB });
-  makeBatch({ type:"school", board:boardName, cls:"Class 11", stream:"Science — PCMB", category:"Science", subjects:PCMB });
-  makeBatch({ type:"school", board:boardName, cls:"Class 11", stream:"Commerce", category:"Commerce", subjects:COMMERCE });
-  makeBatch({ type:"school", board:boardName, cls:"Class 11", stream:"Arts / Humanities", category:"Arts", subjects:ARTS });
-  makeBatch({ type:"school", board:boardName, cls:"Class 12", stream:"Science — PCM", category:"Science", subjects:PCM });
-  makeBatch({ type:"school", board:boardName, cls:"Class 12", stream:"Science — PCB", category:"Science", subjects:PCB });
-  makeBatch({ type:"school", board:boardName, cls:"Class 12", stream:"Science — PCMB", category:"Science", subjects:PCMB });
-  makeBatch({ type:"school", board:boardName, cls:"Class 12", stream:"Commerce", category:"Commerce", subjects:COMMERCE });
-  makeBatch({ type:"school", board:boardName, cls:"Class 12", stream:"Arts / Humanities", category:"Arts", subjects:ARTS });
+  const classes = [
+    {cls:"Class 9", stream:"General", sub:CLASS_9_10, cat:"School Boards"},
+    {cls:"Class 10", stream:"General", sub:CLASS_9_10, cat:"School Boards"},
+    {cls:"Class 11", stream:"Science — PCM", sub:PCM, cat:"Science"},
+    {cls:"Class 11", stream:"Science — PCB", sub:PCB, cat:"Science"},
+    {cls:"Class 11", stream:"Science — PCMB", sub:PCMB, cat:"Science"},
+    {cls:"Class 11", stream:"Commerce", sub:COMMERCE, cat:"Commerce"},
+    {cls:"Class 11", stream:"Arts / Humanities", sub:ARTS, cat:"Arts"},
+    {cls:"Class 12", stream:"Science — PCM", sub:PCM, cat:"Science"},
+    {cls:"Class 12", stream:"Science — PCB", sub:PCB, cat:"Science"},
+    {cls:"Class 12", stream:"Science — PCMB", sub:PCMB, cat:"Science"},
+    {cls:"Class 12", stream:"Commerce", sub:COMMERCE, cat:"Commerce"},
+    {cls:"Class 12", stream:"Arts / Humanities", sub:ARTS, cat:"Arts"}
+  ];
+  classes.forEach(c => makeBatch({ type:"school", board:boardName, cls:c.cls, stream:c.stream, category:c.cat, subjects:c.sub }));
 });
 
-/* =========================================================
-   COMPETITIVE BATCHES
-========================================================= */
+// GENERATE COMPETITIVE BATCHES
 const competitiveData = [
   ["NEET","Class 11","Medical Foundation",NEET,"Medical"], ["NEET","Class 12","Medical Preparation",NEET,"Medical"], ["NEET","Dropper","Medical Dropper",NEET,"Medical"],
   ["JEE Main + Advanced","Class 11","Engineering Foundation",JEE,"Engineering"], ["JEE Main + Advanced","Class 12","Engineering Preparation",JEE,"Engineering"], ["JEE Main + Advanced","Dropper","Engineering Dropper",JEE,"Engineering"],
@@ -620,9 +448,7 @@ const competitiveData = [
   ["State PSC","Graduate","PSC Foundation",UPSC,"Government Exams"], ["State SSC","12th / Graduate","State SSC",SSC,"Government Exams"], ["State Police Exams","12th / Graduate","Police Exam Foundation",["General Knowledge", "Current Affairs", "Reasoning", "Quantitative Aptitude", "General Science"],"Government Exams"]
 ];
 
-competitiveData.forEach(item => {
-  makeBatch({ type:"competitive", exam:item[0], cls:item[1], stream:item[2], subjects:item[3], category:item[4] });
-});
+competitiveData.forEach(item => makeBatch({ type:"competitive", exam:item[0], cls:item[1], stream:item[2], subjects:item[3], category:item[4] }));
 
 /* =========================================================
    FILTERS & RENDERING
@@ -730,12 +556,11 @@ function closeModal(){ document.getElementById("overlay").classList.remove("show
 function outsideClose(event){ if(event.target.id === "overlay") closeModal(); }
 
 /* =========================================================
-   BUY NOW (FIXED FOR CLASSROOM)
+   BUY NOW
 ========================================================= */
 function buy(id) {
   const batch = batches.find(item => item.id === id);
   if (!batch) return;
-
   const title = batch.type === "school" ? `${batch.board} — ${batch.cls} — ${batch.stream}` : `${batch.exam} — ${batch.cls} — ${batch.stream}`;
   const exactSubjects = batch.subjects.map(s => s.name);
 
@@ -743,15 +568,12 @@ function buy(id) {
   sessionStorage.setItem("tb_checkout_price", batch.price);
   sessionStorage.setItem("tb_checkout_tier", "Pro");
   sessionStorage.setItem("tb_checkout_subjects", JSON.stringify(exactSubjects));
-
   window.location.href = "payment.html";
 }
 
 /* =========================================================
-   DASHBOARD BACK BUTTON & TABS
+   TABS & EVENTS
 ========================================================= */
-function goDashboard(){ window.location.href = "dashboard.html"; }
-
 document.querySelectorAll(".tab").forEach(tab => {
   tab.addEventListener("click", () => {
     document.querySelectorAll(".tab").forEach(item => item.classList.remove("active"));
@@ -766,14 +588,8 @@ document.querySelectorAll(".tab").forEach(tab => {
 });
 
 document.getElementById("search").addEventListener("input", render);
+function escapeHTML(value){ return String(value).replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;").replaceAll("'", "&#039;"); }
 
-function escapeHTML(value){
-  return String(value).replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;").replaceAll("'", "&#039;");
-}
-
-/* =========================================================
-   START
-========================================================= */
 renderFilters();
 render();
 </script>
