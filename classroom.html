@@ -2,27 +2,45 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <!-- PWA & APP MODE TAGS (To hide URL bar and feel like a real app) -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#05070d">
+    
     <title>TicBull Academy - My Classroom</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
     <style>
-        :root { --bg: #05070d; --card: #101827; --card-grad: linear-gradient(145deg, #152238, #0f1929); --accent: #e9155c; --text: #f5f7fb; --text-muted: #9aa7ba; --border: #2b3952; --success: #10b981; --danger: #ef4444; --gold: #ffb51b; }
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: Arial, sans-serif; -webkit-tap-highlight-color: transparent; }
-        body { background: var(--bg); color: var(--text); height: 100vh; overflow: hidden; display: flex; flex-direction: column; }
+        /* DYNAMIC THEME VARIABLES */
+        :root { 
+            --bg: #05070d; --card: #101827; --card-grad: linear-gradient(145deg, #152238, #0f1929); 
+            --accent: #e9155c; --text: #f5f7fb; --text-muted: #9aa7ba; --border: #2b3952; 
+            --success: #10b981; --danger: #ef4444; --gold: #ffb51b; 
+        }
 
-        .header { padding: 20px; background: #05070dee; backdrop-filter: blur(14px); border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 15px; position: sticky; top: 0; z-index: 20; }
-        .back-btn { background: transparent; border: none; color: white; font-size: 20px; cursor: pointer; }
+        /* LIGHT THEME (Connected to Dashboard) */
+        body.light-theme {
+            --bg: #f3f4f6; --card: #ffffff; --card-grad: linear-gradient(145deg, #ffffff, #f9fafb); 
+            --text: #111827; --text-muted: #6b7280; --border: #e5e7eb;
+        }
+
+        /* ANTI-WEB BEHAVIOR (To feel like an App) */
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: Arial, sans-serif; -webkit-tap-highlight-color: transparent; user-select: none; }
+        body { background: var(--bg); color: var(--text); height: 100vh; overflow: hidden; display: flex; flex-direction: column; overscroll-behavior-y: none; }
+
+        .header { padding: 20px; padding-top: max(20px, env(safe-area-inset-top)); background: var(--bg); backdrop-filter: blur(14px); border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 15px; position: sticky; top: 0; z-index: 20; }
+        .back-btn { background: transparent; border: none; color: var(--text); font-size: 20px; cursor: pointer; }
         .title { font-size: 22px; font-weight: 900; }
         .score-board { margin-left: auto; background: rgba(16, 185, 129, 0.15); color: var(--success); padding: 6px 12px; border-radius: 10px; font-weight: 900; display: none; border: 1px solid rgba(16, 185, 129, 0.3); }
 
         .content { flex: 1; overflow-y: auto; padding: 20px; padding-bottom: 80px; }
 
-        /* VIEWS */
         #batchView, #subjectView, #actionView, #testSetupView, #testActiveView { display: none; }
         #batchView { display: block; }
 
-        /* CARDS */
-        .batch-card { background: var(--card-grad); border: 1px solid var(--border); border-radius: 20px; padding: 20px; margin-bottom: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
+        .batch-card { background: var(--card-grad); border: 1px solid var(--border); border-radius: 20px; padding: 20px; margin-bottom: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
         .batch-name { font-size: 20px; font-weight: 900; margin-bottom: 5px; line-height: 1.3; }
         .btn-access { background: var(--accent); color: white; border: none; width: 100%; padding: 14px; border-radius: 12px; font-weight: 900; margin-top: 15px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; }
 
@@ -30,7 +48,7 @@
         .sub-card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 20px 10px; text-align: center; cursor: pointer; transition: 0.2s; display: flex; flex-direction: column; align-items: center; gap: 10px; }
         .sub-card:active { transform: scale(0.95); border-color: var(--accent); }
         .sub-icon { font-size: 32px; display: block; }
-        .sub-name { font-size: 14px; font-weight: 800; color: #c8d1df; }
+        .sub-name { font-size: 14px; font-weight: 800; color: var(--text); }
 
         .action-card { background: var(--card-grad); border: 1px solid var(--border); border-radius: 18px; padding: 25px 15px; text-align: center; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 10px; }
         .action-card i { font-size: 35px; }
@@ -38,33 +56,31 @@
         .action-card.pyq { color: var(--gold); border-color: rgba(255, 181, 27, 0.3); }
         .action-card.prac { color: #a855f7; border-color: rgba(168, 85, 247, 0.3); }
         .action-card.test { color: var(--accent); border-color: rgba(233, 21, 92, 0.3); }
-        .action-name { font-weight: 900; font-size: 15px; color: white; }
+        .action-name { font-weight: 900; font-size: 15px; color: var(--text); }
 
-        /* TEST UI */
         .setup-box { background: var(--card); border: 1px solid var(--border); padding: 20px; border-radius: 18px; }
-        .input-chap { width: 100%; background: #16243a; border: 1px solid var(--border); padding: 15px; border-radius: 12px; color: white; font-size: 16px; outline: none; margin: 15px 0; }
+        .input-chap { width: 100%; background: var(--bg); border: 1px solid var(--border); padding: 15px; border-radius: 12px; color: var(--text); font-size: 16px; outline: none; margin: 15px 0; }
         
         .diff-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin: 15px 0; }
-        .diff-btn { background: #16243a; border: 1px solid var(--border); padding: 10px; border-radius: 8px; color: white; cursor: pointer; font-weight: 800; }
-        .diff-btn.active { border-color: var(--accent); background: #2b131d; }
+        .diff-btn { background: var(--bg); border: 1px solid var(--border); padding: 10px; border-radius: 8px; color: var(--text); cursor: pointer; font-weight: 800; }
+        .diff-btn.active { border-color: var(--accent); background: rgba(233, 21, 92, 0.1); }
 
-        .timer-bar { height: 6px; background: #26354b; border-radius: 5px; overflow: hidden; margin-bottom: 20px; }
+        .timer-bar { height: 6px; background: var(--border); border-radius: 5px; overflow: hidden; margin-bottom: 20px; }
         .timer-fill { height: 100%; width: 100%; background: var(--success); transition: width 1s linear, background 0.3s; }
         .timer-fill.danger { background: var(--danger); }
         .timer-text { font-size: 24px; font-weight: 900; text-align: center; margin-bottom: 10px; color: var(--gold); }
 
         .question-box { font-size: 18px; font-weight: 800; line-height: 1.5; margin-bottom: 25px; }
-        .option { background: var(--card); border: 1px solid var(--border); padding: 15px; border-radius: 12px; margin-bottom: 10px; font-weight: 700; cursor: pointer; transition: 0.2s; color: #c8d1df; display: flex; justify-content: space-between; align-items: center; }
+        .option { background: var(--card); border: 1px solid var(--border); padding: 15px; border-radius: 12px; margin-bottom: 10px; font-weight: 700; cursor: pointer; transition: 0.2s; color: var(--text); display: flex; justify-content: space-between; align-items: center; }
         .option.correct { background: rgba(16, 185, 129, 0.2); border-color: var(--success); color: var(--success); }
         .option.wrong { background: rgba(239, 68, 68, 0.2); border-color: var(--danger); color: var(--danger); }
         .option.disabled { pointer-events: none; opacity: 0.8; }
         .btn-next { background: var(--accent); color: white; border: none; padding: 16px; border-radius: 12px; font-weight: 900; width: 100%; font-size: 16px; margin-top: 20px; cursor: pointer; display: none; }
 
-        /* MODAL */
         .tic-modal { position: fixed; inset: 0; background: rgba(0,0,0,0.85); display: none; justify-content: center; align-items: center; z-index: 999; backdrop-filter: blur(5px); }
         .tic-box { background: var(--card); padding: 25px; border-radius: 20px; text-align: center; width: 85%; max-width: 350px; border: 1px solid var(--border); box-shadow: 0 15px 35px rgba(0,0,0,0.5); }
         .tic-btn { background: var(--accent); color: white; border: none; padding: 12px 20px; border-radius: 10px; margin: 5px; cursor: pointer; font-weight: 900; width: 45%; }
-        .tic-btn-cancel { background: #2b3952; color: white; border: none; padding: 12px 20px; border-radius: 10px; margin: 5px; cursor: pointer; font-weight: 900; width: 45%; }
+        .tic-btn-cancel { background: var(--border); color: var(--text); border: none; padding: 12px 20px; border-radius: 10px; margin: 5px; cursor: pointer; font-weight: 900; width: 45%; }
     </style>
 </head>
 <body>
@@ -87,7 +103,7 @@
 
         <!-- 3. ACTION COLUMNS -->
         <div id="actionView">
-            <h3 style="margin-bottom: 5px; color: #ffb51b; font-size:22px;" id="selectedSubTitle">Subject</h3>
+            <h3 style="margin-bottom: 5px; color: var(--gold); font-size:22px;" id="selectedSubTitle">Subject</h3>
             <p style="color: var(--text-muted); font-size: 13px; margin-bottom: 20px;">Select your learning mode below.</p>
             
             <div class="grid-2">
@@ -110,7 +126,7 @@
         <div id="testSetupView">
             <div class="setup-box">
                 <h2 style="color: var(--accent); margin-bottom: 5px;"><i class="fa-solid fa-brain"></i> AI Test Series</h2>
-                <p style="color: var(--text-muted); font-size: 13px;">Enter a chapter name from <strong style="color:white" id="testSubName"></strong>.</p>
+                <p style="color: var(--text-muted); font-size: 13px;">Enter a chapter name from <strong style="color:var(--text)" id="testSubName"></strong>.</p>
                 
                 <p style="font-size:12px; color:var(--text-muted); margin-top:15px; margin-bottom:5px;">Select Difficulty Level:</p>
                 <div class="diff-grid">
@@ -145,6 +161,27 @@
         </div>
     </div>
 
+    <!-- GLOBAL SETTINGS SYNCHRONIZER (THEME & SOUND) -->
+    <script>
+        // Theme Sync
+        const currentTheme = localStorage.getItem('tb_theme') || 'dark';
+        if(currentTheme === 'light') {
+            document.body.classList.add('light-theme');
+            document.querySelector('meta[name="theme-color"]').setAttribute('content', '#f3f4f6');
+        }
+
+        // Sound Sync (Global Click Listener)
+        const clickAudio = new Audio('https://assets.mixkit.co/active_storage/sfx/2568/2568-preview.mp3'); 
+        document.addEventListener('click', (e) => {
+            if(e.target.closest('button, .sub-card, .action-card, .option, .diff-btn, .tic-btn')) {
+                if(localStorage.getItem('tb_sound') !== 'off') {
+                    clickAudio.currentTime = 0;
+                    clickAudio.play().catch(()=>{});
+                }
+            }
+        });
+    </script>
+
     <script>
         function showTicModal(msg, onYes, showCancel = true) {
             document.getElementById('ticModalMsg').innerText = msg;
@@ -173,15 +210,11 @@
             "Organic Chemistry":"🧬", "Inorganic Chemistry":"🔬", "Mathematics":"🔢",
             "Biology":"🧬", "Botany":"🌱", "Zoology":"🦁", "Chemistry":"🧪", 
             "Hindi":"📖", "Accountancy":"🧾", "Business Studies":"💼", "Economics":"📈",
-            "Science":"🔬", "Social Science":"🌍"
+            "History":"🏛️", "Geography":"🌍", "Political Science":"⚖️", "Science":"🔬", "Social Science":"🌍"
         };
 
         window.onload = function() {
-            try {
-                enrolled = JSON.parse(localStorage.getItem('tb_enrolled') || '[]');
-            } catch(e) {
-                enrolled = [];
-            }
+            try { enrolled = JSON.parse(localStorage.getItem('tb_enrolled') || '[]'); } catch(e) { enrolled = []; }
             renderBatches();
         };
 
@@ -209,28 +242,30 @@
             document.getElementById('headTitle').innerText = "My Classroom";
         }
 
-        // FAIL-SAFE SUBJECT RENDERER (Will never show blank screen)
         function showSubjects(batchIndex) {
             currentBatchIndex = batchIndex;
             let batch = enrolled[batchIndex];
             let subjects = [];
 
-            // 1. Try to get real subjects
-            try {
-                if (batch && batch.subjects) {
-                    if (Array.isArray(batch.subjects)) subjects = batch.subjects;
-                    else subjects = JSON.parse(batch.subjects);
+            if (batch && batch.subjects) {
+                if (Array.isArray(batch.subjects)) { subjects = batch.subjects; } 
+                else {
+                    try { subjects = JSON.parse(batch.subjects); } 
+                    catch(e) { if(typeof batch.subjects === 'string') subjects = batch.subjects.split(',').map(s => s.trim()); }
                 }
-            } catch(e) { console.log("Subject parsing fallback triggered"); }
+            }
 
-            // 2. Smart Fallback if subjects are empty
             if (!subjects || subjects.length === 0) {
                 let t = (batch.title || "").toLowerCase();
-                if(t.includes('pcm')) subjects = ["English", "Physics", "Physical Chemistry", "Organic Chemistry", "Inorganic Chemistry", "Mathematics"];
-                else if(t.includes('pcb')) subjects = ["English", "Physics", "Zoology", "Botany", "Chemistry"];
-                else if(t.includes('commerce')) subjects = ["Accountancy", "Business Studies", "Economics", "English", "Mathematics"];
-                else if(t.includes('9') || t.includes('10')) subjects = ["Mathematics", "Science", "Social Science", "English", "Hindi"];
-                else subjects = ["Physics", "Chemistry", "Biology", "Mathematics", "English"];
+                if(t.includes('9') || t.includes('10') || t.includes('general')) {
+                    subjects = ["Hindi", "English", "Mathematics", "Physics", "Chemistry", "Biology", "History", "Geography", "Political Science", "Economics"];
+                } else if(t.includes('pcm')) {
+                    subjects = ["English", "Physics", "Physical Chemistry", "Organic Chemistry", "Inorganic Chemistry", "Mathematics"];
+                } else if(t.includes('pcb')) {
+                    subjects = ["English", "Physics", "Zoology", "Botany", "Chemistry"];
+                } else {
+                    subjects = ["Physics", "Chemistry", "Biology", "Mathematics", "English"];
+                }
             }
 
             let grid = document.getElementById('subjectGrid');
@@ -261,9 +296,7 @@
             document.getElementById('headTitle').innerText = "Study Mode";
         }
 
-        function openMode(page) { 
-            location.href = page + "?sub=" + encodeURIComponent(currentSubject); 
-        }
+        function openMode(page) { location.href = page + "?sub=" + encodeURIComponent(currentSubject); }
 
         function showTestSetup() {
             document.getElementById('testSubName').innerText = currentSubject;
@@ -318,7 +351,6 @@
                 const qData = await response.json();
                 renderRealQuestion(qData);
             } catch(e) {
-                // Backend fail hone par bhi UI crash nahi hogi
                 setTimeout(() => {
                     renderRealQuestion({
                         question: `Which of the following principles functions correctly within ${currentChapter} in ${currentSubject}?`,
