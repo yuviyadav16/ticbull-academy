@@ -24,8 +24,11 @@
 
         #subjectView { display: none; }
         .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 15px; }
+        
+        /* Fixed Exact UI for Subjects */
         .sub-card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 20px 10px; text-align: center; cursor: pointer; transition: 0.2s; display: flex; flex-direction: column; align-items: center; gap: 10px; }
         .sub-card:active { transform: scale(0.95); border-color: var(--accent); }
+        .sub-icon { font-size: 32px; display: block; }
         .sub-name { font-size: 14px; font-weight: 800; color: #c8d1df; }
 
         #actionView { display: none; }
@@ -58,7 +61,6 @@
 
         .btn-next { background: var(--accent); color: white; border: none; padding: 16px; border-radius: 12px; font-weight: 900; width: 100%; font-size: 16px; margin-top: 20px; cursor: pointer; display: none; }
 
-        /* PROFESSIONAL CUSTOM MODAL (NO DEFAULT WATERMARKS) */
         .tic-modal { position: fixed; inset: 0; background: rgba(0,0,0,0.85); display: none; justify-content: center; align-items: center; z-index: 999; backdrop-filter: blur(5px); }
         .tic-box { background: var(--card); padding: 25px; border-radius: 20px; text-align: center; width: 85%; max-width: 350px; border: 1px solid var(--border); box-shadow: 0 15px 35px rgba(0,0,0,0.5); }
         .tic-btn { background: var(--accent); color: white; border: none; padding: 12px 20px; border-radius: 10px; margin: 5px; cursor: pointer; font-weight: 900; width: 45%; }
@@ -75,9 +77,7 @@
 
     <div class="content">
         <!-- 1. BATCH LIST -->
-        <div id="batchView">
-            <!-- Dynamic Batches go here -->
-        </div>
+        <div id="batchView"></div>
 
         <!-- 2. SUBJECT LIST -->
         <div id="subjectView">
@@ -85,27 +85,23 @@
             <div class="grid-2" id="subjectGrid"></div>
         </div>
 
-        <!-- 3. ACTION COLUMNS (4 PILLARS) - BRINGING BACK OLD DESIGN -->
+        <!-- 3. ACTION COLUMNS -->
         <div id="actionView">
             <h3 style="margin-bottom: 5px; color: #ffb51b; font-size:22px;" id="selectedSubTitle">Subject</h3>
             <p style="color: var(--text-muted); font-size: 13px; margin-bottom: 20px;">Select your learning mode below.</p>
             
             <div class="grid-2">
-                <div class="action-card chat" id="actionChat" onclick="openChat()">
-                    <i class="fa-solid fa-robot"></i>
-                    <div class="action-name">Ask AI Teacher</div>
+                <div class="action-card chat" onclick="openMode('chat.html')">
+                    <i class="fa-solid fa-robot"></i><div class="action-name">Ask AI Teacher</div>
                 </div>
-                <div class="action-card prac" id="actionPractice" onclick="openPractice()">
-                    <i class="fa-solid fa-pen-nib"></i>
-                    <div class="action-name">Practice Sets</div>
+                <div class="action-card prac" onclick="openMode('practice.html')">
+                    <i class="fa-solid fa-pen-nib"></i><div class="action-name">Practice Sets</div>
                 </div>
-                <div class="action-card pyq" id="actionPYQs" onclick="openPYQs()">
-                    <i class="fa-solid fa-file-pdf"></i>
-                    <div class="action-name">20 Yrs PYQs</div>
+                <div class="action-card pyq" onclick="openMode('pyqs.html')">
+                    <i class="fa-solid fa-file-pdf"></i><div class="action-name">20 Yrs PYQs</div>
                 </div>
-                <div class="action-card test" id="actionTest" onclick="showTestSetup()">
-                    <i class="fa-solid fa-bolt"></i>
-                    <div class="action-name">AI Smart Test</div>
+                <div class="action-card test" onclick="showTestSetup()">
+                    <i class="fa-solid fa-bolt"></i><div class="action-name">AI Smart Test</div>
                 </div>
             </div>
         </div>
@@ -123,8 +119,7 @@
                     <button class="diff-btn" onclick="setDiff(this, 'hard')">Hard</button>
                 </div>
 
-                <input type="text" id="chapInput" class="input-chap" placeholder="Enter Chapter (e.g. Animal Kingdom)">
-                
+                <input type="text" id="chapInput" class="input-chap" placeholder="Enter Chapter Name">
                 <button class="btn-access" onclick="startTest()">START UNLIMITED TEST <i class="fa-solid fa-play"></i></button>
             </div>
         </div>
@@ -133,15 +128,13 @@
         <div id="testActiveView">
             <div class="timer-text" id="timerText">00:15</div>
             <div class="timer-bar"><div class="timer-fill" id="timerFill"></div></div>
-
             <div class="question-box" id="qText">Generating Question via AI...</div>
             <div id="optionsBox"></div>
-
             <button class="btn-next" id="btnNext" onclick="generateQuestion()">NEXT QUESTION <i class="fa-solid fa-forward"></i></button>
         </div>
     </div>
 
-    <!-- PROFESSIONAL CUSTOM MODAL (NO DEFAULT WATERMARKS) -->
+    <!-- CUSTOM POPUP -->
     <div id="ticModal" class="tic-modal">
         <div class="tic-box">
             <h3 id="ticModalMsg" style="font-size:17px; margin-bottom:15px; line-height:1.4;">Message</h3>
@@ -153,12 +146,10 @@
     </div>
 
     <script>
-        // Custom Popup Logic (replaces browser alerts)
         function showTicModal(msg, onYes, showCancel = true) {
             document.getElementById('ticModalMsg').innerText = msg;
             document.getElementById('ticModal').style.display = 'flex';
             document.getElementById('ticModalNo').style.display = showCancel ? 'inline-block' : 'none';
-            
             document.getElementById('ticModalYes').onclick = function() {
                 document.getElementById('ticModal').style.display = 'none';
                 if(onYes) onYes();
@@ -172,13 +163,16 @@
         let currentSubject = "";
         let currentChapter = "";
         let selectedDiff = "normal";
+        let currentBatchIndex = 0;
         let enrolled = JSON.parse(localStorage.getItem('tb_enrolled') || '[]');
         
-        let score = 0;
-        let timer = 15;
-        let timerInterval;
-        let qCount = 1;
-        let isAnswered = false;
+        let score = 0; let timer = 15; let timerInterval; let qCount = 1; let isAnswered = false;
+
+        const icons = {
+            "English":"📘", "Physics":"⚛️", "Physical Chemistry":"⚗️", 
+            "Organic Chemistry":"🧬", "Inorganic Chemistry":"🔬", "Mathematics":"🔢",
+            "Biology":"🧬", "Botany":"🌱", "Zoology":"🦁", "Chemistry":"🧪", "Hindi":"📖"
+        };
 
         window.onload = function() {
             renderBatches();
@@ -189,7 +183,7 @@
             container.innerHTML = '';
             
             if(enrolled.length === 0) {
-                container.innerHTML = `<div style="text-align:center; color:var(--text-muted); margin-top:50px;">No batches found.<br>Go to batches and buy one first.</div>`;
+                container.innerHTML = `<div style="text-align:center; color:var(--text-muted); margin-top:50px;">No active batches found.</div>`;
                 return;
             }
 
@@ -208,15 +202,32 @@
             document.getElementById('headTitle').innerText = "My Classroom";
         }
 
+        // FULL PROOF FAIL-SAFE LOGIC FOR SUBJECTS
         function showSubjects(batchIndex) {
-            let subjects = enrolled[batchIndex].subjects || [];
+            currentBatchIndex = batchIndex;
+            let batch = enrolled[batchIndex];
+            let subjects = [];
+
+            // Safe parsing to prevent blank screen error
+            if (batch && batch.subjects && Array.isArray(batch.subjects) && batch.subjects.length > 0) {
+                subjects = batch.subjects;
+            } else if (batch && typeof batch.subjects === 'string') {
+                try { subjects = JSON.parse(batch.subjects); } catch(e) { subjects = []; }
+            }
+            
+            // Absolute Fallback
+            if (subjects.length === 0) {
+                subjects = ["English", "Physics", "Physical Chemistry", "Organic Chemistry", "Inorganic Chemistry", "Mathematics"];
+            }
+
             let grid = document.getElementById('subjectGrid');
             grid.innerHTML = '';
 
             subjects.forEach(subject => {
                 grid.innerHTML += `
                     <div class="sub-card" onclick="openActionView('${subject}')">
-                        <b>${subject}</b>
+                        <span class="sub-icon">${icons[subject] || "📚"}</span>
+                        <div class="sub-name">${subject}</div>
                     </div>
                 `;
             });
@@ -236,12 +247,8 @@
             document.getElementById('headTitle').innerText = "Study Mode";
         }
 
-        // Mode Actions (Old Pillar Logic)
-        function openChat() { location.href = `chat.html?subject=${currentSubject}`; }
-        function openPYQs() { location.href = `pyqs.html?subject=${currentSubject}`; }
-        function openPractice() { location.href = `practice.html?subject=${currentSubject}`; }
+        function openMode(page) { location.href = page + "?sub=" + encodeURIComponent(currentSubject); }
 
-        // Test Logic
         function showTestSetup() {
             document.getElementById('testSubName').innerText = currentSubject;
             hideAllViews();
@@ -262,44 +269,27 @@
                 showTicModal("Please enter a chapter name to start the test!", null, false);
                 return;
             }
-            
-            // Dummy data connection if API key is not yet present on backend server.
-            // If API key is not set, Gemini connection might fail. 
-            // In a production app, checking key on backend is preferred. Assuming no check here.
-            
-            score = 0;
-            qCount = 1;
-            updateScore();
-            
+            score = 0; qCount = 1; updateScore();
             hideAllViews();
             document.getElementById('testActiveView').style.display = 'block';
             document.getElementById('scoreBoard').style.display = 'block';
             viewState = 5;
             document.getElementById('headTitle').innerText = "Live AI Test";
-            
             generateQuestion();
         }
 
-        function updateScore() {
-            document.getElementById('scoreBoard').innerText = `Score: ${score}`;
-        }
+        function updateScore() { document.getElementById('scoreBoard').innerText = `Score: ${score}`; }
 
         async function generateQuestion() {
             isAnswered = false;
             document.getElementById('btnNext').style.display = 'none';
             document.getElementById('timerFill').style.width = '100%';
             document.getElementById('timerFill').classList.remove('danger');
-            
-            // Visual feedback from image
-            document.getElementById('qText').innerHTML = `
-                <i class="fa-solid fa-brain fa-fade" style="color:var(--accent)"></i> AI is generating a ${selectedDiff} level question for ${currentChapter}...
-            `;
+            document.getElementById('qText').innerHTML = `<i class="fa-solid fa-brain fa-fade" style="color:var(--accent)"></i> AI is generating a ${selectedDiff} level question for ${currentChapter}...`;
             document.getElementById('optionsBox').innerHTML = "";
             document.getElementById('timerText').innerText = "Wait...";
-
             clearInterval(timerInterval);
 
-            // Fetch Real Question from backend server (Calls /api/generateTest in Vercel/Node.js)
             try {
                 const response = await fetch('/api/generateTest', {
                     method: 'POST',
@@ -308,145 +298,82 @@
                         prompt: `Generate ONE ${selectedDiff} level MCQ question for Subject: ${currentSubject}, Topic: ${currentChapter}. Return ONLY a valid JSON object without markdown blocks in this format: {"question": "text", "options": ["A", "B", "C", "D"], "correctIndex": 0, "reason": "explanation"}` 
                     })
                 });
-
-                if(!response.ok) throw new Error("API Error or Server configuration missing");
-
+                if(!response.ok) throw new Error("API Error");
                 const qData = await response.json();
                 renderRealQuestion(qData);
-
             } catch(e) {
-                // Fallback to dummy data connection if backend API is not set up
                 setTimeout(() => {
                     renderRealQuestion({
-                        question: `Which of the following principles functions correctly within the concept of ${currentChapter} in ${currentSubject}?`,
-                        options: [
-                            `This is the logically correct concept formulated by AI.`,
-                            `Distractor option 2 generated by AI to test your concepts.`,
-                            `Distractor option 3 generated by AI to test your concepts.`,
-                            `Distractor option 4 generated by AI to test your concepts.`
-                        ],
-                        correctIndex: 0,
-                        reason: `Core logic explanation goes here.`
+                        question: `Which of the following principles functions correctly within ${currentChapter} in ${currentSubject}?`,
+                        options: [`This is the correct option.`, `Distractor option 2`, `Distractor option 3`, `Distractor option 4`],
+                        correctIndex: 0
                     });
                 }, 1500); 
             }
         }
 
         function renderRealQuestion(qData) {
-            // Updated renderer to match image format
-            document.getElementById('qText').innerHTML = `
-                <span style="color:var(--text-muted); font-size:12px;">Q${qCount} | ${currentSubject} • ${currentChapter}</span><br>
-                <b>${qData.question}</b>
-            `;
-            
+            document.getElementById('qText').innerHTML = `<span style="color:var(--text-muted); font-size:12px;">Q${qCount} | ${currentSubject} • ${currentChapter}</span><br><b>${qData.question}</b>`;
             let html = '';
             qData.options.forEach((opt, index) => {
                 let isCorrect = (index === qData.correctIndex) ? 'true' : 'false';
-                html += `<div class="option" onclick="selectOption(this, ${isCorrect})">
-                            <span>${String.fromCharCode(65+index)}) ${opt}</span>
-                         </div>`;
+                html += `<div class="option" onclick="selectOption(this, ${isCorrect})"><span>${String.fromCharCode(65+index)}) ${opt}</span></div>`;
             });
             document.getElementById('optionsBox').innerHTML = html;
-
-            startTimer();
-            qCount++;
+            startTimer(); qCount++;
         }
 
         function startTimer() {
             timer = 15;
             document.getElementById('timerText').innerText = `00:${timer}`;
-            
             timerInterval = setInterval(() => {
                 timer--;
-                let percent = (timer / 15) * 100;
-                document.getElementById('timerFill').style.width = percent + '%';
-                
+                document.getElementById('timerFill').style.width = ((timer/15)*100) + '%';
                 if(timer <= 5) document.getElementById('timerFill').classList.add('danger');
-                if(timer < 10) document.getElementById('timerText').innerText = `00:0${timer}`;
-                else document.getElementById('timerText').innerText = `00:${timer}`;
-
-                if(timer <= 0) {
-                    clearInterval(timerInterval);
-                    if(!isAnswered) autoTimeOut();
-                }
+                document.getElementById('timerText').innerText = timer < 10 ? `00:0${timer}` : `00:${timer}`;
+                if(timer <= 0) { clearInterval(timerInterval); if(!isAnswered) autoTimeOut(); }
             }, 1000);
         }
 
         function selectOption(elem, isCorrect) {
             if(isAnswered) return;
-            isAnswered = true;
-            clearInterval(timerInterval);
-
-            // Disable other options
+            isAnswered = true; clearInterval(timerInterval);
             let allOptions = document.querySelectorAll('.option');
             allOptions.forEach(opt => opt.classList.add('disabled'));
-
-            if(isCorrect) {
-                elem.classList.add('correct');
-                elem.innerHTML += '<i class="fa-solid fa-circle-check"></i>';
-                score += 4;
-            } else {
-                elem.classList.add('wrong');
-                elem.innerHTML += '<i class="fa-solid fa-circle-xmark"></i>';
-                score -= 1;
-                
-                // Show correct one
-                allOptions.forEach(opt => {
-                    if(opt.getAttribute('onclick').includes('true')) {
-                        opt.classList.add('correct');
-                        opt.innerHTML += '<i class="fa-solid fa-circle-check"></i>';
-                    }
-                });
+            if(isCorrect) { elem.classList.add('correct'); elem.innerHTML += '<i class="fa-solid fa-circle-check"></i>'; score += 4; } 
+            else {
+                elem.classList.add('wrong'); elem.innerHTML += '<i class="fa-solid fa-circle-xmark"></i>'; score -= 1;
+                allOptions.forEach(opt => { if(opt.getAttribute('onclick').includes('true')) { opt.classList.add('correct'); opt.innerHTML += '<i class="fa-solid fa-circle-check"></i>'; }});
             }
-            updateScore();
-            document.getElementById('btnNext').style.display = 'block';
+            updateScore(); document.getElementById('btnNext').style.display = 'block';
         }
 
         function autoTimeOut() {
-            isAnswered = true;
-            score -= 1; 
-            updateScore();
-
-            // Highlight correct answer
+            isAnswered = true; score -= 1; updateScore();
             let allOptions = document.querySelectorAll('.option');
             allOptions.forEach(opt => {
                 opt.classList.add('disabled');
-                if(opt.getAttribute('onclick').includes('true')) {
-                    opt.classList.add('correct');
-                    opt.innerHTML += '<i class="fa-solid fa-circle-check"></i>';
-                }
+                if(opt.getAttribute('onclick').includes('true')) { opt.classList.add('correct'); opt.innerHTML += '<i class="fa-solid fa-circle-check"></i>'; }
             });
             document.getElementById('timerText').innerText = "TIME OUT!";
             document.getElementById('btnNext').style.display = 'block';
         }
 
-        // Navigation
         function hideAllViews() {
             document.querySelectorAll('.content > div').forEach(div => div.style.display = 'none');
             document.getElementById('scoreBoard').style.display = 'none';
         }
 
         function goBack() {
-            if(viewState === 1) { location.href = "dashboard.html"; } // Batches -> Dashboard
-            else if(viewState === 2) { renderBatches(); } // Subjects -> Batches
-            else if(viewState === 3) { goBackToSubjects(); } // Actions -> Subjects
-            else if(viewState === 4) { openActionView(currentSubject); } // Test Setup -> Actions
-            else if(viewState === 5) { // Live Test -> Test Setup (with warning)
-                showTicModal("Are you sure you want to quit the test? Your score will be lost.", () => {
-                    clearInterval(timerInterval);
-                    showTestSetup();
-                });
+            if(viewState === 1) { location.href = "dashboard.html"; } 
+            else if(viewState === 2) { renderBatches(); } 
+            else if(viewState === 3) { showSubjects(currentBatchIndex); } 
+            else if(viewState === 4) { openActionView(currentSubject); } 
+            else if(viewState === 5) {
+                showTicModal("Are you sure you want to quit the test? Your score will be lost.", () => { clearInterval(timerInterval); showTestSetup(); });
             }
-        }
-
-        // Helper to find and render subjects of current enrolled batch index
-        function goBackToSubjects() {
-             // Since goBack refined Navigation doesn't easily store batchIndex in all cases, 
-             // simplest refined way is just re-render batches. 
-             // To perfectly go back to subjects of a specific batch, State variable batchIndex is needed.
-             // Added proper logic refined.
-             renderBatches(); 
         }
     </script>
 </body>
 </html>
+
