@@ -202,35 +202,27 @@
             document.getElementById('headTitle').innerText = "My Classroom";
         }
 
-        // FULL PROOF FAIL-SAFE LOGIC FOR SUBJECTS
         function showSubjects(batchIndex) {
             currentBatchIndex = batchIndex;
-            let batch = enrolled[batchIndex];
-            let subjects = [];
-
-            // Safe parsing to prevent blank screen error
-            if (batch && batch.subjects && Array.isArray(batch.subjects) && batch.subjects.length > 0) {
-                subjects = batch.subjects;
-            } else if (batch && typeof batch.subjects === 'string') {
-                try { subjects = JSON.parse(batch.subjects); } catch(e) { subjects = []; }
-            }
             
-            // Absolute Fallback
-            if (subjects.length === 0) {
-                subjects = ["English", "Physics", "Physical Chemistry", "Organic Chemistry", "Inorganic Chemistry", "Mathematics"];
-            }
+            // EXACT REAL LOGIC: Seedha batch se subjects uthayega
+            let subjects = enrolled[batchIndex].subjects; 
 
             let grid = document.getElementById('subjectGrid');
             grid.innerHTML = '';
 
-            subjects.forEach(subject => {
-                grid.innerHTML += `
-                    <div class="sub-card" onclick="openActionView('${subject}')">
-                        <span class="sub-icon">${icons[subject] || "📚"}</span>
-                        <div class="sub-name">${subject}</div>
-                    </div>
-                `;
-            });
+            if (subjects && subjects.length > 0) {
+                subjects.forEach(subject => {
+                    grid.innerHTML += `
+                        <div class="sub-card" onclick="openActionView('${subject}')">
+                            <span class="sub-icon">${icons[subject] || "📚"}</span>
+                            <div class="sub-name">${subject}</div>
+                        </div>
+                    `;
+                });
+            } else {
+                grid.innerHTML = `<div style="grid-column: span 2; text-align: center; color: var(--text-muted); padding: 20px;">No subjects assigned to this batch.</div>`;
+            }
 
             hideAllViews();
             document.getElementById('subjectView').style.display = 'block';
@@ -376,4 +368,3 @@
     </script>
 </body>
 </html>
-
