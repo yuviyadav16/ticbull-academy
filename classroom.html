@@ -218,14 +218,25 @@
             document.getElementById('batchView').innerHTML = html;
         };
 
-        function openSubjectView(batchTitle, index) {
+                function openSubjectView(batchTitle, index) {
             currentBatch = batchTitle;
             viewState = 2;
             document.getElementById('batchView').style.display = 'none';
             document.getElementById('subjectView').style.display = 'block';
             document.getElementById('headTitle').innerText = "Classroom";
 
-            let subs = window['batchSubs_' + index];
+            let enrolled = JSON.parse(localStorage.getItem('tb_enrolled') || '[]');
+            let targetBatch = enrolled[index];
+            
+            let subs = [];
+            if(targetBatch && targetBatch.subjects && targetBatch.subjects.length > 0) {
+                subs = targetBatch.subjects;
+            } else if(window['batchSubs_' + index] && window['batchSubs_' + index].length > 0) {
+                subs = window['batchSubs_' + index];
+            } else {
+                subs = ["English", "Physics", "Physical Chemistry", "Organic Chemistry", "Inorganic Chemistry", "Mathematics"];
+            }
+
             let html = '';
             subs.forEach(s => {
                 html += `
@@ -237,6 +248,7 @@
             });
             document.getElementById('subjectGrid').innerHTML = html;
         }
+
 
         function openActionView(subject) {
             currentSubject = subject;
