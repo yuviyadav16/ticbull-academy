@@ -30,6 +30,14 @@
       "use": "@vercel/static"
     },
     {
+      "src": "practice.html",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "pyqs.html",
+      "use": "@vercel/static"
+    },
+    {
       "src": "admin.html",
       "use": "@vercel/static"
     },
@@ -82,6 +90,14 @@
     {
       "source": "/chat.html",
       "destination": "/chat.html"
+    },
+    {
+      "source": "/practice.html",
+      "destination": "/practice.html"
+    },
+    {
+      "source": "/pyqs.html",
+      "destination": "/pyqs.html"
     },
     {
       "source": "/admin.html",
