@@ -185,28 +185,35 @@
             "Sociology":"👥", "Psychology":"🧠", "Accountancy":"🧾", "Business Studies":"💼",
             "Computer Science":"💻", "Artificial Intelligence":"🤖", "Physical Education":"🏃"
         };
-
-        window.onload = function() {
-            let enrolled = JSON.parse(localStorage.getItem('tb_enrolled') || '[]');
+                window.onload = function() {
+            // FIX: Agar sessionStorage mein naya checkout data hai, toh usko priority do!
+            let savedTitle = sessionStorage.getItem('tb_checkout_title');
+            let savedSubs = JSON.parse(sessionStorage.getItem('tb_checkout_subjects') || '[]');
             
-            if(enrolled.length === 0) {
-                let savedTitle = sessionStorage.getItem('tb_checkout_title') || "CBSE — Class 12 — Science — PCB";
-                let savedSubs = JSON.parse(sessionStorage.getItem('tb_checkout_subjects') || '[]');
-                
-                if(savedSubs.length === 0) {
-                    savedSubs = ["English", "Physics", "Zoology", "Botany", "Chemistry"];
-                }
-                
+            let enrolled = [];
+            if(savedTitle && savedSubs.length > 0) {
                 enrolled = [{
                     title: savedTitle,
                     date: "Today",
                     subjects: savedSubs
                 }];
+                // localStorage ko fresh data se update kar diya
+                localStorage.setItem('tb_enrolled', JSON.stringify(enrolled));
+            } else {
+                enrolled = JSON.parse(localStorage.getItem('tb_enrolled') || '[]');
+            }
+
+            if(enrolled.length === 0) {
+                enrolled = [{
+                    title: "CBSE — Class 12 — Science — PCM",
+                    date: "Today",
+                    subjects: ["English", "Physics", "Physical Chemistry", "Organic Chemistry", "Inorganic Chemistry", "Mathematics"]
+                }];
             }
 
             let html = '';
             enrolled.forEach((b, index) => {
-                window['batchSubs_' + index] = b.subjects || ["Physics", "Chemistry", "Biology", "English", "Mathematics"];
+                window['batchSubs_' + index] = b.subjects;
                 html += `
                     <div class="batch-card">
                         <div style="color:var(--success); font-size:12px; font-weight:800; margin-bottom:5px;"><i class="fa-solid fa-circle-check"></i> Premium Access</div>
