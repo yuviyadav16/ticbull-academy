@@ -14,13 +14,11 @@ CORS(app)
 # ========================================================
 # 🚀 1. BEAST MODE: MULTI-KEY ROTATION SYSTEM (25+ KEYS)
 # ========================================================
-# Ye script automatically env se saari keys utha legi jinka naam "GEMINI_API_KEY_" se shuru hota hai
 GEMINI_API_KEYS = []
 for key, value in os.environ.items():
     if key.startswith("GEMINI_API_KEY") and value.strip():
         GEMINI_API_KEYS.append(value.strip())
 
-# Agar koi list khali reh jaye, toh fallback
 if not GEMINI_API_KEYS:
     GEMINI_API_KEYS = [os.getenv("GEMINI_API_KEY", "")]
 
@@ -121,7 +119,6 @@ def verify_otp():
         return jsonify({"success": True, "message": "Verification successful!", "token": token, "user": user_data})
     return jsonify({"success": False, "message": "Invalid 6-Digit OTP!"}), 400
 
-# --- ACCOUNT & PROFILE ENDPOINTS ---
 @app.route('/api/send-delete-otp', methods=['POST'])
 def send_delete_otp():
     email = (request.get_json() or {}).get('email', '').strip().lower()
@@ -152,7 +149,6 @@ def update_profile():
         return jsonify({"success": True})
     return jsonify({"success": False})
 
-# --- DATA SYNC ENDPOINTS ---
 @app.route('/api/sync-batch', methods=['POST'])
 def sync_batch():
     data = request.get_json() or {}
@@ -236,7 +232,7 @@ def delete_session():
         requests.delete(db_url(f"chat_sessions/{sanitize_email(data.get('email'))}/{data.get('session_id')}.json"))
     return jsonify({"success": True})
 
-# --- SUPER SMART AI CHAT ENGINE (With Cache + Real Human Intelligence) ---
+# --- SUPER SMART AI CHAT ENGINE ---
 @app.route('/api/chat', methods=['POST'])
 def chat():
     data = request.get_json() or {}
@@ -283,13 +279,13 @@ def chat():
             daily_limit = 1000 
             if current_usage >= daily_limit: return jsonify({"success": True, "reply": f"🛑 **Daily Limit Reached!**"})
 
-    # ⚡ 2. SMART IMAGE GENERATOR
-    if "image" in prompt.lower() and len(prompt) < 60:
-        topic = prompt.replace("image", "").replace("generate", "").replace("prompt", "").strip()
+    # ⚡ 2. SMART IMAGE GENERATOR FIX
+    if "image" in prompt.lower() and len(prompt) < 100:
+        topic = prompt.lower().replace("describe an educational image prompt for:", "").replace("image", "").replace("generate", "").replace("prompt", "").replace("for:", "").strip()
         img_url = f"https://image.pollinations.ai/prompt/{urllib.parse.quote(topic)}?nologo=true&width=1024&height=1024"
-        return jsonify({"success": True, "reply": f"Ye rahi '{topic}' ki image:\n\n![Image]({img_url})"})
+        return jsonify({"success": True, "reply": f"Ye rahi is topic ki image:\n\n![Image]({img_url})"})
 
-    # ⚡ 3. CACHE SYSTEM (Saves API Limit!)
+    # ⚡ 3. CACHE SYSTEM
     prompt_key = urllib.parse.quote(prompt.lower().strip())
     cache_url = db_url(f"cache/{prompt_key}.json")
     
@@ -301,7 +297,7 @@ def chat():
                 return jsonify({"success": True, "reply": cached_reply, "source": "cache"})
         except: pass
 
-    # ⚡ 4. HYPER-REALISTIC PERSONA CONSTRUCTION
+    # ⚡ 4. HYPER-REALISTIC PERSONA
     gender_hint = "female" if teacher_gender.lower() == 'female' else "male"
     
     if gender_hint == "female":
@@ -311,21 +307,22 @@ def chat():
 
     system_instruction = f"""Act exactly as {teacher_name}, an elite and intelligent {subject} expert teacher at TicBull Academy.
 Student Name: {student_name}
-Student's Academic Level/Batch: {board} (CRITICAL: Use this ONLY to set the difficulty of your teaching. NEVER mention the batch name aloud unless they ask 'Mera batch kya hai?').
+Student's Academic Level/Batch: {board} (CRITICAL: Use this ONLY to set the difficulty of your teaching. NEVER mention the batch name aloud).
 
 CRITICAL RULES FOR REALISM:
-1. NATURAL HINGLISH: Speak like a highly educated Indian teacher. NEVER use cheap slang like 'teri', 'tera', 'yaar' awkwardly. Use 'tum' or 'aap'.
-2. NO ROBOTIC GREETINGS: If the student says "Hi" or "Hello", DO NOT reply with "Namaste Yuvraj, main Prof...". Just reply naturally like "Haan {student_name}, batao aaj kis topic mein doubt hai?"
-3. PERSONALITY: {persona}
-4. HOOK & GUIDE: Your job is to make them study 100%. If they talk about random things, hook them back to {subject} with a smart reply, a mild roast, or strict guidance.
-5. OUT OF SYLLABUS: You ONLY teach {subject}. For other subjects, firmly say: "Main sirf {subject} padhata hu, wo sawal unke teacher se poochho."
-6. APP & SUPPORT: If they ask about login, buying batches, or app issues, clearly say: "Beta, app ya account ki dikkat ke liye ticbull.support@gmail.com par mail kardo, team help kar degi."
-7. NO AI MENTIONS: NEVER say you are an AI, an assistant, Gemini, Groq, or a language model. You are a real human expert teacher.
+1. IMAGE READING: If the student uploads an image, analyze it extremely carefully and answer their questions based ONLY on the content of that image.
+2. NATURAL HINGLISH: Speak like a highly educated Indian teacher. NEVER use cheap slang like 'teri', 'tera', 'yaar' awkwardly. Use 'tum' or 'aap'.
+3. NO ROBOTIC GREETINGS: If the student says "Hi" or "Hello", DO NOT reply with "Namaste, main Prof...". Just reply naturally like "Haan {student_name}, batao aaj kis topic mein doubt hai?"
+4. PERSONALITY: {persona}
+5. HOOK & GUIDE: Your job is to make them study 100%.
+6. OUT OF SYLLABUS: You ONLY teach {subject}.
+7. APP & SUPPORT: If they ask about login/app issues, clearly say: "Beta, app ya account ki dikkat ke liye ticbull.support@gmail.com par mail kardo, team help kar degi."
+8. NO AI MENTIONS: NEVER say you are an AI, an assistant, or Gemini.
 """
 
     final_reply = None
     
-    # ⚡ 5. SMART ROUTER (Groq for engagement, Gemini for logic/files)
+    # ⚡ 5. SMART ROUTER
     is_simple_chat = len(prompt) < 150 and not attachments
     
     if is_simple_chat and GROQ_API_KEY:
@@ -338,11 +335,15 @@ CRITICAL RULES FOR REALISM:
 
     if not final_reply and VALID_KEYS:
         parts = [{"text": f"{system_instruction}\n\nStudent message: {prompt}"}]
+        
+        # 🔥 THE CRITICAL IMAGE BUG FIX 🔥
+        # Using camelCase "inlineData" and "mimeType" per Google REST API specs!
         for file_data in attachments:
             if "," in file_data:
-                parts.append({"inline_data": {"mime_type": file_data.split(';')[0].split(':')[1], "data": file_data.split(',')[1]}})
+                mime_type = file_data.split(';')[0].split(':')[1]
+                b64_data = file_data.split(',')[1]
+                parts.append({"inlineData": {"mimeType": mime_type, "data": b64_data}})
         
-        # Load Balancing across all valid keys
         random.shuffle(VALID_KEYS)
         for api_key in VALID_KEYS:
             try:
@@ -357,7 +358,6 @@ CRITICAL RULES FOR REALISM:
     if final_reply:
         formatted_reply = final_reply.replace("Gemini", "TicBull").replace("Google", "TicBull")
         
-        # Save to Cache if it was a text-only prompt
         if not attachments and FIREBASE_URL:
             try: requests.put(cache_url, json=formatted_reply)
             except: pass
@@ -367,7 +367,6 @@ CRITICAL RULES FOR REALISM:
         
     return jsonify({"success": False, "message": "Server error. Try again."}), 500
 
-# --- TEST GENERATOR ---
 @app.route('/api/generateTest', methods=['POST'])
 def generate_test():
     data = request.get_json() or {}
@@ -392,7 +391,6 @@ def generate_test():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-# --- ADMIN PANEL ENDPOINTS ---
 @app.route('/api/admin/data', methods=['POST'])
 def admin_data():
     data = request.get_json() or {}
