@@ -18,7 +18,6 @@ body.light-theme {
     --bg-color: #f1f5f9; --card-bg: #ffffff; --text-main: #0f172a; --text-muted: #64748b; 
     --border-color: #cbd5e1; --input-bg: #ffffff; --chat-user: #2563eb; --chat-ai: #f1f5f9;
 }
-
 * { margin:0; padding:0; box-sizing:border-box; font-family:-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; -webkit-tap-highlight-color: transparent; }
 body { background: #000; display: flex; justify-content: center; height: 100dvh; overflow: hidden; }
 
@@ -60,14 +59,6 @@ body.light-theme .chat-ai { color: #0f172a; border: none; }
 .chat-input { width: 100%; background: transparent; border: none; color: var(--text-main); font-size: 14.5px; padding: 10px 0; outline: none; max-height: 100px; resize: none; overflow-y: auto; }
 .attach-btn { color: var(--text-muted); font-size: 18px; cursor: pointer; padding: 5px; }
 .send-btn { width: 45px; height: 45px; border-radius: 50%; background: var(--accent-color); color: #fff; border: none; font-size: 16px; display: flex; justify-content: center; align-items: center; cursor: pointer; flex-shrink: 0; box-shadow: 0 4px 15px var(--accent-glow); transition: 0.2s;}
-.send-btn:disabled { background: var(--text-muted); box-shadow: none; cursor: not-allowed; }
-
-/* SHORTCUT MENU */
-.shortcut-menu { position: absolute; bottom: 85px; left: 20px; background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 20px; padding: 10px; display: none; flex-direction: column; gap: 5px; box-shadow: 0 15px 40px rgba(0,0,0,0.6); z-index: 100; animation: slideUp 0.2s ease-out; }
-.shortcut-menu.show { display: flex; }
-.short-item { padding: 12px 16px; color: var(--text-main); font-size: 14px; font-weight: 600; display: flex; align-items: center; gap: 14px; border-radius: 12px; cursor: pointer; transition: 0.2s; }
-.short-item:hover { background: rgba(255,255,255,0.05); color: var(--text-main); }
-@keyframes slideUp { from { transform: translateY(20px) scale(0.95); opacity: 0; } to { transform: translateY(0) scale(1); opacity: 1; } }
 
 /* MULTI-ATTACHMENT PREVIEW */
 .image-preview-container { display: none; padding: 10px 20px; background: var(--card-bg); border-radius: 16px; margin: 0 20px 10px 20px; border: 1px solid var(--border-color); gap: 15px; overflow-x: auto; }
@@ -93,28 +84,18 @@ body.light-theme .chat-ai { color: #0f172a; border: none; }
 .drawer-content { flex: 1; overflow-y: auto; padding: 10px 15px; }
 
 .new-chat-btn { display: flex; align-items: center; gap: 12px; padding: 12px 16px; background: transparent; border: none; border-radius: 20px; color: var(--text-main); font-size: 15px; font-weight: 500; cursor: pointer; transition: 0.2s; margin-bottom: 25px; width: fit-content; }
-.new-chat-btn:hover { background: rgba(255,255,255,0.05); }
 .recent-title { font-size: 13px; color: var(--text-muted); font-weight: 600; margin-bottom: 10px; padding-left: 10px; }
 .history-list { display: flex; flex-direction: column; gap: 4px; }
 .history-row { display: flex; align-items: center; justify-content: space-between; border-radius: 12px; transition: 0.2s; padding-right: 8px;}
-.history-row:hover { background: rgba(255,255,255,0.05); }
 .history-row.active { background: rgba(37,99,235,0.1); }
-.history-row.active .history-item { color: var(--accent-color); font-weight: 600; }
 .history-item { flex: 1; padding: 12px 14px; color: var(--text-main); font-size: 14px; cursor: pointer; display: flex; align-items: center; gap: 12px; overflow: hidden; }
 .history-title { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 190px; }
 .delete-chat-btn { background: transparent; border: none; color: var(--text-muted); font-size: 14px; cursor: pointer; padding: 8px; border-radius: 50%; transition: 0.2s; opacity: 0.6;}
-.delete-chat-btn:hover { color: #ef4444; background: rgba(239, 68, 68, 0.1); opacity: 1;}
+.delete-chat-btn:hover { color: #ef4444; opacity: 1;}
 
-/* MODAL */
-.modal-overlay { position:absolute; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); z-index:3000; display:none; justify-content:center; align-items:center; padding:20px; backdrop-filter: blur(2px); opacity: 0; transition: opacity 0.2s; }
-.modal-overlay.show { display: flex; opacity: 1; }
-.gemini-modal { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 24px; padding: 24px; width: 100%; max-width: 340px; box-shadow: 0 20px 50px rgba(0,0,0,0.5); transform: scale(0.9); transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
-.modal-overlay.show .gemini-modal { transform: scale(1); }
-.gemini-modal h3 { font-size: 22px; margin-bottom: 15px; font-weight: 500; color: var(--text-main); }
-.gemini-modal p { font-size: 14.5px; color: var(--text-muted); line-height: 1.5; margin-bottom: 30px; }
-.modal-actions { display: flex; justify-content: flex-end; gap: 10px; }
-.btn-text { background: transparent; border: none; color: var(--accent-color); font-weight: 600; font-size: 15px; padding: 10px 16px; cursor: pointer; border-radius: 20px; transition: 0.2s;}
-.btn-text:hover { background: rgba(37,99,235,0.1); }
+.shortcut-menu { position: absolute; bottom: 85px; left: 20px; background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 20px; padding: 10px; display: none; flex-direction: column; gap: 5px; box-shadow: 0 15px 40px rgba(0,0,0,0.6); z-index: 100; }
+.shortcut-menu.show { display: flex; }
+.short-item { padding: 12px 16px; color: var(--text-main); font-size: 14px; cursor: pointer; display: flex; align-items: center; gap: 14px; }
 </style>
 </head>
 <body>
@@ -122,7 +103,6 @@ body.light-theme .chat-ai { color: #0f172a; border: none; }
 <div class="app-container">
     <div id="custom-toast"><i class="fa-solid fa-circle-check toast-icon success"></i> <span id="toast-message">Notification</span></div>
 
-    <!-- HEADER -->
     <div class="chat-header">
         <div class="header-left">
             <button class="back-btn" onclick="window.history.back()"><i class="fa-solid fa-arrow-left"></i></button>
@@ -135,24 +115,15 @@ body.light-theme .chat-ai { color: #0f172a; border: none; }
         <button class="menu-btn" onclick="openHistoryDrawer()"><i class="fa-solid fa-ellipsis-vertical"></i></button>
     </div>
 
-    <!-- CHAT AREA -->
     <div class="chat-area" id="chatBox"></div>
 
-    <!-- MULTI IMAGE/PDF PREVIEW -->
-    <div class="image-preview-container" id="imagePreviewContainer">
-        <div id="attList" style="display:flex; gap:10px;"></div>
-    </div>
+    <div class="image-preview-container" id="imagePreviewContainer"><div id="attList" style="display:flex; gap:10px;"></div></div>
 
-    <!-- INPUT AREA -->
     <div class="input-wrapper">
         <div class="shortcut-menu" id="shortcutMenu">
             <div class="short-item" onclick="sendShortcut('short')"><i class="fa-solid fa-bolt" style="color:#f59e0b; width:20px;"></i> Short Notes</div>
-            <div class="short-item" onclick="sendShortcut('detail')"><i class="fa-solid fa-book-open" style="color:#2563eb; width:20px;"></i> Detailed Notes</div>
-            <div class="short-item" onclick="sendShortcut('mindmap')"><i class="fa-solid fa-network-wired" style="color:#10b981; width:20px;"></i> Mind Map</div>
             <div class="short-item" onclick="sendShortcut('image')"><i class="fa-solid fa-image" style="color:#8b5cf6; width:20px;"></i> Image Generate</div>
-            <div class="short-item" onclick="sendShortcut('video')"><i class="fa-solid fa-video" style="color:#ef4444; width:20px;"></i> Video Generate</div>
         </div>
-
         <div class="input-area">
             <button class="plus-btn" id="plusBtn" onclick="toggleShortcutMenu(event)"><i class="fa-solid fa-plus"></i></button>
             <div class="input-box">
@@ -164,38 +135,21 @@ body.light-theme .chat-ai { color: #0f172a; border: none; }
         </div>
     </div>
 
-    <!-- DRAWER & MODAL -->
     <div class="drawer-overlay" id="historyOverlay" onclick="closeHistoryDrawer()"></div>
     <div class="history-drawer" id="historyDrawer">
-        <div class="drawer-header">
-            <h2><img src="logo.png" style="width:24px; border-radius:50%;" onerror="this.style.display='none'"> TicBull AI</h2>
-            <button class="drawer-close" onclick="closeHistoryDrawer()"><i class="fa-solid fa-xmark"></i></button>
-        </div>
+        <div class="drawer-header"><h2>TicBull AI</h2><button class="drawer-close" onclick="closeHistoryDrawer()"><i class="fa-solid fa-xmark"></i></button></div>
         <div class="drawer-content">
             <button class="new-chat-btn" onclick="startNewChat()"><i class="fa-solid fa-pen-to-square"></i> New chat</button>
             <div class="recent-title">Recent</div>
             <div class="history-list" id="historyListUI"></div>
         </div>
     </div>
-
-    <div class="modal-overlay" id="warningModal">
-        <div class="gemini-modal">
-            <h3>Delete chat?</h3>
-            <p>You'll no longer see this chat here. This will also delete related activity like prompts and responses.</p>
-            <div class="modal-actions">
-                <button class="btn-text" style="color:var(--text-main);" onclick="closeDeleteWarning()">Cancel</button>
-                <button class="btn-text" onclick="confirmDeleteChat()">Confirm</button>
-            </div>
-        </div>
-    </div>
 </div>
 
 <script>
-/* Teacher Assignment Setup */
-const fNames = ["Priya", "Neha", "Riya", "Kavya", "Ananya", "Sneha", "Kriti", "Pooja", "Megha", "Shruti"];
-const mNames = ["Aarav", "Aditya", "Kabir", "Rohan", "Rahul", "Varun", "Samar", "Aman", "Ishaan", "Kunal"];
-const lastNames = ["Sharma", "Gupta", "Verma", "Yadav", "Singh", "Kumar", "Rao", "Mehta", "Chauhan", "Patel"];
-
+const fNames = ["Priya", "Neha", "Riya", "Kavya", "Ananya", "Sneha"];
+const mNames = ["Aarav", "Aditya", "Kabir", "Rohan", "Rahul", "Varun"];
+const lastNames = ["Sharma", "Gupta", "Verma", "Yadav", "Singh"];
 const FEMALE_AVATAR = "https://raw.githubusercontent.com/yuviyadav16/ticbull-academy/main/11723.png";
 const MALE_AVATAR = "https://raw.githubusercontent.com/yuviyadav16/ticbull-academy/main/11708.png";
 
@@ -225,27 +179,17 @@ if (!currentSessionId) {
 }
 let chatTitle = localStorage.getItem(`${currentSessionId}_title`) || `${activeSubject} Thread`;
 let teacher = getTeacherDetails(activeSubject);
-
 let currentAttachments = []; 
-let sessionToDelete = null;
 
-function getGreeting(isNew = false) {
-    const studentFirstName = studentName.split(" ")[0];
-    if(isNew) {
-        return `<strong style="display:block; margin-bottom:4px; font-size:13px;">${teacher.name}</strong>Haan ${studentFirstName}, batao aaj kaun sa doubt clear karna hai?`;
-    } else {
-        return `<strong style="display:block; margin-bottom:4px; font-size:13px;">${teacher.name}</strong>Welcome ${studentFirstName}! <span style="color:var(--accent-color); font-weight:bold;">${activeSubject}</span> ka koi bhi doubt ho, toh photo/PDF bhejo ya yahan type karke pooch lo.`;
-    }
+function getGreeting() {
+    return `<strong style="display:block; margin-bottom:4px; font-size:13px;">${teacher.name}</strong>Haan ${studentName.split(" ")[0]}, batao aaj kaun sa doubt clear karna hai?`;
 }
 
 window.addEventListener('DOMContentLoaded', () => {
     document.documentElement.style.setProperty('--accent-color', localStorage.getItem('tb_theme_color') || '#2563eb');
-    if(localStorage.getItem('tb_theme') === 'light') document.body.classList.add('light-theme');
-
     document.getElementById('teacherName').innerText = teacher.name;
     document.getElementById('teacherAvatar').src = teacher.avatar;
     document.getElementById('subjectName').innerText = activeSubject;
-
     loadChatHistory();
 });
 
@@ -255,24 +199,19 @@ function showToast(msg, type='success') {
     toast.classList.add('show'); setTimeout(() => toast.classList.remove('show'), 3000);
 }
 
-/* UI Menus */
 function toggleShortcutMenu(e) { e.stopPropagation(); document.getElementById('shortcutMenu').classList.toggle('show'); }
-document.addEventListener('click', (e) => {
-    if(!e.target.closest('.input-area') && !e.target.closest('.shortcut-menu')) document.getElementById('shortcutMenu').classList.remove('show');
-});
+function sendShortcut(action) {
+    const input = document.getElementById('promptInput');
+    if(action === 'short') input.value = "Please provide short notes on: ";
+    if(action === 'image') input.value = "Describe an educational image prompt for: ";
+    input.focus(); document.getElementById('shortcutMenu').classList.remove('show');
+}
 
-function openHistoryDrawer() {
-    document.getElementById('historyOverlay').classList.add('show');
-    document.getElementById('historyDrawer').classList.add('open');
-    populateHistoryDrawer();
-}
-function closeHistoryDrawer() {
-    document.getElementById('historyDrawer').classList.remove('open');
-    document.getElementById('historyOverlay').classList.remove('show');
-}
+function openHistoryDrawer() { document.getElementById('historyOverlay').classList.add('show'); document.getElementById('historyDrawer').classList.add('open'); populateHistoryDrawer(); }
+function closeHistoryDrawer() { document.getElementById('historyDrawer').classList.remove('open'); document.getElementById('historyOverlay').classList.remove('show'); }
+
 function populateHistoryDrawer() {
-    const listUI = document.getElementById('historyListUI');
-    listUI.innerHTML = "";
+    const listUI = document.getElementById('historyListUI'); listUI.innerHTML = "";
     let sessions = [];
     for(let i=0; i<localStorage.length; i++) {
         let key = localStorage.key(i);
@@ -281,79 +220,44 @@ function populateHistoryDrawer() {
         }
     }
     sessions.sort((a,b) => b.time - a.time);
-    
-    if(sessions.length === 0) { listUI.innerHTML = `<div style="font-size:12px; color:var(--text-muted); padding:10px;">No recent chats.</div>`; return; }
-    
     sessions.forEach(s => {
         let isActive = (s.id === currentSessionId) ? "active" : "";
-        listUI.innerHTML += `
-            <div class="history-row ${isActive}">
-                <div class="history-item" onclick="switchChat('${s.id}')">
-                    <i class="fa-regular fa-message"></i> <span class="history-title">${s.title}</span>
-                </div>
-                <button class="delete-chat-btn" onclick="openDeleteWarning('${s.id}', event)"><i class="fa-solid fa-trash"></i></button>
-            </div>
-        `;
+        listUI.innerHTML += `<div class="history-row ${isActive}"><div class="history-item" onclick="switchChat('${s.id}')"><i class="fa-regular fa-message"></i> <span class="history-title">${s.title}</span></div><button class="delete-chat-btn" onclick="deleteSession('${s.id}', event)"><i class="fa-solid fa-trash"></i></button></div>`;
     });
 }
-function switchChat(key) {
-    currentSessionId = key;
-    localStorage.setItem(`tb_last_session_${cleanBatch}_${cleanSubject}`, currentSessionId);
-    chatTitle = localStorage.getItem(`${currentSessionId}_title`) || `${activeSubject} Thread`;
-    loadChatHistory();
-    closeHistoryDrawer();
-}
-function startNewChat() {
-    currentSessionId = sessionPrefix + Date.now();
-    localStorage.setItem(`tb_last_session_${cleanBatch}_${cleanSubject}`, currentSessionId);
-    chatTitle = `New Chat`;
-    document.getElementById('chatBox').innerHTML = `
-        <div class="chat-bubble chat-ai">
-            <img src="${teacher.avatar}" class="ai-avatar-small">
-            <div>${getGreeting(true)}</div>
-        </div>
-    `;
-    saveChatHistory();
-    closeHistoryDrawer();
-}
+function switchChat(key) { currentSessionId = key; localStorage.setItem(`tb_last_session_${cleanBatch}_${cleanSubject}`, currentSessionId); loadChatHistory(); closeHistoryDrawer(); }
+function startNewChat() { currentSessionId = sessionPrefix + Date.now(); localStorage.setItem(`tb_last_session_${cleanBatch}_${cleanSubject}`, currentSessionId); document.getElementById('chatBox').innerHTML = `<div class="chat-bubble chat-ai"><img src="${teacher.avatar}" class="ai-avatar-small"><div>${getGreeting()}</div></div>`; saveChatHistory(); closeHistoryDrawer(); }
+function deleteSession(id, e) { e.stopPropagation(); localStorage.removeItem(id); localStorage.removeItem(`${id}_title`); if(id === currentSessionId) startNewChat(); populateHistoryDrawer(); }
 
-function openDeleteWarning(id, event) {
-    if(event) event.stopPropagation();
-    sessionToDelete = id;
-    closeHistoryDrawer();
-    const modal = document.getElementById('warningModal');
-    modal.style.display = 'flex';
-    setTimeout(() => modal.classList.add('show'), 10);
-}
-function closeDeleteWarning() {
-    const modal = document.getElementById('warningModal');
-    modal.classList.remove('show');
-    setTimeout(() => modal.style.display = 'none', 200);
-}
-function confirmDeleteChat() {
-    if(sessionToDelete) {
-        localStorage.removeItem(sessionToDelete);
-        localStorage.removeItem(`${sessionToDelete}_title`);
-        fetch('/api/delete-session', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ email: studentEmail, session_id: sessionToDelete }) });
-        if(sessionToDelete === currentSessionId) startNewChat();
-        closeDeleteWarning();
-        showToast("Chat deleted", "success");
-    }
-}
-
-/* File Upload */
+// 🔥 THE IMAGE COMPRESSION FIX 🔥 (Prevents Vercel Timeout)
 function handleFileUpload(event) {
     const files = event.target.files;
     if(!files || files.length === 0) return;
     for(let file of files) {
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            currentAttachments.push({ data: e.target.result, isPdf: file.type === 'application/pdf', name: file.name });
-            renderAttachments();
-        };
-        reader.readAsDataURL(file);
+        if(file.type.startsWith('image/')) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const img = new Image();
+                img.onload = function() {
+                    const canvas = document.createElement('canvas');
+                    const ctx = canvas.getContext('2d');
+                    const maxW = 1000, maxH = 1000;
+                    let w = img.width, h = img.height;
+                    if(w > maxW || h > maxH) { if(w > h) { h = Math.round((h*maxW)/w); w = maxW; } else { w = Math.round((w*maxH)/h); h = maxH; } }
+                    canvas.width = w; canvas.height = h;
+                    ctx.drawImage(img, 0, 0, w, h);
+                    currentAttachments.push({ data: canvas.toDataURL('image/jpeg', 0.7), isPdf: false, name: file.name });
+                    renderAttachments();
+                }
+                img.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        } else {
+            const reader = new FileReader();
+            reader.onload = function(e) { currentAttachments.push({ data: e.target.result, isPdf: true, name: file.name }); renderAttachments(); };
+            reader.readAsDataURL(file);
+        }
     }
-    document.getElementById('fileInput').value = "";
 }
 
 function renderAttachments() {
@@ -361,74 +265,28 @@ function renderAttachments() {
     const list = document.getElementById('attList');
     if(currentAttachments.length === 0) { container.style.display = 'none'; return; }
     container.style.display = 'flex'; list.innerHTML = "";
-    
     currentAttachments.forEach((att, index) => {
         let content = att.isPdf ? `<i class="fa-solid fa-file-pdf" style="font-size:28px; color:#ef4444;"></i>` : `<img src="${att.data}">`;
-        list.innerHTML += `<div class="att-box">${content}<i class="fa-solid fa-circle-xmark remove-att" onclick="removeAttachment(${index})"></i></div>`;
+        list.innerHTML += `<div class="att-box">${content}<i class="fa-solid fa-circle-xmark remove-att" onclick="currentAttachments.splice(${index}, 1); renderAttachments();"></i></div>`;
     });
 }
-function removeAttachment(index) { currentAttachments.splice(index, 1); renderAttachments(); }
 
-function sendShortcut(action) {
-    const input = document.getElementById('promptInput');
-    let prefix = "";
-    if(action === 'short') prefix = "Please provide short notes on: ";
-    if(action === 'detail') prefix = "Provide detailed notes with examples on: ";
-    if(action === 'mindmap') prefix = "Create a text-based mind map for: ";
-    if(action === 'image') prefix = "Describe an educational image prompt for: ";
-    if(action === 'video') prefix = "Write a short video script explaining: ";
-    
-    input.value = prefix;
-    input.focus();
-    document.getElementById('shortcutMenu').classList.remove('show');
-}
+function scrollToBottom() { const chatBox = document.getElementById('chatBox'); chatBox.scrollTop = chatBox.scrollHeight; }
 
-function scrollToBottom() {
-    const chatBox = document.getElementById('chatBox');
-    chatBox.scrollTop = chatBox.scrollHeight;
-}
-
-// FORMAT MARKDOWN TO RENDER LINKS/IMAGES/BOLD TEXT CORRECTLY
 function formatMarkdown(text) {
     let html = text.replace(/!\[.*?\]\((.*?)\)/g, '<img src="$1" style="width:100%; border-radius:12px; margin-top:10px; box-shadow:0 4px 10px rgba(0,0,0,0.2);">');
     html = html.replace(/\*\*(.*?)\*\*/g, '<strong style="color:var(--accent-color);">$1</strong>');
-    html = html.replace(/\*(.*?)\*/g, '<em>$1</em>');
-    html = html.replace(/\n/g, '<br>');
-    return html;
+    return html.replace(/\n/g, '<br>');
 }
 
 function appendMessage(sender, text, attachments=[]) {
     const chatBox = document.getElementById('chatBox');
     const div = document.createElement('div');
+    let attHTML = attachments.map(att => att.isPdf ? `<div style="background:var(--input-bg); border:1px solid var(--border-color); padding:10px; border-radius:10px; margin-top:10px;"><i class="fa-solid fa-file-pdf" style="color:#ef4444;"></i> ${att.name||'Doc'}</div>` : `<img src="${att.data}" class="chat-image">`).join('');
     
-    let attHTML = "";
-    attachments.forEach(att => {
-        if(att.isPdf) {
-            attHTML += `<div style="background:var(--input-bg); border:1px solid var(--border-color); padding:10px; border-radius:10px; margin-top:10px; display:flex; align-items:center; gap:10px;"><i class="fa-solid fa-file-pdf" style="color:#ef4444; font-size:24px;"></i> <span style="font-size:12px; font-weight:bold;">${att.name || 'Document.pdf'}</span></div>`;
-        } else {
-            attHTML += `<img src="${att.data}" class="chat-image">`;
-        }
-    });
-    
-    if(sender === 'user') {
-        div.className = "chat-bubble chat-user";
-        div.innerHTML = `${text} ${attHTML}`;
-    } else {
-        div.className = "chat-bubble chat-ai";
-        const formattedText = formatMarkdown(text);
-        div.innerHTML = `<img src="${teacher.avatar}" class="ai-avatar-small"><div><strong style="display:block; margin-bottom:4px; font-size:13px;">${teacher.name}</strong>${formattedText}</div>`;
-    }
-    chatBox.appendChild(div);
-    scrollToBottom();
-    saveChatHistory();
-}
-
-/* Chat Engine */
-function setInputState(disabled) {
-    document.getElementById('promptInput').disabled = disabled;
-    document.getElementById('sendBtn').disabled = disabled;
-    document.getElementById('plusBtn').disabled = disabled;
-    document.getElementById('attachLabel').style.pointerEvents = disabled ? 'none' : 'auto';
+    if(sender === 'user') { div.className = "chat-bubble chat-user"; div.innerHTML = `${text} ${attHTML}`; } 
+    else { div.className = "chat-bubble chat-ai"; div.innerHTML = `<img src="${teacher.avatar}" class="ai-avatar-small"><div><strong style="display:block; margin-bottom:4px; font-size:13px;">${teacher.name}</strong>${formatMarkdown(text)}</div>`; }
+    chatBox.appendChild(div); scrollToBottom(); saveChatHistory();
 }
 
 function sendMessage() {
@@ -436,100 +294,45 @@ function sendMessage() {
     const text = input.value.trim();
     if(!text && currentAttachments.length === 0) return;
 
-    setInputState(true); 
-
+    input.disabled = true; document.getElementById('sendBtn').disabled = true;
     const sentAttachments = [...currentAttachments];
     appendMessage('user', text, sentAttachments);
     
-    if(document.querySelectorAll('.chat-user').length === 1 && text) {
-        chatTitle = text.substring(0, 25) + (text.length > 25 ? "..." : "");
-        localStorage.setItem(`${currentSessionId}_title`, chatTitle);
-    }
+    // 🔥 MEMORY TRACKER: Send recent history so AI doesn't act like a robot!
+    let historyArr = [];
+    document.querySelectorAll('.chat-bubble').forEach(b => {
+        let isUser = b.classList.contains('chat-user');
+        let txt = b.innerText.replace(/Prof\..*?\n/, '').trim();
+        if(txt) historyArr.push((isUser ? "Student: " : "Teacher: ") + txt);
+    });
+    let recentHistory = historyArr.slice(-6).join('\n'); // Yaad rakhega pichhli 6 baatein
 
-    input.value = ""; input.style.height = ''; 
-    currentAttachments = []; renderAttachments();
+    if(document.querySelectorAll('.chat-user').length === 1 && text) { localStorage.setItem(`${currentSessionId}_title`, text.substring(0,25)); }
+    input.value = ""; currentAttachments = []; renderAttachments();
 
-    const tempIndicator = document.createElement('div');
-    tempIndicator.id = 'tempTyping';
-    tempIndicator.className = 'typing-indicator';
-    tempIndicator.innerHTML = '<div class="dot"></div><div class="dot"></div><div class="dot"></div>';
-    document.getElementById('chatBox').appendChild(tempIndicator);
-    scrollToBottom();
-
-    const apiImagesData = sentAttachments.map(a => a.data);
+    const ti = document.createElement('div'); ti.id = 'tempTyping'; ti.className = 'typing-indicator';
+    ti.innerHTML = '<div class="dot"></div><div class="dot"></div><div class="dot"></div>';
+    document.getElementById('chatBox').appendChild(ti); scrollToBottom();
 
     fetch('/api/chat', {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({
-            prompt: text, images: apiImagesData,
-            board: activeBatch, subject: activeSubject, class: "", stream: "", lang: "Hinglish",
-            student_name: studentName, email: studentEmail, token: sessionToken,
-            teacher_name: teacher.name, teacher_gender: teacher.gender
-        })
-    })
-    .then(res => res.json())
-    .then(data => {
-        const ti = document.getElementById('tempTyping');
-        if(ti) ti.remove();
-        setInputState(false); 
-        
-        if(data.success) {
-            appendMessage('ai', data.reply);
-        } else {
-            if(data.session_expired) {
-                showToast(data.message, "error");
-                setTimeout(()=> window.location.href="index.html", 2000);
-            } else {
-                appendMessage('ai', "⚠️ Server overload or API Key error. Please try again.");
-            }
-        }
-    })
-    .catch(err => {
-        const ti = document.getElementById('tempTyping');
-        if(ti) ti.remove();
-        setInputState(false);
-        appendMessage('ai', "⚠️ Network connection lost. Please check your internet.");
-    });
-}
-
-function saveChatHistory() {
-    const chatBox = document.getElementById('chatBox');
-    localStorage.setItem(currentSessionId, chatBox.innerHTML);
-    fetch('/api/sync-session', {
         method: 'POST', headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({ email: studentEmail, session_id: currentSessionId, title: chatTitle, html: chatBox.innerHTML })
+        body: JSON.stringify({
+            prompt: text, images: sentAttachments.map(a => a.data), history: recentHistory,
+            board: activeBatch, subject: activeSubject, student_name: studentName, email: studentEmail, token: sessionToken, teacher_name: teacher.name, teacher_gender: teacher.gender
+        })
+    }).then(res => res.json()).then(data => {
+        document.getElementById('tempTyping').remove(); input.disabled = false; document.getElementById('sendBtn').disabled = false;
+        if(data.success) appendMessage('ai', data.reply);
+        else appendMessage('ai', "⚠️ Server overload. Please try again.");
     });
 }
 
+function saveChatHistory() { localStorage.setItem(currentSessionId, document.getElementById('chatBox').innerHTML); }
 function loadChatHistory() {
     const saved = localStorage.getItem(currentSessionId);
-    if(saved) {
-        document.getElementById('chatBox').innerHTML = saved;
-        scrollToBottom();
-    } else {
-        document.getElementById('chatBox').innerHTML = `
-            <div class="chat-bubble chat-ai">
-                <img src="${teacher.avatar}" class="ai-avatar-small">
-                <div>${getGreeting(false)}</div>
-            </div>
-        `;
-        
-        fetch('/api/get-session-html', {
-            method: 'POST', headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({ email: studentEmail, session_id: currentSessionId })
-        })
-        .then(res => res.json())
-        .then(data => {
-            if(data.success && data.html) {
-                document.getElementById('chatBox').innerHTML = data.html;
-                localStorage.setItem(currentSessionId, data.html);
-                scrollToBottom();
-            }
-        }).catch(e => console.log("Cloud history checked"));
-    }
+    if(saved) { document.getElementById('chatBox').innerHTML = saved; scrollToBottom(); } 
+    else { document.getElementById('chatBox').innerHTML = `<div class="chat-bubble chat-ai"><img src="${teacher.avatar}" class="ai-avatar-small"><div>${getGreeting(true)}</div></div>`; }
 }
 </script>
-
 </body>
 </html>
