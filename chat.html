@@ -235,9 +235,9 @@ let sessionToDelete = null;
 function getGreeting(isNew = false) {
     const studentFirstName = studentName.split(" ")[0];
     if(isNew) {
-        return `<strong style="display:block; margin-bottom:4px; font-size:13px;">${teacher.name}</strong>Haan ${studentFirstName} beta, batao aaj kaun sa doubt clear karna hai?`;
+        return `<strong style="display:block; margin-bottom:4px; font-size:13px;">${teacher.name}</strong>Haan ${studentFirstName}, batao aaj kaun sa doubt clear karna hai?`;
     } else {
-        return `<strong style="display:block; margin-bottom:4px; font-size:13px;">${teacher.name}</strong>Welcome ${studentFirstName}! <span style="color:var(--accent-color); font-weight:bold;">${activeSubject}</span> mein jo bhi doubt ho, bina jhijhak poochho. Main yahin hu.`;
+        return `<strong style="display:block; margin-bottom:4px; font-size:13px;">${teacher.name}</strong>Welcome ${studentFirstName}! <span style="color:var(--accent-color); font-weight:bold;">${activeSubject}</span> ka koi bhi doubt ho, toh photo/PDF bhejo ya yahan type karke pooch lo.`;
     }
 }
 
@@ -528,3 +528,4 @@ function loadChatHistory() {
 </body>
 </html>
 
+            
