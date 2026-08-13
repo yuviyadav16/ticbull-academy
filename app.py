@@ -12,15 +12,19 @@ app = Flask(__name__)
 CORS(app)
 
 # ========================================================
-# 🚀 FULL MULTI-KEY & ROUTING SYSTEM
+# 🚀 1. BEAST MODE: MULTI-KEY ROTATION SYSTEM (25+ KEYS)
 # ========================================================
-GEMINI_API_KEYS = [
-    os.getenv("GEMINI_API_KEY", ""), 
-    "AAPKI_2ND_KEY_YAHAN_DAALEIN",
-    "AAPKI_3RD_KEY_YAHAN_DAALEIN",
-    "AAPKI_4TH_KEY_YAHAN_DAALEIN"
-]
-VALID_KEYS = [k for k in GEMINI_API_KEYS if k.strip() and "YAHAN_DAALEIN" not in k]
+# Ye script automatically env se saari keys utha legi jinka naam "GEMINI_API_KEY_" se shuru hota hai
+GEMINI_API_KEYS = []
+for key, value in os.environ.items():
+    if key.startswith("GEMINI_API_KEY") and value.strip():
+        GEMINI_API_KEYS.append(value.strip())
+
+# Agar koi list khali reh jaye, toh fallback
+if not GEMINI_API_KEYS:
+    GEMINI_API_KEYS = [os.getenv("GEMINI_API_KEY", "")]
+
+VALID_KEYS = list(set([k for k in GEMINI_API_KEYS if k.strip() and "YAHAN_DAALEIN" not in k]))
 GROQ_API_KEY = os.getenv("GROQ_API_KEY", "")
 
 # Environment Variables
@@ -232,7 +236,7 @@ def delete_session():
         requests.delete(db_url(f"chat_sessions/{sanitize_email(data.get('email'))}/{data.get('session_id')}.json"))
     return jsonify({"success": True})
 
-# --- SUPER SMART AI CHAT ENGINE (Real Human Intelligence) ---
+# --- SUPER SMART AI CHAT ENGINE (With Cache + Real Human Intelligence) ---
 @app.route('/api/chat', methods=['POST'])
 def chat():
     data = request.get_json() or {}
@@ -279,13 +283,25 @@ def chat():
             daily_limit = 1000 
             if current_usage >= daily_limit: return jsonify({"success": True, "reply": f"🛑 **Daily Limit Reached!**"})
 
-    # ⚡ 1. SMART IMAGE GENERATOR
+    # ⚡ 2. SMART IMAGE GENERATOR
     if "image" in prompt.lower() and len(prompt) < 60:
         topic = prompt.replace("image", "").replace("generate", "").replace("prompt", "").strip()
         img_url = f"https://image.pollinations.ai/prompt/{urllib.parse.quote(topic)}?nologo=true&width=1024&height=1024"
         return jsonify({"success": True, "reply": f"Ye rahi '{topic}' ki image:\n\n![Image]({img_url})"})
 
-    # ⚡ 2. HYPER-REALISTIC PERSONA CONSTRUCTION
+    # ⚡ 3. CACHE SYSTEM (Saves API Limit!)
+    prompt_key = urllib.parse.quote(prompt.lower().strip())
+    cache_url = db_url(f"cache/{prompt_key}.json")
+    
+    if not attachments and FIREBASE_URL:
+        try:
+            cached_reply = requests.get(cache_url).json()
+            if cached_reply:
+                if email: requests.put(usage_url, json=current_usage + 1)
+                return jsonify({"success": True, "reply": cached_reply, "source": "cache"})
+        except: pass
+
+    # ⚡ 4. HYPER-REALISTIC PERSONA CONSTRUCTION
     gender_hint = "female" if teacher_gender.lower() == 'female' else "male"
     
     if gender_hint == "female":
@@ -309,7 +325,7 @@ CRITICAL RULES FOR REALISM:
 
     final_reply = None
     
-    # ⚡ 3. SMART ROUTER (Groq for engagement, Gemini for logic/files)
+    # ⚡ 5. SMART ROUTER (Groq for engagement, Gemini for logic/files)
     is_simple_chat = len(prompt) < 150 and not attachments
     
     if is_simple_chat and GROQ_API_KEY:
@@ -326,6 +342,8 @@ CRITICAL RULES FOR REALISM:
             if "," in file_data:
                 parts.append({"inline_data": {"mime_type": file_data.split(';')[0].split(':')[1], "data": file_data.split(',')[1]}})
         
+        # Load Balancing across all valid keys
+        random.shuffle(VALID_KEYS)
         for api_key in VALID_KEYS:
             try:
                 res = requests.post(f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={api_key}", 
@@ -337,8 +355,16 @@ CRITICAL RULES FOR REALISM:
             except: continue
 
     if final_reply:
+        formatted_reply = final_reply.replace("Gemini", "TicBull").replace("Google", "TicBull")
+        
+        # Save to Cache if it was a text-only prompt
+        if not attachments and FIREBASE_URL:
+            try: requests.put(cache_url, json=formatted_reply)
+            except: pass
+            
         if email and FIREBASE_URL: requests.put(usage_url, json=current_usage + 1)
-        return jsonify({"success": True, "reply": final_reply.replace("Gemini", "TicBull").replace("Google", "TicBull")})
+        return jsonify({"success": True, "reply": formatted_reply})
+        
     return jsonify({"success": False, "message": "Server error. Try again."}), 500
 
 # --- TEST GENERATOR ---
