@@ -17,7 +17,7 @@
 :root { 
     --bg-color: #030712; 
     --card-bg: rgba(15, 23, 42, 0.95); 
-    --accent-color: #e9155c; /* Default fallback */
+    --accent-color: #e9155c; 
     --accent-glow: rgba(233, 21, 92, 0.45); 
     --text-main: #f8fafc; 
     --text-muted: #94a3b8; 
@@ -212,7 +212,6 @@ body.light-theme .card { box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
 
 <body>
 
-<!-- FIX 1: INSTANT COLOR APPLY BEFORE PAGE LOADS (No Pink Flash) -->
 <script>
   (function() {
       const savedColor = localStorage.getItem('ticbull_theme_color');
@@ -229,8 +228,8 @@ body.light-theme .card { box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
 
 <header class="header">
   <div class="top">
-    <!-- FIX 2: SAFE BACK BUTTON FUNCTION -->
-    <button class="back" onclick="goDashboard()"><i class="fa-solid fa-arrow-left"></i></button>
+    <!-- FIX 1: EXTREMELY SAFE INLINE BACK BUTTON -->
+    <button type="button" class="back" onclick="window.location.replace('dashboard.html')"><i class="fa-solid fa-arrow-left"></i></button>
     <div class="brand">TicBull <span>Academy</span></div>
   </div>
 
@@ -277,38 +276,32 @@ body.light-theme .card { box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
 
 <script>
 /* =========================================================
-   CLICK SOUND SYSTEM (FIXED TO PREVENT CRASHES)
+   CLICK SOUND SYSTEM (FIX 2: BUG-FREE AUDIO ENGINE)
 ========================================================= */
 let appSoundEnabled = localStorage.getItem('ticbull_sound') !== 'false';
-const AudioContext = window.AudioContext || window.webkitAudioContext;
-let audioCtx;
+const AudioCtx = window.AudioContext || window.webkitAudioContext;
+let audioCtxInstance;
 
 function playClickSound() {
     try {
-        if(!appSoundEnabled) return;
-        if(!audioCtx) audioCtx = new AudioContext();
-        if(audioCtx.state === 'suspended') audioCtx.resume();
-        const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain();
-        osc.type = 'sine'; osc.frequency.setValueAtTime(800, audioCtx.currentTime);
-        gain.gain.setValueAtTime(0.05, audioCtx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.1);
-        osc.connect(gain); gain.connect(audioCtx.destination);
-        osc.start(); osc.stop(audioCtx.currentTime + 0.1);
+        if(!appSoundEnabled || !AudioCtx) return;
+        if(!audioCtxInstance) audioCtxInstance = new AudioCtx();
+        if(audioCtxInstance.state === 'suspended') audioCtxInstance.resume();
+        const osc = audioCtxInstance.createOscillator(); 
+        const gain = audioCtxInstance.createGain();
+        osc.type = 'sine'; osc.frequency.setValueAtTime(800, audioCtxInstance.currentTime);
+        gain.gain.setValueAtTime(0.05, audioCtxInstance.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, audioCtxInstance.currentTime + 0.1);
+        osc.connect(gain); gain.connect(audioCtxInstance.destination);
+        osc.start(); osc.stop(audioCtxInstance.currentTime + 0.1);
     } catch(e) {
-        // Silently ignore audio errors so buttons keep working
+        // Safe Catch - Will not freeze the page if audio fails
     }
 }
 
 document.addEventListener('click', function(e) {
     if(e.target.closest('button') || e.target.closest('.tab') || e.target.closest('.filter')) playClickSound();
 });
-
-/* =========================================================
-   SAFE NAVIGATION FUNCTION
-========================================================= */
-function goDashboard() { 
-    window.location.href = "dashboard.html"; 
-}
 
 /* =========================================================
    ICONS
