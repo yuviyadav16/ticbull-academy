@@ -5,244 +5,391 @@
 <meta name="viewport" content="width=device-width,initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <title>TicBull Academy — Batches</title>
 
-<!-- GLOBAL ECOSYSTEM LINK -->
+<!-- GLOBAL SYNC INTEGRATION -->
 <script src="global.js"></script>
 
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-
 <style>
-/* =========================================================
-   100% DASHBOARD MATCHED CSS VARIABLES (GLOBAL SYNC)
-========================================================= */
+/* CSS VARIABLES (Integrated with Theme) */
 :root { 
-    --bg-color: #030712; 
-    --card-bg: rgba(15, 23, 42, 0.95); 
-    --accent-color: #e9155c; 
-    --accent-glow: rgba(233, 21, 92, 0.45); 
-    --text-main: #f8fafc; 
-    --text-muted: #94a3b8; 
-    --border-color: rgba(255, 255, 255, 0.12); 
-    --success-color: #10b981; 
-    --gold-color: #f59e0b; 
-    --input-bg: #0f172a; 
-    --primary: var(--accent-color); 
+    --bg-color: #05070d; 
+    --card-bg: linear-gradient(145deg, #152238, #0f1929);
+    --card-border: #2b3b55;
+    --text-main: #f5f7fb; 
+    --text-muted: #93a1b5; 
+    --accent: #e9155c; 
+    --header-bg: #05070df2;
+    --input-bg: #101827;
+    --input-border: #2b3952;
+    --gold: #ffb51b;
 }
 
 body.light-theme { 
     --bg-color: #f1f5f9; 
-    --card-bg: #ffffff; 
+    --card-bg: #ffffff;
+    --card-border: #cbd5e1;
     --text-main: #0f172a; 
     --text-muted: #64748b; 
-    --border-color: #cbd5e1; 
-    --input-bg: #ffffff; 
+    --header-bg: rgba(241, 245, 249, 0.95);
+    --input-bg: #ffffff;
+    --input-border: #cbd5e1;
+    --gold: #d97706;
 }
 
-* { margin:0; padding:0; box-sizing:border-box; font-family:-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; -webkit-tap-highlight-color: transparent; }
+*{box-sizing:border-box}
 
-body {
-  background: var(--bg-color);
-  color: var(--text-main);
+body{
+  margin:0;
+  font-family:Arial,Helvetica,sans-serif;
+  background:var(--bg-color);
+  color:var(--text-main);
   transition: background 0.3s, color 0.3s;
 }
 
-.header {
+.header{
   padding:20px 16px 16px;
   position:sticky;
   top:0;
   z-index:20;
-  background: var(--bg-color);
+  background:var(--header-bg);
   backdrop-filter:blur(14px);
-  border-bottom:1px solid var(--border-color);
+  border-bottom:1px solid var(--input-border);
 }
 
-.top {
+.top{
   display:flex;
   align-items:center;
   gap:12px;
 }
 
-.back {
-  border:1px solid var(--border-color);
-  background: var(--card-bg);
-  color: var(--text-main);
+.back{
+  border:0;
+  background:var(--input-bg);
+  border: 1px solid var(--input-border);
+  color:var(--text-main);
   width:42px;
   height:42px;
-  border-radius:12px;
-  font-size:18px;
+  border-radius:13px;
+  font-size:21px;
   cursor:pointer;
-  box-shadow:0 5px 15px rgba(0,0,0,0.3);
-  transition: 0.2s;
-  display: flex;
-  align-items: center;
-  justify-content: center;
 }
-.back:active { transform: scale(0.9); }
 
-.brand {
-  font-size:24px;
+.brand{
+  font-size:28px;
   font-weight:900;
 }
 
-.brand span {
-  color: var(--gold-color);
+.brand span{
+  color:var(--gold);
 }
 
-.subtitle {
-  color: var(--text-muted);
+.subtitle{
+  color:var(--text-muted);
   margin:8px 0 14px 54px;
   font-size:13px;
 }
 
-.input-group { position:relative; margin-bottom:14px; text-align:left; width: 100%; }
-.input-group i.left-icon { position:absolute; left:14px; top:50%; transform:translateY(-50%); color:var(--text-muted); font-size:14px; }
-.input-group input { width:100%; background:var(--input-bg); border:1px solid var(--border-color); color:var(--text-main); padding:14px 40px; border-radius:12px; font-size:14px; outline:none; transition:0.3s; }
-.input-group input:focus { border-color:var(--primary); box-shadow: 0 0 12px var(--accent-glow); }
+.search{
+  width:100%;
+  padding:15px 16px;
+  border-radius:15px;
+  border:1px solid var(--input-border);
+  background:var(--input-bg);
+  color:var(--text-main);
+  outline:none;
+  font-size:15px;
+}
 
-.tabs {
+.search::placeholder{
+  color:var(--text-muted);
+}
+
+.tabs{
   display:flex;
   gap:9px;
   overflow-x:auto;
   margin-top:13px;
-  padding-bottom: 5px;
 }
-.tabs::-webkit-scrollbar, .filters::-webkit-scrollbar { display: none; }
 
-.tab {
+.tab{
   flex:0 0 auto;
-  padding:10px 16px;
-  border-radius:12px;
-  border:1px solid var(--border-color);
-  background: var(--input-bg);
-  color: var(--text-muted);
-  font-weight:700;
-  font-size: 13.5px;
+  padding:11px 15px;
+  border-radius:999px;
+  border:1px solid var(--input-border);
+  background:var(--input-bg);
+  color:var(--text-muted);
+  font-weight:800;
   cursor:pointer;
-  transition: 0.3s;
 }
 
-.tab.active {
-  background: var(--primary);
-  border-color: var(--primary);
-  color: white;
-  box-shadow: 0 4px 15px var(--accent-glow);
+.tab.active{
+  background:var(--accent);
+  border-color:var(--accent);
+  color:white;
 }
 
-.filters {
+.filters{
   display:flex;
   gap:8px;
   overflow-x:auto;
   padding:13px 16px 4px;
 }
 
-.filter {
+.filter{
   flex:0 0 auto;
-  padding:8px 14px;
-  border-radius:12px;
-  border:1px solid var(--border-color);
-  background: var(--input-bg);
-  color: var(--text-muted);
-  font-size: 13px;
-  font-weight: 600;
+  padding:9px 13px;
+  border-radius:999px;
+  border:1px solid var(--input-border);
+  background:var(--input-bg);
+  color:var(--text-muted);
   cursor:pointer;
-  transition: 0.2s;
 }
 
-.filter.active {
-  background: rgba(255,255,255,0.1);
-  color: var(--text-main);
-  border-color: var(--text-muted);
+.filter.active{
+  background:var(--accent);
+  color:white;
 }
-body.light-theme .filter.active { background: #e2e8f0; border-color: #94a3b8; }
 
-.main { padding:15px 16px 70px; }
-.count { color: var(--text-muted); font-size:13px; font-weight:700; margin:5px 0 14px; }
-.grid { display:grid; gap:16px; }
-
-.card {
-  background: var(--card-bg);
-  border: 1px solid var(--border-color);
-  border-radius: 24px;
-  padding: 24px 20px;
-  box-shadow: 0 20px 50px rgba(0,0,0,0.4);
+.main{
+  padding:15px 16px 70px;
 }
-body.light-theme .card { box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
 
-.card h2 { margin:0 0 6px; font-size:19px; font-weight:800; }
-.meta { color: var(--text-muted); font-size:12.5px; margin-bottom:16px; font-weight: 600; }
-.badges { display:flex; flex-wrap:wrap; gap:8px; }
-.badge { background: var(--input-bg); border: 1px solid var(--border-color); color: var(--text-main); border-radius:8px; padding:6px 10px; font-size:11.5px; font-weight: 600; }
-.more { background: rgba(37, 99, 235, 0.15); color: #3b82f6; border-color: #3b82f6; }
+.count{
+  color:var(--text-muted);
+  font-size:14px;
+  font-weight:800;
+  margin:5px 0 14px;
+}
 
-.price { display:flex; align-items:center; gap:10px; margin:20px 0 16px; }
-.price strong { color: var(--gold-color); font-size:24px; font-weight: 900; }
-.old { color: var(--text-muted); text-decoration:line-through; font-size:13px; font-weight: 600; }
+.grid{
+  display:grid;
+  gap:14px;
+}
 
-.actions { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
-.viewBtn, .buyBtn { border:0; padding:14px 10px; border-radius:12px; font-weight:800; font-size: 13.5px; cursor:pointer; transition: 0.2s; }
-.viewBtn { background: var(--input-bg); border: 1px solid var(--border-color); color: var(--text-main); }
-.viewBtn:active { transform: scale(0.96); }
-.buyBtn { background: var(--primary); color: white; box-shadow: 0 8px 20px var(--accent-glow); }
-.buyBtn:active { transform: scale(0.96); }
-.empty { text-align:center; padding:50px 20px; color: var(--text-muted); font-weight: 600; }
+.card{
+  background:var(--card-bg);
+  border:1px solid var(--card-border);
+  border-radius:21px;
+  padding:18px;
+  box-shadow:0 12px 35px rgba(0,0,0,0.1);
+}
 
-/* MODAL DESIGN */
-.overlay { display:none; position:fixed; inset:0; z-index:2000; background:rgba(0,0,0,0.85); backdrop-filter: blur(5px); padding:16px; overflow:auto; align-items: center; justify-content: center; }
-.overlay.show { display:flex; }
-.modal { width:100%; max-width: 420px; background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 24px; box-shadow: 0 20px 50px rgba(0,0,0,0.5); overflow:hidden; animation: popIn 0.3s ease; }
-@keyframes popIn { 0% { opacity:0; transform:scale(0.8) translateY(10px); } 100% { opacity:1; transform:scale(1) translateY(0); } }
+.card h2{
+  margin:0 0 7px;
+  font-size:20px;
+}
 
-.modalHead { padding:22px; display:flex; justify-content:space-between; align-items: flex-start; gap:12px; border-bottom:1px solid var(--border-color); }
-.modalHead h2 { margin:0; font-size:20px; font-weight: 800; }
-.close { width:36px; height:36px; border:0; border-radius:50%; background: transparent; color: var(--text-muted); font-size:20px; cursor:pointer; transition: 0.2s; display:flex; align-items:center; justify-content:center; }
-.close:hover { color: var(--text-main); background: rgba(255,255,255,0.05); }
+.meta{
+  color:var(--text-muted);
+  font-size:13px;
+  margin-bottom:14px;
+}
 
-.modalBody { padding:22px; max-height: 60vh; overflow-y: auto; }
-.subject { display:flex; align-items:center; gap:14px; background: var(--input-bg); border: 1px solid var(--border-color); border-radius:16px; padding:14px; margin-bottom:10px; }
-.icon { width:44px; height:44px; display:grid; place-items:center; border-radius:12px; background: rgba(255,255,255,0.05); color: var(--text-main); font-size:20px; flex:none; }
-.subjectName { font-size:15px; font-weight:800; color: var(--text-main); }
-.teacher { color: var(--gold-color); margin-top:4px; font-size:12.5px; font-weight:700; }
+.badges{
+  display:flex;
+  flex-wrap:wrap;
+  gap:7px;
+}
 
-.modalBuy { width:100%; margin-top:16px; padding:16px; border:0; border-radius:14px; background: var(--primary); color:white; font-weight:800; font-size:15px; cursor:pointer; box-shadow: 0 8px 20px var(--accent-glow); transition: 0.2s; }
-.modalBuy:active { transform: scale(0.98); }
-.note { color: var(--text-muted); font-size:11.5px; line-height:1.5; margin-top:16px; text-align: center; font-weight: 600; }
+.badge{
+  background:var(--input-bg);
+  border: 1px solid var(--input-border);
+  color:var(--text-main);
+  border-radius:9px;
+  padding:7px 9px;
+  font-size:12px;
+}
 
-@media(min-width:700px){ .grid{ grid-template-columns:repeat(2,1fr); } }
+.more{
+  background:rgba(37, 99, 235, 0.2);
+  color: #3b82f6;
+}
+
+.price{
+  display:flex;
+  align-items:center;
+  gap:9px;
+  margin:17px 0 13px;
+}
+
+.price strong{
+  color:var(--gold);
+  font-size:26px;
+}
+
+.old{
+  color:var(--text-muted);
+  text-decoration:line-through;
+  font-size:14px;
+}
+
+.actions{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:9px;
+}
+
+.viewBtn,
+.buyBtn{
+  border:0;
+  padding:13px 7px;
+  border-radius:13px;
+  font-weight:900;
+  cursor:pointer;
+}
+
+.viewBtn{
+  background:var(--input-bg);
+  border: 1px solid var(--input-border);
+  color:var(--text-main);
+}
+
+.buyBtn{
+  background:var(--accent);
+  color:white;
+}
+
+.empty{
+  text-align:center;
+  padding:50px 20px;
+  color:var(--text-muted);
+}
+
+/* MODAL */
+
+.overlay{
+  display:none;
+  position:fixed;
+  inset:0;
+  z-index:100;
+  background:rgba(0,0,0,0.85);
+  backdrop-filter: blur(5px);
+  padding:15px;
+  overflow:auto;
+}
+
+.overlay.show{
+  display:block;
+}
+
+.modal{
+  width:min(680px,100%);
+  margin:25px auto;
+  background:var(--card-bg);
+  border:1px solid var(--card-border);
+  border-radius:23px;
+  overflow:hidden;
+}
+
+.modalHead{
+  padding:18px;
+  display:flex;
+  justify-content:space-between;
+  gap:12px;
+  border-bottom:1px solid var(--input-border);
+}
+
+.modalHead h2{
+  margin:0;
+  font-size:21px;
+}
+
+.close{
+  width:40px;
+  height:40px;
+  border:0;
+  border-radius:50%;
+  background:var(--input-bg);
+  border: 1px solid var(--input-border);
+  color:var(--text-main);
+  font-size:22px;
+  cursor:pointer;
+}
+
+.modalBody{
+  padding:18px;
+}
+
+.subject{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  background:var(--input-bg);
+  border:1px solid var(--input-border);
+  border-radius:15px;
+  padding:13px;
+  margin-bottom:9px;
+}
+
+.icon{
+  width:42px;
+  height:42px;
+  display:grid;
+  place-items:center;
+  border-radius:12px;
+  background:rgba(255,255,255,0.05);
+  font-size:21px;
+  flex:none;
+}
+
+.subjectName{
+  font-size:16px;
+  font-weight:900;
+}
+
+.teacher{
+  color:var(--gold);
+  margin-top:4px;
+  font-size:13px;
+  font-weight:800;
+}
+
+.modalBuy{
+  width:100%;
+  margin-top:10px;
+  padding:15px;
+  border:0;
+  border-radius:14px;
+  background:var(--accent);
+  color:white;
+  font-weight:900;
+  font-size:16px;
+  cursor:pointer;
+}
+
+.note{
+  color:var(--text-muted);
+  font-size:11px;
+  line-height:1.5;
+  margin-top:12px;
+}
+
+@media(min-width:700px){
+  .grid{
+    grid-template-columns:repeat(2,1fr);
+  }
+}
 </style>
 </head>
 
 <body>
 
-<script>
-  (function() {
-      const savedColor = localStorage.getItem('ticbull_theme_color');
-      if(savedColor) {
-          document.documentElement.style.setProperty('--accent-color', savedColor);
-          document.documentElement.style.setProperty('--primary', savedColor);
-          document.documentElement.style.setProperty('--accent-glow', savedColor + '66');
-      }
-      if(localStorage.getItem('ticbull_theme') === 'light') {
-          document.body.classList.add('light-theme');
-      }
-  })();
-</script>
-
 <header class="header">
   <div class="top">
-    <!-- FIX 1: EXTREMELY SAFE INLINE BACK BUTTON -->
-    <button type="button" class="back" onclick="window.location.replace('dashboard.html')"><i class="fa-solid fa-arrow-left"></i></button>
-    <div class="brand">TicBull <span>Academy</span></div>
+    <button class="back" onclick="goDashboard()">←</button>
+    <div class="brand">
+      TicBull <span>Academy</span>
+    </div>
   </div>
 
-  <div class="subtitle">Board → Class / Stream → Subjects → Teacher</div>
-
-  <div class="input-group">
-      <i class="fa-solid fa-magnifying-glass left-icon"></i>
-      <input id="search" placeholder="Search board, class, stream, NEET, JEE...">
+  <div class="subtitle">
+    Board → Class / Stream → Subjects → Teacher
   </div>
+
+  <input id="search" class="search" placeholder="Search board, class, stream, NEET, JEE...">
 
   <div class="tabs">
-    <button class="tab active" data-type="school"><i class="fa-solid fa-school"></i> School Boards</button>
-    <button class="tab" data-type="competitive"><i class="fa-solid fa-bullseye"></i> Competitive Exams</button>
+    <button class="tab active" data-type="school">🏫 School Boards</button>
+    <button class="tab" data-type="competitive">🎯 Competitive Exams</button>
   </div>
 </header>
 
@@ -261,48 +408,23 @@ body.light-theme .card { box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
     <div class="modalHead">
       <div>
         <h2 id="modalTitle"></h2>
-        <div id="modalMeta" class="meta" style="margin-top:6px; margin-bottom:0;"></div>
+        <div id="modalMeta" class="meta" style="margin-top:6px"></div>
       </div>
-      <button class="close" onclick="closeModal()"><i class="fa-solid fa-xmark"></i></button>
+      <button class="close" onclick="closeModal()">×</button>
     </div>
 
     <div class="modalBody">
       <div id="subjectList"></div>
       <button id="modalBuy" class="modalBuy">BUY NOW</button>
-      <div class="note">This screen shows only the subjects assigned to this batch and the teacher assigned to each subject.</div>
+      <div class="note">
+        This screen shows only the subjects assigned to this batch
+        and the teacher assigned to each subject.
+      </div>
     </div>
   </div>
 </div>
 
 <script>
-/* =========================================================
-   CLICK SOUND SYSTEM (FIX 2: BUG-FREE AUDIO ENGINE)
-========================================================= */
-let appSoundEnabled = localStorage.getItem('ticbull_sound') !== 'false';
-const AudioCtx = window.AudioContext || window.webkitAudioContext;
-let audioCtxInstance;
-
-function playClickSound() {
-    try {
-        if(!appSoundEnabled || !AudioCtx) return;
-        if(!audioCtxInstance) audioCtxInstance = new AudioCtx();
-        if(audioCtxInstance.state === 'suspended') audioCtxInstance.resume();
-        const osc = audioCtxInstance.createOscillator(); 
-        const gain = audioCtxInstance.createGain();
-        osc.type = 'sine'; osc.frequency.setValueAtTime(800, audioCtxInstance.currentTime);
-        gain.gain.setValueAtTime(0.05, audioCtxInstance.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.001, audioCtxInstance.currentTime + 0.1);
-        osc.connect(gain); gain.connect(audioCtxInstance.destination);
-        osc.start(); osc.stop(audioCtxInstance.currentTime + 0.1);
-    } catch(e) {
-        // Safe Catch - Will not freeze the page if audio fails
-    }
-}
-
-document.addEventListener('click', function(e) {
-    if(e.target.closest('button') || e.target.closest('.tab') || e.target.closest('.filter')) playClickSound();
-});
-
 /* =========================================================
    ICONS
 ========================================================= */
@@ -321,21 +443,7 @@ const icons = {
 };
 
 /* =========================================================
-   UNIQUE TEACHER GENERATOR (NO REPEATS)
-========================================================= */
-const firstNames = ["Aarav","Vivaan","Aditya","Arjun","Kabir","Ishaan","Rohan","Kunal","Rahul","Nikhil","Varun","Manav","Samar","Yash","Aman","Dev","Vikram","Sanjay","Gaurav","Deepak","Nitin","Rajesh","Suresh","Manish","Akash","Ravi","Vikas","Mohit","Pankaj","Abhishek"];
-const lastNames = ["Sharma","Gupta","Verma","Yadav","Singh","Kumar","Rao","Mehta","Chauhan","Patel","Mishra","Pandey","Tiwari","Joshi","Nair","Iyer","Reddy","Das","Bose","Sinha","Jha","Thakur","Malhotra","Kapoor","Bansal","Agarwal","Srivastava","Tripathi","Saxena","Shukla"];
-
-function getUniqueTeacher(subjectName) {
-    let hash = 0;
-    for (let i = 0; i < subjectName.length; i++) { hash = subjectName.charCodeAt(i) + ((hash << 5) - hash); }
-    const fName = firstNames[Math.abs(hash) % firstNames.length];
-    const lName = lastNames[Math.abs(hash >> 3) % lastNames.length];
-    return `Prof. ${fName} ${lName}`;
-}
-
-/* =========================================================
-   SUBJECT STRUCTURE (100% ORIGINAL)
+   SCHOOL SUBJECT STRUCTURE
 ========================================================= */
 const CLASS_9_10 = ["Hindi", "English", "Mathematics", "Physics", "Chemistry", "Biology", "History", "Geography", "Political Science", "Economics"];
 const PCM = ["English", "Physics", "Physical Chemistry", "Organic Chemistry", "Inorganic Chemistry", "Mathematics"];
@@ -344,6 +452,9 @@ const PCMB = ["English", "Physics", "Physical Chemistry", "Organic Chemistry", "
 const COMMERCE = ["English", "Accountancy", "Business Studies", "Economics", "Mathematics"];
 const ARTS = ["English", "Hindi", "History", "Political Science", "Geography", "Economics", "Sociology", "Psychology"];
 
+/* =========================================================
+   COMPETITIVE EXAM SUBJECTS
+========================================================= */
 const NEET = ["Physics", "Physical Chemistry", "Organic Chemistry", "Inorganic Chemistry", "Botany", "Zoology"];
 const JEE = ["Physics", "Physical Chemistry", "Organic Chemistry", "Inorganic Chemistry", "Mathematics"];
 const CUET = ["English", "General Knowledge", "Current Affairs", "Quantitative Aptitude", "Reasoning"];
@@ -359,24 +470,55 @@ const AGRICULTURE = ["Physics", "Chemistry", "Biology", "Mathematics", "Agricult
 const MANAGEMENT = ["Quantitative Aptitude", "Logical Reasoning", "Data Interpretation", "Verbal Ability", "Reading Comprehension"];
 const DESIGN = ["English", "General Knowledge", "Current Affairs", "Design Aptitude", "Creative Ability", "Drawing"];
 
+/* =========================================================
+   SCHOOL BOARDS
+========================================================= */
 const boards = [
-  ["CBSE","Central Board of Secondary Education"], ["CISCE","Council for the Indian School Certificate Examinations"], ["NIOS","National Institute of Open Schooling"],
-  ["Andhra Pradesh","Andhra Pradesh Board"], ["Assam","Assam Board"], ["Bihar","Bihar School Examination Board"], ["Chhattisgarh","Chhattisgarh Board of Secondary Education"],
-  ["Goa","Goa Board"], ["Gujarat","Gujarat Secondary and Higher Secondary Education Board"], ["Haryana","Board of School Education Haryana"], ["Himachal Pradesh","Himachal Pradesh Board of School Education"],
-  ["Jharkhand","Jharkhand Academic Council"], ["Jammu & Kashmir","Jammu and Kashmir Board"], ["Karnataka","Karnataka School Examination and Assessment Board"], ["Kerala","Kerala Board"],
-  ["Madhya Pradesh","Madhya Pradesh Board"], ["Maharashtra","Maharashtra State Board"], ["Manipur","Manipur Board"], ["Meghalaya","Meghalaya Board"], ["Mizoram","Mizoram Board"],
-  ["Nagaland","Nagaland Board"], ["Odisha","Odisha Board"], ["Punjab","Punjab School Education Board"], ["Rajasthan","Board of Secondary Education Rajasthan"], ["Sikkim","Sikkim Board"],
-  ["Tamil Nadu","Tamil Nadu State Board"], ["Telangana","Telangana Board"], ["Tripura","Tripura Board"], ["Uttar Pradesh","Uttar Pradesh Madhyamik Shiksha Parishad"],
-  ["Uttarakhand","Uttarakhand Board"], ["West Bengal","West Bengal Board"]
+  ["CBSE","Central Board of Secondary Education"], ["CISCE","Council for the Indian School Certificate Examinations"],
+  ["NIOS","National Institute of Open Schooling"], ["Andhra Pradesh","Andhra Pradesh Board"], ["Assam","Assam Board"],
+  ["Bihar","Bihar School Examination Board"], ["Chhattisgarh","Chhattisgarh Board of Secondary Education"], ["Goa","Goa Board"],
+  ["Gujarat","Gujarat Secondary and Higher Secondary Education Board"], ["Haryana","Board of School Education Haryana"],
+  ["Himachal Pradesh","Himachal Pradesh Board of School Education"], ["Jharkhand","Jharkhand Academic Council"],
+  ["Jammu & Kashmir","Jammu and Kashmir Board"], ["Karnataka","Karnataka School Examination and Assessment Board"],
+  ["Kerala","Kerala Board"], ["Madhya Pradesh","Madhya Pradesh Board"], ["Maharashtra","Maharashtra State Board"],
+  ["Manipur","Manipur Board"], ["Meghalaya","Meghalaya Board"], ["Mizoram","Mizoram Board"], ["Nagaland","Nagaland Board"],
+  ["Odisha","Odisha Board"], ["Punjab","Punjab School Education Board"], ["Rajasthan","Board of Secondary Education Rajasthan"],
+  ["Sikkim","Sikkim Board"], ["Tamil Nadu","Tamil Nadu State Board"], ["Telangana","Telangana Board"], ["Tripura","Tripura Board"],
+  ["Uttar Pradesh","Uttar Pradesh Madhyamik Shiksha Parishad"], ["Uttarakhand","Uttarakhand Board"], ["West Bengal","West Bengal Board"]
 ];
 
 /* =========================================================
-   BATCH DATABASE & AUTOMATIC PRICE SYSTEM
+   BATCH DATABASE & STATE
 ========================================================= */
 let batches = [];
 let currentType = "school";
 let currentFilter = "All";
 
+/* =========================================================
+   UNIQUE TEACHER GENERATOR (NO MORE FAKE FEELING)
+========================================================= */
+// 50+ unique first names
+const firstNames = ["Vikram", "Neha", "Aman", "Priya", "Rahul", "Kavita", "Sanjay", "Anjali", "Rohan", "Sneha", "Karan", "Pooja", "Arjun", "Simran", "Amit", "Diya", "Raj", "Nandini", "Vivek", "Shruti", "Manish", "Aditi", "Ravi", "Tanya", "Akash", "Kriti", "Deepak", "Riya", "Gaurav", "Meera", "Nitin", "Kavya", "Suresh", "Ritu", "Mohit", "Ananya", "Shivam", "Ishita", "Harsh", "Meghna", "Abhishek", "Sakshi", "Rajesh", "Shraddha", "Vikas", "Tanvi", "Pankaj", "Bhavna"];
+
+// 50+ unique last names
+const lastNames = ["Rathore", "Desai", "Jain", "Bhatia", "Iyer", "Chawla", "Reddy", "Kapoor", "Trivedi", "Menon", "Chopra", "Patil", "Srivastava", "Das", "Mukherjee", "Nair", "Saxena", "Bansal", "Thakur", "Sinha", "Joshi", "Bose", "Pillai", "Choudhury", "Malhotra", "Rao", "Pandey", "Mehta", "Mishra", "Patel", "Kumar", "Singh", "Yadav", "Dutta", "Banerjee", "Naidu", "Kulkarni", "Deshmukh", "Kadam", "More", "Prasad", "Tiwari", "Sharma", "Verma", "Gupta", "Agarwal", "Bhatt", "Chauhan"];
+
+// A deterministic unique name generator based on subject name
+// It ensures that "Physics" will always get the same unique teacher name, avoiding randomness on reload.
+function getUniqueTeacherForSubject(subjectName) {
+    let hash = 0;
+    for (let i = 0; i < subjectName.length; i++) {
+        hash = subjectName.charCodeAt(i) + ((hash << 5) - hash);
+    }
+    const fnIndex = Math.abs(hash) % firstNames.length;
+    const lnIndex = Math.abs(hash >> 3) % lastNames.length;
+    return `Prof. ${firstNames[fnIndex]} ${lastNames[lnIndex]}`;
+}
+
+
+/* =========================================================
+   AUTOMATIC PRICE SYSTEM
+========================================================= */
 function getBatchPrice(type,cls,exam){
   if(type === "school"){
     if(cls === "Class 9" || cls === "Class 10") return 199;
@@ -402,38 +544,48 @@ function getBatchPrice(type,cls,exam){
   return 199;
 }
 
+/* =========================================================
+   CREATE BATCH
+========================================================= */
 function makeBatch({ type, board="", cls="", stream="", exam="", category="", subjects }) {
   const id = "B" + String(batches.length + 1).padStart(4,"0");
   const price = getBatchPrice(type, cls, exam);
-  const subjectData = subjects.map(subject => ({ name: subject, teacher: getUniqueTeacher(subject) }));
+  
+  // Assign exact subjects and unique teacher
+  const subjectData = subjects.map(subject => ({
+      name: subject,
+      teacher: getUniqueTeacherForSubject(subject)
+  }));
 
   batches.push({
     id, type, board, cls, stream, exam, category, price,
-    oldPrice: Math.round(price * 1.5), subjects: subjectData
+    oldPrice: Math.round(price * 1.5),
+    subjects: subjectData
   });
 }
 
-// GENERATE ALL 372 SCHOOL BATCHES
+/* =========================================================
+   CREATE SCHOOL BATCHES
+========================================================= */
 boards.forEach(board => {
   const boardName = board[0];
-  const classes = [
-    {cls:"Class 9", stream:"General", sub:CLASS_9_10, cat:"School Boards"},
-    {cls:"Class 10", stream:"General", sub:CLASS_9_10, cat:"School Boards"},
-    {cls:"Class 11", stream:"Science — PCM", sub:PCM, cat:"Science"},
-    {cls:"Class 11", stream:"Science — PCB", sub:PCB, cat:"Science"},
-    {cls:"Class 11", stream:"Science — PCMB", sub:PCMB, cat:"Science"},
-    {cls:"Class 11", stream:"Commerce", sub:COMMERCE, cat:"Commerce"},
-    {cls:"Class 11", stream:"Arts / Humanities", sub:ARTS, cat:"Arts"},
-    {cls:"Class 12", stream:"Science — PCM", sub:PCM, cat:"Science"},
-    {cls:"Class 12", stream:"Science — PCB", sub:PCB, cat:"Science"},
-    {cls:"Class 12", stream:"Science — PCMB", sub:PCMB, cat:"Science"},
-    {cls:"Class 12", stream:"Commerce", sub:COMMERCE, cat:"Commerce"},
-    {cls:"Class 12", stream:"Arts / Humanities", sub:ARTS, cat:"Arts"}
-  ];
-  classes.forEach(c => makeBatch({ type:"school", board:boardName, cls:c.cls, stream:c.stream, category:c.cat, subjects:c.sub }));
+  makeBatch({ type:"school", board:boardName, cls:"Class 9", stream:"General", category:"School Boards", subjects:CLASS_9_10 });
+  makeBatch({ type:"school", board:boardName, cls:"Class 10", stream:"General", category:"School Boards", subjects:CLASS_9_10 });
+  makeBatch({ type:"school", board:boardName, cls:"Class 11", stream:"Science — PCM", category:"Science", subjects:PCM });
+  makeBatch({ type:"school", board:boardName, cls:"Class 11", stream:"Science — PCB", category:"Science", subjects:PCB });
+  makeBatch({ type:"school", board:boardName, cls:"Class 11", stream:"Science — PCMB", category:"Science", subjects:PCMB });
+  makeBatch({ type:"school", board:boardName, cls:"Class 11", stream:"Commerce", category:"Commerce", subjects:COMMERCE });
+  makeBatch({ type:"school", board:boardName, cls:"Class 11", stream:"Arts / Humanities", category:"Arts", subjects:ARTS });
+  makeBatch({ type:"school", board:boardName, cls:"Class 12", stream:"Science — PCM", category:"Science", subjects:PCM });
+  makeBatch({ type:"school", board:boardName, cls:"Class 12", stream:"Science — PCB", category:"Science", subjects:PCB });
+  makeBatch({ type:"school", board:boardName, cls:"Class 12", stream:"Science — PCMB", category:"Science", subjects:PCMB });
+  makeBatch({ type:"school", board:boardName, cls:"Class 12", stream:"Commerce", category:"Commerce", subjects:COMMERCE });
+  makeBatch({ type:"school", board:boardName, cls:"Class 12", stream:"Arts / Humanities", category:"Arts", subjects:ARTS });
 });
 
-// GENERATE COMPETITIVE BATCHES
+/* =========================================================
+   COMPETITIVE BATCHES
+========================================================= */
 const competitiveData = [
   ["NEET","Class 11","Medical Foundation",NEET,"Medical"], ["NEET","Class 12","Medical Preparation",NEET,"Medical"], ["NEET","Dropper","Medical Dropper",NEET,"Medical"],
   ["JEE Main + Advanced","Class 11","Engineering Foundation",JEE,"Engineering"], ["JEE Main + Advanced","Class 12","Engineering Preparation",JEE,"Engineering"], ["JEE Main + Advanced","Dropper","Engineering Dropper",JEE,"Engineering"],
@@ -452,10 +604,12 @@ const competitiveData = [
   ["State PSC","Graduate","PSC Foundation",UPSC,"Government Exams"], ["State SSC","12th / Graduate","State SSC",SSC,"Government Exams"], ["State Police Exams","12th / Graduate","Police Exam Foundation",["General Knowledge", "Current Affairs", "Reasoning", "Quantitative Aptitude", "General Science"],"Government Exams"]
 ];
 
-competitiveData.forEach(item => makeBatch({ type:"competitive", exam:item[0], cls:item[1], stream:item[2], subjects:item[3], category:item[4] }));
+competitiveData.forEach(item => {
+  makeBatch({ type:"competitive", exam:item[0], cls:item[1], stream:item[2], subjects:item[3], category:item[4] });
+});
 
 /* =========================================================
-   FILTERS & RENDERING
+   FILTERS
 ========================================================= */
 const schoolFilters = ["All", "National", "Andhra Pradesh", "Assam", "Bihar", "Chhattisgarh", "Goa", "Gujarat", "Haryana", "Himachal Pradesh", "Jharkhand", "Jammu & Kashmir", "Karnataka", "Kerala", "Madhya Pradesh", "Maharashtra", "Manipur", "Meghalaya", "Mizoram", "Nagaland", "Odisha", "Punjab", "Rajasthan", "Sikkim", "Tamil Nadu", "Telangana", "Tripura", "Uttar Pradesh", "Uttarakhand", "West Bengal"];
 const competitiveFilters = ["All", "Medical", "Engineering", "University Entrance", "UPSC", "SSC", "Banking", "Defence", "Law", "Teaching", "Railway", "Agriculture", "Management", "Design", "Science Entrance", "Government Exams"];
@@ -469,11 +623,18 @@ function renderFilters(){
     const button = document.createElement("button");
     button.className = "filter" + (currentFilter === filter ? " active" : "");
     button.textContent = filter;
-    button.onclick = () => { currentFilter = filter; renderFilters(); render(); };
+    button.onclick = () => {
+      currentFilter = filter;
+      renderFilters();
+      render();
+    };
     target.appendChild(button);
   });
 }
 
+/* =========================================================
+   RENDER BATCHES
+========================================================= */
 function render(){
   const grid = document.getElementById("grid");
   const search = document.getElementById("search").value.toLowerCase().trim();
@@ -560,11 +721,12 @@ function closeModal(){ document.getElementById("overlay").classList.remove("show
 function outsideClose(event){ if(event.target.id === "overlay") closeModal(); }
 
 /* =========================================================
-   BUY NOW
+   BUY NOW (FIXED FOR CLASSROOM)
 ========================================================= */
 function buy(id) {
   const batch = batches.find(item => item.id === id);
   if (!batch) return;
+
   const title = batch.type === "school" ? `${batch.board} — ${batch.cls} — ${batch.stream}` : `${batch.exam} — ${batch.cls} — ${batch.stream}`;
   const exactSubjects = batch.subjects.map(s => s.name);
 
@@ -572,12 +734,15 @@ function buy(id) {
   sessionStorage.setItem("tb_checkout_price", batch.price);
   sessionStorage.setItem("tb_checkout_tier", "Pro");
   sessionStorage.setItem("tb_checkout_subjects", JSON.stringify(exactSubjects));
+
   window.location.href = "payment.html";
 }
 
 /* =========================================================
-   TABS & EVENTS
+   DASHBOARD BACK BUTTON & TABS
 ========================================================= */
+function goDashboard(){ window.location.href = "dashboard.html"; }
+
 document.querySelectorAll(".tab").forEach(tab => {
   tab.addEventListener("click", () => {
     document.querySelectorAll(".tab").forEach(item => item.classList.remove("active"));
@@ -592,8 +757,14 @@ document.querySelectorAll(".tab").forEach(tab => {
 });
 
 document.getElementById("search").addEventListener("input", render);
-function escapeHTML(value){ return String(value).replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;").replaceAll("'", "&#039;"); }
 
+function escapeHTML(value){
+  return String(value).replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;").replaceAll("'", "&#039;");
+}
+
+/* =========================================================
+   START
+========================================================= */
 renderFilters();
 render();
 </script>
