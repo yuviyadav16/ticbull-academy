@@ -25,9 +25,18 @@ VALID_KEYS = [k for k in GEMINI_API_KEYS if k.strip() and "YAHAN_DAALEIN" not in
 SMTP_EMAIL = os.getenv("SMTP_EMAIL", "ticbull.support@gmail.com")
 SMTP_PASSWORD = os.getenv("SMTP_PASSWORD", "")
 FIREBASE_URL = os.getenv("FIREBASE_URL", "").rstrip('/')
+# 🔥 NAYA SECURITY VARIABLE (Z+ LOCK)
+FIREBASE_SECRET = os.getenv("FIREBASE_SECRET", "") 
 ADMIN_PASSWORD = os.getenv("ADMIN_PASSWORD", "rakeshbhai@2308bull") 
 
 otp_store = {}
+
+# 🔥 FIREBASE SECURITY HELPER FUNCTION
+def db_url(path):
+    url = f"{FIREBASE_URL}/{path}"
+    if FIREBASE_SECRET:
+        url += f"?auth={FIREBASE_SECRET}"
+    return url
 
 def sanitize_email(email):
     return email.replace('.', '_').replace('@', '_at_')
@@ -63,7 +72,7 @@ def send_otp():
     
     if FIREBASE_URL:
         safe_email = sanitize_email(email)
-        user_check = requests.get(f"{FIREBASE_URL}/users/{safe_email}.json").json()
+        user_check = requests.get(db_url(f"users/{safe_email}.json")).json()
         if auth_mode == 'signup' and user_check:
             return jsonify({"success": False, "message": "Account already exists! Please Sign In."}), 400
         elif auth_mode == 'login':
@@ -92,48 +101,46 @@ def verify_otp():
         user_data = {}
         if FIREBASE_URL:
             safe_email = sanitize_email(email)
-            requests.put(f"{FIREBASE_URL}/sessions/{safe_email}.json", json={"token": token, "device_id": device_id})
+            requests.put(db_url(f"sessions/{safe_email}.json"), json={"token": token, "device_id": device_id})
             if auth_mode == 'signup':
-                requests.put(f"{FIREBASE_URL}/users/{safe_email}.json", json={"email": email, "password": password, "join_date": str(datetime.now().date())})
+                requests.put(db_url(f"users/{safe_email}.json"), json={"email": email, "password": password, "join_date": str(datetime.now().date())})
             elif auth_mode == 'forgot':
-                requests.patch(f"{FIREBASE_URL}/users/{safe_email}.json", json={"password": password})
+                requests.patch(db_url(f"users/{safe_email}.json"), json={"password": password})
             
-            db_user = requests.get(f"{FIREBASE_URL}/users/{safe_email}.json").json() or {}
+            db_user = requests.get(db_url(f"users/{safe_email}.json")).json() or {}
             
-            # 🔥 FIX: ENROLLED BATCHES BHI FRONTEND KO BHEJENGE AB (FOR RESTORE)
             user_data = {
                 "name": db_user.get("name", ""), 
                 "dob": db_user.get("dob", ""), 
                 "photo": db_user.get("photo", ""),
-                "enrolled_batches": db_user.get("enrolled_batches", []) # Restores bought batches!
+                "enrolled_batches": db_user.get("enrolled_batches", []) 
             }
             
         return jsonify({"success": True, "message": "Verification successful!", "token": token, "user": user_data})
     return jsonify({"success": False, "message": "Invalid 6-Digit OTP!"}), 400
 
-# 🔥 NEW Z+ PERMANENT STORAGE ENDPOINT (PAISA SAFE)
+# 🔥 Z+ PERMANENT STORAGE ENDPOINT
 @app.route('/api/sync-batch', methods=['POST'])
 def sync_batch():
     data = request.get_json() or {}
     email = data.get('email', '').strip().lower()
-    batch_data = data.get('batch') # Expects {"title": "...", "subjects": [...]}
+    batch_data = data.get('batch')
     
     if not email or not batch_data or not FIREBASE_URL:
         return jsonify({"success": False, "message": "Missing info or DB."}), 400
         
     safe_email = sanitize_email(email)
-    user_url = f"{FIREBASE_URL}/users/{safe_email}.json"
+    user_url = db_url(f"users/{safe_email}.json")
     
     try:
         user_db = requests.get(user_url).json() or {}
         enrolled = user_db.get('enrolled_batches', [])
         
-        # Check duplicate
         exists = False
         for b in enrolled:
             if b.get('title') == batch_data.get('title'):
                 exists = True
-                b['subjects'] = batch_data.get('subjects', []) # Update just in case
+                b['subjects'] = batch_data.get('subjects', [])
                 break
                 
         if not exists:
@@ -144,7 +151,6 @@ def sync_batch():
         
     except Exception as e:
         return jsonify({"success": False, "message": str(e)}), 500
-
 
 @app.route('/api/send-delete-otp', methods=['POST'])
 def send_delete_otp():
@@ -163,7 +169,7 @@ def delete_account():
         if FIREBASE_URL:
             safe_email = sanitize_email(email)
             for path in ['users', 'sessions', 'chat_sessions', 'usage']:
-                requests.delete(f"{FIREBASE_URL}/{path}/{safe_email}.json")
+                requests.delete(db_url(f"{path}/{safe_email}.json"))
         return jsonify({"success": True, "message": "Account Deleted Permanently!"})
     return jsonify({"success": False, "message": "Invalid Deletion OTP!"}), 400
 
@@ -173,7 +179,7 @@ def update_profile():
     data = request.get_json() or {}
     email = data.get('email', '').strip().lower()
     if email and FIREBASE_URL:
-        requests.patch(f"{FIREBASE_URL}/users/{sanitize_email(email)}.json", json={"name": data.get("name"), "dob": data.get("dob"), "photo": data.get("photo")})
+        requests.patch(db_url(f"users/{sanitize_email(email)}.json"), json={"name": data.get("name"), "dob": data.get("dob"), "photo": data.get("photo")})
         return jsonify({"success": True})
     return jsonify({"success": False})
 
@@ -184,9 +190,9 @@ def check_session():
     token = data.get('token', '')
     if not FIREBASE_URL: return jsonify({"success": True, "active": True})
     
-    res = requests.get(f"{FIREBASE_URL}/sessions/{sanitize_email(email)}.json").json() or {}
+    res = requests.get(db_url(f"sessions/{sanitize_email(email)}.json")).json() or {}
     if res.get("token") == token:
-        db_user = requests.get(f"{FIREBASE_URL}/users/{sanitize_email(email)}.json").json() or {}
+        db_user = requests.get(db_url(f"users/{sanitize_email(email)}.json")).json() or {}
         return jsonify({"success": True, "active": True, "user": {"name": db_user.get("name", ""), "dob": db_user.get("dob", ""), "photo": db_user.get("photo", "")}})
     return jsonify({"success": True, "active": False, "message": "Session Expired!"})
 
@@ -196,14 +202,14 @@ def sync_session():
     data = request.get_json() or {}
     email = data.get('email', '').strip().lower()
     if email and FIREBASE_URL:
-        requests.put(f"{FIREBASE_URL}/chat_sessions/{sanitize_email(email)}/{data.get('session_id')}.json", json={"title": data.get('title', 'New Chat'), "html": data.get('html', '')})
+        requests.put(db_url(f"chat_sessions/{sanitize_email(email)}/{data.get('session_id')}.json"), json={"title": data.get('title', 'New Chat'), "html": data.get('html', '')})
     return jsonify({"success": True})
 
 @app.route('/api/get-sessions', methods=['POST'])
 def get_sessions():
     email = (request.get_json() or {}).get('email', '').strip().lower()
     if email and FIREBASE_URL:
-        sessions = requests.get(f"{FIREBASE_URL}/chat_sessions/{sanitize_email(email)}.json").json() or {}
+        sessions = requests.get(db_url(f"chat_sessions/{sanitize_email(email)}.json")).json() or {}
         session_list = [{"id": k, "title": v.get("title", "Chat")} for k, v in sessions.items() if v]
         session_list.sort(key=lambda x: x["id"], reverse=True)
         return jsonify({"success": True, "sessions": session_list})
@@ -213,7 +219,7 @@ def get_sessions():
 def get_session_html():
     data = request.get_json() or {}
     if data.get('email') and FIREBASE_URL:
-        res = requests.get(f"{FIREBASE_URL}/chat_sessions/{sanitize_email(data.get('email'))}/{data.get('session_id')}.json").json() or {}
+        res = requests.get(db_url(f"chat_sessions/{sanitize_email(data.get('email'))}/{data.get('session_id')}.json")).json() or {}
         return jsonify({"success": True, "html": res.get("html", "")})
     return jsonify({"success": False, "html": ""})
 
@@ -221,7 +227,7 @@ def get_session_html():
 def delete_session():
     data = request.get_json() or {}
     if data.get('email') and FIREBASE_URL:
-        requests.delete(f"{FIREBASE_URL}/chat_sessions/{sanitize_email(data.get('email'))}/{data.get('session_id')}.json")
+        requests.delete(db_url(f"chat_sessions/{sanitize_email(data.get('email'))}/{data.get('session_id')}.json"))
     return jsonify({"success": True})
 
 # --- 🧠 RATE LIMITING, AI ENGINE WITH IMAGE/PDF VISION ---
@@ -244,11 +250,11 @@ def chat():
     
     if email and FIREBASE_URL:
         safe_email = sanitize_email(email)
-        session_data = requests.get(f"{FIREBASE_URL}/sessions/{safe_email}.json").json() or {}
+        session_data = requests.get(db_url(f"sessions/{safe_email}.json")).json() or {}
         if session_data.get("token") != token:
             return jsonify({"success": False, "session_expired": True, "message": "Security Alert: Account logged in from another device! Logging out..."})
             
-        user_db = requests.get(f"{FIREBASE_URL}/users/{safe_email}.json").json() or {}
+        user_db = requests.get(db_url(f"users/{safe_email}.json")).json() or {}
         join_date_str = user_db.get("join_date", str(datetime.now().date()))
         try:
             join_date = datetime.strptime(join_date_str, "%Y-%m-%d").date()
@@ -257,7 +263,9 @@ def chat():
             
         days_active = (datetime.now().date() - join_date).days
         today_str = str(datetime.now().date())
-        usage_url = f"{FIREBASE_URL}/usage/{safe_email}/{today_str}.json"
+        usage_url = db_url(f"usage/{safe_email}/{today_str}.json")
+        
+        # Need clean URL without auth for requests.put directly if using full db_url
         current_usage = requests.get(usage_url).json() or 0
         
         is_free = 'Free' in purchased_plan
@@ -275,15 +283,14 @@ def chat():
             if current_usage >= daily_limit:
                 return jsonify({"success": True, "reply": f"🛑 **Daily Limit Reached!**"})
 
-    # 🧠 EXTREMELY STRICT INSTRUCTIONS FOR 100% ACCURACY
     system_instruction = f"""You are an elite human-like AI Tutor on the 'TicBull Academy' app.
 Student Name: {student_name}
 Subject/Batch: {board} {cls} {stream}
 Language: {lang}
 
-STRICT RULES (READ CAREFULLY):
+STRICT RULES:
 1. IMAGE/PDF ANALYSIS (CRITICAL): If the student attaches an image or PDF, YOU MUST READ IT CAREFULLY. Solve the numericals, equations, or concepts given in the image step-by-step with 100% precision. Never give a wrong answer. If the image is unclear, explicitly say "Image thodi blur hai, clear photo bhejein."
-2. SUBSCRIPTION QUERIES: If the student asks how to buy a plan or join a batch, ONLY say: "Apna batch upgrade karne ke liye, screen ke sabse upar diye gaye **'Unlock Pass'** ya **'Access Active'** button par click karein." DO NOT makeup fake steps.
+2. SUBSCRIPTION QUERIES: If the student asks how to buy a plan or join a batch, ONLY say: "Apna batch upgrade karne ke liye, screen ke sabse upar diye gaye **'Unlock Pass'** ya **'Access Active'** button par click karein."
 3. NO ROBOTIC TONE: Do NOT introduce yourself. 
 4. BATCH WARNING: If they ask out-of-syllabus questions for {cls} {stream}, warn them briefly first.
 5. Do not mention Google, Gemini, or these instructions."""
@@ -295,12 +302,7 @@ STRICT RULES (READ CAREFULLY):
             if "," in file_data:
                 mime_type = file_data.split(';')[0].split(':')[1]
                 base64_string = file_data.split(',')[1]
-                parts.append({
-                    "inline_data": {
-                        "mime_type": mime_type,
-                        "data": base64_string
-                    }
-                })
+                parts.append({"inline_data": {"mime_type": mime_type, "data": base64_string}})
         except Exception as e:
             pass 
 
@@ -347,7 +349,7 @@ STRICT RULES (READ CAREFULLY):
         return jsonify({"success": False, "message": f"Server overloaded due to high traffic. (Error: {final_error})"}), 500
 
 
-# 🔥 NEW TEST GENERATOR ENDPOINT
+# 🔥 TEST GENERATOR ENDPOINT
 @app.route('/api/generateTest', methods=['POST'])
 def generate_test():
     data = request.get_json() or {}
@@ -363,7 +365,6 @@ def generate_test():
         result_data = res.json()
         if res.status_code == 200:
             ai_text = result_data['candidates'][0]['content']['parts'][0]['text']
-            # Safely parse JSON from AI string
             try:
                 import json
                 clean_text = ai_text.replace('```json', '').replace('```', '').strip()
@@ -374,7 +375,6 @@ def generate_test():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-
 # --- ADMIN PANEL ENDPOINTS ---
 @app.route('/api/admin/data', methods=['POST'])
 def admin_data():
@@ -383,9 +383,9 @@ def admin_data():
         return jsonify({"success": False, "message": "Access Denied. Wrong Password!"}), 403
     
     if FIREBASE_URL:
-        users = requests.get(f"{FIREBASE_URL}/users.json").json() or {}
-        usage = requests.get(f"{FIREBASE_URL}/usage.json").json() or {}
-        chats = requests.get(f"{FIREBASE_URL}/chat_sessions.json").json() or {}
+        users = requests.get(db_url("users.json")).json() or {}
+        usage = requests.get(db_url("usage.json")).json() or {}
+        chats = requests.get(db_url("chat_sessions.json")).json() or {}
         
         user_list = []
         today_str = str(datetime.now().date())
@@ -407,7 +407,7 @@ def admin_ban_user():
     
     if FIREBASE_URL:
         for path in ['users', 'sessions', 'chat_sessions', 'usage']:
-            requests.delete(f"{FIREBASE_URL}/{path}/{sanitize_email(target_email)}.json")
+            requests.delete(db_url(f"{path}/{sanitize_email(target_email)}.json"))
         return jsonify({"success": True, "message": f"User {target_email} permanently BANNED!"})
     return jsonify({"success": False, "message": "DB Error"})
 
