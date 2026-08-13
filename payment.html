@@ -1,172 +1,309 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>TicBull Academy - Secure Checkout</title>
-    
-    <link rel="manifest" href="/manifest.json">
-    <meta name="theme-color" content="#2563eb">
-    <link rel="apple-touch-icon" href="logo.png">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>TicBull Academy — Checkout</title>
 
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    
-    <!-- Cashfree JS SDK v3 -->
-    <script src="https://sdk.cashfree.com/js/v3/cashfree.js"></script>
+<script src="global.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
-    <style>
-        :root { --bg-color: #030712; --card-bg: #0f172a; --accent-color: #9f1239; --text-main: #f8fafc; --text-muted: #94a3b8; --border-color: rgba(255, 255, 255, 0.12); --success-color: #10b981; --gold-color: #f59e0b; --input-bg: #1e293b; }
-        body.light-theme { --bg-color: #f1f5f9; --card-bg: #ffffff; --text-main: #0f172a; --text-muted: #64748b; --border-color: #cbd5e1; --input-bg: #ffffff; }
-        * { margin:0; padding:0; box-sizing:border-box; font-family:-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; -webkit-tap-highlight-color: transparent; }
-        body { background: var(--bg-color); color: var(--text-main); display:flex; flex-direction:column; min-height: 100vh; overflow-x: hidden; transition: background 0.3s, color 0.3s; }
+<style>
+/* =========================================================
+   EXACT DASHBOARD MATCHED CSS (PREMIUM UI)
+========================================================= */
+:root { 
+    --bg-color: #030712; 
+    --card-bg: rgba(15, 23, 42, 0.95); 
+    --accent-color: #2563eb; 
+    --accent-glow: rgba(37, 99, 235, 0.45); 
+    --text-main: #f8fafc; 
+    --text-muted: #94a3b8; 
+    --border-color: rgba(255, 255, 255, 0.12); 
+    --success-color: #10b981; 
+    --gold-color: #f59e0b; 
+    --input-bg: #0f172a; 
+}
 
-        .top-bar { display:flex; justify-content:center; align-items:center; padding:15px 20px; z-index:50; background: var(--card-bg); border-bottom: 1px solid var(--border-color); position: sticky; top: 0; }
-        .back-btn { position: absolute; left: 20px; background:transparent; border:none; color:var(--text-main); font-size:20px; cursor:pointer; display:flex; align-items:center; }
-        .checkout-title { font-size: 16px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; color: var(--text-muted); }
-        .secure-badge { position: absolute; right: 20px; color: var(--success-color); font-size: 18px; }
+body.light-theme { 
+    --bg-color: #f1f5f9; 
+    --card-bg: #ffffff; 
+    --text-main: #0f172a; 
+    --text-muted: #64748b; 
+    --border-color: #cbd5e1; 
+    --input-bg: #ffffff; 
+}
 
-        .container { flex: 1; padding: 20px; display: flex; flex-direction: column; gap: 20px; max-width: 600px; margin: 0 auto; width: 100%; }
+* { margin:0; padding:0; box-sizing:border-box; font-family:-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; -webkit-tap-highlight-color: transparent; }
 
-        .summary-card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 20px; padding: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
-        .summary-header { display: flex; align-items: center; gap: 12px; margin-bottom: 15px; padding-bottom: 15px; border-bottom: 1px dashed var(--border-color); }
-        .summary-icon { width: 45px; height: 45px; background: rgba(159, 18, 57, 0.1); color: var(--accent-color); border-radius: 12px; display: flex; justify-content: center; align-items: center; font-size: 20px; }
-        .batch-name { font-size: 16px; font-weight: 800; color: var(--text-main); }
-        .plan-name { font-size: 12px; color: var(--gold-color); font-weight: 700; background: rgba(245, 158, 11, 0.1); padding: 3px 8px; border-radius: 6px; display: inline-block; margin-top: 4px; }
-        
-        .price-row { display: flex; justify-content: space-between; font-size: 14px; color: var(--text-muted); margin-bottom: 10px; }
-        .price-row.total { border-top: 1px dashed var(--border-color); padding-top: 15px; margin-top: 5px; font-size: 18px; font-weight: 800; color: var(--text-main); margin-bottom: 0; }
-        .price-row.total span:last-child { color: var(--success-color); }
+body { background: var(--bg-color); color: var(--text-main); transition: background 0.3s, color 0.3s; display: flex; flex-direction: column; min-height: 100vh;}
 
-        .badge-cashfree { background: rgba(16, 185, 129, 0.1); color: var(--success-color); border: 1px solid rgba(16, 185, 129, 0.3); padding: 10px 14px; border-radius: 12px; font-size: 12px; font-weight: 700; display: flex; align-items: center; gap: 8px; }
+/* CUSTOM TOAST */
+#custom-toast { position: fixed; top: -100px; left: 50%; transform: translateX(-50%); background: var(--card-bg); color: var(--text-main); border: 1px solid var(--accent-color); padding: 12px 24px; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); z-index: 10000; display: flex; align-items: center; gap: 12px; font-size: 13.5px; font-weight: 600; transition: top 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55); }
+#custom-toast.show { top: 30px; }
 
-        .btn-pay { background: var(--success-color); color: #fff; font-weight: 800; padding: 18px; border: none; border-radius: 16px; cursor: pointer; font-size: 16px; margin-top: 10px; transition: 0.2s; box-shadow: 0 8px 20px rgba(16, 185, 129, 0.3); display: flex; justify-content: center; align-items: center; gap: 10px; width: 100%; }
-        .btn-pay:active { transform: scale(0.97); }
+/* HEADER */
+.top-bar { display:flex; align-items:center; padding:20px 20px 10px 20px; z-index:50; position: sticky; top: 0; background: var(--bg-color); border-bottom: 1px solid var(--border-color); }
+.back-btn { background:var(--card-bg); border:1px solid var(--border-color); color:var(--text-main); font-size:18px; width:42px; height:42px; border-radius:12px; display:flex; justify-content:center; align-items:center; cursor:pointer; box-shadow:0 5px 15px rgba(0,0,0,0.3); transition: 0.2s; text-decoration: none; flex-shrink: 0; }
+.back-btn:active { transform: scale(0.9); }
 
-        .processing-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg-color); z-index: 9999; display: none; flex-direction: column; justify-content: center; align-items: center; }
-        .loader-spinner { width: 50px; height: 50px; border: 4px solid var(--border-color); border-top: 4px solid var(--accent-color); border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 20px; }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        .processing-text { font-size: 16px; font-weight: 700; color: var(--text-main); margin-bottom: 8px; }
-        .processing-subtext { font-size: 12px; color: var(--text-muted); }
-    </style>
+.header-text { margin-left: 14px; display: flex; flex-direction: column; }
+.header-text span { font-weight:800; font-size:20px; color:#fff; letter-spacing:0.5px; }
+.header-text small { color: var(--text-muted); font-size: 11px; margin-top: 2px; font-weight: 600;}
+
+/* CHECKOUT CONTAINER */
+.checkout-container { padding: 20px; flex: 1; display: flex; flex-direction: column; gap: 20px; max-width: 500px; margin: 0 auto; width: 100%;}
+
+/* ORDER SUMMARY CARD */
+.summary-card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 20px; padding: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
+.summary-title { font-size: 12px; color: var(--text-muted); font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; }
+.batch-name { font-size: 18px; font-weight: 800; color: var(--text-main); margin-bottom: 15px; }
+
+.price-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; font-size: 14px; font-weight: 600; color: var(--text-muted); }
+.price-row.total { border-top: 1px dashed var(--border-color); padding-top: 15px; margin-top: 5px; color: var(--text-main); font-size: 18px; font-weight: 800; }
+.price-row.total span:last-child { color: var(--gold-color); font-size: 22px; }
+
+/* PAYMENT METHODS */
+.payment-methods { display: flex; flex-direction: column; gap: 12px; }
+.pay-method { display: flex; align-items: center; gap: 14px; background: var(--input-bg); border: 1px solid var(--border-color); padding: 16px; border-radius: 16px; cursor: pointer; transition: 0.2s; }
+.pay-method:active { transform: scale(0.98); }
+.pay-method.active { border-color: var(--accent-color); background: rgba(37, 99, 235, 0.05); }
+.pay-icon { width: 40px; height: 40px; border-radius: 10px; background: var(--card-bg); display: flex; justify-content: center; align-items: center; font-size: 20px; border: 1px solid var(--border-color); }
+.pay-method.active .pay-icon { color: var(--accent-color); border-color: var(--accent-color); }
+.pay-details { flex: 1; }
+.pay-name { font-size: 15px; font-weight: 700; color: var(--text-main); }
+.pay-desc { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+.radio-btn { width: 20px; height: 20px; border-radius: 50%; border: 2px solid var(--border-color); display: flex; justify-content: center; align-items: center; }
+.pay-method.active .radio-btn { border-color: var(--accent-color); }
+.pay-method.active .radio-btn::after { content: ''; width: 10px; height: 10px; border-radius: 50%; background: var(--accent-color); }
+
+/* BOTTOM ACTION */
+.bottom-action { position: sticky; bottom: 0; background: var(--bg-color); padding: 20px; border-top: 1px solid var(--border-color); z-index: 50; }
+.pay-btn { width: 100%; background: var(--accent-color); color: white; border: none; padding: 18px; border-radius: 16px; font-size: 16px; font-weight: 800; cursor: pointer; box-shadow: 0 8px 20px var(--accent-glow); transition: 0.2s; display: flex; justify-content: center; align-items: center; gap: 10px; }
+.pay-btn:active { transform: scale(0.96); }
+.pay-btn:disabled { opacity: 0.7; cursor: not-allowed; transform: none; }
+
+/* SPINNER */
+.spinner { width: 20px; height: 20px; border: 3px solid rgba(255,255,255,0.3); border-radius: 50%; border-top-color: #fff; animation: spin 1s ease-in-out infinite; display: none; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* SUCCESS OVERLAY */
+.success-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg-color); z-index: 9999; display: none; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 20px; animation: fadeIn 0.3s; }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+.success-icon { width: 100px; height: 100px; background: rgba(16, 185, 129, 0.1); border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 50px; color: var(--success-color); margin-bottom: 20px; animation: popScale 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+@keyframes popScale { 0% { transform: scale(0); } 100% { transform: scale(1); } }
+</style>
 </head>
+
 <body>
 
-    <div class="top-bar">
-        <button class="back-btn" onclick="window.location.href='batches.html'"><i class="fa-solid fa-arrow-left"></i></button>
-        <div class="checkout-title">Secure Checkout</div>
-        <div class="secure-badge"><i class="fa-solid fa-shield-halved"></i></div>
+<script>
+  (function() {
+      const savedColor = localStorage.getItem('tb_theme_color') || '#2563eb';
+      document.documentElement.style.setProperty('--accent-color', savedColor);
+      document.documentElement.style.setProperty('--accent-glow', savedColor + '66');
+      if(localStorage.getItem('tb_theme') === 'light') { document.body.classList.add('light-theme'); }
+  })();
+</script>
+
+<div id="custom-toast"><i class="fa-solid fa-circle-check toast-icon success"></i> <span id="toast-message">Notification</span></div>
+
+<div class="top-bar">
+    <a href="batches.html" class="back-btn"><i class="fa-solid fa-arrow-left"></i></a>
+    <div class="header-text">
+        <span>Secure Checkout</span>
+        <small>Powered by TicBull Payments</small>
+    </div>
+</div>
+
+<div class="checkout-container">
+    <div class="summary-card">
+        <div class="summary-title">Order Summary</div>
+        <div class="batch-name" id="batchTitle">Loading Batch...</div>
+        
+        <div class="price-row">
+            <span>Course Fee</span>
+            <span id="courseFee">₹0</span>
+        </div>
+        <div class="price-row">
+            <span>Internet Handling Fee</span>
+            <span>₹0</span>
+        </div>
+        <div class="price-row total">
+            <span>Total Payable</span>
+            <span id="totalPrice">₹0</span>
+        </div>
     </div>
 
-    <div class="container">
-        <div class="summary-card">
-            <div class="summary-header">
-                <div class="summary-icon"><i class="fa-solid fa-graduation-cap"></i></div>
-                <div>
-                    <div class="batch-name" id="displayBatchName">Loading Batch...</div>
-                    <div class="plan-name" id="displayPlanTier">Loading Plan...</div>
+    <div>
+        <div class="summary-title" style="margin-left: 5px;">Select Payment Method</div>
+        <div class="payment-methods">
+            <div class="pay-method active" onclick="selectMethod(this)">
+                <div class="pay-icon" style="color: #0ea5e9;"><i class="fa-brands fa-google-pay"></i></div>
+                <div class="pay-details">
+                    <div class="pay-name">UPI Payment</div>
+                    <div class="pay-desc">GPay, PhonePe, Paytm</div>
                 </div>
+                <div class="radio-btn"></div>
             </div>
             
-            <div class="price-row">
-                <span>Base Price</span>
-                <span id="displayBasePrice">₹0</span>
-            </div>
-            <div class="price-row">
-                <span>GST (18%)</span>
-                <span id="displayTax">₹0</span>
-            </div>
-            <div class="price-row total">
-                <span>Total Payable</span>
-                <span id="displayTotalAmount">₹0</span>
+            <div class="pay-method" onclick="selectMethod(this)">
+                <div class="pay-icon" style="color: #8b5cf6;"><i class="fa-regular fa-credit-card"></i></div>
+                <div class="pay-details">
+                    <div class="pay-name">Card Payment</div>
+                    <div class="pay-desc">Debit or Credit Card</div>
+                </div>
+                <div class="radio-btn"></div>
             </div>
         </div>
-
-        <div class="badge-cashfree">
-            <i class="fa-solid fa-lock"></i> Secured by Cashfree Payments (UPI, Cards, NetBanking, Wallets)
-        </div>
-
-        <button class="btn-pay" onclick="initiateCashfreePayment()">
-            PAY WITH CASHFREE <span id="btnAmount">₹0</span> <i class="fa-solid fa-arrow-right"></i>
-        </button>
     </div>
+</div>
 
-    <div class="processing-overlay" id="processingOverlay">
-        <div class="loader-spinner"></div>
-        <div class="processing-text" id="procText">Connecting to Gateway...</div>
-        <div class="processing-subtext">Please do not refresh or press back</div>
-    </div>
+<div class="bottom-action">
+    <button class="pay-btn" id="payBtn" onclick="processPayment()">
+        <span id="payBtnText">PAY NOW</span>
+        <div class="spinner" id="paySpinner"></div>
+    </button>
+</div>
 
-    <script>
-        // Cashfree Init (Change mode to "PROD" after review approval)
-        const cashfree = Cashfree({
-            mode: "sandbox" 
-        });
+<!-- SUCCESS SCREEN -->
+<div class="success-overlay" id="successScreen">
+    <div class="success-icon"><i class="fa-solid fa-check"></i></div>
+    <h2 style="font-size: 24px; font-weight: 800; margin-bottom: 10px;">Payment Successful!</h2>
+    <p style="color: var(--text-muted); font-size: 14px; margin-bottom: 30px;">Welcome to the Batch. Generating your Classroom...</p>
+    <div class="spinner" style="display: block; border-top-color: var(--accent-color); width: 30px; height: 30px;"></div>
+</div>
 
-        var finalTotal = 0;
-        var userEmail = "";
+<script>
+// Click Sound
+let appSoundEnabled = localStorage.getItem('tb_sound') !== 'off';
+const AudioCtx = window.AudioContext || window.webkitAudioContext;
+let audioCtxInstance;
+function playClickSound() {
+    try {
+        if(!appSoundEnabled || !AudioCtx) return;
+        if(!audioCtxInstance) audioCtxInstance = new AudioCtx();
+        if(audioCtxInstance.state === 'suspended') audioCtxInstance.resume();
+        const osc = audioCtxInstance.createOscillator(); const gain = audioCtxInstance.createGain();
+        osc.type = 'sine'; osc.frequency.setValueAtTime(800, audioCtxInstance.currentTime);
+        gain.gain.setValueAtTime(0.05, audioCtxInstance.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, audioCtxInstance.currentTime + 0.1);
+        osc.connect(gain); gain.connect(audioCtxInstance.destination);
+        osc.start(); osc.stop(audioCtxInstance.currentTime + 0.1);
+    } catch(e) {}
+}
 
-        window.addEventListener('DOMContentLoaded', function() {
-            userEmail = localStorage.getItem('ticbull_email') || 'student@ticbull.com';
-            var isLight = localStorage.getItem('ticbull_theme') === 'light';
-            if(isLight) { document.body.classList.add('light-theme'); }
-            loadOrderDetails();
-        });
+document.addEventListener('click', function(e) {
+    if(e.target.closest('button') || e.target.closest('.pay-method')) playClickSound();
+});
 
-        function loadOrderDetails() {
-            var batchTitle = sessionStorage.getItem('tb_checkout_title') || "TicBull Target Batch";
-            var batchPrice = sessionStorage.getItem('tb_checkout_price') || 399;
-            var tier = sessionStorage.getItem('tb_checkout_tier') || 'Pro';
+function showToast(msg, type = 'success') {
+    const toast = document.getElementById('custom-toast');
+    toast.innerHTML = `<i class="fa-solid ${type === 'success' ? 'fa-circle-check toast-icon success' : 'fa-circle-exclamation toast-icon error'}"></i> <span>${msg}</span>`;
+    toast.classList.add('show');
+    setTimeout(() => toast.classList.remove('show'), 3000);
+}
 
-            document.getElementById('displayBatchName').innerText = batchTitle;
-            document.getElementById('displayPlanTier').innerText = tier + " Pass";
+// Load Data
+let batchTitle = "";
+let batchPrice = "";
+let batchSubjects = [];
 
-            var basePrice = parseInt(batchPrice);
-            var tax = Math.round(basePrice * 0.18);
-            finalTotal = basePrice + tax;
+window.addEventListener('DOMContentLoaded', () => {
+    batchTitle = sessionStorage.getItem('tb_checkout_title');
+    batchPrice = sessionStorage.getItem('tb_checkout_price');
+    const subString = sessionStorage.getItem('tb_checkout_subjects');
+    
+    // Redirect if no data
+    if(!batchTitle || !batchPrice) {
+        window.location.href = "batches.html";
+        return;
+    }
+    
+    if(subString) batchSubjects = JSON.parse(subString);
 
-            document.getElementById('displayBasePrice').innerText = '₹' + basePrice;
-            document.getElementById('displayTax').innerText = '₹' + tax;
-            document.getElementById('displayTotalAmount').innerText = '₹' + finalTotal;
-            document.getElementById('btnAmount').innerText = '₹' + finalTotal;
+    document.getElementById('batchTitle').innerText = batchTitle;
+    document.getElementById('courseFee').innerText = `₹${batchPrice}`;
+    document.getElementById('totalPrice').innerText = `₹${batchPrice}`;
+    document.getElementById('payBtnText').innerText = `PAY ₹${batchPrice} SECURELY`;
+});
+
+function selectMethod(el) {
+    document.querySelectorAll('.pay-method').forEach(m => m.classList.remove('active'));
+    el.classList.add('active');
+}
+
+function processPayment() {
+    const btn = document.getElementById('payBtn');
+    const text = document.getElementById('payBtnText');
+    const spinner = document.getElementById('paySpinner');
+    
+    btn.disabled = true;
+    text.innerText = "PROCESSING...";
+    spinner.style.display = "block";
+
+    // Simulate Payment Gateway Delay
+    setTimeout(() => {
+        saveBatchToDatabase();
+    }, 2000);
+}
+
+function saveBatchToDatabase() {
+    const email = localStorage.getItem('ticbull_email');
+    if(!email) {
+        showToast("Session Error! Please login again.", "error");
+        setTimeout(() => window.location.href = "index.html", 2000);
+        return;
+    }
+
+    const payload = {
+        email: email,
+        batch: {
+            title: batchTitle,
+            price: batchPrice,
+            subjects: batchSubjects,
+            purchase_date: new Date().toISOString().split('T')[0]
         }
+    };
 
-        function initiateCashfreePayment() {
-            var overlay = document.getElementById('processingOverlay');
-            overlay.style.display = 'flex';
-
-            /*
-              NOTE: Server-side API endpoint se payment_session_id laana padega.
-              Backend call: POST https://api.cashfree.com/pg/orders
-            */
-
-            // Temporary simulation for testing before production approval
-            setTimeout(function() {
-                var dummySessionId = sessionStorage.getItem('cf_session_id');
-                
-                if (dummySessionId) {
-                    // Actual Cashfree Checkout Modal call
-                    let checkoutOptions = {
-                        paymentSessionId: dummySessionId,
-                        redirectTarget: "_self"
-                    };
-                    cashfree.checkout(checkoutOptions);
-                } else {
-                    // Fallback redirect to classroom for local testing
-                    overlay.style.display = 'none';
-                    
-                    var enrolled = JSON.parse(localStorage.getItem('tb_enrolled') || '[]');
-                    enrolled.push({
-                        title: document.getElementById('displayBatchName').innerText,
-                        tier: document.getElementById('displayPlanTier').innerText,
-                        date: new Date().toLocaleDateString()
-                    });
-                    localStorage.setItem('tb_enrolled', JSON.stringify(enrolled));
-                    
-                    alert("Payment Gateway activation is in progress on Cashfree. Test enrollment completed!");
-                    window.location.href = 'classroom.html';
-                }
-            }, 1200);
+    fetch('/api/sync-batch', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(payload)
+    })
+    .then(res => res.json())
+    .then(data => {
+        if(data.success) {
+            document.getElementById('successScreen').style.display = 'flex';
+            // Clear checkout data
+            sessionStorage.removeItem('tb_checkout_title');
+            sessionStorage.removeItem('tb_checkout_price');
+            sessionStorage.removeItem('tb_checkout_subjects');
+            
+            // Redirect to classroom
+            setTimeout(() => {
+                window.location.href = "classroom.html";
+            }, 2500);
+        } else {
+            showError();
         }
-    </script>
+    })
+    .catch(err => {
+        showError();
+    });
+}
+
+function showError() {
+    const btn = document.getElementById('payBtn');
+    const text = document.getElementById('payBtnText');
+    const spinner = document.getElementById('paySpinner');
+    
+    btn.disabled = false;
+    text.innerText = `RETRY PAYMENT`;
+    spinner.style.display = "none";
+    showToast("Payment Sync Failed! Contact Support.", "error");
+}
+</script>
+
 </body>
 </html>
