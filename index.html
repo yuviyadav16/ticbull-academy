@@ -1,3 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>TicBull Academy - Secure Login</title>
+    
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#2563eb">
+    <link rel="apple-touch-icon" href="logo.png">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <style>
+        :root {
+            --bg-color: #030712;
+            --card-bg: rgba(15, 23, 42, 0.95);
+            --accent-color: #2563eb;
+            --accent-glow: rgba(37, 99, 235, 0.45);
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --border-color: rgba(255, 255, 255, 0.12);
+            --success-color: #10b981;
+            --input-bg: #0f172a;
+        }
+
+        * { margin:0; padding:0; box-sizing:border-box; font-family:-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; -webkit-tap-highlight-color: transparent; }
+        
+        html, body { height: 100%; width: 100%; overflow: hidden; background: var(--bg-color); color: var(--text-main); display:flex; flex-direction:column; }
+
+        /* CUSTOM TOAST NOTIFICATION */
+        #custom-toast { position: fixed; top: -100px; left: 50%; transform: translateX(-50%); background: var(--card-bg); color: var(--text-main); border: 1px solid var(--accent-color); padding: 12px 24px; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); z-index: 10000; display: flex; align-items: center; gap: 12px; font-size: 13.5px; font-weight: 600; transition: top 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55); }
+        #custom-toast.show { top: 30px; }
+        .toast-icon { font-size: 18px; }
+        .toast-icon.success { color: var(--success-color); }
+        .toast-icon.error { color: #ef4444; }
+
+        /* CINEMATIC SPLASH ANIMATION */
+        #splash-screen { position: fixed; top:0; left:0; width:100%; height:100%; background: radial-gradient(circle at center, #0b1329 0%, #020617 100%); display:flex; flex-direction:column; justify-content:center; align-items:center; z-index:9999; transition: opacity 0.8s ease, visibility 0.8s ease; padding: 20px; }
+        .splash-logo-container { position: relative; width: 130px; height: 110px; display:flex; justify-content:center; align-items:center; }
+        .splash-logo-glow { position: absolute; width: 100%; height: 100%; border-radius: 50%; background: radial-gradient(circle, rgba(37, 99, 235, 0.9) 0%, rgba(0,0,0,0) 70%); filter: blur(20px); animation: pulseGlow 2.5s infinite alternate ease-in-out; }
+        .splash-logo { position: relative; width: 105px; height: 105px; border-radius: 50%; background: #000; border: 2px solid rgba(37, 99, 235, 0.5); display:flex; justify-content:center; align-items:center; overflow:hidden; box-shadow: 0 0 35px var(--accent-glow); }
+        .splash-logo img { width:90%; height:90%; object-fit:contain; }
+        .splash-title { margin-top:20px; font-size:26px; font-weight:800; letter-spacing:1px; color:#fff; text-shadow:0 0 15px rgba(255,255,255,0.3); }
+        .developer-tag { margin-top:6px; font-size:13px; color: var(--accent-color); font-weight:700; letter-spacing:0.5px; }
+
+        .splash-socials { display:flex; gap:18px; margin-top:20px; }
+        .splash-socials a { color:var(--text-muted); font-size:24px; transition:0.3s; animation: floatIcon 3s ease-in-out infinite; }
+        .splash-socials a:hover { color:#fff; transform:scale(1.2); }
+        
+        .progress-bar-container { width: 180px; height: 4px; background: rgba(255,255,255,0.1); border-radius: 10px; margin-top: 25px; overflow: hidden; }
+        .progress-bar { width: 0%; height: 100%; background: linear-gradient(90deg, var(--accent-color), #f59e0b); animation: loadProgress 3.5s linear forwards; }
+
+        @keyframes pulseGlow { 0% { transform: scale(0.85); opacity: 0.5; } 100% { transform: scale(1.2); opacity: 0.95; } }
+        @keyframes loadProgress { 0% { width: 0%; } 100% { width: 100%; } }
+        @keyframes floatIcon { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); color: var(--accent-color); } }
+
+        /* AUTH CARD */
+        .auth-container { display:flex; flex-direction:column; align-items:center; justify-content:center; flex:1; padding:20px; width:100%; overflow-y:auto; }
+        .auth-card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius:24px; padding:28px 22px; width:100%; max-width:420px; box-shadow:0 20px 50px rgba(0,0,0,0.5); text-align:center; position: relative; }
+        .brand-header { display:flex; flex-direction:column; align-items:center; margin-bottom:18px; }
+        .brand-icon-box { width:80px; height:80px; border-radius:50%; background:#000; border:2px solid rgba(37, 99, 235, 0.4); display:flex; justify-content:center; align-items:center; margin-bottom:12px; box-shadow: 0 8px 25px rgba(0,0,0,0.6); overflow:hidden; }
+        .brand-icon-box img { width:90%; height:90%; object-fit:contain; }
+
+        .auth-tabs { display:flex; background:var(--input-bg); padding:4px; border-radius:12px; border:1px solid var(--border-color); margin-bottom:16px; }
+        .auth-tab { flex:1; padding:10px; font-size:13px; font-weight:600; color:var(--text-muted); border-radius:8px; cursor:pointer; transition:0.3s; }
+        .auth-tab.active { background:var(--accent-color); color:#fff; }
+
+        .input-group { position:relative; margin-bottom:12px; text-align:left; }
+        .input-group i.left-icon { position:absolute; left:14px; top:50%; transform:translateY(-50%); color:var(--text-muted); font-size:14px; }
+        .input-group input { width:100%; background:var(--input-bg); border:1px solid var(--border-color); color:var(--text-main); padding:12px 40px; border-radius:12px; font-size:14px; outline:none; transition:0.3s; }
+        .input-group input:focus { border-color:var(--accent-color); box-shadow: 0 0 12px var(--accent-glow); }
+        .pwd-toggle { position:absolute; right:14px; top:50%; transform:translateY(-50%); color:var(--text-muted); cursor:pointer; font-size:14px; }
+
+        .signup-extra-fields { display:none; flex-direction:column; gap:0px; }
+        .forgot-link { font-size:11.5px; color:var(--accent-color); text-decoration:none; display:block; text-align:right; margin:-6px 0 12px 0; cursor:pointer; }
+
+        .btn-primary { width:100%; background: var(--accent-color); color:#fff; font-weight:700; padding:13px; border:none; border-radius:12px; cursor:pointer; font-size:14px; letter-spacing:0.5px; box-shadow:0 8px 20px var(--accent-glow); transition:0.2s; margin-top:8px; }
+        .btn-primary:active { transform:scale(0.98); }
+
+        .auth-footer-support { margin-top: 24px; border-top: 1px solid var(--border-color); padding-top: 16px; display: flex; flex-direction: column; align-items: center; gap: 8px; }
+        .auth-footer-support p { font-size: 11px; color: var(--text-muted); font-weight: 600; margin: 0; }
+        .auth-footer-socials { display: flex; gap: 14px; }
+        .auth-footer-socials a { color: var(--text-muted); font-size: 16px; transition: 0.2s; }
+        .auth-footer-socials a:hover { color: var(--accent-color); transform: scale(1.1); }
+
+        /* MODALS */
+        .modal-overlay { position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); z-index:2000; display:none; justify-content:center; align-items:center; padding:16px; backdrop-filter: blur(5px); }
+        .modal-card { background:var(--card-bg); border:1px solid var(--border-color); border-radius:24px; padding:26px; max-width:480px; width:100%; text-align:center; position:relative; box-shadow: 0 20px 50px rgba(0,0,0,0.5); }
+    </style>
+</head>
+<body>
+
+    <!-- CUSTOM TOAST -->
+    <div id="custom-toast">
+        <i class="fa-solid fa-circle-check toast-icon success"></i>
+        <span id="toast-message">Notification</span>
+    </div>
+
+    <!-- SPLASH SCREEN -->
+    <div id="splash-screen">
+        <div class="splash-logo-container">
+            <div class="splash-logo-glow"></div>
+            <div class="splash-logo">
+                <img src="./logo.png" alt="TicBull Logo" onerror="this.src='https://raw.githubusercontent.com/yuviyadav16/ticbull-academy/main/logo.png'">
+            </div>
+        </div>
+        <div class="splash-title">TicBull Academy</div>
+        <div class="developer-tag"><i class="fa-solid fa-code"></i> Developed by MrYuviYadav</div>
+        
+        <div class="splash-socials">
+            <a href="https://youtube.com/@mryuviyadav" target="_blank" style="color:#ff0000;"><i class="fa-brands fa-youtube"></i></a>
+            <a href="https://www.instagram.com/mryuvi_yadav" target="_blank" style="color:#e1306c;"><i class="fa-brands fa-instagram"></i></a>
+            <a href="https://t.me/mryuviyadav" target="_blank" style="color:#0088cc;"><i class="fa-brands fa-telegram"></i></a>
+            <a href="https://x.com/mryuviyadav" target="_blank"><i class="fa-brands fa-x-twitter"></i></a>
+            <a href="https://facebook.com/mryuviyadav" target="_blank" style="color:#1877f2;"><i class="fa-brands fa-facebook"></i></a>
+        </div>
+
+        <div class="progress-bar-container"><div class="progress-bar"></div></div>
+    </div>
+
+    <!-- AUTH SCREEN -->
+    <div class="auth-container" id="auth-screen">
+        <div class="auth-card">
+            <div class="brand-header">
+                <div class="brand-icon-box">
+                    <img src="./logo.png" alt="Logo" onerror="this.src='https://raw.githubusercontent.com/yuviyadav16/ticbull-academy/main/logo.png'">
+                </div>
+                <h2 style="font-size:22px; font-weight:800;">TicBull Academy</h2>
+                <p style="font-size:12.5px; color:var(--text-muted); margin-top:4px;">AI Student Portal & Exam Engine</p>
+            </div>
+
+            <div class="auth-tabs">
+                <div class="auth-tab active" id="tab-login" onclick="switchAuth('login')">Sign In</div>
+                <div class="auth-tab" id="tab-signup" onclick="switchAuth('signup')">Sign Up</div>
+            </div>
+
+            <div class="signup-extra-fields" id="signupFields">
+                <div class="input-group">
+                    <i class="fa-regular fa-user left-icon"></i>
+                    <input type="text" id="studentName" placeholder="Full Student Name">
+                </div>
+                <div class="input-group">
+                    <i class="fa-regular fa-calendar left-icon"></i>
+                    <input type="date" id="studentDob" placeholder="Date of Birth">
+                </div>
+            </div>
+
+            <div class="input-group">
+                <i class="fa-regular fa-envelope left-icon"></i>
+                <input type="email" id="email" placeholder="Student Email ID">
+            </div>
+            
+            <div class="input-group">
+                <i class="fa-solid fa-lock left-icon"></i>
+                <input type="password" id="password" placeholder="Password">
+                <i class="fa-solid fa-eye pwd-toggle" id="pwdToggle" onclick="togglePassword('password')"></i>
+            </div>
+
+            <span class="forgot-link" onclick="openForgotModal()"><i class="fa-solid fa-key"></i> Forgot Password?</span>
+
+            <button class="btn-primary" id="authSubmitBtn" onclick="initiateAuthWithOTP()">SEND VERIFICATION OTP</button>
+            
+            <div class="auth-footer-support">
+                <p>Need Help? Contact TicBull Support</p>
+                <div class="auth-footer-socials">
+                    <a href="mailto:ticbull.support@gmail.com"><i class="fa-solid fa-envelope"></i></a>
+                    <a href="https://t.me/ticbullteam"><i class="fa-brands fa-telegram"></i></a>
+                    <a href="https://www.instagram.com/ticbull"><i class="fa-brands fa-instagram"></i></a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- FORGOT PASSWORD MODAL -->
+    <div class="modal-overlay" id="forgotModal">
+        <div class="modal-card">
+            <i class="fa-solid fa-xmark" style="position:absolute; right:16px; top:16px; color:var(--text-muted); cursor:pointer;" onclick="document.getElementById('forgotModal').style.display='none'"></i>
+            <h3 style="color:var(--text-main); font-size:18px;">🔑 Reset Password</h3>
+            <div class="input-group" style="margin-top:20px;">
+                <i class="fa-regular fa-envelope left-icon"></i>
+                <input type="email" id="forgotEmail" placeholder="Registered Email ID">
+            </div>
+            <div class="input-group">
+                <i class="fa-solid fa-lock left-icon"></i>
+                <input type="password" id="forgotNewPassword" placeholder="Enter New Password">
+                <i class="fa-solid fa-eye pwd-toggle" onclick="togglePassword('forgotNewPassword')"></i>
+            </div>
+            <button class="btn-primary" onclick="initiateForgotOTP()">SEND RESET OTP</button>
+        </div>
+    </div>
+
+    <!-- OTP VERIFICATION MODAL -->
+    <div class="modal-overlay" id="otpModal">
+        <div class="modal-card">
+            <i class="fa-solid fa-xmark" style="position:absolute; right:16px; top:16px; color:var(--text-muted); cursor:pointer;" onclick="document.getElementById('otpModal').style.display='none'"></i>
+            <h3 style="color:var(--text-main); font-size:18px;">📧 Verify Email OTP</h3>
+            <p style="font-size:12px; color:var(--text-muted); margin-top:6px;">Enter the 6-digit OTP sent to your Email ID</p>
+            <div class="input-group" style="margin-top:20px;">
+                <i class="fa-solid fa-shield-halved left-icon"></i>
+                <input type="text" id="otpInput" placeholder="Enter 6-Digit OTP" maxlength="6" style="text-align:center; font-weight:800; letter-spacing:4px; font-size:16px;">
+            </div>
+            <button class="btn-primary" id="verifyBtn" onclick="verifyOTPAndLogin()">VERIFY & CONTINUE</button>
+        </div>
+    </div>
+
     <script>
         let currentAuthMode = 'login';
         let currentStudentData = { name: '', email: '', dob: '' };
@@ -5,21 +211,14 @@
         window.addEventListener('load', () => {
             const savedEmail = localStorage.getItem('ticbull_email');
             const savedToken = localStorage.getItem('ticbull_token');
-            const authScreen = document.getElementById('auth-screen');
-            const mainFooter = document.getElementById('main-footer');
             
             setTimeout(() => {
                 const splash = document.getElementById('splash-screen');
                 splash.style.opacity = '0';
-                
                 setTimeout(() => {
                     splash.style.display = 'none';
                     if(savedEmail && savedToken) {
-                        // FIX: Ab direct Dashboard par jayega bina loop ke
                         window.location.replace("dashboard.html");
-                    } else {
-                        authScreen.style.display = 'flex';
-                        mainFooter.style.display = 'block'; 
                     }
                 }, 800);
             }, 3500);
@@ -161,4 +360,14 @@
                 setTimeout(() => { window.location.replace("dashboard.html"); }, 1000);
             });
         }
-    </script>
+    </script> 
+    <footer style="text-align: center; margin-top: 30px; padding: 15px; font-size: 12px; border-top: 1px solid #334155;">
+  <a href="/privacy-policy.html" target="_blank" style="color: #94a3b8; text-decoration: none; margin: 0 8px;">Privacy Policy</a> | 
+  <a href="/terms.html" target="_blank" style="color: #94a3b8; text-decoration: none; margin: 0 8px;">Terms & Conditions</a> | 
+  <a href="/refund-policy.html" target="_blank" style="color: #94a3b8; text-decoration: none; margin: 0 8px;">Refund Policy</a> | 
+  <a href="/contact.html" target="_blank" style="color: #94a3b8; text-decoration: none; margin: 0 8px;">Contact Us</a>
+  <p style="color: #64748b; margin-top: 8px;">© 2026 TicBull Academy. All rights reserved.</p>
+</footer>
+
+</body>
+</html>
