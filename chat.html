@@ -43,16 +43,9 @@ body { background: #000; display: flex; justify-content: center; height: 100dvh;
 .teacher-subject { font-size: 11.5px; color: var(--success-color); font-weight: 600; display: flex; align-items: center; gap: 6px; }
 .online-dot { width: 8px; height: 8px; background: var(--success-color); border-radius: 50%; display: inline-block; box-shadow: 0 0 8px var(--success-color); }
 
-/* 3-DOT MENU (Matched to your Screenshot) */
-.menu-container { position: relative; }
+/* DIRECT DRAWER BUTTON */
 .menu-btn { color: var(--text-main); font-size: 20px; background: transparent; border: none; cursor: pointer; padding: 5px 10px; transition: 0.2s; border-radius: 50%;}
 .menu-btn:active { background: rgba(255,255,255,0.1); }
-.dropdown-menu { position: absolute; right: 10px; top: 40px; background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); display: none; flex-direction: column; min-width: 180px; overflow: hidden; z-index: 100; transform-origin: top right; animation: scaleIn 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
-.dropdown-menu.show { display: flex; }
-.dropdown-item { padding: 14px 16px; color: var(--text-main); font-size: 14px; font-weight: 600; display: flex; align-items: center; gap: 12px; cursor: pointer; transition: 0.2s; }
-.dropdown-item:hover { background: rgba(255,255,255,0.05); }
-.dropdown-item.danger { color: #ef4444; border-top: 1px solid var(--border-color); }
-@keyframes scaleIn { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
 
 /* CHAT AREA */
 .chat-area { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 20px; scroll-behavior: smooth; }
@@ -66,7 +59,7 @@ body.light-theme .chat-ai { color: #0f172a; border: none; }
 .ai-avatar-small { width: 32px; height: 32px; border-radius: 50%; object-fit: cover; flex-shrink: 0; margin-top: 2px; border: 1px solid var(--accent-color);}
 .chat-image { max-width: 100%; border-radius: 12px; margin-top: 10px; }
 
-/* INPUT AREA (Responsive & Fixed at bottom) */
+/* INPUT AREA */
 .input-wrapper { background: var(--bg-color); padding: 15px 20px; border-top: 1px solid var(--border-color); z-index: 50; flex-shrink: 0; padding-bottom: max(15px, env(safe-area-inset-bottom)); }
 .input-area { display: flex; align-items: flex-end; gap: 10px; }
 .plus-btn { width: 45px; height: 45px; border-radius: 50%; background: var(--input-bg); border: 1px solid var(--border-color); color: var(--text-main); font-size: 20px; display: flex; justify-content: center; align-items: center; cursor: pointer; transition: 0.2s; flex-shrink: 0; }
@@ -100,7 +93,7 @@ body.light-theme .chat-ai { color: #0f172a; border: none; }
 @keyframes bounce { 0%, 80%, 100% { transform: scale(0); } 40% { transform: scale(1); background: var(--accent-color);} }
 
 /* =========================================================
-   GEMINI STYLE HISTORY DRAWER
+   GEMINI STYLE HISTORY DRAWER (Updated)
 ========================================================= */
 .drawer-overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.6); z-index: 2000; display: none; opacity: 0; transition: opacity 0.3s; backdrop-filter: blur(2px);}
 .drawer-overlay.show { display: block; opacity: 1; }
@@ -113,8 +106,12 @@ body.light-theme .chat-ai { color: #0f172a; border: none; }
 .drawer-close { background: transparent; border: none; color: var(--text-muted); font-size: 22px; cursor: pointer; }
 
 .drawer-content { flex: 1; overflow-y: auto; padding: 20px 15px; }
-.new-chat-btn { display: flex; align-items: center; gap: 12px; padding: 14px 16px; background: var(--input-bg); border: 1px solid var(--border-color); border-radius: 16px; color: var(--text-main); font-size: 15px; font-weight: 600; cursor: pointer; transition: 0.2s; margin-bottom: 25px; }
-.new-chat-btn:hover { border-color: var(--accent-color); color: var(--accent-color); }
+
+/* DRAWER ACTION BUTTONS */
+.drawer-actions { display: flex; gap: 10px; margin-bottom: 25px; }
+.drawer-btn { flex: 1; display: flex; justify-content: center; align-items: center; gap: 8px; padding: 12px; background: var(--input-bg); border: 1px solid var(--border-color); border-radius: 12px; color: var(--text-main); font-size: 13px; font-weight: 700; cursor: pointer; transition: 0.2s; }
+.drawer-btn:active { transform: scale(0.95); }
+.drawer-btn.danger { color: #ef4444; border-color: rgba(239, 68, 68, 0.3); background: rgba(239, 68, 68, 0.05); }
 
 .recent-title { font-size: 13px; color: var(--text-muted); font-weight: 600; margin-bottom: 10px; padding-left: 5px; }
 .history-list { display: flex; flex-direction: column; gap: 5px; }
@@ -123,7 +120,7 @@ body.light-theme .chat-ai { color: #0f172a; border: none; }
 .history-item.active { background: rgba(37,99,235,0.1); color: var(--accent-color); font-weight: 600; }
 
 /* =========================================================
-   GEMINI STYLE PROFESSIONAL MODAL (Screenshot 4)
+   GEMINI STYLE PROFESSIONAL MODAL
 ========================================================= */
 .modal-overlay { position:absolute; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); z-index:3000; display:none; justify-content:center; align-items:center; padding:20px; backdrop-filter: blur(2px); opacity: 0; transition: opacity 0.2s; }
 .modal-overlay.show { display: flex; opacity: 1; }
@@ -145,7 +142,7 @@ body.light-theme .chat-ai { color: #0f172a; border: none; }
 
     <div id="custom-toast"><i class="fa-solid fa-circle-check toast-icon success"></i> <span id="toast-message">Notification</span></div>
 
-    <!-- HEADER -->
+    <!-- HEADER (3 Dots directly opens drawer) -->
     <div class="chat-header">
         <div class="header-left">
             <button class="back-btn" onclick="window.history.back()"><i class="fa-solid fa-arrow-left"></i></button>
@@ -155,14 +152,7 @@ body.light-theme .chat-ai { color: #0f172a; border: none; }
                 <div class="teacher-subject"><span class="online-dot"></span> <span id="subjectName">AI Doubt Solver</span></div>
             </div>
         </div>
-        
-        <div class="menu-container">
-            <button class="menu-btn" onclick="toggleMenu(event)"><i class="fa-solid fa-ellipsis-vertical"></i></button>
-            <div class="dropdown-menu" id="dropdownMenu">
-                <div class="dropdown-item" onclick="openHistoryDrawer()"><i class="fa-solid fa-clock-rotate-left"></i> View Chat History</div>
-                <div class="dropdown-item danger" onclick="openDeleteWarning()"><i class="fa-solid fa-trash"></i> Clear Chat</div>
-            </div>
-        </div>
+        <button class="menu-btn" onclick="openHistoryDrawer()"><i class="fa-solid fa-ellipsis-vertical"></i></button>
     </div>
 
     <!-- CHAT AREA -->
@@ -207,7 +197,7 @@ body.light-theme .chat-ai { color: #0f172a; border: none; }
         </div>
     </div>
 
-    <!-- GEMINI HISTORY DRAWER -->
+    <!-- GEMINI HISTORY DRAWER (Updated) -->
     <div class="drawer-overlay" id="historyOverlay" onclick="closeHistoryDrawer()"></div>
     <div class="history-drawer" id="historyDrawer">
         <div class="drawer-header">
@@ -215,13 +205,19 @@ body.light-theme .chat-ai { color: #0f172a; border: none; }
             <button class="drawer-close" onclick="closeHistoryDrawer()"><i class="fa-solid fa-xmark"></i></button>
         </div>
         <div class="drawer-content">
-            <div class="new-chat-btn" onclick="startNewChat()">
-                <i class="fa-solid fa-pen-to-square"></i> New chat
+            
+            <div class="drawer-actions">
+                <div class="drawer-btn" onclick="startNewChat()">
+                    <i class="fa-solid fa-pen-to-square"></i> New Chat
+                </div>
+                <div class="drawer-btn danger" onclick="openDeleteWarning()">
+                    <i class="fa-solid fa-trash"></i> Clear Chat
+                </div>
             </div>
             
-            <div class="recent-title">Recent</div>
+            <div class="recent-title">Current Subject History</div>
             <div class="history-list" id="historyListUI">
-                <!-- Chat history items will load here -->
+                <!-- Subject specific history displays here -->
             </div>
         </div>
     </div>
@@ -230,7 +226,7 @@ body.light-theme .chat-ai { color: #0f172a; border: none; }
     <div class="modal-overlay" id="warningModal">
         <div class="gemini-modal">
             <h3>Delete chat?</h3>
-            <p>You'll no longer see this chat here. This will also delete related activity like prompts, responses and feedback from your TicBull activity.</p>
+            <p>You'll no longer see this chat history. This will permanently delete related activity like prompts and responses for this subject.</p>
             <div class="modal-actions">
                 <button class="btn-text" style="color:var(--text-main);" onclick="closeDeleteWarning()">Cancel</button>
                 <button class="btn-text" onclick="clearChatHistory()">Confirm</button>
@@ -238,10 +234,10 @@ body.light-theme .chat-ai { color: #0f172a; border: none; }
         </div>
     </div>
 
-</div> <!-- End App Container -->
+</div>
 
 <script>
-/* Teacher Assignment Logic */
+/* FIX: 100% Reliable Teacher Assignment Logic */
 const fNames = ["Priya", "Neha", "Riya", "Kavya", "Ananya", "Sneha", "Kriti", "Pooja", "Megha", "Shruti"];
 const mNames = ["Aarav", "Aditya", "Kabir", "Rohan", "Rahul", "Varun", "Samar", "Aman", "Ishaan", "Kunal"];
 const lastNames = ["Sharma", "Gupta", "Verma", "Yadav", "Singh", "Kumar", "Rao", "Mehta", "Chauhan", "Patel"];
@@ -250,11 +246,18 @@ const FEMALE_AVATAR = "https://raw.githubusercontent.com/yuviyadav16/ticbull-aca
 const MALE_AVATAR = "https://raw.githubusercontent.com/yuviyadav16/ticbull-academy/main/11708.png";
 
 function getTeacherDetails(subjectName) {
-    let hash = 0; for (let i = 0; i < subjectName.length; i++) { hash = subjectName.charCodeAt(i) + ((hash << 5) - hash); }
+    let hash = 0; 
+    for (let i = 0; i < subjectName.length; i++) { 
+        hash = subjectName.charCodeAt(i) + ((hash << 5) - hash); 
+    }
     const absHash = Math.abs(hash);
     const isFemale = absHash % 2 === 0;
     const fName = isFemale ? fNames[absHash % fNames.length] : mNames[absHash % mNames.length];
-    const lName = lastNames[(absHash >> 3) % lastNames.length];
+    
+    // Fixed the Math logic for undefined Last Name
+    const lNameIndex = Math.abs(hash * 3) % lastNames.length; 
+    const lName = lastNames[lNameIndex];
+    
     return { name: `Prof. ${fName} ${lName}`, avatar: isFemale ? FEMALE_AVATAR : MALE_AVATAR };
 }
 
@@ -264,9 +267,10 @@ let studentName = localStorage.getItem('ticbull_name') || "Student";
 let studentEmail = localStorage.getItem('ticbull_email');
 let sessionToken = localStorage.getItem('ticbull_token');
 
+// Strictly Isolated Session Key per Subject & Batch
+let currentSessionId = `chat_${activeBatch.replace(/[^a-zA-Z0-9]/g, '')}_${activeSubject.replace(/[^a-zA-Z0-9]/g, '')}`;
 let teacher = getTeacherDetails(activeSubject);
 let currentImageBase64 = null;
-let currentSessionId = `chat_${activeBatch.replace(/[^a-zA-Z0-9]/g, '')}_${activeSubject.replace(/[^a-zA-Z0-9]/g, '')}`;
 
 window.addEventListener('DOMContentLoaded', () => {
     document.getElementById('teacherName').innerText = teacher.name;
@@ -286,24 +290,18 @@ function showToast(msg, type='success') {
     toast.classList.add('show'); setTimeout(() => toast.classList.remove('show'), 3000);
 }
 
-/* Menus & Popups */
-function toggleMenu(e) { 
-    e.stopPropagation();
-    document.getElementById('dropdownMenu').classList.toggle('show'); 
-}
+/* Plus Menu Popup */
 function toggleShortcutMenu(e) { 
     e.stopPropagation();
     document.getElementById('shortcutMenu').classList.toggle('show'); 
 }
-
 document.addEventListener('click', (e) => {
-    if(!e.target.closest('.menu-container')) document.getElementById('dropdownMenu').classList.remove('show');
     if(!e.target.closest('.input-area') && !e.target.closest('.shortcut-menu')) document.getElementById('shortcutMenu').classList.remove('show');
 });
 
 /* Delete Modal */
 function openDeleteWarning() {
-    document.getElementById('dropdownMenu').classList.remove('show');
+    closeHistoryDrawer();
     const modal = document.getElementById('warningModal');
     modal.style.display = 'flex';
     setTimeout(() => modal.classList.add('show'), 10);
@@ -316,7 +314,6 @@ function closeDeleteWarning() {
 
 /* Chat History Drawer */
 function openHistoryDrawer() {
-    document.getElementById('dropdownMenu').classList.remove('show');
     document.getElementById('historyOverlay').classList.add('show');
     document.getElementById('historyDrawer').classList.add('open');
     populateHistoryDrawer();
@@ -327,59 +324,42 @@ function closeHistoryDrawer() {
 }
 function populateHistoryDrawer() {
     const listUI = document.getElementById('historyListUI');
-    listUI.innerHTML = "";
-    
-    // Find all chats in local storage
-    let found = false;
-    for (let i = 0; i < localStorage.length; i++) {
-        const key = localStorage.key(i);
-        if (key.startsWith('chat_')) {
-            found = true;
-            const parts = key.split('_');
-            const subName = parts.length > 2 ? parts[2] : "Saved Chat";
-            
-            const isActive = (key === currentSessionId) ? "active" : "";
-            listUI.innerHTML += `
-                <div class="history-item ${isActive}" onclick="switchChat('${key}')">
-                    <i class="fa-regular fa-message"></i> ${subName} Chat
-                </div>
-            `;
-        }
-    }
-    if(!found) {
-        listUI.innerHTML = `<div style="font-size:12px; color:var(--text-muted); padding-left:5px;">No recent chats.</div>`;
-    }
+    listUI.innerHTML = `
+        <div class="history-item active" onclick="closeHistoryDrawer()">
+            <i class="fa-regular fa-message"></i> ${activeSubject} Thread
+        </div>
+    `;
 }
-function switchChat(key) {
-    // Basic switch logic (For a full implementation, you would store and fetch the exact subject name to update the header too)
-    const saved = localStorage.getItem(key);
-    if(saved) {
-        document.getElementById('chatBox').innerHTML = saved;
-        document.getElementById('chatBox').scrollTop = document.getElementById('chatBox').scrollHeight;
-        currentSessionId = key;
-    }
-    closeHistoryDrawer();
-}
+
 function startNewChat() {
+    closeHistoryDrawer();
     document.getElementById('chatBox').innerHTML = `
         <div class="chat-bubble chat-ai">
             <img src="${teacher.avatar}" class="ai-avatar-small">
-            <div><strong style="display:block; margin-bottom:4px; font-size:13px;">${teacher.name}</strong>How can I help you today?</div>
+            <div><strong style="display:block; margin-bottom:4px; font-size:13px;">${teacher.name}</strong>How can I help you with a new topic today?</div>
         </div>
     `;
-    closeHistoryDrawer();
+    saveChatHistory();
 }
 
 /* Core Functions */
 function clearChatHistory() {
     localStorage.removeItem(currentSessionId);
+    
+    // Cloud Delete
     fetch('/api/delete-session', {
         method: 'POST', headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({ email: studentEmail, session_id: currentSessionId })
     });
-    startNewChat();
+    
+    document.getElementById('chatBox').innerHTML = `
+        <div class="chat-bubble chat-ai">
+            <img src="${teacher.avatar}" class="ai-avatar-small">
+            <div><strong style="display:block; margin-bottom:4px; font-size:13px;">${teacher.name}</strong>History cleared permanently. Send a message to start fresh.</div>
+        </div>
+    `;
     closeDeleteWarning();
-    showToast("Chat deleted from activity", "success");
+    showToast("Chat permanently deleted", "success");
 }
 
 function handleFileUpload(event) {
@@ -424,8 +404,13 @@ function appendMessage(sender, text, imageBase64=null) {
         `;
     }
     chatBox.appendChild(div);
-    chatBox.scrollTop = chatBox.scrollHeight;
+    scrollToBottom();
     saveChatHistory();
+}
+
+function scrollToBottom() {
+    const chatBox = document.getElementById('chatBox');
+    chatBox.scrollTop = chatBox.scrollHeight;
 }
 
 function sendMessage() {
@@ -436,16 +421,16 @@ function sendMessage() {
     appendMessage('user', text, currentImageBase64);
     
     input.value = "";
-    input.style.height = ''; // reset height
+    input.style.height = ''; 
     const imgData = currentImageBase64 ? [currentImageBase64] : [];
     removeImage();
 
     const indicator = document.getElementById('typingIndicator');
     indicator.style.display = 'flex';
     document.getElementById('chatBox').appendChild(indicator);
-    document.getElementById('chatBox').scrollTop = document.getElementById('chatBox').scrollHeight;
+    scrollToBottom();
 
-    // Call Backend
+    // Send to Backend Router
     fetch('/api/chat', {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
@@ -471,16 +456,17 @@ function sendMessage() {
                 showToast(data.message, "error");
                 setTimeout(()=> window.location.href="index.html", 2000);
             } else {
-                appendMessage('ai', "⚠️ Network Error: Please check your connection or try again.");
+                appendMessage('ai', "⚠️ Server overload or connection issue. (Make sure API Keys are active).");
             }
         }
     })
     .catch(err => {
         indicator.style.display = 'none';
-        appendMessage('ai', "⚠️ Server Error. Please contact support.");
+        appendMessage('ai', "⚠️ Network connection lost. Please try again.");
     });
 }
 
+// FULL CLOUD & LOCAL SYNC
 function saveChatHistory() {
     const chatBox = document.getElementById('chatBox');
     localStorage.setItem(currentSessionId, chatBox.innerHTML);
@@ -490,17 +476,32 @@ function saveChatHistory() {
         body: JSON.stringify({
             email: studentEmail,
             session_id: currentSessionId,
-            title: `${activeSubject} - ${new Date().toLocaleDateString()}`,
+            title: `${activeSubject} - ${activeBatch}`,
             html: chatBox.innerHTML
         })
     });
 }
 
 function loadChatHistory() {
+    // 1. Try Local Storage
     const saved = localStorage.getItem(currentSessionId);
     if(saved) {
         document.getElementById('chatBox').innerHTML = saved;
-        document.getElementById('chatBox').scrollTop = document.getElementById('chatBox').scrollHeight;
+        scrollToBottom();
+    } else {
+        // 2. Fetch from Firebase Cloud (If app was deleted/reinstalled)
+        fetch('/api/get-session-html', {
+            method: 'POST', headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({ email: studentEmail, session_id: currentSessionId })
+        })
+        .then(res => res.json())
+        .then(data => {
+            if(data.success && data.html) {
+                document.getElementById('chatBox').innerHTML = data.html;
+                localStorage.setItem(currentSessionId, data.html); // backup locally
+                scrollToBottom();
+            }
+        }).catch(e => console.log("No cloud history found"));
     }
 }
 </script>
