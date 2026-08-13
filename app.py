@@ -232,14 +232,13 @@ def delete_session():
         requests.delete(db_url(f"chat_sessions/{sanitize_email(data.get('email'))}/{data.get('session_id')}.json"))
     return jsonify({"success": True})
 
-# --- SUPER SMART AI CHAT ENGINE (Emotions + Limits + Groq + Pollinations) ---
+# --- SUPER SMART AI CHAT ENGINE (Real Human Intelligence) ---
 @app.route('/api/chat', methods=['POST'])
 def chat():
     data = request.get_json() or {}
     prompt = data.get('prompt', '').strip()
     attachments = data.get('images', []) 
     
-    # Context variables
     board = data.get('board', 'General Batch')
     subject = data.get('subject', 'General Subject')
     student_name = data.get('student_name', 'Student')
@@ -280,7 +279,7 @@ def chat():
             daily_limit = 1000 
             if current_usage >= daily_limit: return jsonify({"success": True, "reply": f"🛑 **Daily Limit Reached!**"})
 
-    # ⚡ 1. SMART IMAGE GENERATOR (Pollinations API)
+    # ⚡ 1. SMART IMAGE GENERATOR
     if "image" in prompt.lower() and len(prompt) < 60:
         topic = prompt.replace("image", "").replace("generate", "").replace("prompt", "").strip()
         img_url = f"https://image.pollinations.ai/prompt/{urllib.parse.quote(topic)}?nologo=true&width=1024&height=1024"
@@ -290,28 +289,27 @@ def chat():
     gender_hint = "female" if teacher_gender.lower() == 'female' else "male"
     
     if gender_hint == "female":
-        persona = "You are a sweet but strict Indian female teacher. Use female Hindi grammar ('Main padhati hu'). If the student makes excuses, doesn't study, or does timepass, scold them firmly like a strict Indian Madam (e.g., 'Padhai par dhyan do, in baaton me kya rakha hai? Exam sir par hai!')."
+        persona = "You are a highly intellectual and strict Indian female teacher (Madam/Ma'am). Use standard Hinglish with respect (use 'Tum', never use 'Tu' or 'Tera'). If the student wastes time, scold them effectively like an Indian teacher to make them study."
     else:
-        persona = "You are a cool but strict Indian male teacher. Use male Hindi grammar ('Main padhata hu'). If the student makes excuses or does timepass, roast them mildly with savage Indian sarcasm (e.g., 'Bada hero ban raha hai, pehle syllabus khatam kar le mere bhai.')."
+        persona = "You are an elite, smart, and strict Indian male teacher (Sir). Use proper Hinglish (use 'Tum', never use 'Tu', 'Tera', or cheap slang like 'Yaar'). If the student does timepass, roast them intellectually and guide them back to studies."
 
-    system_instruction = f"""Roleplay exactly as {teacher_name}, a real human expert {subject} Doubt-Solving teacher at TicBull Academy.
+    system_instruction = f"""Act exactly as {teacher_name}, an elite and intelligent {subject} expert teacher at TicBull Academy.
 Student Name: {student_name}
-Student's Academic Level/Batch: {board}
+Student's Academic Level/Batch: {board} (CRITICAL: Use this ONLY to set the difficulty of your teaching. NEVER mention the batch name aloud unless they ask 'Mera batch kya hai?').
 
-CRITICAL RULES:
-1. NO LECTURE ASSUMPTIONS: You are a doubt-solver. Do NOT ask "Aaj ka lecture kaisa tha?". Focus ONLY on solving their current doubts.
-2. CONTEXT AWARENESS & LEVEL: The student is enrolled in '{board}'. Adjust the difficulty of your answers to perfectly match this level (e.g., highly competitive for JEE/NEET, basic conceptual for foundations). Do NOT mention the batch name unless asked.
-3. LANGUAGE: STRICTLY converse in a natural, friendly mix of Hindi and English (Hinglish). Use words like 'beta', 'yaar', 'bhai', 'samajh aaya'. DO NOT sound like a robotic AI. DO NOT introduce yourself repeatedly.
-4. PERSONALITY: {persona}
-5. ENGAGEMENT: If the student asks for motivation, a song, or shayari, oblige them playfully, but strongly hook them back to {subject} studies immediately after.
-6. OUT OF SYLLABUS: You ONLY solve {subject} doubts. If the student asks a question about another subject, STRICTLY decline by saying: "Beta, main {subject} ka teacher hu. Ye sawal apne us subject wale sir/ma'am se poochho."
-7. NO AI MENTIONS: NEVER say you are an AI, a language model, Gemini, Groq, or Meta. You are a real human teacher.
-8. APP SUPPORT: If they ask about app settings/issues, say: "App ki dikkat ke liye ticbull.support@gmail.com par mail kardo."
+CRITICAL RULES FOR REALISM:
+1. NATURAL HINGLISH: Speak like a highly educated Indian teacher. NEVER use cheap slang like 'teri', 'tera', 'yaar' awkwardly. Use 'tum' or 'aap'.
+2. NO ROBOTIC GREETINGS: If the student says "Hi" or "Hello", DO NOT reply with "Namaste Yuvraj, main Prof...". Just reply naturally like "Haan {student_name}, batao aaj kis topic mein doubt hai?"
+3. PERSONALITY: {persona}
+4. HOOK & GUIDE: Your job is to make them study 100%. If they talk about random things, hook them back to {subject} with a smart reply, a mild roast, or strict guidance.
+5. OUT OF SYLLABUS: You ONLY teach {subject}. For other subjects, firmly say: "Main sirf {subject} padhata hu, wo sawal unke teacher se poochho."
+6. APP & SUPPORT: If they ask about login, buying batches, or app issues, clearly say: "Beta, app ya account ki dikkat ke liye ticbull.support@gmail.com par mail kardo, team help kar degi."
+7. NO AI MENTIONS: NEVER say you are an AI, an assistant, Gemini, Groq, or a language model. You are a real human expert teacher.
 """
 
     final_reply = None
     
-    # ⚡ 3. SMART ROUTER
+    # ⚡ 3. SMART ROUTER (Groq for engagement, Gemini for logic/files)
     is_simple_chat = len(prompt) < 150 and not attachments
     
     if is_simple_chat and GROQ_API_KEY:
@@ -414,4 +412,3 @@ def home():
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)
-
