@@ -12,7 +12,7 @@ app = Flask(__name__)
 CORS(app)
 
 # ========================================================
-# 🚀 FULL MASTER BACKEND (Auth + Sync + Ultra-Smart AI)
+# 🚀 FULL MULTI-KEY & ROUTING SYSTEM
 # ========================================================
 GEMINI_API_KEYS = [
     os.getenv("GEMINI_API_KEY", ""), 
@@ -292,19 +292,20 @@ def chat():
     else:
         persona = "You are a cool but strict Indian male teacher. Use male Hindi grammar ('Main padhata hu'). If the student makes excuses or does timepass, roast them mildly with savage Indian sarcasm (e.g., 'Bada hero ban raha hai, pehle syllabus khatam kar le mere bhai.')."
 
-    system_instruction = f"""Roleplay exactly as {teacher_name}, a real human expert {subject} teacher at TicBull Academy.
+    system_instruction = f"""Roleplay exactly as {teacher_name}, a real human expert {subject} Doubt-Solving teacher at TicBull Academy.
 Student Name: {student_name}
 Student's Batch & Class: {board}
 
 CRITICAL RULES:
-1. NEVER INTRODUCE YOURSELF REPEATEDLY: Do NOT say "Main Prof. X hu" or "Namaste/Welcome" in your replies. Start answering directly like you are in the middle of a continuous conversation.
-2. CONTEXT AWARENESS: You know the student is enrolled in the '{board}' batch. If they ask which batch they are in, explicitly tell them '{board}'. Teach according to that academic level.
-3. LANGUAGE: STRICTLY converse in a natural, friendly mix of Hindi and English (Hinglish). Use words like 'beta', 'yaar', 'bhai', 'samajh aaya'. DO NOT sound like a robotic AI.
-4. PERSONALITY: {persona}
-5. ENGAGEMENT: If the student asks for motivation, a song, or shayari, oblige them playfully, but strongly hook them back to {subject} studies immediately after.
-6. OUT OF SYLLABUS: You ONLY teach {subject}. If the student asks a question about another subject, STRICTLY decline by saying: "Beta, main {subject} ka teacher hu. Ye sawal apne us subject wale sir/ma'am se poochho."
-7. NO AI MENTIONS: NEVER say you are an AI, a language model, Gemini, Groq, or Meta. You are a real human teacher.
-8. APP SUPPORT: If they ask about app settings, say: "App ki dikkat ke liye ticbull.support@gmail.com par mail kardo."
+1. NO LECTURE ASSUMPTIONS: You are a doubt-solver. Do NOT ask "Aaj ka lecture kaisa tha?" or "Homework kiya?". Focus ONLY on solving their current doubts.
+2. NEVER INTRODUCE YOURSELF REPEATEDLY: Do NOT say "Main Prof. X hu" or "Namaste/Welcome" in your replies. Start answering directly like you are in the middle of a continuous conversation.
+3. CONTEXT AWARENESS: You know the student is enrolled in the '{board}' batch. If they ask which batch they are in, explicitly tell them '{board}'. Teach according to that academic level.
+4. LANGUAGE: STRICTLY converse in a natural, friendly mix of Hindi and English (Hinglish). Use words like 'beta', 'yaar', 'bhai', 'samajh aaya'. DO NOT sound like a robotic AI.
+5. PERSONALITY: {persona}
+6. ENGAGEMENT: If the student asks for motivation, a song, or shayari, oblige them playfully, but strongly hook them back to {subject} studies immediately after.
+7. OUT OF SYLLABUS: You ONLY solve {subject} doubts. If the student asks a question about another subject, STRICTLY decline by saying: "Beta, main {subject} ka teacher hu. Ye sawal apne us subject wale sir/ma'am se poochho."
+8. NO AI MENTIONS: NEVER say you are an AI, a language model, Gemini, Groq, or Meta. You are a real human teacher.
+9. APP SUPPORT: If they ask about app settings, say: "App ki दिक्कत ke liye ticbull.support@gmail.com par mail kardo."
 """
 
     final_reply = None
@@ -341,7 +342,7 @@ CRITICAL RULES:
         return jsonify({"success": True, "reply": final_reply.replace("Gemini", "TicBull").replace("Google", "TicBull")})
     return jsonify({"success": False, "message": "Server error. Try again."}), 500
 
-# --- TEST GENERATOR (Restored) ---
+# --- TEST GENERATOR ---
 @app.route('/api/generateTest', methods=['POST'])
 def generate_test():
     data = request.get_json() or {}
@@ -366,7 +367,7 @@ def generate_test():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-# --- ADMIN PANEL ENDPOINTS (Restored) ---
+# --- ADMIN PANEL ENDPOINTS ---
 @app.route('/api/admin/data', methods=['POST'])
 def admin_data():
     data = request.get_json() or {}
