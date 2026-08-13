@@ -56,7 +56,8 @@
         @keyframes floatIcon { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); color: var(--accent-color); } }
 
         /* AUTH CARD */
-        .auth-container { display:flex; flex-direction:column; align-items:center; justify-content:center; flex:1; padding:20px; width:100%; overflow-y:auto; }
+        /* FIX: display: none kar diya hai by default taaki ye fade hote waqt peeche na dikhe */
+        .auth-container { display:none; flex-direction:column; align-items:center; justify-content:center; flex:1; padding:20px; width:100%; overflow-y:auto; }
         .auth-card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius:24px; padding:28px 22px; width:100%; max-width:420px; box-shadow:0 20px 50px rgba(0,0,0,0.5); text-align:center; position: relative; }
         .brand-header { display:flex; flex-direction:column; align-items:center; margin-bottom:18px; }
         .brand-icon-box { width:80px; height:80px; border-radius:50%; background:#000; border:2px solid rgba(37, 99, 235, 0.4); display:flex; justify-content:center; align-items:center; margin-bottom:12px; box-shadow: 0 8px 25px rgba(0,0,0,0.6); overflow:hidden; }
@@ -211,14 +212,21 @@
         window.addEventListener('load', () => {
             const savedEmail = localStorage.getItem('ticbull_email');
             const savedToken = localStorage.getItem('ticbull_token');
+            const authScreen = document.getElementById('auth-screen');
+            const mainFooter = document.getElementById('main-footer');
             
             setTimeout(() => {
                 const splash = document.getElementById('splash-screen');
                 splash.style.opacity = '0';
+                
                 setTimeout(() => {
                     splash.style.display = 'none';
                     if(savedEmail && savedToken) {
                         window.location.replace("dashboard.html");
+                    } else {
+                        // FIX: Jab user logged in nahi hoga, sirf tabhi login page show hoga
+                        authScreen.style.display = 'flex';
+                        if(mainFooter) mainFooter.style.display = 'block'; 
                     }
                 }, 800);
             }, 3500);
@@ -361,13 +369,15 @@
             });
         }
     </script> 
-    <footer style="text-align: center; margin-top: 30px; padding: 15px; font-size: 12px; border-top: 1px solid #334155;">
-  <a href="/privacy-policy.html" target="_blank" style="color: #94a3b8; text-decoration: none; margin: 0 8px;">Privacy Policy</a> | 
-  <a href="/terms.html" target="_blank" style="color: #94a3b8; text-decoration: none; margin: 0 8px;">Terms & Conditions</a> | 
-  <a href="/refund-policy.html" target="_blank" style="color: #94a3b8; text-decoration: none; margin: 0 8px;">Refund Policy</a> | 
-  <a href="/contact.html" target="_blank" style="color: #94a3b8; text-decoration: none; margin: 0 8px;">Contact Us</a>
-  <p style="color: #64748b; margin-top: 8px;">© 2026 TicBull Academy. All rights reserved.</p>
-</footer>
+    
+    <!-- FIX: Footer ko bhi by default chupaya gaya hai -->
+    <footer id="main-footer" style="display: none; text-align: center; margin-top: 30px; padding: 15px; font-size: 12px; border-top: 1px solid #334155;">
+        <a href="/privacy-policy.html" target="_blank" style="color: #94a3b8; text-decoration: none; margin: 0 8px;">Privacy Policy</a> | 
+        <a href="/terms.html" target="_blank" style="color: #94a3b8; text-decoration: none; margin: 0 8px;">Terms & Conditions</a> | 
+        <a href="/refund-policy.html" target="_blank" style="color: #94a3b8; text-decoration: none; margin: 0 8px;">Refund Policy</a> | 
+        <a href="/contact.html" target="_blank" style="color: #94a3b8; text-decoration: none; margin: 0 8px;">Contact Us</a>
+        <p style="color: #64748b; margin-top: 8px;">© 2026 TicBull Academy. All rights reserved.</p>
+    </footer>
 
 </body>
 </html>
