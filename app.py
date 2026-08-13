@@ -25,13 +25,11 @@ VALID_KEYS = [k for k in GEMINI_API_KEYS if k.strip() and "YAHAN_DAALEIN" not in
 SMTP_EMAIL = os.getenv("SMTP_EMAIL", "ticbull.support@gmail.com")
 SMTP_PASSWORD = os.getenv("SMTP_PASSWORD", "")
 FIREBASE_URL = os.getenv("FIREBASE_URL", "").rstrip('/')
-# 🔥 NAYA SECURITY VARIABLE (Z+ LOCK)
 FIREBASE_SECRET = os.getenv("FIREBASE_SECRET", "") 
 ADMIN_PASSWORD = os.getenv("ADMIN_PASSWORD", "rakeshbhai@2308bull") 
 
 otp_store = {}
 
-# 🔥 FIREBASE SECURITY HELPER FUNCTION
 def db_url(path):
     url = f"{FIREBASE_URL}/{path}"
     if FIREBASE_SECRET:
@@ -61,7 +59,6 @@ def send_otp_email(to_email, otp, is_delete=False):
     except:
         return False
 
-# --- AUTHENTICATION & DELETE ENDPOINTS ---
 @app.route('/api/send-otp', methods=['POST'])
 def send_otp():
     data = request.get_json() or {}
@@ -119,7 +116,6 @@ def verify_otp():
         return jsonify({"success": True, "message": "Verification successful!", "token": token, "user": user_data})
     return jsonify({"success": False, "message": "Invalid 6-Digit OTP!"}), 400
 
-# 🔥 Z+ PERMANENT STORAGE ENDPOINT
 @app.route('/api/sync-batch', methods=['POST'])
 def sync_batch():
     data = request.get_json() or {}
@@ -173,7 +169,6 @@ def delete_account():
         return jsonify({"success": True, "message": "Account Deleted Permanently!"})
     return jsonify({"success": False, "message": "Invalid Deletion OTP!"}), 400
 
-# --- PROFILE & SESSION ENDPOINTS ---
 @app.route('/api/update-profile', methods=['POST'])
 def update_profile():
     data = request.get_json() or {}
@@ -183,6 +178,7 @@ def update_profile():
         return jsonify({"success": True})
     return jsonify({"success": False})
 
+# 🔥 FIX: Yahan enrolled_batches bhejna miss ho gaya tha. Ab add kar diya hai!
 @app.route('/api/check-session', methods=['POST'])
 def check_session():
     data = request.get_json() or {}
@@ -193,10 +189,18 @@ def check_session():
     res = requests.get(db_url(f"sessions/{sanitize_email(email)}.json")).json() or {}
     if res.get("token") == token:
         db_user = requests.get(db_url(f"users/{sanitize_email(email)}.json")).json() or {}
-        return jsonify({"success": True, "active": True, "user": {"name": db_user.get("name", ""), "dob": db_user.get("dob", ""), "photo": db_user.get("photo", "")}})
+        return jsonify({
+            "success": True, 
+            "active": True, 
+            "user": {
+                "name": db_user.get("name", ""), 
+                "dob": db_user.get("dob", ""), 
+                "photo": db_user.get("photo", ""),
+                "enrolled_batches": db_user.get("enrolled_batches", []) # <-- THE FIX
+            }
+        })
     return jsonify({"success": True, "active": False, "message": "Session Expired!"})
 
-# --- MULTI-SESSION CHAT ENDPOINTS ---
 @app.route('/api/sync-session', methods=['POST'])
 def sync_session():
     data = request.get_json() or {}
@@ -230,7 +234,6 @@ def delete_session():
         requests.delete(db_url(f"chat_sessions/{sanitize_email(data.get('email'))}/{data.get('session_id')}.json"))
     return jsonify({"success": True})
 
-# --- 🧠 RATE LIMITING, AI ENGINE WITH IMAGE/PDF VISION ---
 @app.route('/api/chat', methods=['POST'])
 def chat():
     data = request.get_json() or {}
@@ -265,7 +268,6 @@ def chat():
         today_str = str(datetime.now().date())
         usage_url = db_url(f"usage/{safe_email}/{today_str}.json")
         
-        # Need clean URL without auth for requests.put directly if using full db_url
         current_usage = requests.get(usage_url).json() or 0
         
         is_free = 'Free' in purchased_plan
@@ -348,8 +350,6 @@ STRICT RULES:
     else:
         return jsonify({"success": False, "message": f"Server overloaded due to high traffic. (Error: {final_error})"}), 500
 
-
-# 🔥 TEST GENERATOR ENDPOINT
 @app.route('/api/generateTest', methods=['POST'])
 def generate_test():
     data = request.get_json() or {}
@@ -375,7 +375,6 @@ def generate_test():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-# --- ADMIN PANEL ENDPOINTS ---
 @app.route('/api/admin/data', methods=['POST'])
 def admin_data():
     data = request.get_json() or {}
