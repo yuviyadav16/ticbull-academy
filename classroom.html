@@ -36,13 +36,12 @@ body.light-theme {
 
 * { margin:0; padding:0; box-sizing:border-box; font-family:-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; -webkit-tap-highlight-color: transparent; }
 
-body { background: var(--bg-color); color: var(--text-main); transition: background 0.3s, color 0.3s; display: flex; flex-direction: column; min-height: 100vh; }
+body { background: var(--bg-color); color: var(--text-main); transition: background 0.3s, color 0.3s; display: flex; flex-direction: column; min-height: 100vh; overflow-x: hidden; }
 
-/* CUSTOM TOAST */
 #custom-toast { position: fixed; top: -100px; left: 50%; transform: translateX(-50%); background: var(--card-bg); color: var(--text-main); border: 1px solid var(--accent-color); padding: 12px 24px; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); z-index: 10000; display: flex; align-items: center; gap: 12px; font-size: 13.5px; font-weight: 600; transition: top 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55); }
 #custom-toast.show { top: 30px; }
 
-/* HEADER */
+/* MAIN HEADER */
 .top-bar { display:flex; align-items:center; padding:20px 20px 10px 20px; z-index:50; position: sticky; top: 0; background: var(--bg-color); border-bottom: 1px solid var(--border-color); }
 .back-btn { background:var(--card-bg); border:1px solid var(--border-color); color:var(--text-main); font-size:18px; width:42px; height:42px; border-radius:12px; display:flex; justify-content:center; align-items:center; cursor:pointer; box-shadow:0 5px 15px rgba(0,0,0,0.3); transition: 0.2s; text-decoration: none; flex-shrink: 0; }
 .back-btn:active { transform: scale(0.9); }
@@ -51,16 +50,15 @@ body { background: var(--bg-color); color: var(--text-main); transition: backgro
 .header-text span { font-weight:800; font-size:20px; color:#fff; letter-spacing:0.5px; }
 .header-text small { color: var(--text-muted); font-size: 11px; margin-top: 2px; font-weight: 600;}
 
-/* MAIN CONTENT */
+/* CONTENT */
 .main-content { padding: 20px; flex: 1; display: flex; flex-direction: column; max-width: 600px; margin: 0 auto; width: 100%; }
 
-/* LOADER */
+/* LOADER & EMPTY STATE */
 .loader-container { display: flex; justify-content: center; align-items: center; flex: 1; flex-direction: column; gap: 15px; }
 .spinner { width: 35px; height: 35px; border: 4px solid rgba(255,255,255,0.1); border-radius: 50%; border-top-color: var(--accent-color); animation: spin 1s ease-in-out infinite; }
 body.light-theme .spinner { border: 4px solid rgba(0,0,0,0.1); border-top-color: var(--accent-color); }
 @keyframes spin { to { transform: rotate(360deg); } }
 
-/* EMPTY STATE */
 .empty-state { display: none; flex-direction: column; align-items: center; justify-content: center; flex: 1; text-align: center; padding: 20px; }
 .empty-icon { width: 100px; height: 100px; background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 40px; color: var(--text-muted); margin-bottom: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
 .empty-title { font-size: 20px; font-weight: 800; color: var(--text-main); margin-bottom: 8px; }
@@ -70,14 +68,13 @@ body.light-theme .spinner { border: 4px solid rgba(0,0,0,0.1); border-top-color:
 .grid { display: none; grid-template-columns: 1fr; gap: 16px; padding-bottom: 20px; }
 .batch-card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 24px; padding: 24px 20px; box-shadow: 0 20px 50px rgba(0,0,0,0.4); position: relative; overflow: hidden; }
 body.light-theme .batch-card { box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
-
 .batch-card::before { content: ''; position: absolute; top: 0; left: 0; width: 4px; height: 100%; background: var(--accent-color); }
 
 .batch-title { font-size: 18px; font-weight: 800; color: var(--text-main); margin-bottom: 6px; padding-right: 60px;}
 .batch-status { position: absolute; top: 24px; right: 20px; background: rgba(16, 185, 129, 0.15); color: var(--success-color); font-size: 11px; font-weight: 800; padding: 4px 10px; border-radius: 8px; border: 1px solid rgba(16, 185, 129, 0.3); }
 .batch-date { font-size: 12px; color: var(--text-muted); font-weight: 600; margin-bottom: 20px; }
 
-/* PROGRESS BAR */
+/* REAL PROGRESS BAR (Defaults to 0%) */
 .progress-container { width: 100%; background: var(--input-bg); border: 1px solid var(--border-color); height: 8px; border-radius: 10px; overflow: hidden; margin-bottom: 8px; }
 .progress-fill { height: 100%; background: var(--success-color); border-radius: 10px; transition: width 1s ease-in-out; }
 .progress-text { font-size: 11.5px; color: var(--text-muted); font-weight: 700; text-align: right; margin-bottom: 20px; }
@@ -85,38 +82,49 @@ body.light-theme .batch-card { box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
 .btn-primary { width: 100%; background: var(--accent-color); color: white; border: none; padding: 16px; border-radius: 14px; font-size: 14.5px; font-weight: 800; cursor: pointer; box-shadow: 0 8px 20px var(--accent-glow); transition: 0.2s; display: flex; justify-content: center; align-items: center; gap: 10px; }
 .btn-primary:active { transform: scale(0.96); }
 
-/* MODALS */
-.overlay { display:none; position:fixed; inset:0; z-index:2000; background:rgba(0,0,0,0.85); backdrop-filter: blur(5px); padding:16px; align-items: center; justify-content: center; }
-.overlay.show { display:flex; }
-.modal { width:100%; max-width: 420px; background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 24px; box-shadow: 0 20px 50px rgba(0,0,0,0.5); overflow:hidden; animation: popIn 0.3s ease; display: flex; flex-direction: column; max-height: 85vh; }
-@keyframes popIn { 0% { opacity:0; transform:scale(0.8) translateY(10px); } 100% { opacity:1; transform:scale(1) translateY(0); } }
+/* =========================================================
+   FULL SCREEN VIEWS (Replaces old Modals)
+========================================================= */
+.full-screen-view { position: fixed; top: 0; left: 100%; width: 100%; height: 100%; background: var(--bg-color); z-index: 2000; display: flex; flex-direction: column; transition: left 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); overflow-y: auto; }
+.full-screen-view.active { left: 0; }
 
-.modalHead { padding:22px; display:flex; justify-content:space-between; align-items: flex-start; gap:12px; border-bottom:1px solid var(--border-color); flex-shrink: 0;}
-.modalHead h2 { margin:0; font-size:18px; font-weight: 800; color: var(--text-main); }
-.close { width:36px; height:36px; border:0; border-radius:50%; background: transparent; color: var(--text-muted); font-size:20px; cursor:pointer; display:flex; align-items:center; justify-content:center; transition: 0.2s; }
-.close:hover { background: rgba(255,255,255,0.05); color: var(--text-main); }
+.fs-header { display: flex; align-items: center; padding: 20px; background: var(--bg-color); border-bottom: 1px solid var(--border-color); position: sticky; top: 0; z-index: 10; }
+.fs-back { background: transparent; border: none; color: var(--text-main); font-size: 22px; cursor: pointer; padding-right: 15px; }
+.fs-title-area { display: flex; flex-direction: column; }
+.fs-title { font-size: 18px; font-weight: 800; color: var(--text-main); }
+.fs-subtitle { font-size: 12px; color: var(--text-muted); font-weight: 600; margin-top: 2px; }
 
-.modalBody { padding:20px; overflow-y: auto; flex: 1; }
+.fs-body { padding: 20px; flex: 1; max-width: 600px; margin: 0 auto; width: 100%; }
 
-/* SUBJECT ITEM */
-.subject-item { display:flex; justify-content: space-between; align-items:center; background: var(--input-bg); border: 1px solid var(--border-color); border-radius:16px; padding:14px; margin-bottom:12px; cursor: pointer; transition: 0.2s; }
+/* SUBJECT LIST UI */
+.subject-item { display:flex; justify-content: space-between; align-items:center; background: var(--card-bg); border: 1px solid var(--border-color); border-radius:16px; padding:14px; margin-bottom:12px; cursor: pointer; transition: 0.2s; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
 .subject-item:active { transform: scale(0.98); border-color: var(--accent-color); }
 .subject-left { display: flex; align-items: center; gap: 14px; }
 .icon { width:44px; height:44px; display:grid; place-items:center; border-radius:12px; background: rgba(255,255,255,0.05); color: var(--text-main); font-size:20px; flex:none; }
 .subjectName { font-size:15px; font-weight:800; color: var(--text-main); }
 .subject-right { color: var(--accent-color); font-size: 18px; }
 
-/* ACTION MODAL (Smart AI) */
-.action-box { display: flex; flex-direction: column; gap: 12px; }
-.action-btn { width: 100%; background: var(--input-bg); border: 1px solid var(--border-color); padding: 18px; border-radius: 16px; text-align: left; display: flex; align-items: center; gap: 15px; cursor: pointer; transition: 0.2s; }
-.action-btn:active { transform: scale(0.96); }
-.action-btn.ai-test { border-left: 4px solid var(--gold-color); }
-.action-btn.ai-doubt { border-left: 4px solid var(--accent-color); }
-.action-icon { width: 45px; height: 45px; border-radius: 12px; display: flex; justify-content: center; align-items: center; font-size: 20px; }
-.ai-test .action-icon { background: rgba(245, 158, 11, 0.1); color: var(--gold-color); }
-.ai-doubt .action-icon { background: var(--accent-glow); color: var(--accent-color); }
-.action-text strong { display: block; font-size: 16px; color: var(--text-main); font-weight: 800; margin-bottom: 4px; }
-.action-text span { font-size: 12px; color: var(--text-muted); font-weight: 600; }
+/* 4 MAJOR OPTIONS UI */
+.action-grid { display: flex; flex-direction: column; gap: 14px; }
+.action-card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 20px; padding: 20px; display: flex; align-items: center; gap: 16px; cursor: pointer; transition: 0.2s; box-shadow: 0 5px 20px rgba(0,0,0,0.15); }
+.action-card:active { transform: scale(0.96); }
+
+.action-icon-box { width: 55px; height: 55px; border-radius: 14px; display: flex; justify-content: center; align-items: center; font-size: 24px; flex-shrink: 0; }
+.action-text-box h3 { font-size: 16px; font-weight: 800; color: var(--text-main); margin-bottom: 4px; }
+.action-text-box p { font-size: 12px; color: var(--text-muted); font-weight: 600; line-height: 1.4; }
+
+/* Option Colors */
+.opt-teacher { border-left: 4px solid #2563eb; }
+.opt-teacher .action-icon-box { background: rgba(37, 99, 235, 0.1); color: #2563eb; }
+
+.opt-test { border-left: 4px solid #f59e0b; }
+.opt-test .action-icon-box { background: rgba(245, 158, 11, 0.1); color: #f59e0b; }
+
+.opt-pyq { border-left: 4px solid #10b981; }
+.opt-pyq .action-icon-box { background: rgba(16, 185, 129, 0.1); color: #10b981; }
+
+.opt-material { border-left: 4px solid #8b5cf6; }
+.opt-material .action-icon-box { background: rgba(139, 92, 246, 0.1); color: #8b5cf6; }
 
 </style>
 </head>
@@ -132,8 +140,7 @@ body.light-theme .batch-card { box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
   })();
 </script>
 
-<div id="custom-toast"><i class="fa-solid fa-circle-check toast-icon success"></i> <span id="toast-message">Notification</span></div>
-
+<!-- MAIN CLASSROOM SCREEN -->
 <div class="top-bar">
     <a href="dashboard.html" class="back-btn"><i class="fa-solid fa-arrow-left"></i></a>
     <div class="header-text">
@@ -143,14 +150,11 @@ body.light-theme .batch-card { box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
 </div>
 
 <div class="main-content" id="mainContent">
-    
-    <!-- LOADER -->
     <div class="loader-container" id="loader">
         <div class="spinner"></div>
         <div style="font-size: 13px; font-weight: 600; color: var(--text-muted);">Syncing secure data...</div>
     </div>
 
-    <!-- EMPTY STATE -->
     <div class="empty-state" id="emptyState">
         <div class="empty-icon"><i class="fa-solid fa-box-open"></i></div>
         <div class="empty-title">Classroom is Empty!</div>
@@ -160,58 +164,76 @@ body.light-theme .batch-card { box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
         </button>
     </div>
 
-    <!-- BATCH GRID -->
     <div class="grid" id="batchGrid"></div>
-
 </div>
 
-<!-- SUBJECT LIST MODAL -->
-<div id="subjectModal" class="overlay" onclick="outsideClose(event, 'subjectModal')">
-  <div class="modal">
-    <div class="modalHead">
-      <div>
-        <h2 id="modalBatchTitle">Batch Name</h2>
-        <div style="color:var(--text-muted); font-size:12px; margin-top:4px; font-weight:600;">Select a subject to continue</div>
-      </div>
-      <button class="close" onclick="closeModal('subjectModal')"><i class="fa-solid fa-xmark"></i></button>
-    </div>
-    <div class="modalBody" id="subjectModalBody">
-      <!-- Subjects render here -->
-    </div>
-  </div>
-</div>
 
-<!-- ACTION MODAL (Test / Doubt) -->
-<div id="actionModal" class="overlay" onclick="outsideClose(event, 'actionModal')">
-  <div class="modal" style="margin-top: auto; border-radius: 24px 24px 0 0; animation: slideUp 0.3s ease;">
-    <div class="modalHead">
-      <h2 id="modalSubjectTitle">Subject Name</h2>
-      <button class="close" onclick="closeModal('actionModal')"><i class="fa-solid fa-xmark"></i></button>
-    </div>
-    <div class="modalBody">
-        <div class="action-box">
-            
-            <div class="action-btn ai-test" onclick="launchAITest()">
-                <div class="action-icon"><i class="fa-solid fa-file-pen"></i></div>
-                <div class="action-text">
-                    <strong>Take AI Smart Test</strong>
-                    <span>Auto-generated MCQ test by AI</span>
-                </div>
-            </div>
-
-            <div class="action-btn ai-doubt" onclick="launchAIDoubt()">
-                <div class="action-icon"><i class="fa-solid fa-robot"></i></div>
-                <div class="action-text">
-                    <strong>Ask AI Doubt Solver</strong>
-                    <span>Scan photo & get instant solutions</span>
-                </div>
-            </div>
-
+<!-- FULL SCREEN 1: SUBJECTS LIST -->
+<div id="subjectsScreen" class="full-screen-view">
+    <div class="fs-header">
+        <button class="fs-back" onclick="closeSubjectsScreen()"><i class="fa-solid fa-arrow-left"></i></button>
+        <div class="fs-title-area">
+            <div class="fs-title" id="fsBatchTitle">Batch Name</div>
+            <div class="fs-subtitle">Select a subject to continue</div>
         </div>
     </div>
-  </div>
+    <div class="fs-body" id="subjectsListBody">
+        <!-- Subjects will be injected here -->
+    </div>
 </div>
-<style> @keyframes slideUp { 0% { transform: translateY(100%); } 100% { transform: translateY(0); } } </style>
+
+
+<!-- FULL SCREEN 2: THE 4 OPTIONS -->
+<div id="actionsScreen" class="full-screen-view">
+    <div class="fs-header">
+        <button class="fs-back" onclick="closeActionsScreen()"><i class="fa-solid fa-arrow-left"></i></button>
+        <div class="fs-title-area">
+            <div class="fs-title" id="fsSubjectTitle">Subject Name</div>
+            <div class="fs-subtitle">Choose a study module</div>
+        </div>
+    </div>
+    <div class="fs-body">
+        
+        <div class="action-grid">
+            <!-- Option 1: Chat/Teacher -->
+            <div class="action-card opt-teacher" onclick="navigateTo('chat.html')">
+                <div class="action-icon-box"><i class="fa-solid fa-robot"></i></div>
+                <div class="action-text-box">
+                    <h3>Ask Teacher (AI Solver)</h3>
+                    <p>Scan photo & get instant step-by-step solutions</p>
+                </div>
+            </div>
+
+            <!-- Option 2: Test Series -->
+            <div class="action-card opt-test" onclick="navigateTo('test.html')">
+                <div class="action-icon-box"><i class="fa-solid fa-file-pen"></i></div>
+                <div class="action-text-box">
+                    <h3>Test Series</h3>
+                    <p>Auto-generated MCQ tests & mock exams</p>
+                </div>
+            </div>
+
+            <!-- Option 3: PYQs -->
+            <div class="action-card opt-pyq" onclick="navigateTo('pyqs.html')">
+                <div class="action-icon-box"><i class="fa-solid fa-clock-rotate-left"></i></div>
+                <div class="action-text-box">
+                    <h3>Previous Year Questions</h3>
+                    <p>Solve last 10 years board/exam PYQs</p>
+                </div>
+            </div>
+
+            <!-- Option 4: Important Material -->
+            <div class="action-card opt-material" onclick="navigateTo('material.html')">
+                <div class="action-icon-box"><i class="fa-solid fa-book-open-reader"></i></div>
+                <div class="action-text-box">
+                    <h3>Important Material</h3>
+                    <p>Handwritten notes, PDFs & formula sheets</p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
 
 <script>
 // Click Sound Logic
@@ -233,7 +255,7 @@ function playClickSound() {
 }
 
 document.addEventListener('click', function(e) {
-    if(e.target.closest('button') || e.target.closest('.subject-item') || e.target.closest('.action-btn')) playClickSound();
+    if(e.target.closest('button') || e.target.closest('.subject-item') || e.target.closest('.action-card') || e.target.closest('.fs-back')) playClickSound();
 });
 
 const icons = { "Hindi":"📖", "English":"📘", "Sanskrit":"🕉️", "Urdu":"📕", "Mathematics":"🔢", "Physics":"⚛️", "Physical Chemistry":"⚗️", "Organic Chemistry":"🧪", "Inorganic Chemistry":"🔬", "Biology":"🧬", "Botany":"🌱", "Zoology":"🦁", "History":"🏛️", "Geography":"🌍", "Political Science":"⚖️", "Economics":"📈", "General Studies":"📚", "General Knowledge":"🌐", "Current Affairs":"📰", "Reasoning":"🧩", "Quantitative Aptitude":"➗" };
@@ -289,18 +311,15 @@ function renderBatches() {
     emptyState.style.display = 'none';
     grid.style.display = 'grid';
 
-    // Reverse logic so newest is on top
-    const batchesHTML = globalEnrolledBatches.slice().reverse().map((batch, index) => {
-        
-        // Formatting Date
+    const batchesHTML = globalEnrolledBatches.slice().reverse().map((batch) => {
         let pDate = "Recently";
         if(batch.purchase_date) {
             const d = new Date(batch.purchase_date);
             pDate = d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
         }
 
-        // Dummy Progress (Can be dynamic later)
-        const progress = Math.floor(Math.random() * 40) + 10; // Random progress between 10-50%
+        // FAKE RANDOM PROGRESS REMOVED. SET TO 0% INITIALLY.
+        const progress = 0; 
 
         return `
             <div class="batch-card">
@@ -313,7 +332,7 @@ function renderBatches() {
                 </div>
                 <div class="progress-text">${progress}% Syllabus Completed</div>
 
-                <button class="btn-primary" onclick="openSubjectModal('${batch.title}')">
+                <button class="btn-primary" onclick="openSubjectsScreen('${batch.title}')">
                     <i class="fa-solid fa-play"></i> CONTINUE STUDY
                 </button>
             </div>
@@ -323,15 +342,16 @@ function renderBatches() {
     grid.innerHTML = batchesHTML;
 }
 
-function openSubjectModal(batchTitle) {
+// SCREEN TRANSITION LOGIC
+function openSubjectsScreen(batchTitle) {
     selectedBatchTitle = batchTitle;
     const batch = globalEnrolledBatches.find(b => b.title === batchTitle);
     if(!batch) return;
 
-    document.getElementById('modalBatchTitle').innerText = batch.title;
+    document.getElementById('fsBatchTitle').innerText = batch.title;
     
     const subsHTML = (batch.subjects || []).map(subName => `
-        <div class="subject-item" onclick="openActionModal('${subName}')">
+        <div class="subject-item" onclick="openActionsScreen('${subName}')">
             <div class="subject-left">
                 <div class="icon">${icons[subName] || "📚"}</div>
                 <div class="subjectName">${subName}</div>
@@ -340,39 +360,29 @@ function openSubjectModal(batchTitle) {
         </div>
     `).join("");
 
-    document.getElementById('subjectModalBody').innerHTML = subsHTML;
-    document.getElementById('subjectModal').classList.add('show');
+    document.getElementById('subjectsListBody').innerHTML = subsHTML;
+    document.getElementById('subjectsScreen').classList.add('active');
 }
 
-function openActionModal(subjectName) {
+function closeSubjectsScreen() {
+    document.getElementById('subjectsScreen').classList.remove('active');
+}
+
+function openActionsScreen(subjectName) {
     selectedSubjectName = subjectName;
-    document.getElementById('subjectModal').classList.remove('show');
-    document.getElementById('modalSubjectTitle').innerText = subjectName;
-    
-    // Small delay to allow the first modal to close smoothly
-    setTimeout(() => {
-        document.getElementById('actionModal').classList.add('show');
-    }, 150);
+    document.getElementById('fsSubjectTitle').innerText = subjectName;
+    document.getElementById('actionsScreen').classList.add('active');
 }
 
-function closeModal(modalId) {
-    document.getElementById(modalId).classList.remove('show');
+function closeActionsScreen() {
+    document.getElementById('actionsScreen').classList.remove('active');
 }
 
-function outsideClose(event, modalId) {
-    if(event.target.id === modalId) closeModal(modalId);
-}
-
-// AI ACTIONS
-function launchAITest() {
-    alert("AI Smart Test feature is currently locked for configuration. Coming Soon!");
-}
-
-function launchAIDoubt() {
-    // Redirecting to Chat AI page with the subject info
-    sessionStorage.setItem('tb_active_subject', selectedSubjectName);
+function navigateTo(pageUrl) {
+    // Store selections so the next page knows what the user clicked
     sessionStorage.setItem('tb_active_batch', selectedBatchTitle);
-    window.location.href = "chat.html";
+    sessionStorage.setItem('tb_active_subject', selectedSubjectName);
+    window.location.href = pageUrl;
 }
 </script>
 
