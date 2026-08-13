@@ -12,7 +12,7 @@ app = Flask(__name__)
 CORS(app)
 
 # ========================================================
-# 🚀 MULTI-KEY & ROUTING SYSTEM (Gemini + Groq)
+# 🚀 FULL MULTI-KEY & ROUTING SYSTEM
 # ========================================================
 GEMINI_API_KEYS = [
     os.getenv("GEMINI_API_KEY", ""), 
@@ -108,7 +108,6 @@ def verify_otp():
                 requests.patch(db_url(f"users/{safe_email}.json"), json={"password": password})
             
             db_user = requests.get(db_url(f"users/{safe_email}.json")).json() or {}
-            
             user_data = {
                 "name": db_user.get("name", ""), 
                 "dob": db_user.get("dob", ""), 
@@ -233,16 +232,14 @@ def delete_session():
         requests.delete(db_url(f"chat_sessions/{sanitize_email(data.get('email'))}/{data.get('session_id')}.json"))
     return jsonify({"success": True})
 
-# --- SUPER SMART AI CHAT ENGINE (With Usage Limits + Groq + Pollinations) ---
+# --- SUPER SMART AI CHAT ENGINE (Emotions + Limits + Groq + Pollinations) ---
 @app.route('/api/chat', methods=['POST'])
 def chat():
     data = request.get_json() or {}
     prompt = data.get('prompt', '').strip()
     attachments = data.get('images', []) 
     board = data.get('board', 'CBSE')
-    cls = data.get('class', 'Class 12')
-    stream = data.get('stream', 'Science')
-    lang = data.get('lang', 'Hinglish')
+    subject = data.get('subject', 'General Subject')
     student_name = data.get('student_name', 'Student')
     purchased_plan = data.get('purchased_plan', 'Free Demo Plan')
     email = data.get('email', '').strip().lower()
@@ -252,7 +249,7 @@ def chat():
     
     if not prompt and not attachments: return jsonify({"success": False, "message": "Prompt or Image cannot be empty!"}), 400
     
-    # OLD CODE USAGE LIMITS (Restored)
+    # 🔒 OLD CODE USAGE LIMITS (Restored perfectly)
     if email and FIREBASE_URL:
         safe_email = sanitize_email(email)
         session_data = requests.get(db_url(f"sessions/{safe_email}.json")).json() or {}
@@ -270,7 +267,6 @@ def chat():
         current_usage = requests.get(usage_url).json() or 0
         
         is_free = 'Free' in purchased_plan
-        trial_days_left = max(0, 2 - days_active)
         
         if is_free:
             if days_active <= 1: 
@@ -288,28 +284,40 @@ def chat():
         img_url = f"https://image.pollinations.ai/prompt/{urllib.parse.quote(topic)}?nologo=true&width=1024&height=1024"
         return jsonify({"success": True, "reply": f"Ye rahi aapki '{topic}' ki image:\n\n![Image]({img_url})"})
 
-    # AI PROMPT CONFIGURATION
+    # ⚡ 2. HYPER-REALISTIC PERSONA CONSTRUCTION
     gender_hint = "female" if teacher_gender.lower() == 'female' else "male"
-    hindi_grammar = "Use female grammar ('Main padhati hu')" if gender_hint == "female" else "Use male grammar ('Main padhata hu')"
     
-    if any(x in prompt.lower() for x in ['short notes', 'detailed notes', 'mind map', 'video script']):
-        system_instruction = f"You are {teacher_name}. Provide structured {prompt} for the requested topic."
+    if gender_hint == "female":
+        persona = "You are a sweet but strict Indian female teacher. Use female Hindi grammar ('Main padhati hu'). If the student does timepass, flirts, or doesn't study, get annoyed and scold them strictly like an Indian school Madam (e.g., 'Padhai par dhyan do, in baaton me kya rakha hai?')."
     else:
-        system_instruction = f"You are {teacher_name}, an expert {gender_hint} AI Teacher. {hindi_grammar}. Student Name: {student_name}. Act human."
+        persona = "You are a cool but strict Indian male teacher. Use male Hindi grammar ('Main padhata hu'). If the student does timepass, roast them mildly and playfully (e.g., 'Bada hero ban raha hai, pehle syllabus khatam kar le mere bhai.')."
+
+    system_instruction = f"""You are {teacher_name}, an expert {subject} teacher at TicBull Academy.
+Student Name: {student_name}
+
+CRITICAL RULES:
+1. LANGUAGE: STRICTLY converse in a natural, friendly mix of Hindi and English (Hinglish). DO NOT sound like a robotic AI.
+2. PERSONALITY: {persona}
+3. ENGAGEMENT: If the student asks for motivation, a song, or shayari, oblige them playfully, but hook them back to {subject} studies.
+4. OUT OF SYLLABUS: You ONLY teach {subject}. If the student asks a question about another subject, STRICTLY say: "Beta, main {subject} ka teacher hu. Ye sawal apne us subject wale sir/ma'am se poochho."
+5. SUPPORT: If they ask about app settings/technical issues, say: "App ki dikkat ke liye ticbull.support@gmail.com par mail kardo."
+6. IDENTITY: NEVER say you are an AI, Gemini, Groq, or Meta. You are a real human teacher.
+"""
 
     final_reply = None
     
-    # ⚡ 2. SMART ROUTER (Groq for fast text, Gemini for logic/files)
-    is_simple = len(prompt) < 100 and not attachments
+    # ⚡ 3. SMART ROUTER (Groq for Chat/Timepass, Gemini for Hard Study/Images)
+    is_simple_chat = len(prompt) < 150 and not attachments
     
-    if is_simple and GROQ_API_KEY:
+    if is_simple_chat and GROQ_API_KEY:
         try:
             res = requests.post("https://api.groq.com/openai/v1/chat/completions",
                 json={"model": "llama-3.3-70b-versatile", "messages": [{"role": "system", "content": system_instruction}, {"role": "user", "content": prompt}]},
-                headers={"Authorization": f"Bearer {GROQ_API_KEY}"}, timeout=5)
+                headers={"Authorization": f"Bearer {GROQ_API_KEY}"}, timeout=7)
             if res.status_code == 200: final_reply = res.json()['choices'][0]['message']['content']
         except: pass
 
+    # Fallback to Gemini for heavy logic and image processing
     if not final_reply and VALID_KEYS:
         parts = [{"text": f"{system_instruction}\n\nUser: {prompt}"}]
         for file_data in attachments:
@@ -327,11 +335,11 @@ def chat():
             except: continue
 
     if final_reply:
-        if email and FIREBASE_URL: requests.put(usage_url, json=current_usage + 1) # Update Usage
+        if email and FIREBASE_URL: requests.put(usage_url, json=current_usage + 1) # Updating limit usage
         return jsonify({"success": True, "reply": final_reply.replace("Gemini", "TicBull").replace("Google", "TicBull")})
     return jsonify({"success": False, "message": "Server error. Try again."}), 500
 
-# --- TEST GENERATOR (Restored) ---
+# --- TEST GENERATOR (Restored for test.html) ---
 @app.route('/api/generateTest', methods=['POST'])
 def generate_test():
     data = request.get_json() or {}
