@@ -231,14 +231,13 @@ let teacher = getTeacherDetails(activeSubject);
 let currentAttachments = []; 
 let sessionToDelete = null;
 
-// Doubt Solver Specific Greeting
+// Clean, human-like greeting logic
 function getGreeting(isNew = false) {
     const studentFirstName = studentName.split(" ")[0];
-    
     if(isNew) {
         return `<strong style="display:block; margin-bottom:4px; font-size:13px;">${teacher.name}</strong>Haan ${studentFirstName} beta, batao aaj kaun sa doubt clear karna hai?`;
     } else {
-        return `<strong style="display:block; margin-bottom:4px; font-size:13px;">${teacher.name}</strong>Welcome ${studentFirstName}! <span style="color:var(--accent-color); font-weight:bold;">${activeSubject}</span> mein jo bhi doubt ho, bina jhijhak poochho. Main yahin hu tumhare concepts simple banane ke liye.`;
+        return `<strong style="display:block; margin-bottom:4px; font-size:13px;">${teacher.name}</strong>Welcome ${studentFirstName}! <span style="color:var(--accent-color); font-weight:bold;">${activeSubject}</span> mein jo bhi doubt ho, bina jhijhak poochho. Main yahin hu.`;
     }
 }
 
@@ -528,3 +527,4 @@ function loadChatHistory() {
 
 </body>
 </html>
+
