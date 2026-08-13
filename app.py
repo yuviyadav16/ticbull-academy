@@ -12,116 +12,393 @@ app = Flask(__name__)
 CORS(app)
 
 # ========================================================
-# 🚀 FULL MASTER BACKEND (All Systems Included)
+# 🚀 MULTI-KEY & ROUTING SYSTEM (Gemini + Groq)
 # ========================================================
-VALID_GEMINI_KEYS = [k for k in [os.getenv("GEMINI_API_KEY", "")] if k.strip()]
+GEMINI_API_KEYS = [
+    os.getenv("GEMINI_API_KEY", ""), 
+    "AAPKI_2ND_KEY_YAHAN_DAALEIN",
+    "AAPKI_3RD_KEY_YAHAN_DAALEIN",
+    "AAPKI_4TH_KEY_YAHAN_DAALEIN"
+]
+VALID_KEYS = [k for k in GEMINI_API_KEYS if k.strip() and "YAHAN_DAALEIN" not in k]
 GROQ_API_KEY = os.getenv("GROQ_API_KEY", "")
-FIREBASE_URL = os.getenv("FIREBASE_URL", "").rstrip('/')
-FIREBASE_SECRET = os.getenv("FIREBASE_SECRET", "")
+
+# Environment Variables
 SMTP_EMAIL = os.getenv("SMTP_EMAIL", "ticbull.support@gmail.com")
 SMTP_PASSWORD = os.getenv("SMTP_PASSWORD", "")
+FIREBASE_URL = os.getenv("FIREBASE_URL", "").rstrip('/')
+FIREBASE_SECRET = os.getenv("FIREBASE_SECRET", "") 
+ADMIN_PASSWORD = os.getenv("ADMIN_PASSWORD", "rakeshbhai@2308bull") 
+
+otp_store = {}
 
 def db_url(path):
     url = f"{FIREBASE_URL}/{path}"
-    if FIREBASE_SECRET: url += f"?auth={FIREBASE_SECRET}"
+    if FIREBASE_SECRET:
+        url += f"?auth={FIREBASE_SECRET}"
     return url
 
-def sanitize_email(email): return email.replace('.', '_').replace('@', '_at_')
+def sanitize_email(email):
+    return email.replace('.', '_').replace('@', '_at_')
 
-# --- AUTH SYSTEM (Required) ---
+def send_otp_email(to_email, otp, is_delete=False):
+    if not SMTP_PASSWORD or not SMTP_EMAIL: return False
+    if is_delete:
+        subject = "⚠️ URGENT: Account Deletion OTP - TicBull Academy"
+        body = f"WARNING!\n\nYou have requested to PERMANENTLY DELETE your account.\n\nYour Deletion OTP is: {otp}\n\nTicBull Support"
+    else:
+        subject = "TicBull Academy - Secure Verification OTP"
+        body = f"Welcome to TicBull Academy!\n\nYour 6-Digit Secure Verification OTP is: {otp}\n\nPlease do not share this.\n\nTicBull Support Team"
+    msg = MIMEText(body)
+    msg['Subject'] = subject
+    msg['From'] = f"TicBull Academy <{SMTP_EMAIL}>"
+    msg['To'] = to_email
+    try:
+        with smtplib.SMTP_SSL('smtp.gmail.com', 465) as server:
+            server.login(SMTP_EMAIL, SMTP_PASSWORD)
+            server.sendmail(SMTP_EMAIL, to_email, msg.as_string())
+        return True
+    except:
+        return False
+
+# --- AUTHENTICATION ENDPOINTS ---
 @app.route('/api/send-otp', methods=['POST'])
 def send_otp():
     data = request.get_json() or {}
     email = data.get('email', '').strip().lower()
+    password = data.get('password', '').strip()
+    auth_mode = data.get('auth_mode', 'login')
+    if not email: return jsonify({"success": False, "message": "Email address is required!"}), 400
+    
+    if FIREBASE_URL:
+        safe_email = sanitize_email(email)
+        user_check = requests.get(db_url(f"users/{safe_email}.json")).json()
+        if auth_mode == 'signup' and user_check:
+            return jsonify({"success": False, "message": "Account already exists! Please Sign In."}), 400
+        elif auth_mode == 'login':
+            if not user_check: return jsonify({"success": False, "message": "Account not found! Please Create an Account first."}), 400
+            if user_check.get('password') != password: return jsonify({"success": False, "message": "Incorrect Password!"}), 400
+        elif auth_mode == 'forgot' and not user_check:
+            return jsonify({"success": False, "message": "Account not found!"}), 400
+            
     otp = str(random.randint(100000, 999999))
     otp_store[email] = otp
-    msg = MIMEText(f"Your OTP is: {otp}")
-    msg['Subject'], msg['From'], msg['To'] = "TicBull Verification", f"TicBull <{SMTP_EMAIL}>", email
-    try:
-        with smtplib.SMTP_SSL('smtp.gmail.com', 465) as s:
-            s.login(SMTP_EMAIL, SMTP_PASSWORD)
-            s.sendmail(SMTP_EMAIL, email, msg.as_string())
-        return jsonify({"success": True})
-    except: return jsonify({"success": False}), 500
+    if send_otp_email(email, otp): return jsonify({"success": True, "message": f"OTP sent to {email}"})
+    return jsonify({"success": False, "message": "System configuration error."}), 500
 
 @app.route('/api/verify-otp', methods=['POST'])
 def verify_otp():
     data = request.get_json() or {}
-    email, user_otp = data.get('email', '').lower(), data.get('otp', '')
+    email = data.get('email', '').strip().lower()
+    user_otp = data.get('otp', '').strip()
+    password = data.get('password', '').strip()
+    auth_mode = data.get('auth_mode', 'login')
+    device_id = data.get('device_id', 'default_device')
+    
     if email in otp_store and otp_store[email] == user_otp:
+        del otp_store[email]
         token = str(random.randint(10000000, 99999999))
-        return jsonify({"success": True, "token": token})
-    return jsonify({"success": False}), 400
+        user_data = {}
+        if FIREBASE_URL:
+            safe_email = sanitize_email(email)
+            requests.put(db_url(f"sessions/{safe_email}.json"), json={"token": token, "device_id": device_id})
+            if auth_mode == 'signup':
+                requests.put(db_url(f"users/{safe_email}.json"), json={"email": email, "password": password, "join_date": str(datetime.now().date())})
+            elif auth_mode == 'forgot':
+                requests.patch(db_url(f"users/{safe_email}.json"), json={"password": password})
+            
+            db_user = requests.get(db_url(f"users/{safe_email}.json")).json() or {}
+            
+            user_data = {
+                "name": db_user.get("name", ""), 
+                "dob": db_user.get("dob", ""), 
+                "photo": db_user.get("photo", ""),
+                "enrolled_batches": db_user.get("enrolled_batches", []) 
+            }
+        return jsonify({"success": True, "message": "Verification successful!", "token": token, "user": user_data})
+    return jsonify({"success": False, "message": "Invalid 6-Digit OTP!"}), 400
 
-# --- SYNC SYSTEM (Required for Cloud History) ---
+# --- ACCOUNT & PROFILE ENDPOINTS ---
+@app.route('/api/send-delete-otp', methods=['POST'])
+def send_delete_otp():
+    email = (request.get_json() or {}).get('email', '').strip().lower()
+    otp = str(random.randint(100000, 999999))
+    otp_store[email] = otp
+    if send_otp_email(email, otp, is_delete=True): return jsonify({"success": True, "message": "Deletion Warning OTP sent"})
+    return jsonify({"success": False, "message": "Error sending email."}), 500
+
+@app.route('/api/delete-account', methods=['POST'])
+def delete_account():
+    data = request.get_json() or {}
+    email = data.get('email', '').strip().lower()
+    if email in otp_store and otp_store[email] == data.get('otp', '').strip():
+        del otp_store[email]
+        if FIREBASE_URL:
+            safe_email = sanitize_email(email)
+            for path in ['users', 'sessions', 'chat_sessions', 'usage']:
+                requests.delete(db_url(f"{path}/{safe_email}.json"))
+        return jsonify({"success": True, "message": "Account Deleted Permanently!"})
+    return jsonify({"success": False, "message": "Invalid Deletion OTP!"}), 400
+
+@app.route('/api/update-profile', methods=['POST'])
+def update_profile():
+    data = request.get_json() or {}
+    email = data.get('email', '').strip().lower()
+    if email and FIREBASE_URL:
+        requests.patch(db_url(f"users/{sanitize_email(email)}.json"), json={"name": data.get("name"), "dob": data.get("dob"), "photo": data.get("photo")})
+        return jsonify({"success": True})
+    return jsonify({"success": False})
+
+# --- DATA SYNC ENDPOINTS ---
 @app.route('/api/sync-batch', methods=['POST'])
 def sync_batch():
     data = request.get_json() or {}
-    email, batch = data.get('email', '').lower(), data.get('batch')
+    email = data.get('email', '').strip().lower()
+    batch_data = data.get('batch')
+    
+    if not email or not batch_data or not FIREBASE_URL:
+        return jsonify({"success": False, "message": "Missing info or DB."}), 400
+        
     safe_email = sanitize_email(email)
     user_url = db_url(f"users/{safe_email}.json")
-    user_db = requests.get(user_url).json() or {}
-    enrolled = user_db.get('enrolled_batches', [])
-    enrolled.append(batch)
-    requests.patch(user_url, json={"enrolled_batches": enrolled})
-    return jsonify({"success": True})
+    
+    try:
+        user_db = requests.get(user_url).json() or {}
+        enrolled = user_db.get('enrolled_batches', [])
+        exists = False
+        for b in enrolled:
+            if b.get('title') == batch_data.get('title'):
+                exists = True
+                b['subjects'] = batch_data.get('subjects', [])
+                break
+        if not exists:
+            enrolled.append(batch_data)
+        requests.patch(user_url, json={"enrolled_batches": enrolled})
+        return jsonify({"success": True, "enrolled_batches": enrolled})
+    except Exception as e:
+        return jsonify({"success": False, "message": str(e)}), 500
+
+@app.route('/api/check-session', methods=['POST'])
+def check_session():
+    data = request.get_json() or {}
+    email = data.get('email', '').strip().lower()
+    token = data.get('token', '')
+    if not FIREBASE_URL: return jsonify({"success": True, "active": True})
+    
+    res = requests.get(db_url(f"sessions/{sanitize_email(email)}.json")).json() or {}
+    if res.get("token") == token:
+        db_user = requests.get(db_url(f"users/{sanitize_email(email)}.json")).json() or {}
+        return jsonify({
+            "success": True, 
+            "active": True, 
+            "user": {
+                "name": db_user.get("name", ""), 
+                "dob": db_user.get("dob", ""), 
+                "photo": db_user.get("photo", ""),
+                "enrolled_batches": db_user.get("enrolled_batches", []) 
+            }
+        })
+    return jsonify({"success": True, "active": False, "message": "Session Expired!"})
 
 @app.route('/api/sync-session', methods=['POST'])
 def sync_session():
     data = request.get_json() or {}
-    if data.get('email'):
-        requests.put(db_url(f"chat_sessions/{sanitize_email(data.get('email'))}/{data.get('session_id')}.json"), 
-                     json={"title": data.get('title'), "html": data.get('html')})
+    email = data.get('email', '').strip().lower()
+    if email and FIREBASE_URL:
+        requests.put(db_url(f"chat_sessions/{sanitize_email(email)}/{data.get('session_id')}.json"), json={"title": data.get('title', 'New Chat'), "html": data.get('html', '')})
     return jsonify({"success": True})
+
+@app.route('/api/get-sessions', methods=['POST'])
+def get_sessions():
+    email = (request.get_json() or {}).get('email', '').strip().lower()
+    if email and FIREBASE_URL:
+        sessions = requests.get(db_url(f"chat_sessions/{sanitize_email(email)}.json")).json() or {}
+        session_list = [{"id": k, "title": v.get("title", "Chat")} for k, v in sessions.items() if v]
+        session_list.sort(key=lambda x: x["id"], reverse=True)
+        return jsonify({"success": True, "sessions": session_list})
+    return jsonify({"success": True, "sessions": []})
 
 @app.route('/api/get-session-html', methods=['POST'])
 def get_session_html():
     data = request.get_json() or {}
-    res = requests.get(db_url(f"chat_sessions/{sanitize_email(data.get('email'))}/{data.get('session_id')}.json")).json() or {}
-    return jsonify({"success": True, "html": res.get("html", "")})
+    if data.get('email') and FIREBASE_URL:
+        res = requests.get(db_url(f"chat_sessions/{sanitize_email(data.get('email'))}/{data.get('session_id')}.json")).json() or {}
+        return jsonify({"success": True, "html": res.get("html", "")})
+    return jsonify({"success": False, "html": ""})
 
 @app.route('/api/delete-session', methods=['POST'])
 def delete_session():
     data = request.get_json() or {}
-    requests.delete(db_url(f"chat_sessions/{sanitize_email(data.get('email'))}/{data.get('session_id')}.json"))
+    if data.get('email') and FIREBASE_URL:
+        requests.delete(db_url(f"chat_sessions/{sanitize_email(data.get('email'))}/{data.get('session_id')}.json"))
     return jsonify({"success": True})
 
-# --- AI CHAT ROUTER (Includes Image Generation + Groq) ---
+# --- SUPER SMART AI CHAT ENGINE (With Usage Limits + Groq + Pollinations) ---
 @app.route('/api/chat', methods=['POST'])
 def chat():
     data = request.get_json() or {}
-    prompt, attachments = data.get('prompt', '').strip(), data.get('images', [])
-    teacher_name, teacher_gender = data.get('teacher_name', 'AI Teacher'), data.get('teacher_gender', 'Male')
+    prompt = data.get('prompt', '').strip()
+    attachments = data.get('images', []) 
+    board = data.get('board', 'CBSE')
+    cls = data.get('class', 'Class 12')
+    stream = data.get('stream', 'Science')
+    lang = data.get('lang', 'Hinglish')
+    student_name = data.get('student_name', 'Student')
+    purchased_plan = data.get('purchased_plan', 'Free Demo Plan')
+    email = data.get('email', '').strip().lower()
+    token = data.get('token', '') 
+    teacher_name = data.get('teacher_name', 'AI Teacher')
+    teacher_gender = data.get('teacher_gender', 'Male')
     
-    # 1. Image Generate Shortcut
-    if "image" in prompt.lower() and len(prompt) < 30:
-        topic = prompt.replace("image", "").strip()
-        img_url = f"https://image.pollinations.ai/prompt/{urllib.parse.quote(topic)}?nologo=true"
-        return jsonify({"success": True, "reply": f"Ye rahi aapki image:\n\n![Image]({img_url})"})
+    if not prompt and not attachments: return jsonify({"success": False, "message": "Prompt or Image cannot be empty!"}), 400
+    
+    # OLD CODE USAGE LIMITS (Restored)
+    if email and FIREBASE_URL:
+        safe_email = sanitize_email(email)
+        session_data = requests.get(db_url(f"sessions/{safe_email}.json")).json() or {}
+        if session_data.get("token") != token:
+            return jsonify({"success": False, "session_expired": True, "message": "Security Alert: Logged in from another device!"})
+            
+        user_db = requests.get(db_url(f"users/{safe_email}.json")).json() or {}
+        join_date_str = user_db.get("join_date", str(datetime.now().date()))
+        try: join_date = datetime.strptime(join_date_str, "%Y-%m-%d").date()
+        except: join_date = datetime.now().date()
+            
+        days_active = (datetime.now().date() - join_date).days
+        today_str = str(datetime.now().date())
+        usage_url = db_url(f"usage/{safe_email}/{today_str}.json")
+        current_usage = requests.get(usage_url).json() or 0
+        
+        is_free = 'Free' in purchased_plan
+        trial_days_left = max(0, 2 - days_active)
+        
+        if is_free:
+            if days_active <= 1: 
+                daily_limit = 300 
+                if current_usage >= daily_limit: return jsonify({"success": True, "reply": f"⚠️ **Daily Limit Reached!**\nKal try karein."})
+            else:
+                return jsonify({"success": True, "reply": f"🔒 **Chat Locked - Free Trial Expired!**\n\nAage padhai ke liye Batch kharidein!"})
+        else:
+            daily_limit = 1000 
+            if current_usage >= daily_limit: return jsonify({"success": True, "reply": f"🛑 **Daily Limit Reached!**"})
 
-    # 2. Logic to choose AI
-    is_simple = len(prompt) < 100 and not attachments
+    # ⚡ 1. SMART IMAGE GENERATOR (Pollinations API)
+    if "image" in prompt.lower() and len(prompt) < 60:
+        topic = prompt.replace("image", "").replace("generate", "").replace("prompt", "").strip()
+        img_url = f"https://image.pollinations.ai/prompt/{urllib.parse.quote(topic)}?nologo=true&width=1024&height=1024"
+        return jsonify({"success": True, "reply": f"Ye rahi aapki '{topic}' ki image:\n\n![Image]({img_url})"})
+
+    # AI PROMPT CONFIGURATION
+    gender_hint = "female" if teacher_gender.lower() == 'female' else "male"
+    hindi_grammar = "Use female grammar ('Main padhati hu')" if gender_hint == "female" else "Use male grammar ('Main padhata hu')"
+    
+    if any(x in prompt.lower() for x in ['short notes', 'detailed notes', 'mind map', 'video script']):
+        system_instruction = f"You are {teacher_name}. Provide structured {prompt} for the requested topic."
+    else:
+        system_instruction = f"You are {teacher_name}, an expert {gender_hint} AI Teacher. {hindi_grammar}. Student Name: {student_name}. Act human."
+
     final_reply = None
-
-    # Try Groq for simple text
+    
+    # ⚡ 2. SMART ROUTER (Groq for fast text, Gemini for logic/files)
+    is_simple = len(prompt) < 100 and not attachments
+    
     if is_simple and GROQ_API_KEY:
         try:
             res = requests.post("https://api.groq.com/openai/v1/chat/completions",
-                json={"model": "llama-3.3-70b-versatile", "messages": [{"role": "user", "content": prompt}]},
+                json={"model": "llama-3.3-70b-versatile", "messages": [{"role": "system", "content": system_instruction}, {"role": "user", "content": prompt}]},
                 headers={"Authorization": f"Bearer {GROQ_API_KEY}"}, timeout=5)
             if res.status_code == 200: final_reply = res.json()['choices'][0]['message']['content']
         except: pass
 
-    # Fallback to Gemini
-    if not final_reply and VALID_GEMINI_KEYS:
-        parts = [{"text": f"You are {teacher_name}. {prompt}"}]
-        for f in attachments:
-            parts.append({"inline_data": {"mime_type": f.split(';')[0].split(':')[1], "data": f.split(',')[1]}})
-        res = requests.post(f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={VALID_GEMINI_KEYS[0]}", 
-                           json={"contents": [{"parts": parts}]}, headers={"Content-Type": "application/json"})
-        final_reply = res.json()['candidates'][0]['content']['parts'][0]['text']
+    if not final_reply and VALID_KEYS:
+        parts = [{"text": f"{system_instruction}\n\nUser: {prompt}"}]
+        for file_data in attachments:
+            if "," in file_data:
+                parts.append({"inline_data": {"mime_type": file_data.split(';')[0].split(':')[1], "data": file_data.split(',')[1]}})
+        
+        for api_key in VALID_KEYS:
+            try:
+                res = requests.post(f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={api_key}", 
+                    json={"contents": [{"parts": parts}]}, headers={"Content-Type": "application/json"}, timeout=25)
+                res_data = res.json()
+                if "candidates" in res_data:
+                    final_reply = res_data['candidates'][0]['content']['parts'][0]['text']
+                    break
+            except: continue
 
-    return jsonify({"success": True, "reply": final_reply})
+    if final_reply:
+        if email and FIREBASE_URL: requests.put(usage_url, json=current_usage + 1) # Update Usage
+        return jsonify({"success": True, "reply": final_reply.replace("Gemini", "TicBull").replace("Google", "TicBull")})
+    return jsonify({"success": False, "message": "Server error. Try again."}), 500
+
+# --- TEST GENERATOR (Restored) ---
+@app.route('/api/generateTest', methods=['POST'])
+def generate_test():
+    data = request.get_json() or {}
+    prompt = data.get('prompt', '').strip()
+    if not prompt: return jsonify({"error": "Prompt needed"}), 400
+    if not VALID_KEYS: return jsonify({"error": "No API Key"}), 500
+
+    api_key = random.choice(VALID_KEYS)
+    gemini_url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={api_key}"
+    
+    try:
+        res = requests.post(gemini_url, json={"contents": [{"parts": [{"text": prompt}]}]}, headers={'Content-Type': 'application/json'})
+        if res.status_code == 200:
+            ai_text = res.json()['candidates'][0]['content']['parts'][0]['text']
+            try:
+                import json
+                clean_text = ai_text.replace('```json', '').replace('```', '').strip()
+                return jsonify(json.loads(clean_text))
+            except:
+                return jsonify({"response": ai_text})
+        return jsonify({"error": "AI Gen Failed"}), 500
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+# --- ADMIN PANEL ENDPOINTS (Restored) ---
+@app.route('/api/admin/data', methods=['POST'])
+def admin_data():
+    data = request.get_json() or {}
+    if data.get('password') != ADMIN_PASSWORD:
+        return jsonify({"success": False, "message": "Access Denied. Wrong Password!"}), 403
+    
+    if FIREBASE_URL:
+        users = requests.get(db_url("users.json")).json() or {}
+        usage = requests.get(db_url("usage.json")).json() or {}
+        chats = requests.get(db_url("chat_sessions.json")).json() or {}
+        
+        user_list = []
+        today_str = str(datetime.now().date())
+        for email_key, udata in users.items():
+            email_real = email_key.replace('_at_', '@').replace('_', '.')
+            user_chats = chats.get(email_key, {})
+            recent_prompts = [v.get('title', 'Unknown') for k, v in user_chats.items() if v]
+            user_usage = usage.get(email_key, {}).get(today_str, 0)
+            user_list.append({"email": email_real, "name": udata.get("name", "Unknown"), "joined": udata.get("join_date", "Old User"), "today_usage": user_usage, "recent_chats": recent_prompts[:3]})
+        return jsonify({"success": True, "total_users": len(user_list), "users": user_list})
+    return jsonify({"success": False, "message": "Database not connected."})
+
+@app.route('/api/admin/ban-user', methods=['POST'])
+def admin_ban_user():
+    data = request.get_json() or {}
+    if data.get('password') != ADMIN_PASSWORD: return jsonify({"success": False, "message": "Access Denied!"}), 403
+    target_email = data.get('target_email', '').strip()
+    if not target_email: return jsonify({"success": False, "message": "Email missing"}), 400
+    
+    if FIREBASE_URL:
+        for path in ['users', 'sessions', 'chat_sessions', 'usage']:
+            requests.delete(db_url(f"{path}/{sanitize_email(target_email)}.json"))
+        return jsonify({"success": True, "message": f"User {target_email} permanently BANNED!"})
+    return jsonify({"success": False, "message": "DB Error"})
+
+@app.route('/admin.html')
+def admin_page():
+    return app.send_static_file('admin.html')
+
+@app.route('/')
+def home():
+    return "TicBull Master AI Engine Secure API!"
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)
