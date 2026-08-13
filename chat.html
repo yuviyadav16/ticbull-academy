@@ -466,7 +466,7 @@ function sendMessage() {
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({
             prompt: text, images: apiImagesData,
-            board: activeBatch, class: "", stream: "", lang: "Hinglish",
+            board: activeBatch, subject: activeSubject, class: "", stream: "", lang: "Hinglish",
             student_name: studentName, email: studentEmail, token: sessionToken,
             teacher_name: teacher.name, teacher_gender: teacher.gender
         })
