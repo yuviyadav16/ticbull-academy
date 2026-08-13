@@ -231,13 +231,14 @@ let teacher = getTeacherDetails(activeSubject);
 let currentAttachments = []; 
 let sessionToDelete = null;
 
-// Clean, human-like greeting logic (NO "AI Teacher" mention)
+// Doubt Solver Specific Greeting
 function getGreeting(isNew = false) {
     const studentFirstName = studentName.split(" ")[0];
+    
     if(isNew) {
-        return `<strong style="display:block; margin-bottom:4px; font-size:13px;">${teacher.name}</strong>Haan ${studentFirstName} beta, aaj kaun sa naya topic shuru karein?`;
+        return `<strong style="display:block; margin-bottom:4px; font-size:13px;">${teacher.name}</strong>Haan ${studentFirstName} beta, batao aaj kaun sa doubt clear karna hai?`;
     } else {
-        return `<strong style="display:block; margin-bottom:4px; font-size:13px;">${teacher.name}</strong>Welcome ${studentFirstName}! <span style="color:var(--accent-color); font-weight:bold;">${activeSubject}</span> ka koi bhi doubt ho, toh photo/PDF bhejo ya yahan type karke pooch lo. Main yahin hu.`;
+        return `<strong style="display:block; margin-bottom:4px; font-size:13px;">${teacher.name}</strong>Welcome ${studentFirstName}! <span style="color:var(--accent-color); font-weight:bold;">${activeSubject}</span> mein jo bhi doubt ho, bina jhijhak poochho. Main yahin hu tumhare concepts simple banane ke liye.`;
     }
 }
 
@@ -442,7 +443,7 @@ function sendMessage() {
     input.value = ""; input.style.height = ''; 
     currentAttachments = []; renderAttachments();
 
-    // DYNAMIC TYPING INDICATOR (Fixes bug completely)
+    // DYNAMIC TYPING INDICATOR
     const tempIndicator = document.createElement('div');
     tempIndicator.id = 'tempTyping';
     tempIndicator.className = 'typing-indicator';
