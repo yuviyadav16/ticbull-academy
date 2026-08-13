@@ -57,6 +57,7 @@ body.light-theme .chat-ai { color: #0f172a; border: none; }
 .input-area { display: flex; align-items: flex-end; gap: 10px; }
 .plus-btn { width: 45px; height: 45px; border-radius: 50%; background: var(--input-bg); border: 1px solid var(--border-color); color: var(--text-main); font-size: 20px; display: flex; justify-content: center; align-items: center; cursor: pointer; transition: 0.2s; flex-shrink: 0; }
 .plus-btn:active { transform: scale(0.9); }
+.plus-btn:disabled { opacity: 0.5; pointer-events: none; }
 
 .input-box { flex: 1; background: var(--input-bg); border: 1px solid var(--border-color); border-radius: 24px; display: flex; align-items: center; padding: 5px 15px; transition: 0.3s;}
 .input-box:focus-within { border-color: var(--accent-color); }
@@ -65,6 +66,7 @@ body.light-theme .chat-ai { color: #0f172a; border: none; }
 .attach-btn:hover { color: var(--text-main); }
 .send-btn { width: 45px; height: 45px; border-radius: 50%; background: var(--accent-color); color: #fff; border: none; font-size: 16px; display: flex; justify-content: center; align-items: center; cursor: pointer; flex-shrink: 0; box-shadow: 0 4px 15px var(--accent-glow); transition: 0.2s;}
 .send-btn:active { transform: scale(0.9); }
+.send-btn:disabled { background: var(--text-muted); box-shadow: none; cursor: not-allowed; }
 
 /* SHORTCUT MENU */
 .shortcut-menu { position: absolute; bottom: 85px; left: 20px; background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 20px; padding: 10px; display: none; flex-direction: column; gap: 5px; box-shadow: 0 15px 40px rgba(0,0,0,0.6); z-index: 100; animation: slideUp 0.2s ease-out; }
@@ -141,13 +143,7 @@ body.light-theme .chat-ai { color: #0f172a; border: none; }
 
     <!-- CHAT AREA -->
     <div class="chat-area" id="chatBox">
-        <div class="chat-bubble chat-ai">
-            <img src="" class="ai-avatar-small" id="welcomeAvatar">
-            <div>
-                <strong style="display:block; margin-bottom:4px; font-size:13px;" id="welcomeTeacherName">Teacher</strong>
-                Hello <span id="studentNameLabel">Student</span>! Main aapka AI Teacher hu. Aapko <span id="welcomeSubject" style="color:var(--accent-color); font-weight:bold;">Subject</span> mein koi bhi doubt ho, aap photo ya PDF bhej sakte hain ya type karke pooch sakte hain.
-            </div>
-        </div>
+        <!-- Initial Content loaded by JS -->
     </div>
 
     <div class="typing-indicator" id="typingIndicator">
@@ -170,14 +166,13 @@ body.light-theme .chat-ai { color: #0f172a; border: none; }
         </div>
 
         <div class="input-area">
-            <button class="plus-btn" onclick="toggleShortcutMenu(event)"><i class="fa-solid fa-plus"></i></button>
+            <button class="plus-btn" id="plusBtn" onclick="toggleShortcutMenu(event)"><i class="fa-solid fa-plus"></i></button>
             <div class="input-box">
                 <textarea class="chat-input" id="promptInput" placeholder="Ask your doubt here..." rows="1" oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'"></textarea>
-                <label for="fileInput"><i class="fa-solid fa-paperclip attach-btn"></i></label>
-                <!-- MULTIPLE FILES SUPPORT -->
+                <label for="fileInput" id="attachLabel"><i class="fa-solid fa-paperclip attach-btn"></i></label>
                 <input type="file" id="fileInput" accept="image/*, application/pdf" multiple style="display:none;" onchange="handleFileUpload(event)">
             </div>
-            <button class="send-btn" onclick="sendMessage()"><i class="fa-solid fa-paper-plane"></i></button>
+            <button class="send-btn" id="sendBtn" onclick="sendMessage()"><i class="fa-solid fa-paper-plane"></i></button>
         </div>
     </div>
 
@@ -243,21 +238,29 @@ if (!currentSessionId) {
 let chatTitle = localStorage.getItem(`${currentSessionId}_title`) || `${activeSubject} Thread`;
 let teacher = getTeacherDetails(activeSubject);
 
-// Array to hold multiple files (PDFs/Images)
 let currentAttachments = []; 
 let sessionToDelete = null;
+
+// Dynamic Gender Greeting
+function getGreeting(isNew = false) {
+    const studentFirstName = studentName.split(" ")[0];
+    const prefix = teacher.gender === 'Female' ? "Main aapki AI Teacher hu." : "Main aapka AI Teacher hu.";
+    
+    if(isNew) {
+        const suffix = teacher.gender === 'Female' ? "samjha sakti hu?" : "samjha sakta hu?";
+        return `<strong style="display:block; margin-bottom:4px; font-size:13px;">${teacher.name}</strong>Hello ${studentFirstName}! ${prefix} Boliye, naye topic mein main aapko kya ${suffix}`;
+    } else {
+        return `<strong style="display:block; margin-bottom:4px; font-size:13px;">${teacher.name}</strong>Hello ${studentFirstName}! ${prefix} Aapko <span style="color:var(--accent-color); font-weight:bold;">${activeSubject}</span> mein koi bhi doubt ho, aap photo ya PDF bhej sakte hain ya type karke pooch sakte hain.`;
+    }
+}
 
 window.addEventListener('DOMContentLoaded', () => {
     document.documentElement.style.setProperty('--accent-color', localStorage.getItem('tb_theme_color') || '#2563eb');
     if(localStorage.getItem('tb_theme') === 'light') document.body.classList.add('light-theme');
 
     document.getElementById('teacherName').innerText = teacher.name;
-    document.getElementById('welcomeTeacherName').innerText = teacher.name;
     document.getElementById('teacherAvatar').src = teacher.avatar;
-    document.getElementById('welcomeAvatar').src = teacher.avatar;
     document.getElementById('subjectName').innerText = activeSubject;
-    document.getElementById('welcomeSubject').innerText = activeSubject;
-    document.getElementById('studentNameLabel').innerText = studentName.split(" ")[0];
 
     loadChatHistory();
 });
@@ -268,7 +271,7 @@ function showToast(msg, type='success') {
     toast.classList.add('show'); setTimeout(() => toast.classList.remove('show'), 3000);
 }
 
-/* UI Menus */
+/* Menus & UI */
 function toggleShortcutMenu(e) { e.stopPropagation(); document.getElementById('shortcutMenu').classList.toggle('show'); }
 document.addEventListener('click', (e) => {
     if(!e.target.closest('.input-area') && !e.target.closest('.shortcut-menu')) document.getElementById('shortcutMenu').classList.remove('show');
@@ -294,7 +297,6 @@ function populateHistoryDrawer() {
         }
     }
     sessions.sort((a,b) => b.time - a.time);
-    
     if(sessions.length === 0) { listUI.innerHTML = `<div style="font-size:12px; color:var(--text-muted); padding:10px;">No recent chats.</div>`; return; }
     
     sessions.forEach(s => {
@@ -323,9 +325,10 @@ function startNewChat() {
     document.getElementById('chatBox').innerHTML = `
         <div class="chat-bubble chat-ai">
             <img src="${teacher.avatar}" class="ai-avatar-small">
-            <div><strong style="display:block; margin-bottom:4px; font-size:13px;">${teacher.name}</strong>How can I help you with a new topic today?</div>
+            <div>${getGreeting(true)}</div>
         </div>
     `;
+    saveChatHistory();
     closeHistoryDrawer();
 }
 
@@ -353,57 +356,34 @@ function confirmDeleteChat() {
     }
 }
 
-/* FIX: Multiple Files & PDF Support */
+/* File Upload */
 function handleFileUpload(event) {
     const files = event.target.files;
     if(!files || files.length === 0) return;
-    
     for(let file of files) {
         const reader = new FileReader();
         reader.onload = function(e) {
-            currentAttachments.push({
-                data: e.target.result,
-                isPdf: file.type === 'application/pdf',
-                name: file.name
-            });
+            currentAttachments.push({ data: e.target.result, isPdf: file.type === 'application/pdf', name: file.name });
             renderAttachments();
         };
         reader.readAsDataURL(file);
     }
-    // reset input so same file can be selected again if needed
     document.getElementById('fileInput').value = "";
 }
 
 function renderAttachments() {
     const container = document.getElementById('imagePreviewContainer');
     const list = document.getElementById('attList');
-    if(currentAttachments.length === 0) {
-        container.style.display = 'none';
-        return;
-    }
-    container.style.display = 'flex';
-    list.innerHTML = "";
+    if(currentAttachments.length === 0) { container.style.display = 'none'; return; }
+    container.style.display = 'flex'; list.innerHTML = "";
     
     currentAttachments.forEach((att, index) => {
-        let content = att.isPdf ? 
-            `<i class="fa-solid fa-file-pdf" style="font-size:28px; color:#ef4444;"></i>` : 
-            `<img src="${att.data}">`;
-        
-        list.innerHTML += `
-            <div class="att-box">
-                ${content}
-                <i class="fa-solid fa-circle-xmark remove-att" onclick="removeAttachment(${index})"></i>
-            </div>
-        `;
+        let content = att.isPdf ? `<i class="fa-solid fa-file-pdf" style="font-size:28px; color:#ef4444;"></i>` : `<img src="${att.data}">`;
+        list.innerHTML += `<div class="att-box">${content}<i class="fa-solid fa-circle-xmark remove-att" onclick="removeAttachment(${index})"></i></div>`;
     });
 }
+function removeAttachment(index) { currentAttachments.splice(index, 1); renderAttachments(); }
 
-function removeAttachment(index) {
-    currentAttachments.splice(index, 1);
-    renderAttachments();
-}
-
-/* FIX: Shortcuts pre-fill text */
 function sendShortcut(action) {
     const input = document.getElementById('promptInput');
     let prefix = "";
@@ -416,7 +396,6 @@ function sendShortcut(action) {
     input.value = prefix;
     input.focus();
     document.getElementById('shortcutMenu').classList.remove('show');
-    showToast("Topic ka naam likhein aur send karein", "success");
 }
 
 function scrollToBottom() {
@@ -442,14 +421,19 @@ function appendMessage(sender, text, attachments=[]) {
         div.innerHTML = `${text} ${attHTML}`;
     } else {
         div.className = "chat-bubble chat-ai";
-        div.innerHTML = `
-            <img src="${teacher.avatar}" class="ai-avatar-small">
-            <div><strong style="display:block; margin-bottom:4px; font-size:13px;">${teacher.name}</strong>${text.replace(/\n/g, '<br>')}</div>
-        `;
+        div.innerHTML = `<img src="${teacher.avatar}" class="ai-avatar-small"><div><strong style="display:block; margin-bottom:4px; font-size:13px;">${teacher.name}</strong>${text.replace(/\n/g, '<br>')}</div>`;
     }
     chatBox.appendChild(div);
     scrollToBottom();
     saveChatHistory();
+}
+
+/* Chat Engine */
+function setInputState(disabled) {
+    document.getElementById('promptInput').disabled = disabled;
+    document.getElementById('sendBtn').disabled = disabled;
+    document.getElementById('plusBtn').disabled = disabled;
+    document.getElementById('attachLabel').style.pointerEvents = disabled ? 'none' : 'auto';
 }
 
 function sendMessage() {
@@ -457,9 +441,9 @@ function sendMessage() {
     const text = input.value.trim();
     if(!text && currentAttachments.length === 0) return;
 
-    // Save current attachments array for rendering, then clear global
+    setInputState(true); // Disable buttons while processing
+
     const sentAttachments = [...currentAttachments];
-    
     appendMessage('user', text, sentAttachments);
     
     if(document.querySelectorAll('.chat-user').length === 1 && text) {
@@ -467,39 +451,31 @@ function sendMessage() {
         localStorage.setItem(`${currentSessionId}_title`, chatTitle);
     }
 
-    input.value = "";
-    input.style.height = ''; 
-    currentAttachments = [];
-    renderAttachments();
+    input.value = ""; input.style.height = ''; 
+    currentAttachments = []; renderAttachments();
 
     const indicator = document.getElementById('typingIndicator');
     indicator.style.display = 'flex';
     document.getElementById('chatBox').appendChild(indicator);
     scrollToBottom();
 
-    // Prepare pure base64 strings for backend
     const apiImagesData = sentAttachments.map(a => a.data);
 
     fetch('/api/chat', {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({
-            prompt: text,
-            images: apiImagesData,
-            board: activeBatch,
-            class: "",
-            stream: "",
-            lang: "Hinglish",
-            student_name: studentName,
-            email: studentEmail,
-            token: sessionToken,
-            teacher_name: teacher.name,    // FIX: Passing specific teacher data
-            teacher_gender: teacher.gender
+            prompt: text, images: apiImagesData,
+            board: activeBatch, class: "", stream: "", lang: "Hinglish",
+            student_name: studentName, email: studentEmail, token: sessionToken,
+            teacher_name: teacher.name, teacher_gender: teacher.gender
         })
     })
     .then(res => res.json())
     .then(data => {
         indicator.style.display = 'none';
+        setInputState(false); // Re-enable buttons
+        
         if(data.success) {
             appendMessage('ai', data.reply);
         } else {
@@ -507,28 +483,23 @@ function sendMessage() {
                 showToast(data.message, "error");
                 setTimeout(()=> window.location.href="index.html", 2000);
             } else {
-                appendMessage('ai', "⚠️ Server overload or connection issue.");
+                appendMessage('ai', "⚠️ Server overload or API Key missing. Please try again.");
             }
         }
     })
     .catch(err => {
         indicator.style.display = 'none';
-        appendMessage('ai', "⚠️ Network connection lost. Please try again.");
+        setInputState(false);
+        appendMessage('ai', "⚠️ Network connection lost. Please check your internet.");
     });
 }
 
 function saveChatHistory() {
     const chatBox = document.getElementById('chatBox');
     localStorage.setItem(currentSessionId, chatBox.innerHTML);
-
     fetch('/api/sync-session', {
         method: 'POST', headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({
-            email: studentEmail,
-            session_id: currentSessionId,
-            title: chatTitle,
-            html: chatBox.innerHTML
-        })
+        body: JSON.stringify({ email: studentEmail, session_id: currentSessionId, title: chatTitle, html: chatBox.innerHTML })
     });
 }
 
@@ -538,6 +509,14 @@ function loadChatHistory() {
         document.getElementById('chatBox').innerHTML = saved;
         scrollToBottom();
     } else {
+        // Load initial blank template if nothing is saved
+        document.getElementById('chatBox').innerHTML = `
+            <div class="chat-bubble chat-ai">
+                <img src="${teacher.avatar}" class="ai-avatar-small">
+                <div>${getGreeting(false)}</div>
+            </div>
+        `;
+        
         fetch('/api/get-session-html', {
             method: 'POST', headers: {'Content-Type': 'application/json'},
             body: JSON.stringify({ email: studentEmail, session_id: currentSessionId })
@@ -549,7 +528,7 @@ function loadChatHistory() {
                 localStorage.setItem(currentSessionId, data.html);
                 scrollToBottom();
             }
-        }).catch(e => console.log("No cloud history found"));
+        }).catch(e => console.log("Cloud history checked"));
     }
 }
 </script>
