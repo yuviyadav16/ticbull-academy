@@ -12,7 +12,7 @@ app = Flask(__name__)
 CORS(app)
 
 # ========================================================
-# 🚀 1. BEAST MODE: MULTI-KEY ROTATION SYSTEM (25+ KEYS)
+# 🚀 BEAST MODE: MULTI-KEY ROTATION SYSTEM
 # ========================================================
 GEMINI_API_KEYS = []
 for key, value in os.environ.items():
@@ -36,12 +36,10 @@ otp_store = {}
 
 def db_url(path):
     url = f"{FIREBASE_URL}/{path}"
-    if FIREBASE_SECRET:
-        url += f"?auth={FIREBASE_SECRET}"
+    if FIREBASE_SECRET: url += f"?auth={FIREBASE_SECRET}"
     return url
 
-def sanitize_email(email):
-    return email.replace('.', '_').replace('@', '_at_')
+def sanitize_email(email): return email.replace('.', '_').replace('@', '_at_')
 
 def send_otp_email(to_email, otp, is_delete=False):
     if not SMTP_PASSWORD or not SMTP_EMAIL: return False
@@ -63,7 +61,7 @@ def send_otp_email(to_email, otp, is_delete=False):
     except:
         return False
 
-# --- AUTHENTICATION ENDPOINTS ---
+# --- AUTH & SYNC ENDPOINTS ---
 @app.route('/api/send-otp', methods=['POST'])
 def send_otp():
     data = request.get_json() or {}
@@ -232,12 +230,14 @@ def delete_session():
         requests.delete(db_url(f"chat_sessions/{sanitize_email(data.get('email'))}/{data.get('session_id')}.json"))
     return jsonify({"success": True})
 
-# --- SUPER SMART AI CHAT ENGINE ---
+
+# --- SUPER SMART AI CHAT ENGINE (With Memory Context) ---
 @app.route('/api/chat', methods=['POST'])
 def chat():
     data = request.get_json() or {}
     prompt = data.get('prompt', '').strip()
     attachments = data.get('images', []) 
+    recent_history = data.get('history', '') # Memory from frontend
     
     board = data.get('board', 'General Batch')
     subject = data.get('subject', 'General Subject')
@@ -249,7 +249,7 @@ def chat():
     teacher_gender = data.get('teacher_gender', 'Male')
     
     if not prompt and not attachments: return jsonify({"success": False, "message": "Prompt or Image cannot be empty!"}), 400
-    
+
     # 🔒 USAGE LIMITS
     if email and FIREBASE_URL:
         safe_email = sanitize_email(email)
@@ -268,7 +268,6 @@ def chat():
         current_usage = requests.get(usage_url).json() or 0
         
         is_free = 'Free' in purchased_plan
-        
         if is_free:
             if days_active <= 1: 
                 daily_limit = 300 
@@ -279,65 +278,54 @@ def chat():
             daily_limit = 1000 
             if current_usage >= daily_limit: return jsonify({"success": True, "reply": f"🛑 **Daily Limit Reached!**"})
 
-    # ⚡ 2. SMART IMAGE GENERATOR FIX
+    # 1. SMART IMAGE GENERATOR
     if "image" in prompt.lower() and len(prompt) < 100:
         topic = prompt.lower().replace("describe an educational image prompt for:", "").replace("image", "").replace("generate", "").replace("prompt", "").replace("for:", "").strip()
         img_url = f"https://image.pollinations.ai/prompt/{urllib.parse.quote(topic)}?nologo=true&width=1024&height=1024"
         return jsonify({"success": True, "reply": f"Ye rahi is topic ki image:\n\n![Image]({img_url})"})
 
-    # ⚡ 3. CACHE SYSTEM
-    prompt_key = urllib.parse.quote(prompt.lower().strip())
-    cache_url = db_url(f"cache/{prompt_key}.json")
-    
-    if not attachments and FIREBASE_URL:
-        try:
-            cached_reply = requests.get(cache_url).json()
-            if cached_reply:
-                if email: requests.put(usage_url, json=current_usage + 1)
-                return jsonify({"success": True, "reply": cached_reply, "source": "cache"})
-        except: pass
-
-    # ⚡ 4. HYPER-REALISTIC PERSONA
+    # 2. INTELLIGENT PERSONA
     gender_hint = "female" if teacher_gender.lower() == 'female' else "male"
     
     if gender_hint == "female":
-        persona = "You are a highly intellectual and strict Indian female teacher (Madam/Ma'am). Use standard Hinglish with respect (use 'Tum', never use 'Tu' or 'Tera'). If the student wastes time, scold them effectively like an Indian teacher to make them study."
+        persona = "You are an intelligent, elegant Indian female teacher (Madam/Ma'am). Use standard Hinglish. Do not be overly sweet. Be strict about studies."
     else:
-        persona = "You are an elite, smart, and strict Indian male teacher (Sir). Use proper Hinglish (use 'Tum', never use 'Tu', 'Tera', or cheap slang like 'Yaar'). If the student does timepass, roast them intellectually and guide them back to studies."
+        persona = "You are an elite, smart Indian male teacher (Sir). Use proper Hinglish. If the student makes small talk, reply casually but professionally, and instantly guide them back to studies."
 
-    system_instruction = f"""Act exactly as {teacher_name}, an elite and intelligent {subject} expert teacher at TicBull Academy.
+    system_instruction = f"""Act exactly as {teacher_name}, an elite {subject} expert teacher at TicBull Academy.
 Student Name: {student_name}
-Student's Academic Level/Batch: {board} (CRITICAL: Use this ONLY to set the difficulty of your teaching. NEVER mention the batch name aloud).
+Student's Academic Level/Batch: {board} (Set teaching difficulty accordingly. Do not announce the batch).
 
 CRITICAL RULES FOR REALISM:
-1. IMAGE READING: If the student uploads an image, analyze it extremely carefully and answer their questions based ONLY on the content of that image.
-2. NATURAL HINGLISH: Speak like a highly educated Indian teacher. NEVER use cheap slang like 'teri', 'tera', 'yaar' awkwardly. Use 'tum' or 'aap'.
-3. NO ROBOTIC GREETINGS: If the student says "Hi" or "Hello", DO NOT reply with "Namaste, main Prof...". Just reply naturally like "Haan {student_name}, batao aaj kis topic mein doubt hai?"
-4. PERSONALITY: {persona}
-5. HOOK & GUIDE: Your job is to make them study 100%.
-6. OUT OF SYLLABUS: You ONLY teach {subject}.
-7. APP & SUPPORT: If they ask about login/app issues, clearly say: "Beta, app ya account ki dikkat ke liye ticbull.support@gmail.com par mail kardo, team help kar degi."
-8. NO AI MENTIONS: NEVER say you are an AI, an assistant, or Gemini.
+1. NEVER REPEAT YOURSELF. Read the previous conversation to maintain the flow. If they just said "Hi" previously, don't re-introduce yourself. 
+2. DYNAMIC CONVERSATION: If the student says casual things like "Or sir", "Aur batao", DO NOT reply with a robotic greeting. Say something natural like "Bas badhiya chal raha hai, tum batao padhai par focus hai na?"
+3. IMAGE READING: If they upload a textbook image, analyze it like a real teacher and explain the specific concepts shown in it clearly.
+4. TONE: {persona} NEVER use 'tera/teri'. Use 'tum/aap'. 
+5. NO AI MENTIONS: You are a real human expert. 
 """
+
+    if recent_history:
+        context_prompt = f"{system_instruction}\n\n---\nPREVIOUS CHAT CONTEXT:\n{recent_history}\n---\n\nNEW MESSAGE FROM STUDENT: {prompt}"
+    else:
+        context_prompt = f"{system_instruction}\n\nStudent message: {prompt}"
 
     final_reply = None
     
-    # ⚡ 5. SMART ROUTER
+    # 3. ROUTER
     is_simple_chat = len(prompt) < 150 and not attachments
     
     if is_simple_chat and GROQ_API_KEY:
         try:
             res = requests.post("https://api.groq.com/openai/v1/chat/completions",
-                json={"model": "llama-3.3-70b-versatile", "messages": [{"role": "system", "content": system_instruction}, {"role": "user", "content": prompt}]},
+                json={"model": "llama-3.3-70b-versatile", "messages": [{"role": "system", "content": system_instruction}, {"role": "user", "content": f"Context:\n{recent_history}\n\nStudent: {prompt}"}]},
                 headers={"Authorization": f"Bearer {GROQ_API_KEY}"}, timeout=7)
             if res.status_code == 200: final_reply = res.json()['choices'][0]['message']['content']
         except: pass
 
     if not final_reply and VALID_KEYS:
-        parts = [{"text": f"{system_instruction}\n\nStudent message: {prompt}"}]
+        parts = [{"text": context_prompt}]
         
-        # 🔥 THE CRITICAL IMAGE BUG FIX 🔥
-        # Using camelCase "inlineData" and "mimeType" per Google REST API specs!
+        # Perfect Image Payload for Gemini
         for file_data in attachments:
             if "," in file_data:
                 mime_type = file_data.split(';')[0].split(':')[1]
@@ -348,7 +336,7 @@ CRITICAL RULES FOR REALISM:
         for api_key in VALID_KEYS:
             try:
                 res = requests.post(f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={api_key}", 
-                    json={"contents": [{"parts": parts}]}, headers={"Content-Type": "application/json"}, timeout=25)
+                    json={"contents": [{"parts": parts}]}, headers={"Content-Type": "application/json"}, timeout=30)
                 res_data = res.json()
                 if "candidates" in res_data:
                     final_reply = res_data['candidates'][0]['content']['parts'][0]['text']
@@ -356,17 +344,14 @@ CRITICAL RULES FOR REALISM:
             except: continue
 
     if final_reply:
-        formatted_reply = final_reply.replace("Gemini", "TicBull").replace("Google", "TicBull")
-        
-        if not attachments and FIREBASE_URL:
-            try: requests.put(cache_url, json=formatted_reply)
-            except: pass
-            
         if email and FIREBASE_URL: requests.put(usage_url, json=current_usage + 1)
+        formatted_reply = final_reply.replace("Gemini", "TicBull").replace("Google", "TicBull")
         return jsonify({"success": True, "reply": formatted_reply})
         
     return jsonify({"success": False, "message": "Server error. Try again."}), 500
 
+
+# --- TEST GENERATOR ---
 @app.route('/api/generateTest', methods=['POST'])
 def generate_test():
     data = request.get_json() or {}
@@ -391,6 +376,7 @@ def generate_test():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
+# --- ADMIN PANEL ENDPOINTS ---
 @app.route('/api/admin/data', methods=['POST'])
 def admin_data():
     data = request.get_json() or {}
