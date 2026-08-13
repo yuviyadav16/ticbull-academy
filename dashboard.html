@@ -11,14 +11,13 @@
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     
-    <!-- FIX: LINKING THE GLOBAL CONTROLLER -->
     <script src="global.js"></script>
 
     <style>
         :root { --bg-color: #030712; --card-bg: rgba(15, 23, 42, 0.95); --accent-color: #2563eb; --accent-glow: rgba(37, 99, 235, 0.45); --text-main: #f8fafc; --text-muted: #94a3b8; --border-color: rgba(255, 255, 255, 0.12); --success-color: #10b981; --gold-color: #f59e0b; --input-bg: #0f172a; }
         body.light-theme { --bg-color: #f1f5f9; --card-bg: #ffffff; --text-main: #0f172a; --text-muted: #64748b; --border-color: #cbd5e1; --input-bg: #ffffff; }
         * { margin:0; padding:0; box-sizing:border-box; font-family:-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; -webkit-tap-highlight-color: transparent; }
-        body { background: var(--bg-color); color: var(--text-main); display:flex; flex-direction:column; height: 100vh; overflow: hidden; transition: background 0.3s, color 0.3s; }
+        body { background: var(--bg-color); color: var(--text-main); display:flex; flex-direction:column; height: 100vh; overflow: hidden; transition: background 0.3s ease, color 0.3s ease; }
 
         /* CUSTOM TOAST */
         #custom-toast { position: fixed; top: -100px; left: 50%; transform: translateX(-50%); background: var(--card-bg); color: var(--text-main); border: 1px solid var(--accent-color); padding: 12px 24px; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); z-index: 10000; display: flex; align-items: center; gap: 12px; font-size: 13.5px; font-weight: 600; transition: top 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55); }
@@ -33,7 +32,7 @@
         .menu-btn:active { transform: scale(0.9); }
 
         /* MAIN CONTENT */
-        .main-content { display:flex; flex-direction:column; align-items:center; justify-content:center; flex:1; padding:20px; position:relative; }
+        .main-content { display:flex; flex-direction:column; align-items:center; justify-content:center; flex:1; padding:20px; position:relative; overflow-y: auto;}
         
         /* SOCIAL MEDIA BAR */
         .dashboard-socials { display: flex; gap: 15px; margin-bottom: 20px; justify-content: center; width: 100%; max-width: 400px; z-index: 10; }
@@ -60,8 +59,9 @@
         .btn-classroom { background: linear-gradient(135deg, #10b981, #059669); box-shadow: 0 8px 20px rgba(16, 185, 129, 0.4); }
 
         /* DRAWER MENU */
-        .drawer-overlay { position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.75); z-index:1000; display:none; }
-        .drawer { position:fixed; top:0; left:-320px; width:320px; height:100%; background:var(--card-bg); border-right:1px solid var(--border-color); z-index:1001; transition:0.3s; padding:20px; display:flex; flex-direction:column; overflow-y:auto; }
+        .drawer-overlay { position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.75); z-index:1000; display:none; opacity: 0; transition: opacity 0.3s; }
+        .drawer-overlay.show { display:block; opacity: 1; }
+        .drawer { position:fixed; top:0; left:-320px; width:320px; height:100%; background:var(--card-bg); border-right:1px solid var(--border-color); z-index:1001; transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1); padding:20px; display:flex; flex-direction:column; overflow-y:auto; }
         .drawer.open { left:0; }
         .drawer-header { display:flex; justify-content:space-between; align-items:center; padding-bottom:14px; border-bottom:1px solid var(--border-color); margin-bottom:14px; }
         
@@ -102,7 +102,7 @@
         .btn-primary { width:100%; background: var(--accent-color); color:#fff; font-weight:700; padding:14px; border:none; border-radius:12px; cursor:pointer; font-size:14px; margin-top:10px; transition:0.2s;}
         .btn-primary:active { transform: scale(0.98); }
 
-        .syllabus-task { display:flex; align-items:center; gap:12px; background:var(--chat-bg); padding:12px 14px; border:1px solid var(--border-color); border-radius:12px; margin-bottom:8px; text-align:left; transition:0.2s; }
+        .syllabus-task { display:flex; align-items:center; gap:12px; background:var(--input-bg); padding:12px 14px; border:1px solid var(--border-color); border-radius:12px; margin-bottom:8px; text-align:left; transition:0.2s; }
         .syllabus-task input[type="checkbox"] { width:18px; height:18px; accent-color:var(--success-color); cursor:pointer; }
         .syllabus-task span { font-size:13.5px; font-weight:600; color:var(--text-main); flex:1; }
         .syllabus-task.completed span { text-decoration: line-through; color:var(--text-muted); }
@@ -177,7 +177,7 @@
                     <label class="avatar-upload-icon" for="avatarUploadInput"><i class="fa-solid fa-camera"></i></label>
                     <input type="file" id="avatarUploadInput" accept="image/*" style="display:none;" onchange="handleAvatarUpload(event)">
                 </div>
-                <div>
+                <div style="margin-left: 10px;">
                     <strong style="color:#fff; font-size:16px;" id="drawerStudentName">Loading...</strong>
                     <div style="font-size:11px; color:var(--text-muted); margin-top:2px;" id="drawerStudentEmail">student@ticbull.com</div>
                     <div style="font-size:12px; color:var(--accent-color); font-weight:700; margin-top:4px;" id="drawerStudentAge">Age: Active Learner</div>
@@ -189,7 +189,6 @@
         <div class="drawer-item" onclick="openSyllabusBoard()"><i class="fa-solid fa-list-check" style="color:#0ea5e9; width:20px;"></i> Syllabus Tracker Board</div>
         <div class="drawer-item" onclick="openSettingsModal()"><i class="fa-solid fa-gear" style="color:#94a3b8; width:20px;"></i> App Settings</div>
         
-        <!-- FIX: This uses the logic defined globally -->
         <div class="drawer-item" onclick="toggleThemeDashboard()"><i class="fa-solid fa-circle-half-stroke" style="color:var(--gold-color); width:20px;"></i> <span id="themeToggleText">Switch to Light Mode</span></div>
         
         <div class="drawer-item" onclick="openPricingModal()"><i class="fa-solid fa-crown" style="color:#f59e0b; width:20px;"></i> Upgrade Course Pass</div>
@@ -223,17 +222,9 @@
                 <span style="display:flex; align-items:center; gap:12px;"><i class="fa-solid fa-music"></i> App Click Sounds</span>
                 <label class="switch"><input type="checkbox" id="soundToggle" onchange="toggleSoundSettingDashboard(this)"><span class="slider"></span></label>
             </div>
-            <div class="setting-item">
-                <span style="display:flex; align-items:center; gap:12px;"><i class="fa-solid fa-microphone"></i> Microphone Permission</span>
-                <label class="switch"><input type="checkbox" checked><span class="slider"></span></label>
-            </div>
-            <div class="setting-item">
-                <span style="display:flex; align-items:center; gap:12px;"><i class="fa-solid fa-camera"></i> Camera & Media</span>
-                <label class="switch"><input type="checkbox" checked><span class="slider"></span></label>
-            </div>
             
             <div style="margin-top:20px; padding-top:16px; border-top:1px solid var(--border-color);">
-                <span style="font-size:12px; color:var(--text-muted); display:block; margin-bottom:12px;">Chat Theme Color (40+ Options):</span>
+                <span style="font-size:12px; color:var(--text-muted); display:block; margin-bottom:12px;">App Theme Color:</span>
                 <div class="theme-grid" id="themeGrid"></div>
             </div>
 
@@ -267,7 +258,7 @@
 
     <!-- SYLLABUS TRACKER MODAL -->
     <div class="modal-overlay" id="syllabusModal">
-        <div class="modal-card" style="max-height:80vh;">
+        <div class="modal-card" style="max-height:80vh; display: flex; flex-direction: column;">
             <i class="fa-solid fa-xmark" style="position:absolute; right:16px; top:16px; color:var(--text-muted); cursor:pointer; font-size:20px;" onclick="document.getElementById('syllabusModal').style.display='none';"></i>
             <h3 style="font-size:19px; margin-bottom:6px;"><i class="fa-solid fa-list-check"></i> Syllabus Tracker</h3>
             <p style="font-size:12px; color:var(--text-muted); margin-bottom:16px;">Track your chapters & study progress.</p>
@@ -311,18 +302,20 @@
 
     <script>
         let currentStudentData = { name: '', email: '', dob: '', photo: '' };
+        let appSoundEnabled = localStorage.getItem('tb_sound') !== 'off';
 
         window.addEventListener('DOMContentLoaded', () => {
             const savedEmail = localStorage.getItem('ticbull_email');
             const savedToken = localStorage.getItem('ticbull_token');
             
             generateThemeColors();
-            updateUIFromGlobalSettings(); 
+            applySavedSettings(); 
 
             if(!savedEmail || !savedToken) {
                 if(window.location.hostname !== 'localhost') { window.location.href = "index.html"; return; }
             }
 
+            // Sync with Firebase & Load Profile
             fetch('/api/check-session', {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
@@ -392,38 +385,42 @@
         }
 
         // ---------------------------------------------------------------------------------
-        // SETTINGS & GLOBAL SYNC OVERRIDES
+        // GLOBAL SYNC ENGINE (Theme & Sound)
         // ---------------------------------------------------------------------------------
-        function updateUIFromGlobalSettings() {
-            const isLight = document.body.classList.contains('light-theme');
+        function applySavedSettings() {
+            const isLight = localStorage.getItem('tb_theme') === 'light';
+            if(isLight) { document.body.classList.add('light-theme'); }
             document.getElementById('themeToggleText').innerText = isLight ? 'Switch to Dark Mode' : 'Switch to Light Mode';
-            
+
             const savedColor = localStorage.getItem('tb_theme_color');
-            if(savedColor) {
-                document.documentElement.style.setProperty('--accent-color', savedColor);
+            if(savedColor) { 
+                document.documentElement.style.setProperty('--accent-color', savedColor); 
+                document.documentElement.style.setProperty('--accent-glow', savedColor + '66');
             }
 
             const soundToggle = document.getElementById('soundToggle');
-            if(soundToggle) {
-                soundToggle.checked = (localStorage.getItem('tb_sound') !== 'off');
-            }
+            if(soundToggle) { soundToggle.checked = appSoundEnabled; }
         }
 
         function toggleThemeDashboard() { 
-            // Inform global.js to switch theme
-            let current = localStorage.getItem('tb_theme') || 'dark';
-            localStorage.setItem('tb_theme', current === 'dark' ? 'light' : 'dark');
-            Global.applyTheme(); // Call global function
-            updateUIFromGlobalSettings();
+            const isLight = document.body.classList.contains('light-theme');
+            const nextMode = isLight ? 'dark' : 'light';
+            
+            if(nextMode === 'light') { document.body.classList.add('light-theme'); } 
+            else { document.body.classList.remove('light-theme'); }
+            
+            localStorage.setItem('tb_theme', nextMode);
+            document.getElementById('themeToggleText').innerText = nextMode === 'light' ? 'Switch to Dark Mode' : 'Switch to Light Mode';
         }
 
         function toggleSoundSettingDashboard(checkbox) { 
-            localStorage.setItem('tb_sound', checkbox.checked ? 'on' : 'off');
-            showToast(checkbox.checked ? "App Sounds Enabled" : "App Sounds Muted", "success"); 
+            appSoundEnabled = checkbox.checked;
+            localStorage.setItem('tb_sound', appSoundEnabled ? 'on' : 'off');
+            showToast(appSoundEnabled ? "App Sounds Enabled" : "App Sounds Muted", "success"); 
         }
 
         function generateThemeColors() {
-            const colors = ['#2563eb', '#10b981', '#8b5cf6', '#f43f5e', '#f59e0b', '#06b6d4', '#84cc16', '#14b8a6', '#f97316', '#ef4444', '#ec4899', '#d946ef', '#a855f7', '#6366f1', '#3b82f6', '#0ea5e9', '#0d9488', '#22c55e', '#eab308', '#f97316', '#ef4444', '#f43f5e', '#ec4899', '#d946ef', '#a855f7', '#8b5cf6', '#6366f1', '#4f46e5', '#3b82f6', '#0284c7', '#0369a1', '#075985', '#0f766e', '#115e59', '#166534', '#3f6212', '#854d0e', '#9a3412', '#9f1239', '#9d174d'];
+            const colors = ['#2563eb', '#10b981', '#8b5cf6', '#f43f5e', '#f59e0b', '#06b6d4', '#84cc16', '#14b8a6', '#f97316', '#ef4444', '#ec4899', '#d946ef', '#a855f7', '#6366f1', '#3b82f6', '#0ea5e9', '#0d9488', '#22c55e', '#eab308', '#9d174d'];
             const grid = document.getElementById('themeGrid');
             if(!grid) return;
             grid.innerHTML = '';
@@ -436,21 +433,66 @@
 
         function changeAppTheme(color, el) { 
             document.documentElement.style.setProperty('--accent-color', color); 
+            document.documentElement.style.setProperty('--accent-glow', color + '66');
             localStorage.setItem('tb_theme_color', color);
+            
             document.querySelectorAll('.theme-circle').forEach(c => c.classList.remove('active')); 
             el.classList.add('active'); 
-            showToast("Theme Color Updated!", "success"); 
+            showToast("Theme Color Updated Globally!", "success"); 
         }
 
+        // ---------------------------------------------------------------------------------
+        // SOUND ENGINE (Cross-Platform)
+        // ---------------------------------------------------------------------------------
+        const AudioCtx = window.AudioContext || window.webkitAudioContext;
+        let audioCtxInstance;
 
+        function playClickSound() {
+            try {
+                if(!appSoundEnabled || !AudioCtx) return;
+                if(!audioCtxInstance) audioCtxInstance = new AudioCtx();
+                if(audioCtxInstance.state === 'suspended') audioCtxInstance.resume();
+                
+                const osc = audioCtxInstance.createOscillator(); 
+                const gain = audioCtxInstance.createGain();
+                osc.type = 'sine'; 
+                osc.frequency.setValueAtTime(800, audioCtxInstance.currentTime);
+                gain.gain.setValueAtTime(0.05, audioCtxInstance.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, audioCtxInstance.currentTime + 0.1);
+                
+                osc.connect(gain); gain.connect(audioCtxInstance.destination);
+                osc.start(); osc.stop(audioCtxInstance.currentTime + 0.1);
+            } catch(e) {}
+        }
+
+        document.addEventListener('click', function(e) {
+            if(e.target.closest('button') || e.target.closest('.drawer-item') || e.target.closest('.theme-circle') || e.target.closest('.dashboard-socials a')) {
+                playClickSound();
+            }
+        });
+
+        // ---------------------------------------------------------------------------------
+        // UI INTERACTIONS
+        // ---------------------------------------------------------------------------------
         function toggleDrawer() {
-            document.getElementById('drawer').classList.toggle('open');
-            document.getElementById('drawerOverlay').style.display = document.getElementById('drawer').classList.contains('open') ? 'block' : 'none';
+            const drawer = document.getElementById('drawer');
+            const overlay = document.getElementById('drawerOverlay');
+            
+            if(drawer.classList.contains('open')) {
+                drawer.classList.remove('open');
+                overlay.classList.remove('show');
+                setTimeout(() => { overlay.style.display = 'none'; }, 300);
+            } else {
+                overlay.style.display = 'block';
+                // Trigger reflow
+                void overlay.offsetWidth; 
+                drawer.classList.add('open');
+                overlay.classList.add('show');
+            }
         }
 
         function openSettingsModal() { document.getElementById('settingsModal').style.display = 'flex'; toggleDrawer(); }
         function openPricingModal() { document.getElementById('pricingModal').style.display = 'flex'; toggleDrawer(); }
-        
         function openEditProfileModal() {
             document.getElementById('editName').value = currentStudentData.name;
             document.getElementById('editDob').value = currentStudentData.dob;
@@ -465,8 +507,7 @@
             localStorage.setItem('ticbull_dob', currentStudentData.dob);
             
             fetch(`/api/update-profile`, {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
+                method: 'POST', headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify({ email: currentStudentData.email, name: currentStudentData.name, dob: currentStudentData.dob, photo: currentStudentData.photo })
             }).catch(err => console.log("Saved locally"));
 
@@ -484,10 +525,8 @@
                     localStorage.setItem('ticbull_photo', e.target.result);
                     loadProfileData();
                     showToast("Profile Photo Updated!", "success");
-
                     fetch(`/api/update-profile`, {
-                        method: 'POST',
-                        headers: {'Content-Type': 'application/json'},
+                        method: 'POST', headers: {'Content-Type': 'application/json'},
                         body: JSON.stringify({ email: currentStudentData.email, name: currentStudentData.name, dob: currentStudentData.dob, photo: currentStudentData.photo })
                     }).catch(err => console.log("Saved locally"));
                 };
@@ -495,14 +534,10 @@
             }
         }
 
-        // VIDEO SOUND TOGGLE
         function toggleVideoSound(event) {
-            event.preventDefault(); 
-            event.stopPropagation(); 
-            
+            event.preventDefault(); event.stopPropagation(); 
             const vid = document.getElementById('bg-video');
             const btn = document.getElementById('videoSoundBtn');
-            
             if (vid.muted) {
                 vid.muted = false;
                 btn.innerHTML = '<i class="fa-solid fa-volume-high" style="color:var(--success-color); font-size:18px;"></i>';
@@ -515,7 +550,7 @@
         }
 
         // ---------------------------------------------------------------------------------
-        // ACCOUNT DELETION LOGIC (STRICT BACKEND VALIDATION)
+        // ACCOUNT DELETION
         // ---------------------------------------------------------------------------------
         function openDeleteAccountModal() {
             document.getElementById('settingsModal').style.display = 'none';
@@ -526,56 +561,37 @@
 
         function initiateAccountDeletion() {
             const btn = document.getElementById('sendDelOtpBtn');
-            btn.innerText = "SENDING WARNING OTP...";
-            btn.disabled = true;
+            btn.innerText = "SENDING WARNING OTP..."; btn.disabled = true;
 
-            fetch(`/api/send-delete-otp`, {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({ email: currentStudentData.email })
-            }).then(res => res.json()).then(data => {
+            fetch(`/api/send-delete-otp`, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ email: currentStudentData.email }) })
+            .then(res => res.json()).then(data => {
                 if(data.success) {
-                    btn.style.display = 'none';
-                    document.getElementById('delAccOtpSection').style.display = 'block';
+                    btn.style.display = 'none'; document.getElementById('delAccOtpSection').style.display = 'block';
                     showToast("Warning OTP Sent to Email!", "success");
                 } else {
-                    btn.innerText = "SEND DELETION OTP";
-                    btn.disabled = false;
+                    btn.innerText = "SEND DELETION OTP"; btn.disabled = false;
                     showToast(data.message || "Failed to send OTP", "error");
                 }
-            }).catch(() => {
-                btn.innerText = "SEND DELETION OTP";
-                btn.disabled = false;
-                showToast("Server Error! Check Backend.", "error");
-            });
+            }).catch(() => { btn.innerText = "SEND DELETION OTP"; btn.disabled = false; showToast("Server Error! Check Backend.", "error"); });
         }
 
         function verifyAndDeleteAccount() {
             const otp = document.getElementById('delAccOtp').value.trim();
             if(!otp) return showToast("Enter OTP to delete!", "error");
             const btn = document.getElementById('confirmDeleteAccBtn');
-            btn.disabled = true;
-            btn.innerText = "DELETING...";
+            btn.disabled = true; btn.innerText = "DELETING...";
 
-            fetch(`/api/delete-account`, {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({ email: currentStudentData.email, otp: otp })
-            }).then(res => res.json()).then(data => {
+            fetch(`/api/delete-account`, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ email: currentStudentData.email, otp: otp }) })
+            .then(res => res.json()).then(data => {
                 if(data.success) {
                     showToast("Account Permanently Deleted.", "success");
                     localStorage.clear();
                     setTimeout(() => window.location.href="index.html", 1500);
                 } else {
-                    btn.disabled = false;
-                    btn.innerText = "PERMANENTLY DELETE";
+                    btn.disabled = false; btn.innerText = "PERMANENTLY DELETE";
                     showToast(data.message || "Invalid OTP!", "error"); 
                 }
-            }).catch(() => {
-                btn.disabled = false;
-                btn.innerText = "PERMANENTLY DELETE";
-                showToast("Server Error. Could not delete.", "error");
-            });
+            }).catch(() => { btn.disabled = false; btn.innerText = "PERMANENTLY DELETE"; showToast("Server Error. Could not delete.", "error"); });
         }
 
         function logoutUser() {
@@ -584,7 +600,7 @@
         }
 
         // ---------------------------------------------------------------------------------
-        // SYLLABUS TRACKER LOGIC
+        // SYLLABUS TRACKER
         // ---------------------------------------------------------------------------------
         let syllabusItems = [];
         function openSyllabusBoard() {
@@ -613,12 +629,12 @@
         }
     </script> 
     <footer style="text-align: center; margin-top: 30px; padding: 15px; font-size: 12px; border-top: 1px solid #334155;">
-  <a href="/privacy-policy.html" target="_blank" style="color: #94a3b8; text-decoration: none; margin: 0 8px;">Privacy Policy</a> | 
-  <a href="/terms.html" target="_blank" style="color: #94a3b8; text-decoration: none; margin: 0 8px;">Terms & Conditions</a> | 
-  <a href="/refund-policy.html" target="_blank" style="color: #94a3b8; text-decoration: none; margin: 0 8px;">Refund Policy</a> | 
-  <a href="/contact.html" target="_blank" style="color: #94a3b8; text-decoration: none; margin: 0 8px;">Contact Us</a>
-  <p style="color: #64748b; margin-top: 8px;">© 2026 TicBull Academy. All rights reserved.</p>
-</footer> 
+        <a href="/privacy-policy.html" target="_blank" style="color: #94a3b8; text-decoration: none; margin: 0 8px;">Privacy Policy</a> | 
+        <a href="/terms.html" target="_blank" style="color: #94a3b8; text-decoration: none; margin: 0 8px;">Terms & Conditions</a> | 
+        <a href="/refund-policy.html" target="_blank" style="color: #94a3b8; text-decoration: none; margin: 0 8px;">Refund Policy</a> | 
+        <a href="/contact.html" target="_blank" style="color: #94a3b8; text-decoration: none; margin: 0 8px;">Contact Us</a>
+        <p style="color: #64748b; margin-top: 8px;">© 2026 TicBull Academy. All rights reserved.</p>
+    </footer> 
     
 </body>
 </html>
